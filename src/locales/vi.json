@@ -59,12 +59,19 @@
     "skip": "❌ Bỏ qua",
     "yes": "✅ Có!"
   },
+  "mealPrompt": {
+    "title": "Thêm nhà hàng?",
+    "subtitle": "Bạn có muốn thêm bữa ăn hoặc nghỉ ăn vào ngày của mình không?",
+    "yes": "Có, thêm nhà hàng",
+    "no": "Không, chỉ hoạt động thôi"
+  },
   "restaurants": {
     "title": "Nhà hàng & Ẩm thực",
     "noMore": "Không còn nhà hàng nào",
     "noResults": "Không tìm thấy nhà hàng. Thử thay đổi bộ lọc.",
     "buildItinerary": "Xây dựng lịch trình",
     "adjustFilters": "Điều chỉnh bộ lọc",
+    "skipAndContinue": "Bỏ qua nhà hàng và tiếp tục",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} giờ",
     "skip": "❌ Bỏ qua",

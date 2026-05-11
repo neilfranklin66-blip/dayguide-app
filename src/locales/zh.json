@@ -59,12 +59,19 @@
     "skip": "❌ 跳过",
     "yes": "✅ 好的！"
   },
+  "mealPrompt": {
+    "title": "添加餐厅？",
+    "subtitle": "您想在今天的行程中加入用餐或休息时间吗？",
+    "yes": "是的，添加餐厅",
+    "no": "不，只要活动"
+  },
   "restaurants": {
     "title": "餐厅与美食",
     "noMore": "没有更多餐厅",
     "noResults": "未找到餐厅，请尝试调整筛选条件。",
     "buildItinerary": "制定我的行程",
     "adjustFilters": "调整筛选条件",
+    "skipAndContinue": "跳过餐厅并继续",
     "kmAway": "📍 {{distance}} 公里",
     "duration": "⏱️ {{duration}} 小时",
     "skip": "❌ 跳过",

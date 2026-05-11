@@ -728,6 +728,28 @@ p {
   margin-bottom: 10px;
 }
 
+.meal-prompt-card {
+  text-align: center;
+}
+
+.meal-prompt-icon {
+  font-size: 3.5em;
+  margin-bottom: 12px;
+}
+
+.meal-prompt-subtitle {
+  color: #888;
+  font-size: 0.95em;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.meal-prompt-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .no-results-msg {
   text-align: center;
   color: #888;

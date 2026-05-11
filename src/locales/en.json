@@ -59,12 +59,19 @@
     "skip": "❌ Skip",
     "yes": "✅ Yes!"
   },
+  "mealPrompt": {
+    "title": "Add a restaurant?",
+    "subtitle": "Would you like to add a meal or restaurant break to your day?",
+    "yes": "Yes, add a restaurant",
+    "no": "No thanks, just activities"
+  },
   "restaurants": {
     "title": "Restaurants & Food",
     "noMore": "No more restaurants",
     "noResults": "No restaurants found. Try different cuisine or price filters.",
     "buildItinerary": "Build my itinerary",
     "adjustFilters": "Adjust filters",
+    "skipAndContinue": "Skip restaurant and continue",
     "kmAway": "📍 {{distance}} km away",
     "duration": "⏱️ {{duration}} hours",
     "skip": "❌ Skip",

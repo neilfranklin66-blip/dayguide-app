@@ -164,7 +164,7 @@ const DayGuide = () => {
     if (currentActivityIndex < activityQueue.length - 1) {
       setCurrentActivityIndex(i => i + 1);
     } else {
-      goToRestaurants();
+      setStage('meal-prompt');
     }
   };
 
@@ -346,8 +346,8 @@ const DayGuide = () => {
           <div className="dayguide-container">
             <div className="card">
               <h2>{t('activities.noMore')}</h2>
-              <button onClick={goToRestaurants} className="btn-primary">
-                {t('activities.continueToRestaurants')}
+              <button onClick={() => setStage('meal-prompt')} className="btn-primary">
+                {t('interests.next')}
               </button>
             </div>
           </div>
@@ -376,6 +376,26 @@ const DayGuide = () => {
       );
     }
 
+    if (stage === 'meal-prompt') {
+      return (
+        <div className="dayguide-container">
+          <div className="card meal-prompt-card">
+            <div className="meal-prompt-icon">🍽️</div>
+            <h2>{t('mealPrompt.title')}</h2>
+            <p className="meal-prompt-subtitle">{t('mealPrompt.subtitle')}</p>
+            <div className="meal-prompt-buttons">
+              <button onClick={goToRestaurants} className="btn-primary">
+                {t('mealPrompt.yes')}
+              </button>
+              <button onClick={() => buildTimeline([])} className="btn-secondary">
+                {t('mealPrompt.no')}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     if (stage === 'restaurants') {
       // Empty array means filters returned no results
       if (restaurantQueue !== null && restaurantQueue.length === 0) {
@@ -383,8 +403,11 @@ const DayGuide = () => {
           <div className="dayguide-container">
             <div className="card">
               <p className="no-results-msg">{t('restaurants.noResults')}</p>
-              <button onClick={() => setStage('interests')} className="btn-secondary">
+              <button onClick={goToRestaurants} className="btn-secondary">
                 ← {t('restaurants.adjustFilters')}
+              </button>
+              <button onClick={() => buildTimeline([])} className="btn-secondary" style={{ marginTop: '10px' }}>
+                {t('restaurants.skipAndContinue')}
               </button>
             </div>
           </div>

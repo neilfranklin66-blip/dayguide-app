@@ -59,12 +59,19 @@
     "skip": "❌ Passer",
     "yes": "✅ Oui !"
   },
+  "mealPrompt": {
+    "title": "Ajouter un restaurant ?",
+    "subtitle": "Souhaitez-vous ajouter un repas ou une pause restaurant à votre journée ?",
+    "yes": "Oui, ajouter un restaurant",
+    "no": "Non merci, juste les activités"
+  },
   "restaurants": {
     "title": "Restaurants et nourriture",
     "noMore": "Plus de restaurants",
     "noResults": "Aucun restaurant trouvé. Essayez d'autres filtres.",
     "buildItinerary": "Créer mon itinéraire",
     "adjustFilters": "Modifier les filtres",
+    "skipAndContinue": "Ignorer le restaurant et continuer",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} heures",
     "skip": "❌ Passer",

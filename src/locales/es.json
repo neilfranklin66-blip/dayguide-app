@@ -59,12 +59,19 @@
     "skip": "❌ Omitir",
     "yes": "✅ ¡Sí!"
   },
+  "mealPrompt": {
+    "title": "¿Añadir un restaurante?",
+    "subtitle": "¿Te gustaría añadir una comida o pausa gastronómica a tu día?",
+    "yes": "Sí, añadir restaurante",
+    "no": "No, solo actividades"
+  },
   "restaurants": {
     "title": "Restaurantes y comida",
     "noMore": "No hay más restaurantes",
     "noResults": "No se encontraron restaurantes. Prueba otros filtros.",
     "buildItinerary": "Crear mi itinerario",
     "adjustFilters": "Ajustar filtros",
+    "skipAndContinue": "Omitir restaurante y continuar",
     "kmAway": "📍 {{distance}} km de distancia",
     "duration": "⏱️ {{duration}} horas",
     "skip": "❌ Omitir",
