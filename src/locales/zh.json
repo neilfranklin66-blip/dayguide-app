@@ -1,0 +1,92 @@
+{
+  "app": { "title": "🗺️ DayGuide" },
+  "login": {
+    "tagline": "在英国规划您完美的一天",
+    "googleSignIn": "使用 Google 登录",
+    "or": "或",
+    "signIn": "登录",
+    "createAccount": "创建账户",
+    "emailPlaceholder": "电子邮件地址",
+    "passwordPlaceholder": "密码",
+    "pleaseWait": "请稍候...",
+    "errors": {
+      "userNotFound": "未找到与此电子邮件关联的账户。",
+      "wrongPassword": "密码不正确。",
+      "invalidCredential": "电子邮件或密码无效。",
+      "emailInUse": "该电子邮件已被注册。",
+      "weakPassword": "密码至少需要 6 个字符。",
+      "invalidEmail": "请输入有效的电子邮件地址。",
+      "authFailed": "认证失败，请重试。",
+      "googleFailed": "Google 登录失败，请重试。"
+    }
+  },
+  "location": {
+    "notSupported": "您的浏览器不支持地理定位。",
+    "denied": "位置访问被拒绝。请启用位置权限。",
+    "unavailable": "无法获取您的位置。请重试。"
+  },
+  "welcome": {
+    "tagline": "在英国规划您完美的一天",
+    "subtitle": "滑动浏览活动和餐厅，我们将为您制定行程。",
+    "detectingLocation": "📍 正在检测位置...",
+    "refreshLocation": "刷新位置",
+    "startPlanning": "开始规划",
+    "findingLocation": "📍 正在定位...",
+    "gettingCoordinates": "正在获取 GPS 坐标..."
+  },
+  "interests": {
+    "title": "您对什么感兴趣？",
+    "subtitle": "请至少选择一个兴趣",
+    "museums": "博物馆",
+    "galleries": "画廊",
+    "parks": "公园",
+    "shopping": "购物",
+    "timeLabel": "您有多少时间？（小时）",
+    "hours": "{{count}} 小时",
+    "next": "下一步"
+  },
+  "activities": {
+    "title": "活动",
+    "noMore": "没有更多活动",
+    "continueToRestaurants": "继续选择餐厅",
+    "kmAway": "📍 {{distance}} 公里",
+    "duration": "⏱️ {{duration}} 小时",
+    "skip": "❌ 跳过",
+    "yes": "✅ 好的！"
+  },
+  "restaurants": {
+    "title": "餐厅与美食",
+    "noMore": "没有更多餐厅",
+    "buildItinerary": "制定我的行程",
+    "kmAway": "📍 {{distance}} 公里",
+    "duration": "⏱️ {{duration}} 小时",
+    "skip": "❌ 跳过",
+    "yes": "✅ 好的！"
+  },
+  "cuisine": {
+    "italian": "意大利菜",
+    "japanese": "日本料理",
+    "mexican": "墨西哥菜",
+    "british": "英式料理",
+    "cafe": "咖啡厅"
+  },
+  "timeline": {
+    "title": "您的完美一天",
+    "empty": "没有行程项目。请尝试选择更多活动！",
+    "slideToAdjust": "滑动调整时长",
+    "hoursDisplay": "{{duration}} 小时",
+    "howToGetThere": "↓ 如何前往下一个活动？",
+    "minutes": "{{count}} 分钟",
+    "startOver": "重新开始",
+    "bookNow": "📱 立即预订"
+  },
+  "transport": {
+    "walk": "步行",
+    "taxi": "出租车/Uber",
+    "tube": "地铁",
+    "bus": "公交车"
+  },
+  "header": {
+    "logout": "退出登录"
+  }
+}

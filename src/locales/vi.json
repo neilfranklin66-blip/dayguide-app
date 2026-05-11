@@ -1,0 +1,92 @@
+{
+  "app": { "title": "🗺️ DayGuide" },
+  "login": {
+    "tagline": "Lên kế hoạch ngày hoàn hảo tại Anh",
+    "googleSignIn": "Đăng nhập bằng Google",
+    "or": "hoặc",
+    "signIn": "Đăng nhập",
+    "createAccount": "Tạo tài khoản",
+    "emailPlaceholder": "Địa chỉ email",
+    "passwordPlaceholder": "Mật khẩu",
+    "pleaseWait": "Vui lòng chờ...",
+    "errors": {
+      "userNotFound": "Không tìm thấy tài khoản với email này.",
+      "wrongPassword": "Mật khẩu không chính xác.",
+      "invalidCredential": "Email hoặc mật khẩu không hợp lệ.",
+      "emailInUse": "Tài khoản với email này đã tồn tại.",
+      "weakPassword": "Mật khẩu phải có ít nhất 6 ký tự.",
+      "invalidEmail": "Vui lòng nhập địa chỉ email hợp lệ.",
+      "authFailed": "Xác thực thất bại. Vui lòng thử lại.",
+      "googleFailed": "Đăng nhập Google thất bại. Vui lòng thử lại."
+    }
+  },
+  "location": {
+    "notSupported": "Trình duyệt của bạn không hỗ trợ định vị địa lý.",
+    "denied": "Quyền truy cập vị trí bị từ chối. Vui lòng bật quyền vị trí.",
+    "unavailable": "Không thể lấy vị trí của bạn. Vui lòng thử lại."
+  },
+  "welcome": {
+    "tagline": "Lên kế hoạch ngày hoàn hảo tại Anh",
+    "subtitle": "Vuốt qua các hoạt động và nhà hàng. Chúng tôi sẽ xây dựng lịch trình cho bạn.",
+    "detectingLocation": "📍 Đang phát hiện vị trí...",
+    "refreshLocation": "Làm mới vị trí",
+    "startPlanning": "Bắt đầu lên kế hoạch",
+    "findingLocation": "📍 Đang tìm vị trí của bạn...",
+    "gettingCoordinates": "Đang lấy tọa độ GPS của bạn..."
+  },
+  "interests": {
+    "title": "Bạn quan tâm đến điều gì?",
+    "subtitle": "Chọn ít nhất một sở thích",
+    "museums": "Bảo tàng",
+    "galleries": "Phòng tranh",
+    "parks": "Công viên",
+    "shopping": "Mua sắm",
+    "timeLabel": "Bạn có bao nhiêu thời gian? (giờ)",
+    "hours": "{{count}} giờ",
+    "next": "Tiếp theo"
+  },
+  "activities": {
+    "title": "Hoạt động",
+    "noMore": "Không còn hoạt động nào",
+    "continueToRestaurants": "Tiếp tục đến nhà hàng",
+    "kmAway": "📍 {{distance}} km",
+    "duration": "⏱️ {{duration}} giờ",
+    "skip": "❌ Bỏ qua",
+    "yes": "✅ Có!"
+  },
+  "restaurants": {
+    "title": "Nhà hàng & Ẩm thực",
+    "noMore": "Không còn nhà hàng nào",
+    "buildItinerary": "Xây dựng lịch trình",
+    "kmAway": "📍 {{distance}} km",
+    "duration": "⏱️ {{duration}} giờ",
+    "skip": "❌ Bỏ qua",
+    "yes": "✅ Có!"
+  },
+  "cuisine": {
+    "italian": "Ẩm thực Ý",
+    "japanese": "Ẩm thực Nhật",
+    "mexican": "Ẩm thực Mexico",
+    "british": "Ẩm thực Anh",
+    "cafe": "Cà phê"
+  },
+  "timeline": {
+    "title": "Ngày hoàn hảo của bạn",
+    "empty": "Không có mục nào trong lịch trình. Hãy thử chọn thêm hoạt động!",
+    "slideToAdjust": "Trượt để điều chỉnh thời gian",
+    "hoursDisplay": "{{duration}} giờ",
+    "howToGetThere": "↓ Làm thế nào để đến hoạt động tiếp theo?",
+    "minutes": "{{count}} phút",
+    "startOver": "Bắt đầu lại",
+    "bookNow": "📱 Đặt ngay"
+  },
+  "transport": {
+    "walk": "Đi bộ",
+    "taxi": "Taxi/Uber",
+    "tube": "Tàu điện ngầm",
+    "bus": "Xe buýt"
+  },
+  "header": {
+    "logout": "Đăng xuất"
+  }
+}

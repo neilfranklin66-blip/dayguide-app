@@ -1,0 +1,92 @@
+{
+  "app": { "title": "🗺️ DayGuide" },
+  "login": {
+    "tagline": "Planifiez votre journée parfaite au Royaume-Uni",
+    "googleSignIn": "Se connecter avec Google",
+    "or": "ou",
+    "signIn": "Se connecter",
+    "createAccount": "Créer un compte",
+    "emailPlaceholder": "Adresse e-mail",
+    "passwordPlaceholder": "Mot de passe",
+    "pleaseWait": "Veuillez patienter...",
+    "errors": {
+      "userNotFound": "Aucun compte trouvé avec cet e-mail.",
+      "wrongPassword": "Mot de passe incorrect.",
+      "invalidCredential": "E-mail ou mot de passe invalide.",
+      "emailInUse": "Un compte avec cet e-mail existe déjà.",
+      "weakPassword": "Le mot de passe doit comporter au moins 6 caractères.",
+      "invalidEmail": "Veuillez saisir une adresse e-mail valide.",
+      "authFailed": "Échec de l'authentification. Veuillez réessayer.",
+      "googleFailed": "Échec de la connexion Google. Veuillez réessayer."
+    }
+  },
+  "location": {
+    "notSupported": "La géolocalisation n'est pas prise en charge par votre navigateur.",
+    "denied": "Accès à la localisation refusé. Veuillez activer les autorisations de localisation.",
+    "unavailable": "Impossible de récupérer votre localisation. Veuillez réessayer."
+  },
+  "welcome": {
+    "tagline": "Planifiez votre journée parfaite au Royaume-Uni",
+    "subtitle": "Faites glisser les activités et restaurants. Nous construirons votre itinéraire.",
+    "detectingLocation": "📍 Détection de l'emplacement...",
+    "refreshLocation": "Actualiser la position",
+    "startPlanning": "Commencer à planifier",
+    "findingLocation": "📍 Localisation en cours...",
+    "gettingCoordinates": "Récupération de vos coordonnées GPS..."
+  },
+  "interests": {
+    "title": "Qu'est-ce qui vous intéresse ?",
+    "subtitle": "Sélectionnez au moins un intérêt",
+    "museums": "Musées",
+    "galleries": "Galeries",
+    "parks": "Parcs",
+    "shopping": "Shopping",
+    "timeLabel": "Combien de temps avez-vous ? (heures)",
+    "hours": "{{count}} heures",
+    "next": "Suivant"
+  },
+  "activities": {
+    "title": "Activités",
+    "noMore": "Plus d'activités",
+    "continueToRestaurants": "Continuer vers les restaurants",
+    "kmAway": "📍 {{distance}} km",
+    "duration": "⏱️ {{duration}} heures",
+    "skip": "❌ Passer",
+    "yes": "✅ Oui !"
+  },
+  "restaurants": {
+    "title": "Restaurants et nourriture",
+    "noMore": "Plus de restaurants",
+    "buildItinerary": "Créer mon itinéraire",
+    "kmAway": "📍 {{distance}} km",
+    "duration": "⏱️ {{duration}} heures",
+    "skip": "❌ Passer",
+    "yes": "✅ Oui !"
+  },
+  "cuisine": {
+    "italian": "Italien",
+    "japanese": "Japonais",
+    "mexican": "Mexicain",
+    "british": "Britannique",
+    "cafe": "Café"
+  },
+  "timeline": {
+    "title": "Votre journée parfaite",
+    "empty": "Aucun élément dans l'itinéraire. Essayez de sélectionner plus d'activités !",
+    "slideToAdjust": "Faites glisser pour ajuster la durée",
+    "hoursDisplay": "{{duration}} heures",
+    "howToGetThere": "↓ Comment se rendre à la prochaine activité ?",
+    "minutes": "{{count}} min",
+    "startOver": "Recommencer",
+    "bookNow": "📱 Réserver maintenant"
+  },
+  "transport": {
+    "walk": "À pied",
+    "taxi": "Taxi/Uber",
+    "tube": "Métro",
+    "bus": "Bus"
+  },
+  "header": {
+    "logout": "Se déconnecter"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "app": { "title": "🗺️ DayGuide" },
+  "login": {
+    "tagline": "Plan your perfect day in the UK",
+    "googleSignIn": "Sign in with Google",
+    "or": "or",
+    "signIn": "Sign In",
+    "createAccount": "Create Account",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "pleaseWait": "Please wait...",
+    "errors": {
+      "userNotFound": "No account found with this email.",
+      "wrongPassword": "Incorrect password.",
+      "invalidCredential": "Invalid email or password.",
+      "emailInUse": "An account with this email already exists.",
+      "weakPassword": "Password must be at least 6 characters.",
+      "invalidEmail": "Please enter a valid email address.",
+      "authFailed": "Authentication failed. Please try again.",
+      "googleFailed": "Google sign-in failed. Please try again."
+    }
+  },
+  "location": {
+    "notSupported": "Geolocation is not supported by your browser.",
+    "denied": "Location access denied. Please enable location permissions.",
+    "unavailable": "Unable to retrieve your location. Please try again."
+  },
+  "welcome": {
+    "tagline": "Plan your perfect day in the UK",
+    "subtitle": "Swipe through activities and restaurants. We'll build your itinerary.",
+    "detectingLocation": "📍 Detecting location...",
+    "refreshLocation": "Refresh Location",
+    "startPlanning": "Start Planning",
+    "findingLocation": "📍 Finding your location...",
+    "gettingCoordinates": "Getting your GPS coordinates..."
+  },
+  "interests": {
+    "title": "What interests you?",
+    "subtitle": "Select at least one interest",
+    "museums": "Museums",
+    "galleries": "Galleries",
+    "parks": "Parks",
+    "shopping": "Shopping",
+    "timeLabel": "How much time do you have? (hours)",
+    "hours": "{{count}} hours",
+    "next": "Next"
+  },
+  "activities": {
+    "title": "Activities",
+    "noMore": "No more activities",
+    "continueToRestaurants": "Continue to restaurants",
+    "kmAway": "📍 {{distance}} km away",
+    "duration": "⏱️ {{duration}} hours",
+    "skip": "❌ Skip",
+    "yes": "✅ Yes!"
+  },
+  "restaurants": {
+    "title": "Restaurants & Food",
+    "noMore": "No more restaurants",
+    "buildItinerary": "Build my itinerary",
+    "kmAway": "📍 {{distance}} km away",
+    "duration": "⏱️ {{duration}} hours",
+    "skip": "❌ Skip",
+    "yes": "✅ Yes!"
+  },
+  "cuisine": {
+    "italian": "Italian",
+    "japanese": "Japanese",
+    "mexican": "Mexican",
+    "british": "British",
+    "cafe": "Cafe"
+  },
+  "timeline": {
+    "title": "Your Perfect Day",
+    "empty": "No itinerary items. Try selecting more activities!",
+    "slideToAdjust": "Slide to adjust duration",
+    "hoursDisplay": "{{duration}} hours",
+    "howToGetThere": "↓ How to get to next activity?",
+    "minutes": "{{count}} min",
+    "startOver": "Start Over",
+    "bookNow": "📱 Book Now"
+  },
+  "transport": {
+    "walk": "Walk",
+    "taxi": "Taxi/Uber",
+    "tube": "Tube",
+    "bus": "Bus"
+  },
+  "header": {
+    "logout": "Logout"
+  }
+}
