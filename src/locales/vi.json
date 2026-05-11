@@ -9,6 +9,7 @@
     "emailPlaceholder": "Địa chỉ email",
     "passwordPlaceholder": "Mật khẩu",
     "pleaseWait": "Vui lòng chờ...",
+    "languageLabel": "Ngôn ngữ ưa thích",
     "errors": {
       "userNotFound": "Không tìm thấy tài khoản với email này.",
       "wrongPassword": "Mật khẩu không chính xác.",
@@ -36,7 +37,10 @@
   },
   "interests": {
     "title": "Bạn quan tâm đến điều gì?",
-    "subtitle": "Chọn ít nhất một sở thích",
+    "subtitle": "Chọn hoạt động và sở thích ẩm thực",
+    "activitiesTitle": "Hoạt động",
+    "cuisineTitle": "Ẩm thực",
+    "priceTitle": "Mức giá",
     "museums": "Bảo tàng",
     "galleries": "Phòng tranh",
     "parks": "Công viên",
@@ -48,6 +52,7 @@
   "activities": {
     "title": "Hoạt động",
     "noMore": "Không còn hoạt động nào",
+    "noResults": "Không tìm thấy hoạt động phù hợp. Thử chọn sở thích khác.",
     "continueToRestaurants": "Tiếp tục đến nhà hàng",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} giờ",
@@ -57,7 +62,9 @@
   "restaurants": {
     "title": "Nhà hàng & Ẩm thực",
     "noMore": "Không còn nhà hàng nào",
+    "noResults": "Không tìm thấy nhà hàng. Thử thay đổi bộ lọc.",
     "buildItinerary": "Xây dựng lịch trình",
+    "adjustFilters": "Điều chỉnh bộ lọc",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} giờ",
     "skip": "❌ Bỏ qua",
@@ -68,7 +75,21 @@
     "japanese": "Ẩm thực Nhật",
     "mexican": "Ẩm thực Mexico",
     "british": "Ẩm thực Anh",
-    "cafe": "Cà phê"
+    "cafe": "Cà phê",
+    "indian": "Ẩm thực Ấn Độ",
+    "mediterranean": "Địa Trung Hải",
+    "spanish": "Ẩm thực Tây Ban Nha",
+    "french": "Ẩm thực Pháp",
+    "chinese": "Ẩm thực Trung Hoa",
+    "asian": "Ẩm thực Châu Á",
+    "american": "Ẩm thực Mỹ",
+    "middleEastern": "Trung Đông"
+  },
+  "priceRange": {
+    "any": "Bất kỳ giá",
+    "budget": "Bình dân ($)",
+    "moderate": "Trung bình ($$)",
+    "expensive": "Cao cấp ($$$)"
   },
   "timeline": {
     "title": "Ngày hoàn hảo của bạn",
@@ -78,7 +99,8 @@
     "howToGetThere": "↓ Làm thế nào để đến hoạt động tiếp theo?",
     "minutes": "{{count}} phút",
     "startOver": "Bắt đầu lại",
-    "bookNow": "📱 Đặt ngay"
+    "bookNow": "📱 Đặt ngay",
+    "overTime": "⚠️ Kế hoạch này vượt quá ngân sách {{hours}} giờ của bạn."
   },
   "transport": {
     "walk": "Đi bộ",

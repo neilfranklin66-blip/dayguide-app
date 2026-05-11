@@ -3,6 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import './Login.css';
 
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'es', label: 'Español' },
+  { value: 'fr', label: 'Français' },
+  { value: 'zh', label: '中文' },
+  { value: 'vi', label: 'Tiếng Việt' },
+];
+
 const GoogleIcon = () => (
   <svg className="google-icon" width="20" height="20" viewBox="0 0 48 48">
     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -14,14 +22,21 @@ const GoogleIcon = () => (
 );
 
 const Login = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [selectedLang, setSelectedLang] = useState(i18n.language.split('-')[0]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+
+  const handleLangChange = (lang) => {
+    setSelectedLang(lang);
+    i18n.changeLanguage(lang);
+    localStorage.setItem('dayguide_language', lang);
+  };
 
   const handleGoogleSignIn = async () => {
     setError('');
@@ -43,7 +58,7 @@ const Login = () => {
     setLoading(true);
     try {
       if (mode === 'signup') {
-        await signUpWithEmail(email, password);
+        await signUpWithEmail(email, password, selectedLang);
       } else {
         await signInWithEmail(email, password);
       }
@@ -108,6 +123,25 @@ const Login = () => {
             required
             autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
           />
+
+          {mode === 'signup' && (
+            <div className="lang-select-wrapper">
+              <label className="lang-select-label">{t('login.languageLabel')}</label>
+              <div className="lang-options">
+                {LANGUAGES.map(lang => (
+                  <button
+                    key={lang.value}
+                    type="button"
+                    className={`lang-option-btn ${selectedLang === lang.value ? 'selected' : ''}`}
+                    onClick={() => handleLangChange(lang.value)}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {error && <p className="error-message">{error}</p>}
           <button type="submit" disabled={loading || !email || !password} className="btn-auth-submit">
             {loading ? t('login.pleaseWait') : mode === 'login' ? t('login.signIn') : t('login.createAccount')}

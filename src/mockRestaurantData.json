@@ -1,0 +1,332 @@
+[
+  {
+    "id": 1, "name": "Dishoom", "city": "London",
+    "cuisine": ["indian"], "priceRange": "$$", "rating": 4.7, "duration": 1.5,
+    "distance": 1.2, "address": "12 Upper St Martin's Lane, London WC2H 9FB",
+    "image": "https://placehold.co/400x300/e8d5b7/5c3d2e?text=Dishoom"
+  },
+  {
+    "id": 2, "name": "Hawksmoor Seven Dials", "city": "London",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.6, "duration": 2,
+    "distance": 0.8, "address": "11 Langley St, London WC2H 9JG",
+    "image": "https://placehold.co/400x300/2c2c2c/ffffff?text=Hawksmoor"
+  },
+  {
+    "id": 3, "name": "Padella", "city": "London",
+    "cuisine": ["italian"], "priceRange": "$$", "rating": 4.5, "duration": 1.5,
+    "distance": 1.5, "address": "6 Southwark St, London SE1 1TQ",
+    "image": "https://placehold.co/400x300/f5e6d3/c0392b?text=Padella"
+  },
+  {
+    "id": 4, "name": "Wahaca Covent Garden", "city": "London",
+    "cuisine": ["mexican"], "priceRange": "$", "rating": 4.3, "duration": 1,
+    "distance": 0.6, "address": "66 Chandos Pl, London WC2N 4HG",
+    "image": "https://placehold.co/400x300/27ae60/ffffff?text=Wahaca"
+  },
+  {
+    "id": 5, "name": "Ottolenghi Islington", "city": "London",
+    "cuisine": ["mediterranean", "middleEastern"], "priceRange": "$$", "rating": 4.6, "duration": 1.5,
+    "distance": 2.1, "address": "287 Upper St, London N1 2TZ",
+    "image": "https://placehold.co/400x300/f9f3e8/2c2c2c?text=Ottolenghi"
+  },
+  {
+    "id": 6, "name": "Bone Daddies Soho", "city": "London",
+    "cuisine": ["japanese", "asian"], "priceRange": "$$", "rating": 4.4, "duration": 1,
+    "distance": 0.9, "address": "31 Peter St, London W1F 0AR",
+    "image": "https://placehold.co/400x300/1a1a1a/e74c3c?text=Bone+Daddies"
+  },
+  {
+    "id": 7, "name": "Kiln", "city": "London",
+    "cuisine": ["asian"], "priceRange": "$$", "rating": 4.5, "duration": 1.5,
+    "distance": 0.7, "address": "58 Brewer St, London W1F 9TL",
+    "image": "https://placehold.co/400x300/8b2500/ffffff?text=Kiln"
+  },
+  {
+    "id": 8, "name": "Flat Iron Covent Garden", "city": "London",
+    "cuisine": ["british"], "priceRange": "$$", "rating": 4.4, "duration": 1.5,
+    "distance": 0.5, "address": "17 Henrietta St, London WC2E 8QH",
+    "image": "https://placehold.co/400x300/3d1c02/f5f5f5?text=Flat+Iron"
+  },
+  {
+    "id": 9, "name": "Kanada-Ya St Giles", "city": "London",
+    "cuisine": ["japanese"], "priceRange": "$$", "rating": 4.6, "duration": 1,
+    "distance": 0.6, "address": "64 St Giles High St, London WC2H 8LE",
+    "image": "https://placehold.co/400x300/c0392b/ffffff?text=Kanada-Ya"
+  },
+  {
+    "id": 10, "name": "Brindisa Borough", "city": "London",
+    "cuisine": ["spanish", "mediterranean"], "priceRange": "$$", "rating": 4.4, "duration": 1.5,
+    "distance": 1.4, "address": "18-20 Southwark St, London SE1 1TJ",
+    "image": "https://placehold.co/400x300/d35400/ffffff?text=Brindisa"
+  },
+  {
+    "id": 11, "name": "E. Pellicci", "city": "London",
+    "cuisine": ["italian", "british"], "priceRange": "$", "rating": 4.7, "duration": 0.75,
+    "distance": 3.2, "address": "332 Bethnal Green Rd, London E2 0AG",
+    "image": "https://placehold.co/400x300/2980b9/ffffff?text=E.+Pellicci"
+  },
+  {
+    "id": 12, "name": "Darjeeling Express", "city": "London",
+    "cuisine": ["indian"], "priceRange": "$$", "rating": 4.6, "duration": 1.5,
+    "distance": 1.8, "address": "Kingly Court, Carnaby St, London W1B 5PW",
+    "image": "https://placehold.co/400x300/8e44ad/ffffff?text=Darjeeling+Express"
+  },
+  {
+    "id": 13, "name": "Sketch", "city": "London",
+    "cuisine": ["french", "mediterranean"], "priceRange": "$$$", "rating": 4.5, "duration": 2,
+    "distance": 1.0, "address": "9 Conduit St, London W1S 2XG",
+    "image": "https://placehold.co/400x300/f8f0f0/2c2c2c?text=Sketch"
+  },
+  {
+    "id": 14, "name": "The Clove Club", "city": "London",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.7, "duration": 2.5,
+    "distance": 3.5, "address": "380 Old St, London EC1V 9LT",
+    "image": "https://placehold.co/400x300/2c3e50/ecf0f1?text=The+Clove+Club"
+  },
+  {
+    "id": 15, "name": "Yauatcha Soho", "city": "London",
+    "cuisine": ["chinese", "asian"], "priceRange": "$$$", "rating": 4.5, "duration": 1.5,
+    "distance": 0.8, "address": "15-17 Broadwick St, London W1F 0DL",
+    "image": "https://placehold.co/400x300/7f1535/f9e4b7?text=Yauatcha"
+  },
+  {
+    "id": 16, "name": "Bundobust", "city": "Manchester",
+    "cuisine": ["indian"], "priceRange": "$", "rating": 4.6, "duration": 1,
+    "distance": 0.5, "address": "61 Piccadilly, Manchester M1 2AG",
+    "image": "https://placehold.co/400x300/f39c12/ffffff?text=Bundobust"
+  },
+  {
+    "id": 17, "name": "El Gato Negro", "city": "Manchester",
+    "cuisine": ["spanish"], "priceRange": "$$", "rating": 4.5, "duration": 1.5,
+    "distance": 0.3, "address": "52 King St, Manchester M2 4LY",
+    "image": "https://placehold.co/400x300/1a1a1a/e74c3c?text=El+Gato+Negro"
+  },
+  {
+    "id": 18, "name": "Sugo Pasta Kitchen", "city": "Manchester",
+    "cuisine": ["italian"], "priceRange": "$$", "rating": 4.7, "duration": 1.5,
+    "distance": 1.2, "address": "Cross Keys, Ancoats, Manchester M4 5AB",
+    "image": "https://placehold.co/400x300/e74c3c/ffffff?text=Sugo"
+  },
+  {
+    "id": 19, "name": "Mana", "city": "Manchester",
+    "cuisine": ["british", "mediterranean"], "priceRange": "$$$", "rating": 4.8, "duration": 3,
+    "distance": 1.1, "address": "42 Blossom St, Ancoats, Manchester M4 6BF",
+    "image": "https://placehold.co/400x300/1e272e/f5f6fa?text=Mana"
+  },
+  {
+    "id": 20, "name": "Rudy's Pizza Napoletana", "city": "Manchester",
+    "cuisine": ["italian"], "priceRange": "$", "rating": 4.5, "duration": 1,
+    "distance": 0.8, "address": "9 Nicholas Croft, Manchester M4 1EY",
+    "image": "https://placehold.co/400x300/c0392b/ffeaa7?text=Rudy%27s+Pizza"
+  },
+  {
+    "id": 21, "name": "Elnecot", "city": "Manchester",
+    "cuisine": ["british"], "priceRange": "$$", "rating": 4.4, "duration": 2,
+    "distance": 1.3, "address": "41 Blossom St, Ancoats, Manchester M4 6AJ",
+    "image": "https://placehold.co/400x300/34495e/ecf0f1?text=Elnecot"
+  },
+  {
+    "id": 22, "name": "Tattu", "city": "Manchester",
+    "cuisine": ["chinese"], "priceRange": "$$$", "rating": 4.4, "duration": 2,
+    "distance": 0.4, "address": "3 Hardman Square, Manchester M3 3EB",
+    "image": "https://placehold.co/400x300/6c1f45/f9e4b7?text=Tattu"
+  },
+  {
+    "id": 23, "name": "Kala", "city": "Manchester",
+    "cuisine": ["mediterranean"], "priceRange": "$$", "rating": 4.5, "duration": 1.5,
+    "distance": 0.3, "address": "55 King St, Manchester M2 4LQ",
+    "image": "https://placehold.co/400x300/27ae60/ffffff?text=Kala"
+  },
+  {
+    "id": 24, "name": "Where The Light Gets In", "city": "Manchester",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.6, "duration": 2.5,
+    "distance": 4.2, "address": "7 Rostron Brow, Stockport SK1 1JY",
+    "image": "https://placehold.co/400x300/dfe6e9/2d3436?text=WTLGI"
+  },
+  {
+    "id": 25, "name": "Hawksmoor Manchester", "city": "Manchester",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.6, "duration": 2,
+    "distance": 0.6, "address": "184-186 Deansgate, Manchester M3 3WB",
+    "image": "https://placehold.co/400x300/2c2c2c/ffffff?text=Hawksmoor+MCR"
+  },
+  {
+    "id": 26, "name": "Lasan", "city": "Birmingham",
+    "cuisine": ["indian"], "priceRange": "$$", "rating": 4.6, "duration": 1.5,
+    "distance": 0.8, "address": "3-4 Dakota Buildings, James St, Birmingham B3 1SD",
+    "image": "https://placehold.co/400x300/8e44ad/ffffff?text=Lasan"
+  },
+  {
+    "id": 27, "name": "Simpsons", "city": "Birmingham",
+    "cuisine": ["british", "mediterranean"], "priceRange": "$$$", "rating": 4.7, "duration": 2.5,
+    "distance": 2.1, "address": "20 Highfield Rd, Edgbaston, Birmingham B15 3DU",
+    "image": "https://placehold.co/400x300/f5f5f5/2c2c2c?text=Simpsons"
+  },
+  {
+    "id": 28, "name": "Carters of Moseley", "city": "Birmingham",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.7, "duration": 2.5,
+    "distance": 3.5, "address": "2c St Mary's Row, Moseley, Birmingham B13 8JG",
+    "image": "https://placehold.co/400x300/2c3e50/ecf0f1?text=Carters"
+  },
+  {
+    "id": 29, "name": "Original Patty Men", "city": "Birmingham",
+    "cuisine": ["american"], "priceRange": "$", "rating": 4.5, "duration": 1,
+    "distance": 1.0, "address": "17 Shaw's Passage, Birmingham B5 5JG",
+    "image": "https://placehold.co/400x300/e74c3c/ffffff?text=OPM"
+  },
+  {
+    "id": 30, "name": "Asha's", "city": "Birmingham",
+    "cuisine": ["indian"], "priceRange": "$$$", "rating": 4.5, "duration": 2,
+    "distance": 0.7, "address": "12-22 Newhall St, Birmingham B3 3LX",
+    "image": "https://placehold.co/400x300/d35400/ffffff?text=Asha%27s"
+  },
+  {
+    "id": 31, "name": "Cannella", "city": "Birmingham",
+    "cuisine": ["italian", "mediterranean"], "priceRange": "$$", "rating": 4.4, "duration": 1.5,
+    "distance": 1.8, "address": "4 Suffolk St Queensway, Birmingham B1 1LT",
+    "image": "https://placehold.co/400x300/f39c12/ffffff?text=Cannella"
+  },
+  {
+    "id": 32, "name": "Damascena", "city": "Birmingham",
+    "cuisine": ["middleEastern"], "priceRange": "$", "rating": 4.6, "duration": 1,
+    "distance": 1.2, "address": "The Minories, Bromsgrove St, Birmingham B5 6AG",
+    "image": "https://placehold.co/400x300/16a085/ffffff?text=Damascena"
+  },
+  {
+    "id": 33, "name": "Purnell's", "city": "Birmingham",
+    "cuisine": ["british", "french"], "priceRange": "$$$", "rating": 4.7, "duration": 2.5,
+    "distance": 0.5, "address": "55 Cornwall St, Birmingham B3 2DH",
+    "image": "https://placehold.co/400x300/2c3e50/ecf0f1?text=Purnell%27s"
+  },
+  {
+    "id": 34, "name": "Casamia", "city": "Bristol",
+    "cuisine": ["british", "italian"], "priceRange": "$$$", "rating": 4.8, "duration": 3,
+    "distance": 1.5, "address": "The General, Lower Guinea St, Bristol BS1 6SY",
+    "image": "https://placehold.co/400x300/1a1a2e/eaeaea?text=Casamia"
+  },
+  {
+    "id": 35, "name": "Wilsons", "city": "Bristol",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.7, "duration": 2.5,
+    "distance": 2.3, "address": "24 Chandos Rd, Redland, Bristol BS6 6PF",
+    "image": "https://placehold.co/400x300/dfe6e9/2d3436?text=Wilsons"
+  },
+  {
+    "id": 36, "name": "Pasta Loco", "city": "Bristol",
+    "cuisine": ["italian"], "priceRange": "$$", "rating": 4.6, "duration": 1.5,
+    "distance": 1.8, "address": "37a Cotham Hill, Bristol BS6 6JY",
+    "image": "https://placehold.co/400x300/e74c3c/ffffff?text=Pasta+Loco"
+  },
+  {
+    "id": 37, "name": "Box-E", "city": "Bristol",
+    "cuisine": ["british", "mediterranean"], "priceRange": "$$", "rating": 4.6, "duration": 1.5,
+    "distance": 0.6, "address": "Unit 10, Cargo 1, Wapping Wharf, Bristol BS1 6WP",
+    "image": "https://placehold.co/400x300/f39c12/1a1a1a?text=Box-E"
+  },
+  {
+    "id": 38, "name": "Pho Bristol", "city": "Bristol",
+    "cuisine": ["asian"], "priceRange": "$", "rating": 4.3, "duration": 1,
+    "distance": 0.4, "address": "31 Baldwin St, Bristol BS1 1RG",
+    "image": "https://placehold.co/400x300/27ae60/ffffff?text=Pho"
+  },
+  {
+    "id": 39, "name": "The Ox", "city": "Bristol",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.5, "duration": 2,
+    "distance": 0.5, "address": "73 Corn St, Bristol BS1 1HT",
+    "image": "https://placehold.co/400x300/3d1c02/f5f5f5?text=The+Ox"
+  },
+  {
+    "id": 40, "name": "Bianchi's", "city": "Bristol",
+    "cuisine": ["italian"], "priceRange": "$$", "rating": 4.4, "duration": 1.5,
+    "distance": 2.8, "address": "85 Whiteladies Rd, Bristol BS8 2NT",
+    "image": "https://placehold.co/400x300/2980b9/ffffff?text=Bianchi%27s"
+  },
+  {
+    "id": 41, "name": "Spoke & Stringer", "city": "Bristol",
+    "cuisine": ["british"], "priceRange": "$", "rating": 4.5, "duration": 1,
+    "distance": 0.8, "address": "The Boathouse, Spike Island, Bristol BS1 6XF",
+    "image": "https://placehold.co/400x300/0984e3/ffffff?text=Spoke+%26+Stringer"
+  },
+  {
+    "id": 42, "name": "The Kitchin", "city": "Edinburgh",
+    "cuisine": ["british", "french"], "priceRange": "$$$", "rating": 4.8, "duration": 2.5,
+    "distance": 1.6, "address": "78 Commercial Quay, Leith, Edinburgh EH6 6LX",
+    "image": "https://placehold.co/400x300/2c3e50/ecf0f1?text=The+Kitchin"
+  },
+  {
+    "id": 43, "name": "Wedgwood the Restaurant", "city": "Edinburgh",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.7, "duration": 2,
+    "distance": 0.5, "address": "267 Canongate, Edinburgh EH8 8BQ",
+    "image": "https://placehold.co/400x300/f5f0e8/2c2c2c?text=Wedgwood"
+  },
+  {
+    "id": 44, "name": "Timberyard Edinburgh", "city": "Edinburgh",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.7, "duration": 2.5,
+    "distance": 0.8, "address": "10 Lady Lawson St, Edinburgh EH3 9DS",
+    "image": "https://placehold.co/400x300/4a4a4a/f5f5f5?text=Timberyard"
+  },
+  {
+    "id": 45, "name": "Hanedan", "city": "Edinburgh",
+    "cuisine": ["middleEastern", "mediterranean"], "priceRange": "$$", "rating": 4.5, "duration": 1.5,
+    "distance": 1.2, "address": "42 West Preston St, Edinburgh EH8 9PZ",
+    "image": "https://placehold.co/400x300/16a085/ffffff?text=Hanedan"
+  },
+  {
+    "id": 46, "name": "Pickles", "city": "Edinburgh",
+    "cuisine": ["indian"], "priceRange": "$", "rating": 4.6, "duration": 1,
+    "distance": 1.0, "address": "2 Commercial St, Leith, Edinburgh EH6 6JA",
+    "image": "https://placehold.co/400x300/e67e22/ffffff?text=Pickles"
+  },
+  {
+    "id": 47, "name": "Fishers Bistro", "city": "Edinburgh",
+    "cuisine": ["british"], "priceRange": "$$", "rating": 4.5, "duration": 1.5,
+    "distance": 1.5, "address": "1 The Shore, Leith, Edinburgh EH6 6QW",
+    "image": "https://placehold.co/400x300/0984e3/ffffff?text=Fishers+Bistro"
+  },
+  {
+    "id": 48, "name": "Contini George Street", "city": "Edinburgh",
+    "cuisine": ["italian"], "priceRange": "$$", "rating": 4.4, "duration": 1.5,
+    "distance": 0.3, "address": "103 George St, Edinburgh EH2 3ES",
+    "image": "https://placehold.co/400x300/27ae60/ffffff?text=Contini"
+  },
+  {
+    "id": 49, "name": "Cafe St Honore", "city": "Edinburgh",
+    "cuisine": ["french"], "priceRange": "$$$", "rating": 4.6, "duration": 2,
+    "distance": 0.4, "address": "34 NW Thistle Street Lane, Edinburgh EH2 1EA",
+    "image": "https://placehold.co/400x300/8e44ad/ffffff?text=Cafe+St+Honore"
+  },
+  {
+    "id": 50, "name": "Asador 44", "city": "Cardiff",
+    "cuisine": ["spanish", "mediterranean"], "priceRange": "$$", "rating": 4.6, "duration": 1.5,
+    "distance": 0.4, "address": "14-15 Quay St, Cardiff CF10 1EA",
+    "image": "https://placehold.co/400x300/c0392b/ffffff?text=Asador+44"
+  },
+  {
+    "id": 51, "name": "Heaneys", "city": "Cardiff",
+    "cuisine": ["british"], "priceRange": "$$$", "rating": 4.7, "duration": 2,
+    "distance": 1.8, "address": "6-10 Romilly Cres, Canton, Cardiff CF11 9NR",
+    "image": "https://placehold.co/400x300/2c3e50/ecf0f1?text=Heaneys"
+  },
+  {
+    "id": 52, "name": "Purple Poppadom", "city": "Cardiff",
+    "cuisine": ["indian"], "priceRange": "$$", "rating": 4.5, "duration": 1.5,
+    "distance": 1.2, "address": "185a Cowbridge Rd E, Cardiff CF11 9AJ",
+    "image": "https://placehold.co/400x300/8e44ad/ffffff?text=Purple+Poppadom"
+  },
+  {
+    "id": 53, "name": "Bully's", "city": "Cardiff",
+    "cuisine": ["french"], "priceRange": "$$$", "rating": 4.5, "duration": 2,
+    "distance": 2.0, "address": "5 Romilly Cres, Canton, Cardiff CF11 9NP",
+    "image": "https://placehold.co/400x300/2980b9/ffffff?text=Bully%27s"
+  },
+  {
+    "id": 54, "name": "Hang Fire Southern Kitchen", "city": "Cardiff",
+    "cuisine": ["american"], "priceRange": "$$", "rating": 4.6, "duration": 1.5,
+    "distance": 1.5, "address": "The Pumphouse, Barry, Cardiff CF63 4HF",
+    "image": "https://placehold.co/400x300/d35400/ffffff?text=Hang+Fire"
+  },
+  {
+    "id": 55, "name": "Pettigrew Tea Rooms", "city": "Cardiff",
+    "cuisine": ["british"], "priceRange": "$", "rating": 4.7, "duration": 1,
+    "distance": 0.7, "address": "Park House, Westgate St, Cardiff CF10 1DA",
+    "image": "https://placehold.co/400x300/f5e6d3/2c2c2c?text=Pettigrew"
+  }
+]

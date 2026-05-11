@@ -9,6 +9,7 @@
     "emailPlaceholder": "电子邮件地址",
     "passwordPlaceholder": "密码",
     "pleaseWait": "请稍候...",
+    "languageLabel": "首选语言",
     "errors": {
       "userNotFound": "未找到与此电子邮件关联的账户。",
       "wrongPassword": "密码不正确。",
@@ -36,7 +37,10 @@
   },
   "interests": {
     "title": "您对什么感兴趣？",
-    "subtitle": "请至少选择一个兴趣",
+    "subtitle": "选择活动和饮食偏好",
+    "activitiesTitle": "活动",
+    "cuisineTitle": "菜系",
+    "priceTitle": "价格范围",
     "museums": "博物馆",
     "galleries": "画廊",
     "parks": "公园",
@@ -48,6 +52,7 @@
   "activities": {
     "title": "活动",
     "noMore": "没有更多活动",
+    "noResults": "未找到符合您兴趣的活动，请尝试其他选项。",
     "continueToRestaurants": "继续选择餐厅",
     "kmAway": "📍 {{distance}} 公里",
     "duration": "⏱️ {{duration}} 小时",
@@ -57,7 +62,9 @@
   "restaurants": {
     "title": "餐厅与美食",
     "noMore": "没有更多餐厅",
+    "noResults": "未找到餐厅，请尝试调整筛选条件。",
     "buildItinerary": "制定我的行程",
+    "adjustFilters": "调整筛选条件",
     "kmAway": "📍 {{distance}} 公里",
     "duration": "⏱️ {{duration}} 小时",
     "skip": "❌ 跳过",
@@ -68,7 +75,21 @@
     "japanese": "日本料理",
     "mexican": "墨西哥菜",
     "british": "英式料理",
-    "cafe": "咖啡厅"
+    "cafe": "咖啡厅",
+    "indian": "印度菜",
+    "mediterranean": "地中海菜",
+    "spanish": "西班牙菜",
+    "french": "法式料理",
+    "chinese": "中国菜",
+    "asian": "亚洲菜",
+    "american": "美式料理",
+    "middleEastern": "中东料理"
+  },
+  "priceRange": {
+    "any": "不限价格",
+    "budget": "经济实惠 ($)",
+    "moderate": "中等价位 ($$)",
+    "expensive": "高端 ($$$)"
   },
   "timeline": {
     "title": "您的完美一天",
@@ -78,7 +99,8 @@
     "howToGetThere": "↓ 如何前往下一个活动？",
     "minutes": "{{count}} 分钟",
     "startOver": "重新开始",
-    "bookNow": "📱 立即预订"
+    "bookNow": "📱 立即预订",
+    "overTime": "⚠️ 此计划超出您 {{hours}} 小时的预算。"
   },
   "transport": {
     "walk": "步行",

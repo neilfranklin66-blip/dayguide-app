@@ -9,6 +9,7 @@
     "emailPlaceholder": "Adresse e-mail",
     "passwordPlaceholder": "Mot de passe",
     "pleaseWait": "Veuillez patienter...",
+    "languageLabel": "Langue préférée",
     "errors": {
       "userNotFound": "Aucun compte trouvé avec cet e-mail.",
       "wrongPassword": "Mot de passe incorrect.",
@@ -36,7 +37,10 @@
   },
   "interests": {
     "title": "Qu'est-ce qui vous intéresse ?",
-    "subtitle": "Sélectionnez au moins un intérêt",
+    "subtitle": "Choisissez des activités et vos préférences culinaires",
+    "activitiesTitle": "Activités",
+    "cuisineTitle": "Cuisine",
+    "priceTitle": "Prix",
     "museums": "Musées",
     "galleries": "Galeries",
     "parks": "Parcs",
@@ -48,6 +52,7 @@
   "activities": {
     "title": "Activités",
     "noMore": "Plus d'activités",
+    "noResults": "Aucune activité trouvée pour vos centres d'intérêt. Essayez d'autres.",
     "continueToRestaurants": "Continuer vers les restaurants",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} heures",
@@ -57,7 +62,9 @@
   "restaurants": {
     "title": "Restaurants et nourriture",
     "noMore": "Plus de restaurants",
+    "noResults": "Aucun restaurant trouvé. Essayez d'autres filtres.",
     "buildItinerary": "Créer mon itinéraire",
+    "adjustFilters": "Modifier les filtres",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} heures",
     "skip": "❌ Passer",
@@ -68,17 +75,32 @@
     "japanese": "Japonais",
     "mexican": "Mexicain",
     "british": "Britannique",
-    "cafe": "Café"
+    "cafe": "Café",
+    "indian": "Indien",
+    "mediterranean": "Méditerranéen",
+    "spanish": "Espagnol",
+    "french": "Français",
+    "chinese": "Chinois",
+    "asian": "Asiatique",
+    "american": "Américain",
+    "middleEastern": "Moyen-Orient"
+  },
+  "priceRange": {
+    "any": "Tout prix",
+    "budget": "Économique ($)",
+    "moderate": "Modéré ($$)",
+    "expensive": "Cher ($$$)"
   },
   "timeline": {
     "title": "Votre journée parfaite",
     "empty": "Aucun élément dans l'itinéraire. Essayez de sélectionner plus d'activités !",
     "slideToAdjust": "Faites glisser pour ajuster la durée",
-    "hoursDisplay": "{{duration}} heures",
+    "hoursDisplay": "{{duration}} h",
     "howToGetThere": "↓ Comment se rendre à la prochaine activité ?",
     "minutes": "{{count}} min",
     "startOver": "Recommencer",
-    "bookNow": "📱 Réserver maintenant"
+    "bookNow": "📱 Réserver maintenant",
+    "overTime": "⚠️ Ce plan dépasse votre budget de {{hours}} heures."
   },
   "transport": {
     "walk": "À pied",

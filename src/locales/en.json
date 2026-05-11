@@ -9,6 +9,7 @@
     "emailPlaceholder": "Email address",
     "passwordPlaceholder": "Password",
     "pleaseWait": "Please wait...",
+    "languageLabel": "Preferred Language",
     "errors": {
       "userNotFound": "No account found with this email.",
       "wrongPassword": "Incorrect password.",
@@ -36,7 +37,10 @@
   },
   "interests": {
     "title": "What interests you?",
-    "subtitle": "Select at least one interest",
+    "subtitle": "Pick activities and food preferences",
+    "activitiesTitle": "Activities",
+    "cuisineTitle": "Cuisine",
+    "priceTitle": "Price Range",
     "museums": "Museums",
     "galleries": "Galleries",
     "parks": "Parks",
@@ -48,6 +52,7 @@
   "activities": {
     "title": "Activities",
     "noMore": "No more activities",
+    "noResults": "No activities found for your interests. Try selecting different interests.",
     "continueToRestaurants": "Continue to restaurants",
     "kmAway": "📍 {{distance}} km away",
     "duration": "⏱️ {{duration}} hours",
@@ -57,7 +62,9 @@
   "restaurants": {
     "title": "Restaurants & Food",
     "noMore": "No more restaurants",
+    "noResults": "No restaurants found. Try different cuisine or price filters.",
     "buildItinerary": "Build my itinerary",
+    "adjustFilters": "Adjust filters",
     "kmAway": "📍 {{distance}} km away",
     "duration": "⏱️ {{duration}} hours",
     "skip": "❌ Skip",
@@ -68,17 +75,32 @@
     "japanese": "Japanese",
     "mexican": "Mexican",
     "british": "British",
-    "cafe": "Cafe"
+    "cafe": "Cafe",
+    "indian": "Indian",
+    "mediterranean": "Mediterranean",
+    "spanish": "Spanish",
+    "french": "French",
+    "chinese": "Chinese",
+    "asian": "Asian",
+    "american": "American",
+    "middleEastern": "Middle Eastern"
+  },
+  "priceRange": {
+    "any": "Any price",
+    "budget": "Budget ($)",
+    "moderate": "Moderate ($$)",
+    "expensive": "Expensive ($$$)"
   },
   "timeline": {
     "title": "Your Perfect Day",
     "empty": "No itinerary items. Try selecting more activities!",
     "slideToAdjust": "Slide to adjust duration",
-    "hoursDisplay": "{{duration}} hours",
+    "hoursDisplay": "{{duration}} hrs",
     "howToGetThere": "↓ How to get to next activity?",
     "minutes": "{{count}} min",
     "startOver": "Start Over",
-    "bookNow": "📱 Book Now"
+    "bookNow": "📱 Book Now",
+    "overTime": "⚠️ This plan exceeds your {{hours}}-hour budget."
   },
   "transport": {
     "walk": "Walk",

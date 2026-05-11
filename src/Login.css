@@ -133,6 +133,49 @@
   color: #bbb;
 }
 
+.lang-select-wrapper {
+  text-align: left;
+}
+
+.lang-select-label {
+  display: block;
+  font-size: 0.8em;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lang-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.lang-option-btn {
+  padding: 7px 12px;
+  border: 2px solid #e8e8e8;
+  border-radius: 20px;
+  background: white;
+  font-size: 0.82em;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lang-option-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.lang-option-btn.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: white;
+}
+
 .error-message {
   background: #fff5f5;
   border: 1px solid #fed7d7;
