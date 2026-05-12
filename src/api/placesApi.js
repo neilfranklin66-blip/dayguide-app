@@ -1,5 +1,5 @@
 const API_KEY = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
-const NEARBY_URL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+const NEARBY_URL = '/.netlify/functions/places-nearby';
 const PHOTO_URL = 'https://maps.googleapis.com/maps/api/place/photo';
 
 const CUISINE_KEYWORDS = {
@@ -73,7 +73,6 @@ async function nearbySearch(lat, lng, keyword, maxprice) {
     location: `${lat},${lng}`,
     radius: 5000,
     type: 'restaurant',
-    key: API_KEY,
   });
   if (keyword) params.set('keyword', keyword);
   if (maxprice != null) params.set('maxprice', String(maxprice));
