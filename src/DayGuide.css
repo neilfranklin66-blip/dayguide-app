@@ -480,6 +480,16 @@ p {
   margin-bottom: 15px;
 }
 
+.card-type-label {
+  font-size: 0.78em;
+  font-weight: 700;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
 .swipe-item h3 {
   margin-bottom: 10px;
 }
@@ -768,6 +778,170 @@ p {
   margin-bottom: 16px;
 }
 
+/* Activities grid: 3-column compact layout for 12 categories */
+.activities-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.activities-grid .interest-btn {
+  padding: 14px 6px;
+  font-size: 0.82em;
+  gap: 6px;
+}
+
+.activities-grid .interest-btn .icon {
+  font-size: 1.6em;
+}
+
+/* Popup overlay + card */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.popup-card {
+  background: white;
+  border-radius: 20px;
+  padding: 32px 28px 28px;
+  max-width: 380px;
+  width: calc(100% - 40px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  position: relative;
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+}
+
+.popup-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.8em;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.2s, color 0.2s;
+}
+
+.popup-close:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.popup-icon {
+  font-size: 3.2em;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.popup-title {
+  color: #333;
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.popup-message {
+  color: #666;
+  font-size: 0.95em;
+  line-height: 1.55;
+  margin-bottom: 22px;
+}
+
+.popup-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popup-btn {
+  padding: 13px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.popup-btn-yes {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.popup-btn-yes:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.popup-btn-no {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.popup-btn-no:hover {
+  background: #e0e0e0;
+}
+
+.popup-btn-skip {
+  background: transparent;
+  color: #aaa;
+  font-size: 0.85em;
+  padding: 8px 20px;
+}
+
+.popup-btn-skip:hover {
+  color: #888;
+}
+
+/* Restaurant API loading + source banner */
+.restaurants-loading-icon {
+  font-size: 3em;
+  display: block;
+  margin-bottom: 16px;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+.api-source-banner {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.78em;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.api-source-banner--live {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.api-source-banner--warning {
+  background: #fff8e1;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
 @media (max-width: 600px) {
   .dayguide-container {
     padding: 10px;
@@ -817,5 +991,18 @@ p {
 
   .transport-options {
     grid-template-columns: 1fr;
+  }
+
+  .activities-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .activities-grid .interest-btn {
+    padding: 16px 8px;
+    font-size: 0.88em;
+  }
+
+  .popup-card {
+    padding: 26px 20px 22px;
   }
 }

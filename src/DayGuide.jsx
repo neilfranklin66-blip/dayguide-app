@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import useGeolocation from './useGeolocation';
 import mockRestaurantData from './mockRestaurantData.json';
+import mockActivityData from './mockActivityData.json';
+import { searchRestaurants } from './api/placesApi';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -19,6 +21,20 @@ const getCuisineEmoji = (cuisines) => {
   return '🍽️';
 };
 
+const ACTIVITY_CATEGORIES = new Set([
+  'museums', 'galleries', 'parks', 'shopping', 'theater', 'liveMusic',
+  'sportsEvents', 'nightlife', 'historicalSites', 'foodMarkets', 'cinema', 'comedy',
+]);
+
+const SOURCE_BANNER_KEY = {
+  live: 'liveResults',
+  no_key: 'noKeyWarning',
+  quota: 'quotaWarning',
+  no_location: 'noLocationWarning',
+  no_results: 'noResultsWarning',
+  error: 'errorWarning',
+};
+
 const DayGuide = () => {
   const { currentUser, logout } = useAuth();
   const { t, i18n } = useTranslation();
@@ -33,11 +49,19 @@ const DayGuide = () => {
   const [availableTime, setAvailableTime] = useState(4);
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [currentRestaurantIndex, setCurrentRestaurantIndex] = useState(0);
-  // activityQueue is computed once when entering activities stage (avoids re-shuffle on each render)
   const [activityQueue, setActivityQueue] = useState([]);
-  // null = not yet entered restaurants stage; [] = entered but filters returned no results
   const [restaurantQueue, setRestaurantQueue] = useState(null);
   const [timeline, setTimeline] = useState([]);
+
+  // Popup state
+  const [activePopup, setActivePopup] = useState(null);
+  const popupCooldowns = useRef({});
+  const activePopupRef = useRef(null);
+  const popupActivityReturnRef = useRef(false);
+
+  // Restaurant API state
+  const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(false);
+  const [restaurantSource, setRestaurantSource] = useState(null);
 
   const transportOptions = [
     { mode: 'walk', time: 15, cost: '£0', emoji: '🚶' },
@@ -52,32 +76,19 @@ const DayGuide = () => {
     return transportOptions;
   };
 
-  const londonVenues = {
-    museums: [
-      { id: 1, name: 'British Museum', category: 'museums', duration: 2, distance: 0.5, rating: 4.7, address: 'Great Russell St, London WC1B 3DG', image: '🏛️' },
-      { id: 2, name: 'V&A Museum', category: 'museums', duration: 2, distance: 1.2, rating: 4.6, address: 'Cromwell Rd, London SW7 2RL', image: '🎨' },
-      { id: 3, name: 'National Gallery', category: 'museums', duration: 2, distance: 0.8, rating: 4.8, address: 'Trafalgar Square, London WC2N 5DN', image: '🖼️' },
-    ],
-    galleries: [
-      { id: 4, name: 'Tate Modern', category: 'galleries', duration: 1.5, distance: 1.5, rating: 4.7, address: 'Bankside, London SE1 9TG', image: '🎭' },
-      { id: 5, name: 'Saatchi Gallery', category: 'galleries', duration: 1.5, distance: 2, rating: 4.5, address: 'Duke of York Square, London SW3 4LY', image: '🖌️' },
-    ],
-    parks: [
-      { id: 6, name: 'Hyde Park', category: 'parks', duration: 1, distance: 0.3, rating: 4.6, address: 'London W1K 7AW', image: '🌳' },
-      { id: 7, name: 'St James Park', category: 'parks', duration: 1, distance: 0.5, rating: 4.5, address: 'London SW1A 2BJ', image: '🦆' },
-      { id: 8, name: 'Regent Park', category: 'parks', duration: 1.5, distance: 1.8, rating: 4.4, address: 'London NW1 4NR', image: '🌲' },
-    ],
-    shopping: [
-      { id: 9, name: 'Oxford Street', category: 'shopping', duration: 2, distance: 0.7, rating: 4.3, address: 'Oxford Street, London W1C 1JN', image: '🛍️' },
-      { id: 10, name: 'Covent Garden Market', category: 'shopping', duration: 1.5, distance: 0.6, rating: 4.6, address: 'Covent Garden, London WC2E 8RF', image: '🎪' },
-    ],
-  };
-
   const interestCategories = [
     { id: 'museums', label: t('interests.museums'), icon: '🏛️' },
     { id: 'galleries', label: t('interests.galleries'), icon: '🎨' },
     { id: 'parks', label: t('interests.parks'), icon: '🌳' },
     { id: 'shopping', label: t('interests.shopping'), icon: '🛍️' },
+    { id: 'theater', label: t('interests.theater'), icon: '🎭' },
+    { id: 'liveMusic', label: t('interests.liveMusic'), icon: '🎵' },
+    { id: 'sportsEvents', label: t('interests.sportsEvents'), icon: '🏟️' },
+    { id: 'nightlife', label: t('interests.nightlife'), icon: '🍸' },
+    { id: 'historicalSites', label: t('interests.historicalSites'), icon: '🏰' },
+    { id: 'foodMarkets', label: t('interests.foodMarkets'), icon: '🥕' },
+    { id: 'cinema', label: t('interests.cinema'), icon: '🎬' },
+    { id: 'comedy', label: t('interests.comedy'), icon: '😂' },
   ];
 
   const cuisineCategories = Object.entries(CUISINE_EMOJI).map(([id, icon]) => ({ id, icon }));
@@ -87,6 +98,71 @@ const DayGuide = () => {
     { value: '$$', labelKey: 'priceRange.moderate' },
     { value: '$$$', labelKey: 'priceRange.expensive' },
   ];
+
+  // --- Popup helpers ---
+
+  const dismissPopup = () => {
+    activePopupRef.current = null;
+    setActivePopup(null);
+  };
+
+  const showPopup = (type, data = {}) => {
+    const popup = { type, ...data };
+    popupCooldowns.current[type] = Date.now();
+    activePopupRef.current = popup;
+    setActivePopup(popup);
+  };
+
+  const canShowPopup = (type) => {
+    const last = popupCooldowns.current[type];
+    return !last || Date.now() - last > 3600000;
+  };
+
+  // Popup triggers: fire once after entering timeline with a populated plan
+  useEffect(() => {
+    if (stage !== 'timeline' || timeline.length === 0) return;
+
+    const timer = setTimeout(() => {
+      if (activePopupRef.current) return;
+
+      // Trigger 1: highly-rated restaurant within 500m not already in plan
+      if (canShowPopup('nearbyRestaurant')) {
+        const nearby = mockRestaurantData.find(r =>
+          r.distance <= 0.5 &&
+          r.rating >= 4.3 &&
+          !timeline.some(t => t.activity === r.name)
+        );
+        if (nearby) {
+          showPopup('nearbyRestaurant', { restaurant: nearby });
+          return;
+        }
+      }
+
+      // Trigger 3: 2+ consecutive hours of activities without a food break
+      if (canShowPopup('coffeeBreak')) {
+        let consecutive = 0;
+        for (const item of timeline) {
+          if (ACTIVITY_CATEGORIES.has(item.category)) {
+            consecutive += item.duration;
+            if (consecutive >= 2) { showPopup('coffeeBreak'); return; }
+          } else {
+            consecutive = 0;
+          }
+        }
+      }
+
+      // Trigger 2: plan has restaurants but zero activities — only when 2+ items (single restaurant is intentional)
+      if (canShowPopup('activityBreak')) {
+        const hasActivities = timeline.some(item => ACTIVITY_CATEGORIES.has(item.category));
+        if (!hasActivities && timeline.length >= 2) { showPopup('activityBreak'); }
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage, timeline]);
+
+  // --- Navigation ---
 
   const handleStartPlanning = () => {
     setStage(locationLoading ? 'location' : 'interests');
@@ -109,6 +185,11 @@ const DayGuide = () => {
     setActivityQueue([]);
     setRestaurantQueue(null);
     setTimeline([]);
+    setActivePopup(null);
+    activePopupRef.current = null;
+    popupActivityReturnRef.current = false;
+    setIsRestaurantsLoading(false);
+    setRestaurantSource(null);
     setStage('welcome');
   };
 
@@ -121,12 +202,18 @@ const DayGuide = () => {
   const getActivitiesForInterests = () => {
     const seen = new Set();
     const all = [];
-    selectedInterests.forEach(interest => {
-      (londonVenues[interest] || []).forEach(a => {
+    const interests = selectedInterests.length > 0
+      ? selectedInterests
+      : Object.keys(mockActivityData);
+    interests.forEach(interest => {
+      (mockActivityData[interest] || []).forEach(a => {
         if (!seen.has(a.id)) { all.push(a); seen.add(a.id); }
       });
     });
-    return all.sort(() => Math.random() - 0.5).slice(0, 3);
+    // Exclude already-selected activities
+    const filtered = all.filter(a => !selectedActivities.some(s => s.id === a.id));
+    const pool = filtered.length > 0 ? filtered : all;
+    return pool.sort(() => Math.random() - 0.5).slice(0, 10);
   };
 
   const buildRestaurantQueue = () => {
@@ -146,30 +233,56 @@ const DayGuide = () => {
     setStage('activities');
   };
 
-  const goToRestaurants = () => {
-    const queue = buildRestaurantQueue();
-    setRestaurantQueue(queue);
+  const goToRestaurants = async () => {
+    setIsRestaurantsLoading(true);
+    setRestaurantSource(null);
+    setRestaurantQueue(null);
     setCurrentRestaurantIndex(0);
     setStage('restaurants');
+    try {
+      if (!position?.lat) throw new Error('NO_LOCATION');
+      const results = await searchRestaurants(position.lat, position.lng, selectedCuisines, selectedPriceRange);
+      if (results.length > 0) {
+        setRestaurantQueue(results);
+        setRestaurantSource('live');
+      } else {
+        setRestaurantQueue(buildRestaurantQueue());
+        setRestaurantSource('no_results');
+      }
+    } catch (err) {
+      setRestaurantQueue(buildRestaurantQueue());
+      const msg = err.message;
+      if (msg === 'NO_API_KEY') setRestaurantSource('no_key');
+      else if (msg === 'QUOTA_EXCEEDED') setRestaurantSource('quota');
+      else if (msg === 'NO_LOCATION') setRestaurantSource('no_location');
+      else setRestaurantSource('error');
+    } finally {
+      setIsRestaurantsLoading(false);
+    }
   };
 
-  // Fix: use activityQueue (computed once) instead of re-calling getActivitiesForInterests()
-  // Fix: compute newSelected synchronously so the last liked activity is included if we
-  //      immediately transition (though here we don't call buildTimeline in same cycle — safe)
   const swipeActivity = (liked) => {
     const currentActivity = activityQueue[currentActivityIndex];
+    const newSelected = liked && currentActivity
+      ? [...selectedActivities, currentActivity]
+      : selectedActivities;
+
     if (liked && currentActivity) {
-      setSelectedActivities(prev => [...prev, currentActivity]);
+      setSelectedActivities(newSelected);
     }
+
     if (currentActivityIndex < activityQueue.length - 1) {
       setCurrentActivityIndex(i => i + 1);
     } else {
-      setStage('meal-prompt');
+      if (popupActivityReturnRef.current) {
+        popupActivityReturnRef.current = false;
+        buildTimeline(selectedRestaurants, newSelected);
+      } else {
+        setStage('meal-prompt');
+      }
     }
   };
 
-  // Fix: pass updated restaurant list directly to buildTimeline to avoid async state lag
-  // when the last restaurant is liked and we immediately build the timeline
   const swipeRestaurant = (liked) => {
     const currentRestaurant = restaurantQueue[currentRestaurantIndex];
     const newSelected = liked && currentRestaurant
@@ -187,11 +300,9 @@ const DayGuide = () => {
     }
   };
 
-  // Accept restaurants as param so swipeRestaurant can pass the up-to-date list
-  // without waiting for the async setSelectedRestaurants state update
-  const buildTimeline = (restaurants = selectedRestaurants) => {
+  const buildTimeline = (restaurants = selectedRestaurants, activities = selectedActivities) => {
     let currentTime = 9;
-    const allItems = [...selectedActivities, ...restaurants];
+    const allItems = [...activities, ...restaurants];
     const newTimeline = allItems.map((item, index) => {
       const entry = {
         id: `${index}-${item.id}`,
@@ -217,6 +328,71 @@ const DayGuide = () => {
       updated[index] = { ...updated[index], duration: newDuration };
       return updated;
     });
+  };
+
+  // --- Popup action handlers ---
+
+  const handlePopupYes = (popup) => {
+    dismissPopup();
+    if (popup.type === 'nearbyRestaurant' || popup.type === 'coffeeBreak') {
+      goToRestaurants();
+    } else if (popup.type === 'activityBreak') {
+      popupActivityReturnRef.current = true;
+      goToActivities();
+    }
+  };
+
+  const handlePopupNo = () => dismissPopup();
+  const handlePopupSkip = () => dismissPopup();
+
+  // --- Render helpers ---
+
+  const renderPopup = () => {
+    if (!activePopup) return null;
+
+    const icons = {
+      nearbyRestaurant: '🍽️',
+      activityBreak: '🎭',
+      coffeeBreak: '☕',
+    };
+
+    const getMessage = () => {
+      if (activePopup.type === 'nearbyRestaurant' && activePopup.restaurant) {
+        const r = activePopup.restaurant;
+        const cuisineLabel = r.cuisine.map(c => t(`cuisine.${c}`)).join('/');
+        const distanceM = Math.round(r.distance * 1000);
+        return t('popups.nearbyRestaurant.message', {
+          cuisine: cuisineLabel,
+          name: r.name,
+          distance: distanceM,
+        });
+      }
+      return t(`popups.${activePopup.type}.message`);
+    };
+
+    return (
+      <div className="popup-overlay" onClick={handlePopupNo}>
+        <div className="popup-card" onClick={e => e.stopPropagation()}>
+          <button className="popup-close" onClick={handlePopupNo} aria-label="Close">✕</button>
+          <div className="popup-icon">{icons[activePopup.type]}</div>
+          <h3 className="popup-title">{t(`popups.${activePopup.type}.title`)}</h3>
+          <p className="popup-message">{getMessage()}</p>
+          <div className="popup-buttons">
+            <button className="popup-btn popup-btn-yes" onClick={() => handlePopupYes(activePopup)}>
+              {t(`popups.${activePopup.type}.yes`)}
+            </button>
+            <button className="popup-btn popup-btn-no" onClick={handlePopupNo}>
+              {t(`popups.${activePopup.type}.no`)}
+            </button>
+            {activePopup.type === 'nearbyRestaurant' && (
+              <button className="popup-btn popup-btn-skip" onClick={handlePopupSkip}>
+                {t('popups.nearbyRestaurant.skip')}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const renderStage = () => {
@@ -266,7 +442,7 @@ const DayGuide = () => {
             <p>{t('interests.subtitle')}</p>
 
             <h3 className="section-title">{t('interests.activitiesTitle')}</h3>
-            <div className="interest-grid">
+            <div className="interest-grid activities-grid">
               {interestCategories.map(interest => (
                 <button
                   key={interest.id}
@@ -361,6 +537,7 @@ const DayGuide = () => {
             <p className="swipe-progress">{currentActivityIndex + 1} / {activityQueue.length}</p>
             <div className="swipe-item">
               <div className="item-icon">{currentActivity.image}</div>
+              <p className="card-type-label">{t(`interests.${currentActivity.category}`)}</p>
               <h3>{currentActivity.name}</h3>
               <p className="rating">⭐ {currentActivity.rating}</p>
               <p className="details">{t('activities.kmAway', { distance: currentActivity.distance })}</p>
@@ -397,7 +574,17 @@ const DayGuide = () => {
     }
 
     if (stage === 'restaurants') {
-      // Empty array means filters returned no results
+      if (isRestaurantsLoading) {
+        return (
+          <div className="dayguide-container">
+            <div className="card" style={{ textAlign: 'center' }}>
+              <div className="restaurants-loading-icon">🔍</div>
+              <h2>{t('restaurants.searching')}</h2>
+            </div>
+          </div>
+        );
+      }
+
       if (restaurantQueue !== null && restaurantQueue.length === 0) {
         return (
           <div className="dayguide-container">
@@ -434,6 +621,11 @@ const DayGuide = () => {
           <div className="card swipe-card">
             <h2>{t('restaurants.title')}</h2>
             <p className="swipe-progress">{currentRestaurantIndex + 1} / {restaurantQueue.length}</p>
+            {restaurantSource && SOURCE_BANNER_KEY[restaurantSource] && (
+              <div className={`api-source-banner api-source-banner--${restaurantSource === 'live' ? 'live' : 'warning'}`}>
+                {t(`restaurants.${SOURCE_BANNER_KEY[restaurantSource]}`)}
+              </div>
+            )}
             <div className="swipe-item">
               <div className="restaurant-img-wrapper">
                 <img
@@ -443,11 +635,14 @@ const DayGuide = () => {
                   onError={e => { e.target.style.display = 'none'; }}
                 />
               </div>
+              {currentRestaurant.cuisine.length > 0 && (
+                <p className="card-type-label">
+                  {getCuisineEmoji(currentRestaurant.cuisine)}&nbsp;
+                  {currentRestaurant.cuisine.map(c => t(`cuisine.${c}`)).join(' · ')}
+                </p>
+              )}
               <h3>{currentRestaurant.name}</h3>
-              <p className="cuisine">
-                {currentRestaurant.cuisine.map(c => t(`cuisine.${c}`)).join(' · ')}
-              </p>
-              <p className="city-tag">📍 {currentRestaurant.city}</p>
+              {currentRestaurant.city && <p className="city-tag">📍 {currentRestaurant.city}</p>}
               <p className="rating">⭐ {currentRestaurant.rating}</p>
               <p className="details">💷 {currentRestaurant.priceRange}</p>
               <p className="details">{t('restaurants.kmAway', { distance: currentRestaurant.distance })}</p>
@@ -554,6 +749,7 @@ const DayGuide = () => {
         </div>
       </div>
       {renderStage()}
+      {renderPopup()}
     </>
   );
 };

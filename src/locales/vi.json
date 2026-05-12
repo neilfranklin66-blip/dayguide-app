@@ -45,6 +45,14 @@
     "galleries": "Phòng tranh",
     "parks": "Công viên",
     "shopping": "Mua sắm",
+    "theater": "Nhà hát",
+    "liveMusic": "Âm nhạc sống",
+    "sportsEvents": "Thể thao",
+    "nightlife": "Về đêm",
+    "historicalSites": "Di tích lịch sử",
+    "foodMarkets": "Chợ ẩm thực",
+    "cinema": "Rạp chiếu phim",
+    "comedy": "Hài kịch",
     "timeLabel": "Bạn có bao nhiêu thời gian? (giờ)",
     "hours": "{{count}} giờ",
     "next": "Tiếp theo"
@@ -75,7 +83,14 @@
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} giờ",
     "skip": "❌ Bỏ qua",
-    "yes": "✅ Có!"
+    "yes": "✅ Có!",
+    "searching": "🔍 Đang tìm kiếm nhà hàng gần đây...",
+    "liveResults": "🌐 Dữ liệu trực tiếp từ Google Places",
+    "noKeyWarning": "Chế độ demo: thêm khóa API Google Places để xem nhà hàng thật.",
+    "quotaWarning": "Chế độ demo: đã đạt hạn mức Google Places — hiển thị dữ liệu demo.",
+    "noLocationWarning": "Chế độ demo: không có vị trí — hiển thị dữ liệu demo.",
+    "noResultsWarning": "Không tìm thấy nhà hàng gần đây — hiển thị dữ liệu demo.",
+    "errorWarning": "Chế độ demo: không thể kết nối Google Places."
   },
   "cuisine": {
     "italian": "Ẩm thực Ý",
@@ -114,6 +129,27 @@
     "taxi": "Taxi/Uber",
     "tube": "Tàu điện ngầm",
     "bus": "Xe buýt"
+  },
+  "popups": {
+    "nearbyRestaurant": {
+      "title": "Nhà hàng gần đây!",
+      "message": "Có một nhà hàng {{cuisine}}, {{name}}, chỉ cách {{distance}}m. Bạn đói không?",
+      "yes": "Đi thôi!",
+      "no": "Lúc khác",
+      "skip": "Bỏ qua"
+    },
+    "activityBreak": {
+      "title": "Có khoảng trống?",
+      "message": "Bạn có muốn thêm một hoạt động vào ngày của mình không?",
+      "yes": "Xem hoạt động",
+      "no": "Giữ nguyên"
+    },
+    "coffeeBreak": {
+      "title": "Đến giờ nghỉ chưa?",
+      "message": "Bạn đã lên kế hoạch hơn 2 giờ hoạt động. Uống cà phê hoặc ăn gì đó nhé?",
+      "yes": "Vâng, tuyệt!",
+      "no": "Tôi ổn"
+    }
   },
   "header": {
     "logout": "Đăng xuất"

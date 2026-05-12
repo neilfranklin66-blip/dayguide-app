@@ -45,6 +45,14 @@
     "galleries": "Galleries",
     "parks": "Parks",
     "shopping": "Shopping",
+    "theater": "Theater",
+    "liveMusic": "Live Music",
+    "sportsEvents": "Sports",
+    "nightlife": "Nightlife",
+    "historicalSites": "History",
+    "foodMarkets": "Food Markets",
+    "cinema": "Cinema",
+    "comedy": "Comedy",
     "timeLabel": "How much time do you have? (hours)",
     "hours": "{{count}} hours",
     "next": "Next"
@@ -75,7 +83,14 @@
     "kmAway": "📍 {{distance}} km away",
     "duration": "⏱️ {{duration}} hours",
     "skip": "❌ Skip",
-    "yes": "✅ Yes!"
+    "yes": "✅ Yes!",
+    "searching": "🔍 Searching for restaurants nearby...",
+    "liveResults": "🌐 Live from Google Places",
+    "noKeyWarning": "Demo mode: add a Google Places API key to see real restaurants.",
+    "quotaWarning": "Demo mode: Google Places quota reached — showing demo data.",
+    "noLocationWarning": "Demo mode: no location available — showing demo data.",
+    "noResultsWarning": "No restaurants found nearby — showing demo data.",
+    "errorWarning": "Demo mode: couldn't reach Google Places."
   },
   "cuisine": {
     "italian": "Italian",
@@ -114,6 +129,27 @@
     "taxi": "Taxi/Uber",
     "tube": "Tube",
     "bus": "Bus"
+  },
+  "popups": {
+    "nearbyRestaurant": {
+      "title": "Restaurant Nearby!",
+      "message": "There's a {{cuisine}} restaurant, {{name}}, just {{distance}}m away. Hungry?",
+      "yes": "Let's go!",
+      "no": "Not now",
+      "skip": "Skip"
+    },
+    "activityBreak": {
+      "title": "Add an Activity?",
+      "message": "Your plan has restaurants but no activities yet. Want to add something to do?",
+      "yes": "Show me activities",
+      "no": "Keep as is"
+    },
+    "coffeeBreak": {
+      "title": "Time for a Break?",
+      "message": "You've got 2+ hours of activities planned. Time for a coffee or meal?",
+      "yes": "Yes please!",
+      "no": "I'm fine"
+    }
   },
   "header": {
     "logout": "Logout"

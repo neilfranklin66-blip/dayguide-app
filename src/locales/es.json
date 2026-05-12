@@ -45,6 +45,14 @@
     "galleries": "Galerías",
     "parks": "Parques",
     "shopping": "Compras",
+    "theater": "Teatro",
+    "liveMusic": "Música en vivo",
+    "sportsEvents": "Deportes",
+    "nightlife": "Vida nocturna",
+    "historicalSites": "Historia",
+    "foodMarkets": "Mercados",
+    "cinema": "Cine",
+    "comedy": "Comedia",
     "timeLabel": "¿Cuánto tiempo tienes? (horas)",
     "hours": "{{count}} horas",
     "next": "Siguiente"
@@ -75,7 +83,14 @@
     "kmAway": "📍 {{distance}} km de distancia",
     "duration": "⏱️ {{duration}} horas",
     "skip": "❌ Omitir",
-    "yes": "✅ ¡Sí!"
+    "yes": "✅ ¡Sí!",
+    "searching": "🔍 Buscando restaurantes cercanos...",
+    "liveResults": "🌐 En vivo desde Google Places",
+    "noKeyWarning": "Modo demo: añade una clave API de Google Places para ver restaurantes reales.",
+    "quotaWarning": "Modo demo: límite de Google Places alcanzado — mostrando datos de demo.",
+    "noLocationWarning": "Modo demo: sin ubicación disponible — mostrando datos de demo.",
+    "noResultsWarning": "No se encontraron restaurantes cercanos — mostrando datos de demo.",
+    "errorWarning": "Modo demo: no se pudo conectar con Google Places."
   },
   "cuisine": {
     "italian": "Italiano",
@@ -114,6 +129,27 @@
     "taxi": "Taxi/Uber",
     "tube": "Metro",
     "bus": "Autobús"
+  },
+  "popups": {
+    "nearbyRestaurant": {
+      "title": "¡Restaurante cercano!",
+      "message": "Hay un restaurante {{cuisine}}, {{name}}, a solo {{distance}}m. ¿Tienes hambre?",
+      "yes": "¡Vamos!",
+      "no": "Ahora no",
+      "skip": "Omitir"
+    },
+    "activityBreak": {
+      "title": "¿Hueco libre?",
+      "message": "¿Quieres añadir una actividad a tu día?",
+      "yes": "Ver actividades",
+      "no": "Dejarlo así"
+    },
+    "coffeeBreak": {
+      "title": "¿Hora de descansar?",
+      "message": "Tienes más de 2 horas de actividades planificadas. ¿Un café o una comida?",
+      "yes": "¡Sí, por favor!",
+      "no": "Estoy bien"
+    }
   },
   "header": {
     "logout": "Cerrar sesión"

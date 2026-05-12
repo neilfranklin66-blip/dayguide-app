@@ -45,6 +45,14 @@
     "galleries": "Galeries",
     "parks": "Parcs",
     "shopping": "Shopping",
+    "theater": "Théâtre",
+    "liveMusic": "Concerts",
+    "sportsEvents": "Sports",
+    "nightlife": "Vie nocturne",
+    "historicalSites": "Histoire",
+    "foodMarkets": "Marchés",
+    "cinema": "Cinéma",
+    "comedy": "Comédie",
     "timeLabel": "Combien de temps avez-vous ? (heures)",
     "hours": "{{count}} heures",
     "next": "Suivant"
@@ -75,7 +83,14 @@
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} heures",
     "skip": "❌ Passer",
-    "yes": "✅ Oui !"
+    "yes": "✅ Oui !",
+    "searching": "🔍 Recherche de restaurants à proximité...",
+    "liveResults": "🌐 En direct depuis Google Places",
+    "noKeyWarning": "Mode démo : ajoutez une clé API Google Places pour voir de vrais restaurants.",
+    "quotaWarning": "Mode démo : quota Google Places atteint — affichage des données de démo.",
+    "noLocationWarning": "Mode démo : position indisponible — affichage des données de démo.",
+    "noResultsWarning": "Aucun restaurant trouvé à proximité — affichage des données de démo.",
+    "errorWarning": "Mode démo : impossible de joindre Google Places."
   },
   "cuisine": {
     "italian": "Italien",
@@ -114,6 +129,27 @@
     "taxi": "Taxi/Uber",
     "tube": "Métro",
     "bus": "Bus"
+  },
+  "popups": {
+    "nearbyRestaurant": {
+      "title": "Restaurant à proximité !",
+      "message": "Il y a un restaurant {{cuisine}}, {{name}}, à seulement {{distance}}m. Vous avez faim ?",
+      "yes": "Allons-y !",
+      "no": "Pas maintenant",
+      "skip": "Ignorer"
+    },
+    "activityBreak": {
+      "title": "Un créneau libre ?",
+      "message": "Voulez-vous ajouter une activité à votre journée ?",
+      "yes": "Voir les activités",
+      "no": "Garder tel quel"
+    },
+    "coffeeBreak": {
+      "title": "Temps de pause ?",
+      "message": "Vous avez plus de 2 heures d'activités planifiées. Un café ou un repas ?",
+      "yes": "Oui, s'il vous plaît !",
+      "no": "Ça va"
+    }
   },
   "header": {
     "logout": "Se déconnecter"

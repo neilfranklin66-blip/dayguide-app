@@ -45,6 +45,14 @@
     "galleries": "画廊",
     "parks": "公园",
     "shopping": "购物",
+    "theater": "剧院",
+    "liveMusic": "现场音乐",
+    "sportsEvents": "体育",
+    "nightlife": "夜生活",
+    "historicalSites": "历史遗址",
+    "foodMarkets": "美食市场",
+    "cinema": "电影院",
+    "comedy": "喜剧",
     "timeLabel": "您有多少时间？（小时）",
     "hours": "{{count}} 小时",
     "next": "下一步"
@@ -75,7 +83,14 @@
     "kmAway": "📍 {{distance}} 公里",
     "duration": "⏱️ {{duration}} 小时",
     "skip": "❌ 跳过",
-    "yes": "✅ 好的！"
+    "yes": "✅ 好的！",
+    "searching": "🔍 正在搜索附近餐厅...",
+    "liveResults": "🌐 来自 Google Places 的实时数据",
+    "noKeyWarning": "演示模式：请添加 Google Places API 密钥以查看真实餐厅。",
+    "quotaWarning": "演示模式：Google Places 配额已满 — 显示演示数据。",
+    "noLocationWarning": "演示模式：无定位信息 — 显示演示数据。",
+    "noResultsWarning": "附近未找到餐厅 — 显示演示数据。",
+    "errorWarning": "演示模式：无法连接到 Google Places。"
   },
   "cuisine": {
     "italian": "意大利菜",
@@ -114,6 +129,27 @@
     "taxi": "出租车/Uber",
     "tube": "地铁",
     "bus": "公交车"
+  },
+  "popups": {
+    "nearbyRestaurant": {
+      "title": "附近有餐厅！",
+      "message": "附近{{distance}}米处有一家{{cuisine}}餐厅——{{name}}，饿了吗？",
+      "yes": "走吧！",
+      "no": "暂时不了",
+      "skip": "跳过"
+    },
+    "activityBreak": {
+      "title": "有空闲时间？",
+      "message": "想在今天加入一个活动环节吗？",
+      "yes": "看看活动",
+      "no": "保持原样"
+    },
+    "coffeeBreak": {
+      "title": "该休息了？",
+      "message": "您已安排了2小时以上的活动。来杯咖啡或用餐怎么样？",
+      "yes": "好的！",
+      "no": "没关系"
+    }
   },
   "header": {
     "logout": "退出登录"
