@@ -11,6 +11,7 @@ const CUISINE_EMOJI = {
   italian: '🍝', indian: '🍛', british: '🍖', japanese: '🍣',
   mexican: '🌮', mediterranean: '🥗', spanish: '🥘', french: '🥐',
   chinese: '🥢', asian: '🍜', american: '🍔', middleEastern: '🧆',
+  cafe: '☕',
 };
 
 const getCuisineEmoji = (cuisines) => {
@@ -215,11 +216,12 @@ const DayGuide = () => {
     return pool.sort(() => Math.random() - 0.5).slice(0, 10);
   };
 
-  const buildRestaurantQueue = () => {
+  const buildRestaurantQueue = (cuisines = selectedCuisines, price = selectedPriceRange) => {
     const filtered = mockRestaurantData.filter(r => {
       if (r.distance > 5) return false;
-      if (selectedCuisines.length > 0 && !r.cuisine.some(c => selectedCuisines.includes(c))) return false;
-      if (selectedPriceRange && r.priceRange !== selectedPriceRange) return false;
+      if (cuisines.length > 0 && !r.cuisine.some(c => cuisines.includes(c))) return false;
+      if (price && r.priceRange !== price) return false;
+      if (selectedRestaurants.some(s => s.id === r.id || s.name === r.name)) return false;
       return true;
     });
     return filtered.sort(() => Math.random() - 0.5).slice(0, 8);
@@ -232,7 +234,7 @@ const DayGuide = () => {
     setStage('activities');
   };
 
-  const goToRestaurants = async () => {
+  const goToRestaurants = async (cuisineOverride = selectedCuisines, priceOverride = selectedPriceRange) => {
     setIsRestaurantsLoading(true);
     setRestaurantSource(null);
     setRestaurantQueue(null);
@@ -240,16 +242,17 @@ const DayGuide = () => {
     setStage('restaurants');
     try {
       if (!position?.lat) throw new Error('NO_LOCATION');
-      const results = await searchRestaurants(position.lat, position.lng, selectedCuisines, selectedPriceRange);
-      if (results.length > 0) {
-        setRestaurantQueue(results);
+      const results = await searchRestaurants(position.lat, position.lng, cuisineOverride, priceOverride);
+      const deduped = results.filter(r => !selectedRestaurants.some(s => s.id === r.id || s.name === r.name));
+      if (deduped.length > 0) {
+        setRestaurantQueue(deduped);
         setRestaurantSource('live');
       } else {
-        setRestaurantQueue(buildRestaurantQueue());
+        setRestaurantQueue(buildRestaurantQueue(cuisineOverride, priceOverride));
         setRestaurantSource('no_results');
       }
     } catch (err) {
-      setRestaurantQueue(buildRestaurantQueue());
+      setRestaurantQueue(buildRestaurantQueue(cuisineOverride, priceOverride));
       const msg = err.message;
       if (msg === 'NO_API_KEY') setRestaurantSource('no_key');
       else if (msg === 'QUOTA_EXCEEDED') setRestaurantSource('quota');

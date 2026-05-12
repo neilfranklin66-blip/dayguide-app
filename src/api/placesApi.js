@@ -26,6 +26,43 @@ const SYMBOL_TO_MAXPRICE = { '$': 1, '$$': 2, '$$$': 4 };
 // Meal duration heuristic by price level
 const PRICE_TO_DURATION = { '$': 1, '$$': 1.5, '$$$': 2 };
 
+// Google Places `types` → app cuisine key
+const TYPE_TO_CUISINE = {
+  italian_restaurant: 'italian',
+  pizza_restaurant: 'italian',
+  french_restaurant: 'french',
+  japanese_restaurant: 'japanese',
+  sushi_restaurant: 'japanese',
+  ramen_restaurant: 'japanese',
+  indian_restaurant: 'indian',
+  chinese_restaurant: 'chinese',
+  mexican_restaurant: 'mexican',
+  thai_restaurant: 'asian',
+  vietnamese_restaurant: 'asian',
+  korean_restaurant: 'asian',
+  american_restaurant: 'american',
+  hamburger_restaurant: 'american',
+  steak_house: 'american',
+  mediterranean_restaurant: 'mediterranean',
+  greek_restaurant: 'mediterranean',
+  spanish_restaurant: 'spanish',
+  middle_eastern_restaurant: 'middleEastern',
+  british_restaurant: 'british',
+  pub: 'british',
+  seafood_restaurant: 'british',
+  cafe: 'cafe',
+  coffee_shop: 'cafe',
+  bakery: 'cafe',
+};
+
+function cuisineFromTypes(types = []) {
+  for (const type of types) {
+    const c = TYPE_TO_CUISINE[type];
+    if (c) return [c];
+  }
+  return [];
+}
+
 function haversineKm(lat1, lng1, lat2, lng2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -41,7 +78,7 @@ function buildPhotoUrl(photoReference) {
   return `${PHOTO_URL}?maxwidth=400&photo_reference=${encodeURIComponent(photoReference)}&key=${API_KEY}`;
 }
 
-function parsePlaces(results, lat, lng, cuisineFilters) {
+function parsePlaces(results, lat, lng) {
   return results
     .filter(p => p.business_status !== 'CLOSED_PERMANENTLY')
     .map(p => {
@@ -57,7 +94,7 @@ function parsePlaces(results, lat, lng, cuisineFilters) {
         id: p.place_id,
         name: p.name,
         city: '',
-        cuisine: cuisineFilters.length > 0 ? [...cuisineFilters] : [],
+        cuisine: cuisineFromTypes(p.types),
         priceRange: priceSymbol,
         rating: parseFloat((p.rating || 4.0).toFixed(1)),
         duration: PRICE_TO_DURATION[priceSymbol] ?? 1.5,
@@ -122,7 +159,7 @@ export async function searchRestaurants(lat, lng, cuisineFilters = [], priceFilt
     );
   }
 
-  const parsed = parsePlaces(raw, lat, lng, cuisineFilters);
+  const parsed = parsePlaces(raw, lat, lng);
   return parsed
     .filter(r => r.rating >= 3.5 && r.distance <= 5)
     .sort((a, b) => b.rating - a.rating)
