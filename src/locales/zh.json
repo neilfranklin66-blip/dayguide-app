@@ -60,7 +60,9 @@
   "activities": {
     "title": "活动",
     "noMore": "没有更多活动",
-    "noResults": "未找到符合您兴趣的活动，请尝试其他选项。",
+    "noResultsTitle": "附近无结果",
+    "noResults": "未找到符合所选兴趣的活动，请尝试扩大搜索范围。",
+    "showAll": "显示所有活动类型",
     "continueToRestaurants": "继续选择餐厅",
     "kmAway": "📍 {{distance}} 公里",
     "duration": "⏱️ {{duration}} 小时",
@@ -90,7 +92,14 @@
     "quotaWarning": "演示模式：Google Places 配额已满 — 显示演示数据。",
     "noLocationWarning": "演示模式：无定位信息 — 显示演示数据。",
     "noResultsWarning": "附近未找到餐厅 — 显示演示数据。",
-    "errorWarning": "演示模式：无法连接到 Google Places。"
+    "errorWarning": "演示模式：无法连接到 Google Places。",
+    "noResultsTitle": "未找到餐厅",
+    "noResultsFiltered": "附近没有符合您筛选条件的餐厅。",
+    "noResultsArea": "您位置附近未找到餐厅。",
+    "nearestHint": "📍 最近选项：{{name}}，距您 {{distance}}km",
+    "showAllNearby": "显示附近所有餐厅",
+    "removeCuisineFilter": "任意菜系（移除筛选）",
+    "removePriceFilter": "任意价位（移除筛选）"
   },
   "cuisine": {
     "italian": "意大利菜",

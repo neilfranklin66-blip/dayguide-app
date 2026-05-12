@@ -62,6 +62,7 @@ const DayGuide = () => {
   // Restaurant API state
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(false);
   const [restaurantSource, setRestaurantSource] = useState(null);
+  const [nearestHint, setNearestHint] = useState(null);
 
   const transportOptions = [
     { mode: 'walk', time: 15, cost: '£0', emoji: '🚶' },
@@ -190,6 +191,7 @@ const DayGuide = () => {
     popupActivityReturnRef.current = false;
     setIsRestaurantsLoading(false);
     setRestaurantSource(null);
+    setNearestHint(null);
     setStage('welcome');
   };
 
@@ -199,18 +201,15 @@ const DayGuide = () => {
   const toggleCuisine = (id) =>
     setSelectedCuisines(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
-  const getActivitiesForInterests = () => {
+  const getActivitiesForInterests = (interests = selectedInterests) => {
     const seen = new Set();
     const all = [];
-    const interests = selectedInterests.length > 0
-      ? selectedInterests
-      : Object.keys(mockActivityData);
-    interests.forEach(interest => {
+    const cats = interests.length > 0 ? interests : Object.keys(mockActivityData);
+    cats.forEach(interest => {
       (mockActivityData[interest] || []).forEach(a => {
         if (!seen.has(a.id)) { all.push(a); seen.add(a.id); }
       });
     });
-    // Exclude already-selected activities
     const filtered = all.filter(a => !selectedActivities.some(s => s.id === a.id));
     const pool = filtered.length > 0 ? filtered : all;
     return pool.sort(() => Math.random() - 0.5).slice(0, 10);
@@ -507,11 +506,20 @@ const DayGuide = () => {
       if (activityQueue.length === 0) {
         return (
           <div className="dayguide-container">
-            <div className="card">
+            <div className="card no-results-card">
+              <div className="no-results-icon">🎭</div>
+              <h2>{t('activities.noResultsTitle')}</h2>
               <p className="no-results-msg">{t('activities.noResults')}</p>
-              <button onClick={() => setStage('interests')} className="btn-secondary">
-                ← {t('interests.title')}
-              </button>
+              <div className="no-results-actions">
+                {selectedInterests.length > 0 && (
+                  <button onClick={() => goToActivities([])} className="btn-primary">
+                    {t('activities.showAll')}
+                  </button>
+                )}
+                <button onClick={() => setStage('interests')} className="btn-secondary">
+                  ← {t('interests.title')}
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -586,16 +594,51 @@ const DayGuide = () => {
       }
 
       if (restaurantQueue !== null && restaurantQueue.length === 0) {
+        const hasCuisine = selectedCuisines.length > 0;
+        const hasPrice = !!selectedPriceRange;
+        const hasFilters = hasCuisine || hasPrice;
         return (
           <div className="dayguide-container">
-            <div className="card">
-              <p className="no-results-msg">{t('restaurants.noResults')}</p>
-              <button onClick={goToRestaurants} className="btn-secondary">
-                ← {t('restaurants.adjustFilters')}
-              </button>
-              <button onClick={() => buildTimeline([])} className="btn-secondary" style={{ marginTop: '10px' }}>
-                {t('restaurants.skipAndContinue')}
-              </button>
+            <div className="card no-results-card">
+              <div className="no-results-icon">🍽️</div>
+              <h2>{t('restaurants.noResultsTitle')}</h2>
+              <p className="no-results-msg">
+                {hasFilters ? t('restaurants.noResultsFiltered') : t('restaurants.noResultsArea')}
+              </p>
+              {nearestHint && (
+                <div className="no-results-hint">
+                  {t('restaurants.nearestHint', { name: nearestHint.name, distance: nearestHint.distance })}
+                </div>
+              )}
+              <div className="no-results-actions">
+                {hasFilters && (
+                  <button
+                    onClick={() => { setSelectedCuisines([]); setSelectedPriceRange(null); goToRestaurants([], null); }}
+                    className="btn-primary"
+                  >
+                    {t('restaurants.showAllNearby')}
+                  </button>
+                )}
+                {hasCuisine && hasPrice && (
+                  <button
+                    onClick={() => { setSelectedCuisines([]); goToRestaurants([], selectedPriceRange); }}
+                    className="btn-secondary"
+                  >
+                    {t('restaurants.removeCuisineFilter')}
+                  </button>
+                )}
+                {hasPrice && (
+                  <button
+                    onClick={() => { setSelectedPriceRange(null); goToRestaurants(selectedCuisines, null); }}
+                    className="btn-secondary"
+                  >
+                    {t('restaurants.removePriceFilter')}
+                  </button>
+                )}
+                <button onClick={() => buildTimeline([])} className="btn-secondary">
+                  {t('restaurants.skipAndContinue')}
+                </button>
+              </div>
             </div>
           </div>
         );

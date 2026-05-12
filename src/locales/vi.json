@@ -60,7 +60,9 @@
   "activities": {
     "title": "Hoạt động",
     "noMore": "Không còn hoạt động nào",
-    "noResults": "Không tìm thấy hoạt động phù hợp. Thử chọn sở thích khác.",
+    "noResultsTitle": "Không tìm thấy gì gần đây",
+    "noResults": "Không có hoạt động nào phù hợp với sở thích đã chọn. Hãy mở rộng tìm kiếm.",
+    "showAll": "Hiển thị tất cả loại hoạt động",
     "continueToRestaurants": "Tiếp tục đến nhà hàng",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} giờ",
@@ -90,7 +92,14 @@
     "quotaWarning": "Chế độ demo: đã đạt hạn mức Google Places — hiển thị dữ liệu demo.",
     "noLocationWarning": "Chế độ demo: không có vị trí — hiển thị dữ liệu demo.",
     "noResultsWarning": "Không tìm thấy nhà hàng gần đây — hiển thị dữ liệu demo.",
-    "errorWarning": "Chế độ demo: không thể kết nối Google Places."
+    "errorWarning": "Chế độ demo: không thể kết nối Google Places.",
+    "noResultsTitle": "Không tìm thấy nhà hàng",
+    "noResultsFiltered": "Không có nhà hàng nào gần đây phù hợp với bộ lọc của bạn.",
+    "noResultsArea": "Không tìm thấy nhà hàng gần vị trí của bạn.",
+    "nearestHint": "📍 Gần nhất: {{name}} cách {{distance}}km",
+    "showAllNearby": "Hiển thị tất cả nhà hàng gần đây",
+    "removeCuisineFilter": "Mọi ẩm thực (xóa bộ lọc)",
+    "removePriceFilter": "Mọi giá (xóa bộ lọc)"
   },
   "cuisine": {
     "italian": "Ẩm thực Ý",

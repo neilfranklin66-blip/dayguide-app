@@ -60,7 +60,9 @@
   "activities": {
     "title": "Actividades",
     "noMore": "No hay más actividades",
-    "noResults": "No se encontraron actividades para tus intereses. Prueba con otros.",
+    "noResultsTitle": "Nada encontrado cerca",
+    "noResults": "No hay actividades para tus intereses seleccionados. Prueba a ampliar la búsqueda.",
+    "showAll": "Mostrar todos los tipos de actividad",
     "continueToRestaurants": "Continuar a restaurantes",
     "kmAway": "📍 {{distance}} km de distancia",
     "duration": "⏱️ {{duration}} horas",
@@ -90,7 +92,14 @@
     "quotaWarning": "Modo demo: límite de Google Places alcanzado — mostrando datos de demo.",
     "noLocationWarning": "Modo demo: sin ubicación disponible — mostrando datos de demo.",
     "noResultsWarning": "No se encontraron restaurantes cercanos — mostrando datos de demo.",
-    "errorWarning": "Modo demo: no se pudo conectar con Google Places."
+    "errorWarning": "Modo demo: no se pudo conectar con Google Places.",
+    "noResultsTitle": "No se encontraron restaurantes",
+    "noResultsFiltered": "Ningún restaurante cerca coincide con tu cocina o rango de precio.",
+    "noResultsArea": "No se encontraron restaurantes cerca de tu ubicación.",
+    "nearestHint": "📍 Opción más cercana: {{name}} a {{distance}}km",
+    "showAllNearby": "Mostrar todos los restaurantes cercanos",
+    "removeCuisineFilter": "Cualquier cocina (quitar filtro)",
+    "removePriceFilter": "Cualquier precio (quitar filtro)"
   },
   "cuisine": {
     "italian": "Italiano",
