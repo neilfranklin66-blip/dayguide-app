@@ -26,40 +26,30 @@ const SYMBOL_TO_MAXPRICE = { '$': 1, '$$': 2, '$$$': 4 };
 // Meal duration heuristic by price level
 const PRICE_TO_DURATION = { '$': 1, '$$': 1.5, '$$$': 2 };
 
-// Google Places `types` → app cuisine key
-const TYPE_TO_CUISINE = {
-  italian_restaurant: 'italian',
-  pizza_restaurant: 'italian',
-  french_restaurant: 'french',
-  japanese_restaurant: 'japanese',
-  sushi_restaurant: 'japanese',
-  ramen_restaurant: 'japanese',
-  indian_restaurant: 'indian',
-  chinese_restaurant: 'chinese',
-  mexican_restaurant: 'mexican',
-  thai_restaurant: 'asian',
-  vietnamese_restaurant: 'asian',
-  korean_restaurant: 'asian',
-  american_restaurant: 'american',
-  hamburger_restaurant: 'american',
-  steak_house: 'american',
-  mediterranean_restaurant: 'mediterranean',
-  greek_restaurant: 'mediterranean',
-  spanish_restaurant: 'spanish',
-  middle_eastern_restaurant: 'middleEastern',
-  british_restaurant: 'british',
-  pub: 'british',
-  seafood_restaurant: 'british',
-  cafe: 'cafe',
-  coffee_shop: 'cafe',
-  bakery: 'cafe',
-};
+// Name-based cuisine detection — legacy Places API only returns generic types like
+// "restaurant", "food", "meal_takeaway", so we infer cuisine from the restaurant name.
+const NAME_CUISINE_PATTERNS = [
+  [/(italian|pizza|pizzeria|pasta|trattoria|ristorante|risotto|carbonara|gelato)/i, 'italian'],
+  [/(indian|curry|tandoor|masala|biryani|tikka|balti|punjabi|bengali|dhal?\b)/i, 'indian'],
+  [/(japanese|sushi|ramen|udon|soba|yakitori|tempura|teriyaki|teppanyaki|gyoza)/i, 'japanese'],
+  [/(chinese|cantonese|szechuan|dim.?sum|dumpling|peking|wonton)/i, 'chinese'],
+  [/(thai|vietnamese|korean|pad.?thai|\bpho\b|banh.?mi|bibimbap|kimchi)/i, 'asian'],
+  [/(mexican|taco|burrito|enchilada|quesadilla|cantina)/i, 'mexican'],
+  [/(french|brasserie|bistro|patisserie|cr[eê]pe)/i, 'french'],
+  [/(mediterranean|greek|mezze|souvlaki|moussaka)/i, 'mediterranean'],
+  [/(spanish|tapas|paella)/i, 'spanish'],
+  [/(lebanese|turkish|persian|moroccan|falafel|kebab|shawarma|hummus|tagine)/i, 'middleEastern'],
+  [/fish.?and.?chips?|chippy|\bcarvery\b|\bpub\b/i, 'british'],
+  [/\bburger|\bbbq\b|barbecue|steakhouse|smokehouse|\bdiner\b/i, 'american'],
+  [/caf[eé]|coffee.?shop|\bbakery\b|espresso.?bar/i, 'cafe'],
+];
 
-function cuisineFromTypes(types = []) {
-  for (const type of types) {
-    const c = TYPE_TO_CUISINE[type];
-    if (c) return [c];
+function detectCuisine(name = '', types = []) {
+  for (const [pattern, cuisine] of NAME_CUISINE_PATTERNS) {
+    if (pattern.test(name)) return [cuisine];
   }
+  // Fallback: Google does return cafe/bakery types reliably
+  if (types.some(t => ['cafe', 'bakery', 'coffee_shop'].includes(t))) return ['cafe'];
   return [];
 }
 
@@ -94,7 +84,7 @@ function parsePlaces(results, lat, lng) {
         id: p.place_id,
         name: p.name,
         city: '',
-        cuisine: cuisineFromTypes(p.types),
+        cuisine: detectCuisine(p.name, p.types),
         priceRange: priceSymbol,
         rating: parseFloat((p.rating || 4.0).toFixed(1)),
         duration: PRICE_TO_DURATION[priceSymbol] ?? 1.5,
@@ -160,8 +150,15 @@ export async function searchRestaurants(lat, lng, cuisineFilters = [], priceFilt
   }
 
   const parsed = parsePlaces(raw, lat, lng);
-  return parsed
+  const byRating = parsed
     .filter(r => r.rating >= 3.5 && r.distance <= 5)
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 12);
+    .sort((a, b) => b.rating - a.rating);
+
+  // Remove restaurants whose detected cuisine is known but doesn't match any selected filter.
+  // Restaurants with no detected cuisine (r.cuisine.length === 0) are always kept.
+  const cuisineFiltered = cuisineFilters.length === 0
+    ? byRating
+    : byRating.filter(r => r.cuisine.length === 0 || r.cuisine.some(c => cuisineFilters.includes(c)));
+
+  return cuisineFiltered.slice(0, 12);
 }

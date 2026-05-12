@@ -60,6 +60,10 @@ const DayGuide = () => {
   const activePopupRef = useRef(null);
   const popupActivityReturnRef = useRef(false);
 
+  // Mirror of selectedRestaurants in a ref so goToRestaurants/buildRestaurantQueue
+  // always read the current list regardless of closure capture timing.
+  const selectedRestaurantsRef = useRef([]);
+
   // Restaurant API state
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(false);
   const [restaurantSource, setRestaurantSource] = useState(null);
@@ -181,6 +185,7 @@ const DayGuide = () => {
     setSelectedPriceRange(null);
     setSelectedActivities([]);
     setSelectedRestaurants([]);
+    selectedRestaurantsRef.current = [];
     setAvailableTime(4);
     setCurrentActivityIndex(0);
     setCurrentRestaurantIndex(0);
@@ -217,11 +222,12 @@ const DayGuide = () => {
   };
 
   const buildRestaurantQueue = (cuisines = selectedCuisines, price = selectedPriceRange) => {
+    const alreadySelected = selectedRestaurantsRef.current;
     const filtered = mockRestaurantData.filter(r => {
       if (r.distance > 5) return false;
       if (cuisines.length > 0 && !r.cuisine.some(c => cuisines.includes(c))) return false;
       if (price && r.priceRange !== price) return false;
-      if (selectedRestaurants.some(s => s.id === r.id || s.name === r.name)) return false;
+      if (alreadySelected.some(s => s.id === r.id || s.name === r.name)) return false;
       return true;
     });
     return filtered.sort(() => Math.random() - 0.5).slice(0, 8);
@@ -243,7 +249,8 @@ const DayGuide = () => {
     try {
       if (!position?.lat) throw new Error('NO_LOCATION');
       const results = await searchRestaurants(position.lat, position.lng, cuisineOverride, priceOverride);
-      const deduped = results.filter(r => !selectedRestaurants.some(s => s.id === r.id || s.name === r.name));
+      const alreadySelected = selectedRestaurantsRef.current;
+      const deduped = results.filter(r => !alreadySelected.some(s => s.id === r.id || s.name === r.name));
       if (deduped.length > 0) {
         setRestaurantQueue(deduped);
         setRestaurantSource('live');
@@ -292,6 +299,7 @@ const DayGuide = () => {
       : selectedRestaurants;
 
     if (liked && currentRestaurant) {
+      selectedRestaurantsRef.current = newSelected;
       setSelectedRestaurants(newSelected);
     }
 
