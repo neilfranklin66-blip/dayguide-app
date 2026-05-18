@@ -53,7 +53,7 @@
     "foodMarkets": "Marchés",
     "cinema": "Cinéma",
     "comedy": "Comédie",
-    "timeLabel": "Combien de temps avez-vous ? (heures)",
+    "timeLabel": "Combien de temps avez-vous ? (heures)","startTimeLabel": "À quelle heure commencez-vous ?",
     "hours": "{{count}} heures",
     "next": "Suivant"
   },
@@ -130,6 +130,9 @@
     "howToGetThere": "↓ Comment se rendre à la prochaine activité ?",
     "minutes": "{{count}} min",
     "startOver": "Recommencer",
+    "share": "📲 Partager",
+    "shareTitle": "Partagez votre journée",
+    "shareHint": "Scannez ce QR code pour partager votre itinéraire",
     "bookNow": "📱 Réserver maintenant",
     "overTime": "⚠️ Ce plan dépasse votre budget de {{hours}} heures."
   },

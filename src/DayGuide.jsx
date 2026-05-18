@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from './AuthContext';
 import useGeolocation from './useGeolocation';
 import mockRestaurantData from './mockRestaurantData.json';
@@ -48,6 +49,10 @@ const DayGuide = () => {
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [selectedRestaurants, setSelectedRestaurants] = useState([]);
   const [availableTime, setAvailableTime] = useState(4);
+  const [startTime, setStartTime] = useState(() => {
+      const now = new Date();
+      return now.getHours() + now.getMinutes() / 60;
+  });
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [currentRestaurantIndex, setCurrentRestaurantIndex] = useState(0);
   const [activityQueue, setActivityQueue] = useState([]);
@@ -56,6 +61,7 @@ const DayGuide = () => {
 
   // Popup state
   const [activePopup, setActivePopup] = useState(null);
+  const [showQR, setShowQR] = useState(false);
   const popupCooldowns = useRef({});
   const activePopupRef = useRef(null);
   const popupActivityReturnRef = useRef(false);
@@ -187,6 +193,8 @@ const DayGuide = () => {
     setSelectedRestaurants([]);
     selectedRestaurantsRef.current = [];
     setAvailableTime(4);
+    const now = new Date();
+    setStartTime(now.getHours() + now.getMinutes() / 60);
     setCurrentActivityIndex(0);
     setCurrentRestaurantIndex(0);
     setActivityQueue([]);
@@ -195,6 +203,7 @@ const DayGuide = () => {
     setActivePopup(null);
     activePopupRef.current = null;
     popupActivityReturnRef.current = false;
+    setShowQR(false);
     setIsRestaurantsLoading(false);
     setRestaurantSource(null);
     setNearestHint(null);
@@ -311,7 +320,7 @@ const DayGuide = () => {
   };
 
   const buildTimeline = (restaurants = selectedRestaurants, activities = selectedActivities) => {
-    let currentTime = 9;
+    let currentTime = startTime;
     const allItems = [...activities, ...restaurants];
     const newTimeline = allItems.map((item, index) => {
       const entry = {
@@ -497,7 +506,14 @@ const DayGuide = () => {
               <input type="range" min="1" max="8" value={availableTime}
                 onChange={e => setAvailableTime(parseInt(e.target.value))} className="slider" />
               <span>{t('interests.hours', { count: availableTime })}</span>
-            </div>
+            </div><div className="time-selector">
+  <label>{t('interests.startTimeLabel')}</label>
+  <input type="time" value={`${String(Math.floor(startTime)).padStart(2, '0')}:${String(Math.round((startTime % 1) * 60)).padStart(2, '0')}`}
+    onChange={e => {
+      const [hours, minutes] = e.target.value.split(':').map(Number);
+      setStartTime(hours + minutes / 60);
+    }} className="time-input" />
+</div>
 
             <button
               onClick={goToActivities}
@@ -737,6 +753,11 @@ const DayGuide = () => {
                       <div className="timeline-content">
                         <span className="timeline-icon">{item.icon}</span>
                         <div className="activity-details">
+                          <p className="card-type-label timeline-category">
+                            {ACTIVITY_CATEGORIES.has(item.category)
+                              ? t(`interests.${item.category}`)
+                              : t(`cuisine.${item.category}`, item.category)}
+                          </p>
                           <h4>{item.activity}</h4>
                           <div className="duration-section">
                             <input type="range" min="0.25" max="4" step="0.25" value={item.duration}
@@ -773,6 +794,7 @@ const DayGuide = () => {
             </div>
             <div className="action-buttons">
               <button onClick={resetState} className="btn-secondary">{t('timeline.startOver')}</button>
+              <button onClick={() => setShowQR(true)} className="btn-secondary share-btn">{t('timeline.share')}</button>
               <button className="btn-primary book-btn">{t('timeline.bookNow')}</button>
             </div>
           </div>
@@ -781,6 +803,34 @@ const DayGuide = () => {
     }
 
     return null;
+  };
+
+  const buildQRContent = () => {
+    const lines = [`DayGuide — ${t('timeline.title')}`, ''];
+    timeline.forEach(item => {
+      const catLabel = ACTIVITY_CATEGORIES.has(item.category)
+        ? t(`interests.${item.category}`)
+        : t(`cuisine.${item.category}`, item.category);
+      lines.push(`${item.time}  ${item.icon} ${catLabel}: ${item.activity} (${item.duration}h)`);
+    });
+    return lines.join('\n');
+  };
+
+  const renderQRModal = () => {
+    if (!showQR) return null;
+    return (
+      <div className="popup-overlay" onClick={() => setShowQR(false)}>
+        <div className="popup-card qr-modal" onClick={e => e.stopPropagation()}>
+          <button className="popup-close" onClick={() => setShowQR(false)} aria-label="Close">✕</button>
+          <div className="popup-icon">📲</div>
+          <h3 className="popup-title">{t('timeline.shareTitle')}</h3>
+          <div className="qr-wrapper">
+            <QRCodeSVG value={buildQRContent()} size={200} />
+          </div>
+          <p className="popup-message qr-hint">{t('timeline.shareHint')}</p>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -804,6 +854,7 @@ const DayGuide = () => {
       </div>
       {renderStage()}
       {renderPopup()}
+      {renderQRModal()}
     </>
   );
 };

@@ -53,7 +53,7 @@
     "foodMarkets": "Food Markets",
     "cinema": "Cinema",
     "comedy": "Comedy",
-    "timeLabel": "How much time do you have? (hours)",
+    "timeLabel": "How much time do you have? (hours)","startTimeLabel": "What time are you starting?",
     "hours": "{{count}} hours",
     "next": "Next"
   },
@@ -130,6 +130,9 @@
     "howToGetThere": "↓ How to get to next activity?",
     "minutes": "{{count}} min",
     "startOver": "Start Over",
+    "share": "📲 Share",
+    "shareTitle": "Share Your Day",
+    "shareHint": "Scan this QR code to share your itinerary",
     "bookNow": "📱 Book Now",
     "overTime": "⚠️ This plan exceeds your {{hours}}-hour budget."
   },

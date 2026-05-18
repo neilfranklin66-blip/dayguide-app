@@ -53,7 +53,7 @@
     "foodMarkets": "Chợ ẩm thực",
     "cinema": "Rạp chiếu phim",
     "comedy": "Hài kịch",
-    "timeLabel": "Bạn có bao nhiêu thời gian? (giờ)",
+    "timeLabel": "Bạn có bao nhiêu thời gian? (giờ)","startTimeLabel": "Bạn bắt đầu lúc mấy giờ?",
     "hours": "{{count}} giờ",
     "next": "Tiếp theo"
   },
@@ -130,6 +130,9 @@
     "howToGetThere": "↓ Làm thế nào để đến hoạt động tiếp theo?",
     "minutes": "{{count}} phút",
     "startOver": "Bắt đầu lại",
+    "share": "📲 Chia sẻ",
+    "shareTitle": "Chia sẻ ngày của bạn",
+    "shareHint": "Quét mã QR này để chia sẻ lịch trình",
     "bookNow": "📱 Đặt ngay",
     "overTime": "⚠️ Kế hoạch này vượt quá ngân sách {{hours}} giờ của bạn."
   },
