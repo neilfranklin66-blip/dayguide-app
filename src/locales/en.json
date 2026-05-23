@@ -53,9 +53,12 @@
     "foodMarkets": "Food Markets",
     "cinema": "Cinema",
     "comedy": "Comedy",
-    "timeLabel": "How much time do you have? (hours)","startTimeLabel": "What time are you starting?",
-    "hours": "{{count}} hours",
-    "next": "Next"
+  
+    "timeLabel": "How much time do you have? (hours)",
+"startTimeLabel": "What time are you starting?",
+"dateLabel": "What date do you want to plan?",
+"hours": "{{count}} hours",
+"next": "Next"
   },
   "activities": {
     "title": "Activities",
