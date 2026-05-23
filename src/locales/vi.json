@@ -53,7 +53,9 @@
     "foodMarkets": "Chợ ẩm thực",
     "cinema": "Rạp chiếu phim",
     "comedy": "Hài kịch",
-    "timeLabel": "Bạn có bao nhiêu thời gian? (giờ)","startTimeLabel": "Bạn bắt đầu lúc mấy giờ?",
+    "timeLabel": "Bạn có bao nhiêu thời gian? (giờ)",
+    "startTimeLabel": "Bạn bắt đầu lúc mấy giờ?",
+    "dateLabel": "Bạn muốn lên kế hoạch vào ngày nào?",
     "hours": "{{count}} giờ",
     "next": "Tiếp theo"
   },

@@ -53,7 +53,9 @@
     "foodMarkets": "Marchés",
     "cinema": "Cinéma",
     "comedy": "Comédie",
-    "timeLabel": "Combien de temps avez-vous ? (heures)","startTimeLabel": "À quelle heure commencez-vous ?",
+    "timeLabel": "Combien de temps avez-vous ? (heures)",
+    "startTimeLabel": "À quelle heure commencez-vous ?",
+    "dateLabel": "Quelle date souhaitez-vous planifier?",
     "hours": "{{count}} heures",
     "next": "Suivant"
   },
