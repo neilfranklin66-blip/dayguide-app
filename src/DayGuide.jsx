@@ -49,6 +49,7 @@ const DayGuide = () => {
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [selectedRestaurants, setSelectedRestaurants] = useState([]);
   const [availableTime, setAvailableTime] = useState(4);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState(() => {
       const now = new Date();
       return now.getHours() + now.getMinutes() / 60;
@@ -207,6 +208,7 @@ const DayGuide = () => {
     setIsRestaurantsLoading(false);
     setRestaurantSource(null);
     setNearestHint(null);
+    setSelectedDate(new Date().toISOString().split('T')[0]);
     setStage('welcome');
   };
 
@@ -506,14 +508,26 @@ const DayGuide = () => {
               <input type="range" min="1" max="8" value={availableTime}
                 onChange={e => setAvailableTime(parseInt(e.target.value))} className="slider" />
               <span>{t('interests.hours', { count: availableTime })}</span>
-            </div><div className="time-selector">
-  <label>{t('interests.startTimeLabel')}</label>
-  <input type="time" value={`${String(Math.floor(startTime)).padStart(2, '0')}:${String(Math.round((startTime % 1) * 60)).padStart(2, '0')}`}
-    onChange={e => {
-      const [hours, minutes] = e.target.value.split(':').map(Number);
-      setStartTime(hours + minutes / 60);
-    }} className="time-input" />
-</div>
+            </div>
+            <div className="time-selector">
+              <label>{t('interests.dateLabel') || 'What date do you want to plan?'}</label>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={e => setSelectedDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                max={new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                className="date-input"
+              />
+            </div>
+            <div className="time-selector">
+              <label>{t('interests.startTimeLabel')}</label>
+              <input type="time" value={`${String(Math.floor(startTime)).padStart(2, '0')}:${String(Math.round((startTime % 1) * 60)).padStart(2, '0')}`}
+                onChange={e => {
+                  const [hours, minutes] = e.target.value.split(':').map(Number);
+                  setStartTime(hours + minutes / 60);
+                }} className="time-input" />
+            </div>
 
             <button
               onClick={goToActivities}
