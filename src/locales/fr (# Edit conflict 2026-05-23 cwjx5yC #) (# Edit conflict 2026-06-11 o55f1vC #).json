@@ -1,0 +1,170 @@
+{
+  "app": { "title": "🗺️ DayGuide" },
+  "login": {
+    "tagline": "Planifiez votre journée parfaite au Royaume-Uni",
+    "googleSignIn": "Se connecter avec Google",
+    "or": "ou",
+    "signIn": "Se connecter",
+    "createAccount": "Créer un compte",
+    "emailPlaceholder": "Adresse e-mail",
+    "passwordPlaceholder": "Mot de passe",
+    "pleaseWait": "Veuillez patienter...",
+    "languageLabel": "Langue préférée",
+    "errors": {
+      "userNotFound": "Aucun compte trouvé avec cet e-mail.",
+      "wrongPassword": "Mot de passe incorrect.",
+      "invalidCredential": "E-mail ou mot de passe invalide.",
+      "emailInUse": "Un compte avec cet e-mail existe déjà.",
+      "weakPassword": "Le mot de passe doit comporter au moins 6 caractères.",
+      "invalidEmail": "Veuillez saisir une adresse e-mail valide.",
+      "authFailed": "Échec de l'authentification. Veuillez réessayer.",
+      "googleFailed": "Échec de la connexion Google. Veuillez réessayer."
+    }
+  },
+  "location": {
+    "notSupported": "La géolocalisation n'est pas prise en charge par votre navigateur.",
+    "denied": "Accès à la localisation refusé. Veuillez activer les autorisations de localisation.",
+    "unavailable": "Impossible de récupérer votre localisation. Veuillez réessayer."
+  },
+  "welcome": {
+    "tagline": "Planifiez votre journée parfaite au Royaume-Uni",
+    "subtitle": "Faites glisser les activités et restaurants. Nous construirons votre itinéraire.",
+    "detectingLocation": "📍 Détection de l'emplacement...",
+    "refreshLocation": "Actualiser la position",
+    "startPlanning": "Commencer à planifier",
+    "findingLocation": "📍 Localisation en cours...",
+    "gettingCoordinates": "Récupération de vos coordonnées GPS..."
+  },
+  "interests": {
+    "title": "Qu'est-ce qui vous intéresse ?",
+    "subtitle": "Choisissez des activités et vos préférences culinaires",
+    "activitiesTitle": "Activités",
+    "cuisineTitle": "Cuisine",
+    "priceTitle": "Prix",
+    "museums": "Musées",
+    "galleries": "Galeries",
+    "parks": "Parcs",
+    "shopping": "Shopping",
+    "theater": "Théâtre",
+    "liveMusic": "Concerts",
+    "sportsEvents": "Sports",
+    "nightlife": "Vie nocturne",
+    "historicalSites": "Histoire",
+    "foodMarkets": "Marchés",
+    "cinema": "Cinéma",
+    "comedy": "Comédie",
+    "timeLabel": "Combien de temps avez-vous ? (heures)","startTimeLabel": "À quelle heure commencez-vous ?",
+    "dateLabel": "Quelle date souhaitez-vous planifier?",
+    "hours": "{{count}} heures",
+    "next": "Suivant"
+  },
+  "activities": {
+    "title": "Activités",
+    "noMore": "Plus d'activités",
+    "noResultsTitle": "Rien trouvé à proximité",
+    "noResults": "Aucune activité ne correspond à vos centres d'intérêt. Essayez d'élargir la recherche.",
+    "showAll": "Afficher tous les types d'activité",
+    "continueToRestaurants": "Continuer vers les restaurants",
+    "kmAway": "📍 {{distance}} km",
+    "duration": "⏱️ {{duration}} heures",
+    "skip": "❌ Passer",
+    "yes": "✅ Oui !"
+  },
+  "mealPrompt": {
+    "title": "Ajouter un restaurant ?",
+    "subtitle": "Souhaitez-vous ajouter un repas ou une pause restaurant à votre journée ?",
+    "yes": "Oui, ajouter un restaurant",
+    "no": "Non merci, juste les activités"
+  },
+  "restaurants": {
+    "title": "Restaurants et nourriture",
+    "noMore": "Plus de restaurants",
+    "noResults": "Aucun restaurant trouvé. Essayez d'autres filtres.",
+    "buildItinerary": "Créer mon itinéraire",
+    "adjustFilters": "Modifier les filtres",
+    "skipAndContinue": "Ignorer le restaurant et continuer",
+    "kmAway": "📍 {{distance}} km",
+    "duration": "⏱️ {{duration}} heures",
+    "skip": "❌ Passer",
+    "yes": "✅ Oui !",
+    "searching": "🔍 Recherche de restaurants à proximité...",
+    "liveResults": "🌐 En direct depuis Google Places",
+    "noKeyWarning": "Mode démo : ajoutez une clé API Google Places pour voir de vrais restaurants.",
+    "quotaWarning": "Mode démo : quota Google Places atteint — affichage des données de démo.",
+    "noLocationWarning": "Mode démo : position indisponible — affichage des données de démo.",
+    "noResultsWarning": "Aucun restaurant trouvé à proximité — affichage des données de démo.",
+    "errorWarning": "Mode démo : impossible de joindre Google Places.",
+    "noResultsTitle": "Aucun restaurant trouvé",
+    "noResultsFiltered": "Aucun restaurant à proximité ne correspond à vos filtres.",
+    "noResultsArea": "Aucun restaurant trouvé près de votre position.",
+    "nearestHint": "📍 Option la plus proche : {{name}} à {{distance}}km",
+    "showAllNearby": "Afficher tous les restaurants à proximité",
+    "removeCuisineFilter": "Toute cuisine (supprimer le filtre)",
+    "removePriceFilter": "Tout prix (supprimer le filtre)"
+  },
+  "cuisine": {
+    "italian": "Italien",
+    "japanese": "Japonais",
+    "mexican": "Mexicain",
+    "british": "Britannique",
+    "cafe": "Café",
+    "indian": "Indien",
+    "mediterranean": "Méditerranéen",
+    "spanish": "Espagnol",
+    "french": "Français",
+    "chinese": "Chinois",
+    "asian": "Asiatique",
+    "american": "Américain",
+    "middleEastern": "Moyen-Orient"
+  },
+  "priceRange": {
+    "any": "Tout prix",
+    "budget": "Économique ($)",
+    "moderate": "Modéré ($$)",
+    "expensive": "Cher ($$$)"
+  },
+  "timeline": {
+    "title": "Votre journée parfaite",
+    "empty": "Aucun élément dans l'itinéraire. Essayez de sélectionner plus d'activités !",
+    "slideToAdjust": "Faites glisser pour ajuster la durée",
+    "hoursDisplay": "{{duration}} h",
+    "howToGetThere": "↓ Comment se rendre à la prochaine activité ?",
+    "minutes": "{{count}} min",
+    "startOver": "Recommencer",
+    "share": "📲 Partager",
+    "shareTitle": "Partagez votre journée",
+    "shareHint": "Scannez ce QR code pour partager votre itinéraire",
+    "bookNow": "📱 Réserver maintenant",
+    "overTime": "⚠️ Ce plan dépasse votre budget de {{hours}} heures."
+  },
+  "transport": {
+    "walk": "À pied",
+    "taxi": "Taxi/Uber",
+    "tube": "Métro",
+    "bus": "Bus"
+  },
+  "popups": {
+    "nearbyRestaurant": {
+      "title": "Restaurant à proximité !",
+      "message": "Il y a un restaurant {{cuisine}}, {{name}}, à seulement {{distance}}m. Vous avez faim ?",
+      "yes": "Allons-y !",
+      "no": "Pas maintenant",
+      "skip": "Ignorer"
+    },
+    "activityBreak": {
+      "title": "Un créneau libre ?",
+      "message": "Voulez-vous ajouter une activité à votre journée ?",
+      "yes": "Voir les activités",
+      "no": "Garder tel quel"
+    },
+    "coffeeBreak": {
+      "title": "Temps de pause ?",
+      "message": "Vous avez plus de 2 heures d'activités planifiées. Un café ou un repas ?",
+      "yes": "Oui, s'il vous plaît !",
+      "no": "Ça va"
+    }
+  },
+  "header": {
+    "logout": "Se déconnecter"
+  }
+}
