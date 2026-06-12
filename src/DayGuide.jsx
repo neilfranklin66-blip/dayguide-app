@@ -50,8 +50,9 @@ const DayGuide = () => {
   const [selectedRestaurants, setSelectedRestaurants] = useState([]);
   const [availableTime, setAvailableTime] = useState(4);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [hasChildren, setHasChildren] = useState(null);
   const [startTime, setStartTime] = useState(() => {
-      const now = new Date();
+    const now = new Date();
       return now.getHours() + now.getMinutes() / 60;
   });
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
@@ -64,7 +65,7 @@ const DayGuide = () => {
   const [activePopup, setActivePopup] = useState(null);
   const [showQR, setShowQR] = useState(false);
   const popupCooldowns = useRef({});
-  const activePopupRef = useRef(null);
+    const activePopupRef = useRef(null);
   const popupActivityReturnRef = useRef(false);
 
   // Mirror of selectedRestaurants in a ref so goToRestaurants/buildRestaurantQueue
@@ -529,9 +530,28 @@ const DayGuide = () => {
                 }} className="time-input" />
             </div>
 
+            
+            <div className="time-selector">
+              <label>Are there children in your party?</label>
+              <div className="price-options">
+                <button
+                  className={`price-btn ${hasChildren === true ? 'selected' : ''}`}
+                  onClick={() => setHasChildren(true)}
+                >
+                  Yes
+                </button>
+                <button
+                  className={`price-btn ${hasChildren === false ? 'selected' : ''}`}
+                  onClick={() => setHasChildren(false)}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={goToActivities}
-              disabled={selectedInterests.length === 0}
+              disabled={selectedInterests.length === 0 || hasChildren === null}
               className="btn-primary"
             >
               {t('interests.next')}
@@ -874,3 +894,4 @@ const DayGuide = () => {
 };
 
 export default DayGuide;
+
