@@ -6,6 +6,7 @@ import useGeolocation from './useGeolocation';
 import mockRestaurantData from './mockRestaurantData.json';
 import mockActivityData from './mockActivityData.json';
 import { searchRestaurants } from './api/placesApi';
+import { mapFromMockArray, mapFromPlacesArray } from './adapters/placeCardAdapter';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -235,7 +236,8 @@ const DayGuide = () => {
 
   const buildRestaurantQueue = (cuisines = selectedCuisines, price = selectedPriceRange) => {
     const alreadySelected = selectedRestaurantsRef.current;
-    const filtered = mockRestaurantData.filter(r => {
+    const normalized = mapFromMockArray(mockRestaurantData);
+    const filtered = normalized.filter(r => {
       if (r.distance > 5) return false;
       if (cuisines.length > 0 && !r.cuisine.some(c => cuisines.includes(c))) return false;
       if (price && r.priceRange !== price) return false;
@@ -261,8 +263,9 @@ const DayGuide = () => {
     try {
       if (!position?.lat) throw new Error('NO_LOCATION');
       const results = await searchRestaurants(position.lat, position.lng, cuisineOverride, priceOverride);
+      const placeCards = mapFromPlacesArray(results);
       const alreadySelected = selectedRestaurantsRef.current;
-      const deduped = results.filter(r => !alreadySelected.some(s => s.id === r.id || s.name === r.name));
+      const deduped = placeCards.filter(r => !alreadySelected.some(s => s.id === r.id || s.name === r.name));
       if (deduped.length > 0) {
         setRestaurantQueue(deduped);
         setRestaurantSource('live');
