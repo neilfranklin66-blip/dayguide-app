@@ -7,6 +7,10 @@ import mockRestaurantData from './mockRestaurantData.json';
 import mockActivityData from './mockActivityData.json';
 import { searchRestaurants } from './api/placesApi';
 import { mapFromMockArray, mapFromPlacesArray } from './adapters/placeCardAdapter';
+import {
+  buildRestaurantQueue as buildFilteredRestaurantQueue,
+  getActivitiesForInterests as getFilteredActivitiesForInterests,
+} from './engines/filterEngine';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -220,31 +224,21 @@ const DayGuide = () => {
   const toggleCuisine = (id) =>
     setSelectedCuisines(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
-  const getActivitiesForInterests = (interests = selectedInterests) => {
-    const seen = new Set();
-    const all = [];
-    const cats = interests.length > 0 ? interests : Object.keys(mockActivityData);
-    cats.forEach(interest => {
-      (mockActivityData[interest] || []).forEach(a => {
-        if (!seen.has(a.id)) { all.push(a); seen.add(a.id); }
-      });
+  const getActivitiesForInterests = (interests = selectedInterests) =>
+    getFilteredActivitiesForInterests({
+      activityData: mockActivityData,
+      interests,
+      selectedActivities,
     });
-    const filtered = all.filter(a => !selectedActivities.some(s => s.id === a.id));
-    const pool = filtered.length > 0 ? filtered : all;
-    return pool.sort(() => Math.random() - 0.5).slice(0, 10);
-  };
 
   const buildRestaurantQueue = (cuisines = selectedCuisines, price = selectedPriceRange) => {
-    const alreadySelected = selectedRestaurantsRef.current;
     const normalized = mapFromMockArray(mockRestaurantData);
-    const filtered = normalized.filter(r => {
-      if (r.distance > 5) return false;
-      if (cuisines.length > 0 && !r.cuisine.some(c => cuisines.includes(c))) return false;
-      if (price && r.priceRange !== price) return false;
-      if (alreadySelected.some(s => s.id === r.id || s.name === r.name)) return false;
-      return true;
+    return buildFilteredRestaurantQueue({
+      restaurants: normalized,
+      cuisines,
+      price,
+      selectedRestaurants: selectedRestaurantsRef.current,
     });
-    return filtered.sort(() => Math.random() - 0.5).slice(0, 8);
   };
 
   const goToActivities = () => {
