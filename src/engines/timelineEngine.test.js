@@ -1,0 +1,28 @@
+﻿import { calculateTimelineDuration } from './timelineEngine';
+
+test('calculateTimelineDuration returns zero for an empty timeline', () => {
+  expect(calculateTimelineDuration([])).toBe(0);
+});
+
+test('calculateTimelineDuration returns item duration for one item with no gap', () => {
+  expect(calculateTimelineDuration([{ duration: 1.5 }])).toBe(1.5);
+});
+
+test('calculateTimelineDuration adds default quarter-hour gaps between items', () => {
+  const timeline = [
+    { duration: 1 },
+    { duration: 2 },
+    { duration: 0.5 },
+  ];
+
+  expect(calculateTimelineDuration(timeline)).toBe(4);
+});
+
+test('calculateTimelineDuration supports a custom gap duration', () => {
+  const timeline = [
+    { duration: 1 },
+    { duration: 1 },
+  ];
+
+  expect(calculateTimelineDuration(timeline, 0.5)).toBe(2.5);
+});

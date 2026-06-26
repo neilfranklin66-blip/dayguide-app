@@ -13,6 +13,7 @@ import {
   getActivitiesForInterests as getFilteredActivitiesForInterests,
 } from './engines/filterEngine';
 import { selectTransportOptions } from './engines/transportEngine';
+import { calculateTimelineDuration } from './engines/timelineEngine';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -758,8 +759,7 @@ const DayGuide = () => {
     }
 
     if (stage === 'timeline') {
-      const totalDuration = timeline.reduce((sum, item) => sum + item.duration, 0)
-        + Math.max(0, timeline.length - 1) * 0.25;
+      const totalDuration = calculateTimelineDuration(timeline);
       const isOverTime = timeline.length > 0 && totalDuration > availableTime;
 
       return (
