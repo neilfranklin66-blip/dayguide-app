@@ -16,7 +16,7 @@ import { selectTransportOptions } from './engines/transportEngine';
 import {
   buildTimelineEntries,
   calculateTimelineDuration,
-  formatTimelineTime,
+  updateTimelineItemDuration,
 } from './engines/timelineEngine';
 import './DayGuide.css';
 
@@ -335,11 +335,7 @@ const DayGuide = () => {
   };
 
   const updateActivityDuration = (index, newDuration) => {
-    setTimeline(prev => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], duration: newDuration };
-      return updated;
-    });
+    setTimeline(prev => updateTimelineItemDuration(prev, index, newDuration));
   };
 
   // --- Popup action handlers ---

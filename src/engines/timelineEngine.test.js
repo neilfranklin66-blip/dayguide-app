@@ -2,6 +2,7 @@
   buildTimelineEntries,
   calculateTimelineDuration,
   formatTimelineTime,
+  updateTimelineItemDuration,
 } from './timelineEngine';
 
 test('calculateTimelineDuration returns zero for an empty timeline', () => {
@@ -128,4 +129,32 @@ test('buildTimelineEntries creates timeline fields and times', () => {
       rating: 4.4,
     },
   ]);
+});
+
+test('updateTimelineItemDuration updates only the selected item duration', () => {
+  const timeline = [
+    { id: 'first', duration: 1, activity: 'Museum' },
+    { id: 'second', duration: 2, activity: 'Cafe' },
+  ];
+
+  const updated = updateTimelineItemDuration(timeline, 1, 1.5);
+
+  expect(updated).toEqual([
+    { id: 'first', duration: 1, activity: 'Museum' },
+    { id: 'second', duration: 1.5, activity: 'Cafe' },
+  ]);
+});
+
+test('updateTimelineItemDuration does not mutate the original timeline', () => {
+  const timeline = [
+    { id: 'first', duration: 1, activity: 'Museum' },
+    { id: 'second', duration: 2, activity: 'Cafe' },
+  ];
+
+  const updated = updateTimelineItemDuration(timeline, 1, 1.5);
+
+  expect(timeline[1].duration).toBe(2);
+  expect(updated).not.toBe(timeline);
+  expect(updated[0]).toBe(timeline[0]);
+  expect(updated[1]).not.toBe(timeline[1]);
 });

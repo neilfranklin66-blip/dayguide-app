@@ -35,3 +35,10 @@ export const buildTimelineEntries = ({
     return entry;
   });
 };
+
+export const updateTimelineItemDuration = (timeline, index, newDuration) => {
+  const updated = [...timeline];
+  updated[index] = { ...updated[index], duration: newDuration };
+
+  return updated;
+};
