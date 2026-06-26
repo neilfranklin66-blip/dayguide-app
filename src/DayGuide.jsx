@@ -12,6 +12,7 @@ import {
   excludeAlreadySelected,
   getActivitiesForInterests as getFilteredActivitiesForInterests,
 } from './engines/filterEngine';
+import { selectTransportOptions } from './engines/transportEngine';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -90,11 +91,8 @@ const DayGuide = () => {
     { mode: 'bus', time: 12, cost: '£1.75', emoji: '🚌' },
   ];
 
-  const getSmartTransportOptions = (distance) => {
-    if (distance < 0.5) return transportOptions.filter(opt => ['walk', 'taxi'].includes(opt.mode));
-    if (distance > 1.5) return transportOptions.filter(opt => opt.mode !== 'walk');
-    return transportOptions;
-  };
+  const getSmartTransportOptions = (distance) =>
+    selectTransportOptions(transportOptions, distance);
 
   const interestCategories = [
     { id: 'museums', label: t('interests.museums'), icon: '🏛️' },
