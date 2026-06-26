@@ -9,6 +9,7 @@ import { searchRestaurants } from './api/placesApi';
 import { mapFromMockArray, mapFromPlacesArray } from './adapters/placeCardAdapter';
 import {
   buildRestaurantQueue as buildFilteredRestaurantQueue,
+  excludeAlreadySelected,
   getActivitiesForInterests as getFilteredActivitiesForInterests,
 } from './engines/filterEngine';
 import './DayGuide.css';
@@ -258,8 +259,7 @@ const DayGuide = () => {
       if (!position?.lat) throw new Error('NO_LOCATION');
       const results = await searchRestaurants(position.lat, position.lng, cuisineOverride, priceOverride);
       const placeCards = mapFromPlacesArray(results);
-      const alreadySelected = selectedRestaurantsRef.current;
-      const deduped = placeCards.filter(r => !alreadySelected.some(s => s.id === r.id || s.name === r.name));
+      const deduped = excludeAlreadySelected(placeCards, selectedRestaurantsRef.current);
       if (deduped.length > 0) {
         setRestaurantQueue(deduped);
         setRestaurantSource('live');
