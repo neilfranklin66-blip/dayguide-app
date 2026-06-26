@@ -4,3 +4,6 @@
 
   return itemDuration + gapDuration;
 };
+
+export const formatTimelineTime = (decimalHour) =>
+  `${Math.floor(decimalHour)}:${String(Math.round((decimalHour % 1) * 60)).padStart(2, '0')}`;

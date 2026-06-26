@@ -13,7 +13,10 @@ import {
   getActivitiesForInterests as getFilteredActivitiesForInterests,
 } from './engines/filterEngine';
 import { selectTransportOptions } from './engines/transportEngine';
-import { calculateTimelineDuration } from './engines/timelineEngine';
+import {
+  calculateTimelineDuration,
+  formatTimelineTime,
+} from './engines/timelineEngine';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -324,7 +327,7 @@ const DayGuide = () => {
     const newTimeline = allItems.map((item, index) => {
       const entry = {
         id: `${index}-${item.id}`,
-        time: `${Math.floor(currentTime)}:${String(Math.round((currentTime % 1) * 60)).padStart(2, '0')}`,
+        time: formatTimelineTime(currentTime),
         activity: item.name,
         duration: item.duration,
         distance: item.distance,

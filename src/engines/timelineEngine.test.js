@@ -1,4 +1,7 @@
-﻿import { calculateTimelineDuration } from './timelineEngine';
+﻿import {
+  calculateTimelineDuration,
+  formatTimelineTime,
+} from './timelineEngine';
 
 test('calculateTimelineDuration returns zero for an empty timeline', () => {
   expect(calculateTimelineDuration([])).toBe(0);
@@ -25,4 +28,16 @@ test('calculateTimelineDuration supports a custom gap duration', () => {
   ];
 
   expect(calculateTimelineDuration(timeline, 0.5)).toBe(2.5);
+});
+
+test('formatTimelineTime formats whole hours', () => {
+  expect(formatTimelineTime(9)).toBe('9:00');
+});
+
+test('formatTimelineTime formats quarter hours', () => {
+  expect(formatTimelineTime(9.25)).toBe('9:15');
+});
+
+test('formatTimelineTime formats half hours', () => {
+  expect(formatTimelineTime(14.5)).toBe('14:30');
 });
