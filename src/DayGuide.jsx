@@ -14,6 +14,7 @@ import {
 } from './engines/filterEngine';
 import { selectTransportOptions } from './engines/transportEngine';
 import {
+  buildTimelineEntries,
   calculateTimelineDuration,
   formatTimelineTime,
 } from './engines/timelineEngine';
@@ -322,23 +323,13 @@ const DayGuide = () => {
   };
 
   const buildTimeline = (restaurants = selectedRestaurants, activities = selectedActivities) => {
-    let currentTime = startTime;
-    const allItems = [...activities, ...restaurants];
-    const newTimeline = allItems.map((item, index) => {
-      const entry = {
-        id: `${index}-${item.id}`,
-        time: formatTimelineTime(currentTime),
-        activity: item.name,
-        duration: item.duration,
-        distance: item.distance,
-        category: item.category || (Array.isArray(item.cuisine) ? item.cuisine[0] : item.cuisine),
-        icon: item.category ? item.image : getCuisineEmoji(item.cuisine),
-        address: item.address,
-        rating: item.rating,
-      };
-      currentTime += item.duration + 0.25;
-      return entry;
+    const newTimeline = buildTimelineEntries({
+      restaurants,
+      activities,
+      startTime,
+      getCuisineEmoji,
     });
+
     setTimeline(newTimeline);
     setStage('timeline');
   };
