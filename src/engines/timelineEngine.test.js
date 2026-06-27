@@ -3,6 +3,7 @@
   buildTimelineShareText,
   calculateTimelineDuration,
   formatTimelineTime,
+  getTimelineCategoryLabel,
   updateTimelineItemDuration,
 } from './timelineEngine';
 
@@ -218,4 +219,26 @@ test('buildTimelineShareText falls back to the category for untranslated cuisine
     '',
     '12:00  food-icon thai: Lunch (1h)',
   ].join('\n'));
+});
+
+test('getTimelineCategoryLabel returns an interest label for activity categories', () => {
+  const t = (key, fallback) => ({
+    'interests.museums': 'Museums',
+  }[key] ?? fallback ?? key);
+
+  expect(getTimelineCategoryLabel({
+    category: 'museums',
+    activityCategories: new Set(['museums']),
+    t,
+  })).toBe('Museums');
+});
+
+test('getTimelineCategoryLabel returns a cuisine label with category fallback', () => {
+  const t = (key, fallback) => fallback ?? key;
+
+  expect(getTimelineCategoryLabel({
+    category: 'thai',
+    activityCategories: new Set(['museums']),
+    t,
+  })).toBe('thai');
 });

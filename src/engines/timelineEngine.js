@@ -36,6 +36,15 @@ export const buildTimelineEntries = ({
   });
 };
 
+export const getTimelineCategoryLabel = ({
+  category,
+  t,
+  activityCategories = new Set(),
+}) =>
+  activityCategories.has(category)
+    ? t(`interests.${category}`)
+    : t(`cuisine.${category}`, category);
+
 export const buildTimelineShareText = ({
   timeline = [],
   t,
@@ -44,9 +53,11 @@ export const buildTimelineShareText = ({
   const lines = [`DayGuide \u2014 ${t('timeline.title')}`, ''];
 
   timeline.forEach(item => {
-    const catLabel = activityCategories.has(item.category)
-      ? t(`interests.${item.category}`)
-      : t(`cuisine.${item.category}`, item.category);
+    const catLabel = getTimelineCategoryLabel({
+      category: item.category,
+      t,
+      activityCategories,
+    });
 
     lines.push(`${item.time}  ${item.icon} ${catLabel}: ${item.activity} (${item.duration}h)`);
   });

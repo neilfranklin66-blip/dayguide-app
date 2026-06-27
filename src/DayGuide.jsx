@@ -17,6 +17,7 @@ import {
   buildTimelineEntries,
   buildTimelineShareText,
   calculateTimelineDuration,
+  getTimelineCategoryLabel,
   updateTimelineItemDuration,
 } from './engines/timelineEngine';
 import './DayGuide.css';
@@ -774,9 +775,11 @@ const DayGuide = () => {
                         <span className="timeline-icon">{item.icon}</span>
                         <div className="activity-details">
                           <p className="card-type-label timeline-category">
-                            {ACTIVITY_CATEGORIES.has(item.category)
-                              ? t(`interests.${item.category}`)
-                              : t(`cuisine.${item.category}`, item.category)}
+                            {getTimelineCategoryLabel({
+                              category: item.category,
+                              t,
+                              activityCategories: ACTIVITY_CATEGORIES,
+                            })}
                           </p>
                           <h4>{item.activity}</h4>
                           <div className="duration-section">
