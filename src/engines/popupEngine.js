@@ -1,3 +1,15 @@
+export const findNearbyRestaurantSuggestion = ({
+  restaurants = [],
+  timeline = [],
+  maxDistanceKm = 0.5,
+  minRating = 4.3,
+}) =>
+  restaurants.find(restaurant =>
+    restaurant.distance <= maxDistanceKm &&
+    restaurant.rating >= minRating &&
+    !timeline.some(item => item.activity === restaurant.name)
+  );
+
 export const hasLongActivityRun = ({
   timeline = [],
   activityCategories = new Set(),

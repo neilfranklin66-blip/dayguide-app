@@ -21,6 +21,7 @@ import {
   updateTimelineItemDuration,
 } from './engines/timelineEngine';
 import {
+  findNearbyRestaurantSuggestion,
   hasLongActivityRun,
   shouldSuggestActivityBreak,
 } from './engines/popupEngine';
@@ -156,11 +157,13 @@ const DayGuide = () => {
 
       // Trigger 1: highly-rated restaurant within 500m not already in plan
       if (canShowPopup('nearbyRestaurant')) {
-        const nearby = mockRestaurantData.find(r =>
-          r.distance <= 0.5 &&
-          r.rating >= 4.3 &&
-          !timeline.some(t => t.activity === r.name)
-        );
+        const nearby = findNearbyRestaurantSuggestion({
+          restaurants: mockRestaurantData,
+          timeline,
+          maxDistanceKm: 0.5,
+          minRating: 4.3,
+        });
+
         if (nearby) {
           showPopup('nearbyRestaurant', { restaurant: nearby });
           return;
