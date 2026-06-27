@@ -20,6 +20,10 @@ import {
   getTimelineCategoryLabel,
   updateTimelineItemDuration,
 } from './engines/timelineEngine';
+import {
+  hasLongActivityRun,
+  shouldSuggestActivityBreak,
+} from './engines/popupEngine';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -164,22 +168,28 @@ const DayGuide = () => {
       }
 
       // Trigger 3: 2+ consecutive hours of activities without a food break
-      if (canShowPopup('coffeeBreak')) {
-        let consecutive = 0;
-        for (const item of timeline) {
-          if (ACTIVITY_CATEGORIES.has(item.category)) {
-            consecutive += item.duration;
-            if (consecutive >= 2) { showPopup('coffeeBreak'); return; }
-          } else {
-            consecutive = 0;
-          }
-        }
+      if (
+        canShowPopup('coffeeBreak') &&
+        hasLongActivityRun({
+          timeline,
+          activityCategories: ACTIVITY_CATEGORIES,
+          thresholdHours: 2,
+        })
+      ) {
+        showPopup('coffeeBreak');
+        return;
       }
 
-      // Trigger 2: plan has restaurants but zero activities — only when 2+ items (single restaurant is intentional)
-      if (canShowPopup('activityBreak')) {
-        const hasActivities = timeline.some(item => ACTIVITY_CATEGORIES.has(item.category));
-        if (!hasActivities && timeline.length >= 2) { showPopup('activityBreak'); }
+      // Trigger 2: plan has restaurants but zero activities - only when 2+ items (single restaurant is intentional)
+      if (
+        canShowPopup('activityBreak') &&
+        shouldSuggestActivityBreak({
+          timeline,
+          activityCategories: ACTIVITY_CATEGORIES,
+          minItems: 2,
+        })
+      ) {
+        showPopup('activityBreak');
       }
     }, 1500);
 
