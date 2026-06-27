@@ -13,6 +13,7 @@ import {
   getActivitiesForInterests as getFilteredActivitiesForInterests,
 } from './engines/filterEngine';
 import { selectTransportOptions } from './engines/transportEngine';
+import { createSwipeSelection } from './engines/selectionEngine';
 import {
   buildTimelineEntries,
   buildTimelineShareText,
@@ -300,9 +301,11 @@ const DayGuide = () => {
 
   const swipeActivity = (liked) => {
     const currentActivity = activityQueue[currentActivityIndex];
-    const newSelected = liked && currentActivity
-      ? [...selectedActivities, currentActivity]
-      : selectedActivities;
+    const newSelected = createSwipeSelection({
+      liked,
+      currentItem: currentActivity,
+      selectedItems: selectedActivities,
+    });
 
     if (liked && currentActivity) {
       setSelectedActivities(newSelected);
@@ -322,9 +325,11 @@ const DayGuide = () => {
 
   const swipeRestaurant = (liked) => {
     const currentRestaurant = restaurantQueue[currentRestaurantIndex];
-    const newSelected = liked && currentRestaurant
-      ? [...selectedRestaurants, currentRestaurant]
-      : selectedRestaurants;
+    const newSelected = createSwipeSelection({
+      liked,
+      currentItem: currentRestaurant,
+      selectedItems: selectedRestaurants,
+    });
 
     if (liked && currentRestaurant) {
       selectedRestaurantsRef.current = newSelected;
