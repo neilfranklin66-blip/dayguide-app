@@ -1,5 +1,6 @@
 import {
   findNearbyRestaurantSuggestion,
+  getPopupMessage,
   hasLongActivityRun,
   shouldSuggestActivityBreak,
 } from './popupEngine';
@@ -115,4 +116,43 @@ test('findNearbyRestaurantSuggestion returns undefined when no restaurant qualif
     maxDistanceKm: 0.5,
     minRating: 4.3,
   })).toBeUndefined();
+});
+
+test('getPopupMessage builds the nearby restaurant popup message', () => {
+  const t = (key, params) => {
+    if (key.startsWith('cuisine.')) return key.replace('cuisine.', '');
+    if (params) return `${key}:${params.cuisine}:${params.name}:${params.distance}`;
+    return key;
+  };
+
+  const popup = {
+    type: 'nearbyRestaurant',
+    restaurant: {
+      name: 'Dishoom',
+      cuisine: ['indian'],
+      distance: 0.42,
+    },
+  };
+
+  expect(getPopupMessage({ popup, t })).toBe(
+    'popups.nearbyRestaurant.message:indian:Dishoom:420'
+  );
+});
+
+test('getPopupMessage falls back to the generic popup message key', () => {
+  const t = key => key;
+
+  expect(getPopupMessage({
+    popup: { type: 'coffeeBreak' },
+    t,
+  })).toBe('popups.coffeeBreak.message');
+});
+
+test('getPopupMessage returns an empty string when there is no popup', () => {
+  const t = key => key;
+
+  expect(getPopupMessage({
+    popup: null,
+    t,
+  })).toBe('');
 });

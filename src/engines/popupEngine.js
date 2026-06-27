@@ -39,3 +39,26 @@ export const shouldSuggestActivityBreak = ({
 }) =>
   timeline.length >= minItems &&
   !timeline.some(item => activityCategories.has(item.category));
+
+export const getPopupMessage = ({
+  popup,
+  t,
+}) => {
+  if (!popup) return '';
+
+  if (popup.type === 'nearbyRestaurant' && popup.restaurant) {
+    const restaurant = popup.restaurant;
+    const cuisineLabel = (restaurant.cuisine || [])
+      .map(cuisine => t(`cuisine.${cuisine}`))
+      .join('/');
+    const distanceM = Math.round(restaurant.distance * 1000);
+
+    return t('popups.nearbyRestaurant.message', {
+      cuisine: cuisineLabel,
+      name: restaurant.name,
+      distance: distanceM,
+    });
+  }
+
+  return t(`popups.${popup.type}.message`);
+};

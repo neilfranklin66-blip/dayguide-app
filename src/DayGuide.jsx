@@ -22,6 +22,7 @@ import {
 } from './engines/timelineEngine';
 import {
   findNearbyRestaurantSuggestion,
+  getPopupMessage,
   hasLongActivityRun,
   shouldSuggestActivityBreak,
 } from './engines/popupEngine';
@@ -379,19 +380,10 @@ const DayGuide = () => {
       coffeeBreak: '☕',
     };
 
-    const getMessage = () => {
-      if (activePopup.type === 'nearbyRestaurant' && activePopup.restaurant) {
-        const r = activePopup.restaurant;
-        const cuisineLabel = r.cuisine.map(c => t(`cuisine.${c}`)).join('/');
-        const distanceM = Math.round(r.distance * 1000);
-        return t('popups.nearbyRestaurant.message', {
-          cuisine: cuisineLabel,
-          name: r.name,
-          distance: distanceM,
-        });
-      }
-      return t(`popups.${activePopup.type}.message`);
-    };
+    const getMessage = () => getPopupMessage({
+      popup: activePopup,
+      t,
+    });
 
     return (
       <div className="popup-overlay" onClick={handlePopupNo}>
