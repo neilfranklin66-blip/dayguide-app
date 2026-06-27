@@ -13,6 +13,7 @@ import {
   getActivitiesForInterests as getFilteredActivitiesForInterests,
 } from './engines/filterEngine';
 import { selectTransportOptions } from './engines/transportEngine';
+import { getRestaurantSourceFromError } from './engines/restaurantEngine';
 import { createSwipeSelection } from './engines/selectionEngine';
 import {
   buildTimelineEntries,
@@ -289,11 +290,7 @@ const DayGuide = () => {
       }
     } catch (err) {
       setRestaurantQueue(buildRestaurantQueue(cuisineOverride, priceOverride));
-      const msg = err.message;
-      if (msg === 'NO_API_KEY') setRestaurantSource('no_key');
-      else if (msg === 'QUOTA_EXCEEDED') setRestaurantSource('quota');
-      else if (msg === 'NO_LOCATION') setRestaurantSource('no_location');
-      else setRestaurantSource('error');
+      setRestaurantSource(getRestaurantSourceFromError(err));
     } finally {
       setIsRestaurantsLoading(false);
     }
