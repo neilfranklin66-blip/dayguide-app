@@ -15,6 +15,7 @@ import {
 import { selectTransportOptions } from './engines/transportEngine';
 import {
   buildTimelineEntries,
+  buildTimelineShareText,
   calculateTimelineDuration,
   updateTimelineItemDuration,
 } from './engines/timelineEngine';
@@ -824,16 +825,11 @@ const DayGuide = () => {
     return null;
   };
 
-  const buildQRContent = () => {
-    const lines = [`DayGuide — ${t('timeline.title')}`, ''];
-    timeline.forEach(item => {
-      const catLabel = ACTIVITY_CATEGORIES.has(item.category)
-        ? t(`interests.${item.category}`)
-        : t(`cuisine.${item.category}`, item.category);
-      lines.push(`${item.time}  ${item.icon} ${catLabel}: ${item.activity} (${item.duration}h)`);
-    });
-    return lines.join('\n');
-  };
+  const buildQRContent = () => buildTimelineShareText({
+    timeline,
+    t,
+    activityCategories: ACTIVITY_CATEGORIES,
+  });
 
   const renderQRModal = () => {
     if (!showQR) return null;

@@ -36,6 +36,24 @@ export const buildTimelineEntries = ({
   });
 };
 
+export const buildTimelineShareText = ({
+  timeline = [],
+  t,
+  activityCategories = new Set(),
+}) => {
+  const lines = [`DayGuide \u2014 ${t('timeline.title')}`, ''];
+
+  timeline.forEach(item => {
+    const catLabel = activityCategories.has(item.category)
+      ? t(`interests.${item.category}`)
+      : t(`cuisine.${item.category}`, item.category);
+
+    lines.push(`${item.time}  ${item.icon} ${catLabel}: ${item.activity} (${item.duration}h)`);
+  });
+
+  return lines.join('\n');
+};
+
 export const updateTimelineItemDuration = (timeline, index, newDuration) => {
   const updated = [...timeline];
   updated[index] = { ...updated[index], duration: newDuration };

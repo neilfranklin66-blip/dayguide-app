@@ -1,5 +1,6 @@
 ﻿import {
   buildTimelineEntries,
+  buildTimelineShareText,
   calculateTimelineDuration,
   formatTimelineTime,
   updateTimelineItemDuration,
@@ -157,4 +158,64 @@ test('updateTimelineItemDuration does not mutate the original timeline', () => {
   expect(updated).not.toBe(timeline);
   expect(updated[0]).toBe(timeline[0]);
   expect(updated[1]).not.toBe(timeline[1]);
+});
+
+test('buildTimelineShareText formats activity and cuisine timeline lines', () => {
+  const t = (key, fallback) => ({
+    'timeline.title': 'Your Plan',
+    'interests.museums': 'Museums',
+    'cuisine.cafe': 'Cafe',
+  }[key] ?? fallback ?? key);
+
+  const text = buildTimelineShareText({
+    activityCategories: new Set(['museums']),
+    t,
+    timeline: [
+      {
+        time: '9:00',
+        icon: 'museum-icon',
+        category: 'museums',
+        activity: 'Museum Visit',
+        duration: 1,
+      },
+      {
+        time: '10:15',
+        icon: 'cafe-icon',
+        category: 'cafe',
+        activity: 'Coffee Stop',
+        duration: 0.5,
+      },
+    ],
+  });
+
+  expect(text).toBe([
+    'DayGuide \u2014 Your Plan',
+    '',
+    '9:00  museum-icon Museums: Museum Visit (1h)',
+    '10:15  cafe-icon Cafe: Coffee Stop (0.5h)',
+  ].join('\n'));
+});
+
+test('buildTimelineShareText falls back to the category for untranslated cuisine', () => {
+  const t = (key, fallback) => fallback ?? key;
+
+  const text = buildTimelineShareText({
+    activityCategories: new Set(['museums']),
+    t,
+    timeline: [
+      {
+        time: '12:00',
+        icon: 'food-icon',
+        category: 'thai',
+        activity: 'Lunch',
+        duration: 1,
+      },
+    ],
+  });
+
+  expect(text).toBe([
+    'DayGuide \u2014 timeline.title',
+    '',
+    '12:00  food-icon thai: Lunch (1h)',
+  ].join('\n'));
 });
