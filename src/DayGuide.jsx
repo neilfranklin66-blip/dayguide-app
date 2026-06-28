@@ -833,11 +833,6 @@ const DayGuide = () => {
     return null;
   };
 
-  const buildQRContent = () => buildTimelineShareText({
-    timeline,
-    t,
-    activityCategories: ACTIVITY_CATEGORIES,
-  });
 
   const renderQRModal = () => {
     if (!showQR) return null;
@@ -848,7 +843,7 @@ const DayGuide = () => {
           <div className="popup-icon">📲</div>
           <h3 className="popup-title">{t('timeline.shareTitle')}</h3>
           <div className="qr-wrapper">
-            <QRCodeSVG value={buildQRContent()} size={200} />
+            <QRCodeSVG value={buildTimelineShareText({ timeline, t, activityCategories: ACTIVITY_CATEGORIES })} size={200} />
           </div>
           <p className="popup-message qr-hint">{t('timeline.shareHint')}</p>
         </div>
