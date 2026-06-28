@@ -366,8 +366,6 @@ const DayGuide = () => {
     }
   };
 
-  const handlePopupNo = () => dismissPopup();
-  const handlePopupSkip = () => dismissPopup();
 
   // --- Render helpers ---
 
@@ -386,9 +384,9 @@ const DayGuide = () => {
     });
 
     return (
-      <div className="popup-overlay" onClick={handlePopupNo}>
+      <div className="popup-overlay" onClick={dismissPopup}>
         <div className="popup-card" onClick={e => e.stopPropagation()}>
-          <button className="popup-close" onClick={handlePopupNo} aria-label="Close">✕</button>
+          <button className="popup-close" onClick={dismissPopup} aria-label="Close">✕</button>
           <div className="popup-icon">{icons[activePopup.type]}</div>
           <h3 className="popup-title">{t(`popups.${activePopup.type}.title`)}</h3>
           <p className="popup-message">{getMessage()}</p>
@@ -396,11 +394,11 @@ const DayGuide = () => {
             <button className="popup-btn popup-btn-yes" onClick={() => handlePopupYes(activePopup)}>
               {t(`popups.${activePopup.type}.yes`)}
             </button>
-            <button className="popup-btn popup-btn-no" onClick={handlePopupNo}>
+            <button className="popup-btn popup-btn-no" onClick={dismissPopup}>
               {t(`popups.${activePopup.type}.no`)}
             </button>
             {activePopup.type === 'nearbyRestaurant' && (
-              <button className="popup-btn popup-btn-skip" onClick={handlePopupSkip}>
+              <button className="popup-btn popup-btn-skip" onClick={dismissPopup}>
                 {t('popups.nearbyRestaurant.skip')}
               </button>
             )}
