@@ -14,7 +14,7 @@ import {
 } from './engines/filterEngine';
 import { selectTransportOptions } from './engines/transportEngine';
 import { getRestaurantSourceFromError } from './engines/restaurantEngine';
-import { createSwipeSelection } from './engines/selectionEngine';
+import { createSwipeSelection, toggleIdSelection } from './engines/selectionEngine';
 import {
   buildTimelineEntries,
   buildTimelineShareText,
@@ -239,10 +239,10 @@ const DayGuide = () => {
   };
 
   const toggleInterest = (id) =>
-    setSelectedInterests(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+    setSelectedInterests(prev => toggleIdSelection(prev, id));
 
   const toggleCuisine = (id) =>
-    setSelectedCuisines(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+    setSelectedCuisines(prev => toggleIdSelection(prev, id));
 
   const getActivitiesForInterests = (interests = selectedInterests) =>
     getFilteredActivitiesForInterests({

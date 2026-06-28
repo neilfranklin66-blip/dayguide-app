@@ -1,4 +1,4 @@
-import { createSwipeSelection } from './selectionEngine';
+import { createSwipeSelection, toggleIdSelection } from './selectionEngine';
 
 test('createSwipeSelection appends the current item when liked', () => {
   const selectedItems = [{ id: 'existing' }];
@@ -33,4 +33,12 @@ test('createSwipeSelection returns the original selection when there is no curre
     currentItem: undefined,
     selectedItems,
   })).toBe(selectedItems);
+});
+
+test('toggleIdSelection adds an id when it is not selected', () => {
+  expect(toggleIdSelection(['museums'], 'parks')).toEqual(['museums', 'parks']);
+});
+
+test('toggleIdSelection removes an id when it is already selected', () => {
+  expect(toggleIdSelection(['museums', 'parks'], 'museums')).toEqual(['parks']);
 });
