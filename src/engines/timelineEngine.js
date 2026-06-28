@@ -1,4 +1,4 @@
-﻿export const calculateTimelineDuration = (timeline, gapHours = 0.25) => {
+export const calculateTimelineDuration = (timeline, gapHours = 0.25) => {
   const itemDuration = timeline.reduce((sum, item) => sum + item.duration, 0);
   const gapDuration = Math.max(0, timeline.length - 1) * gapHours;
 
@@ -26,7 +26,9 @@ export const buildTimelineEntries = ({
       duration: item.duration,
       distance: item.distance,
       category: item.category || (Array.isArray(item.cuisine) ? item.cuisine[0] : item.cuisine),
-      icon: item.category ? item.image : getCuisineEmoji(item.cuisine),
+      icon: item.type === 'food_drink' || item.category === 'Food and Drinks'
+        ? getCuisineEmoji(item.cuisine)
+        : item.image,
       address: item.address,
       rating: item.rating,
     };

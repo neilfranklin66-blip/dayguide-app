@@ -535,6 +535,8 @@ p {
   color: #999;
   font-style: italic;
   margin-top: 15px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .swipe-buttons {
@@ -586,6 +588,7 @@ p {
   display: flex;
   gap: 15px;
   flex: 1;
+  min-width: 0;
   text-align: left;
 }
 
@@ -599,6 +602,7 @@ p {
 
 .activity-details {
   flex: 1;
+  min-width: 0;
 }
 
 .activity-details h4 {

@@ -144,7 +144,7 @@ const DayGuide = () => {
 
   const canShowPopup = (type) => {
     const last = popupCooldowns.current[type];
-    return !last || Date.now() - last > 3600000;
+    return !last || Date.now() - last > 7200000;
   };
 
   // Popup triggers: fire once after entering timeline with a populated plan
@@ -297,6 +297,7 @@ const DayGuide = () => {
     });
 
     if (liked && currentRestaurant) {
+      popupCooldowns.current.nearbyRestaurant = Date.now();
       selectedRestaurantsRef.current = newSelected;
       setSelectedRestaurants(newSelected);
     }

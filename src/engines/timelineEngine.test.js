@@ -1,4 +1,4 @@
-﻿import {
+import {
   buildTimelineEntries,
   buildTimelineShareText,
   calculateTimelineDuration,
@@ -46,7 +46,7 @@ test('formatTimelineTime formats half hours', () => {
   expect(formatTimelineTime(14.5)).toBe('14:30');
 });
 
-test('buildTimelineEntries combines activities before restaurants', () => {
+test('buildTimelineEntries combines activities before restaurants without rendering restaurant image URLs as icons', () => {
   const entries = buildTimelineEntries({
     startTime: 9,
     getCuisineEmoji: () => 'food-icon',
@@ -68,7 +68,10 @@ test('buildTimelineEntries combines activities before restaurants', () => {
         name: 'Cafe',
         duration: 0.5,
         distance: 0.2,
+        type: 'food_drink',
+        category: 'Food and Drinks',
         cuisine: ['cafe'],
+        image: 'https://placehold.co/400x300/cafe',
         address: '2 Cafe Street',
         rating: 4.4,
       },
@@ -76,6 +79,7 @@ test('buildTimelineEntries combines activities before restaurants', () => {
   });
 
   expect(entries.map(entry => entry.activity)).toEqual(['Museum', 'Cafe']);
+  expect(entries[1].icon).toBe('food-icon');
 });
 
 test('buildTimelineEntries creates timeline fields and times', () => {
@@ -100,7 +104,10 @@ test('buildTimelineEntries creates timeline fields and times', () => {
         name: 'Cafe',
         duration: 0.5,
         distance: 0.2,
+        type: 'food_drink',
+        category: 'Food and Drinks',
         cuisine: ['cafe'],
+        image: 'https://placehold.co/400x300/cafe',
         address: '2 Cafe Street',
         rating: 4.4,
       },
@@ -125,7 +132,7 @@ test('buildTimelineEntries creates timeline fields and times', () => {
       activity: 'Cafe',
       duration: 0.5,
       distance: 0.2,
-      category: 'cafe',
+      category: 'Food and Drinks',
       icon: 'food-icon',
       address: '2 Cafe Street',
       rating: 4.4,
