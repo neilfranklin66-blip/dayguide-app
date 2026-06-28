@@ -106,8 +106,6 @@ const DayGuide = () => {
     { mode: 'bus', time: 12, cost: '£1.75', emoji: '🚌' },
   ];
 
-  const getSmartTransportOptions = (distance) =>
-    selectTransportOptions(transportOptions, distance);
 
   const interestCategories = [
     { id: 'museums', label: t('interests.museums'), icon: '🏛️' },
@@ -805,7 +803,7 @@ const DayGuide = () => {
                       <div className="transport-section">
                         <div className="transport-label">{t('timeline.howToGetThere')}</div>
                         <div className="transport-options">
-                          {getSmartTransportOptions(item.distance).map((option, i) => (
+                          {selectTransportOptions(transportOptions, item.distance).map((option, i) => (
                             <div key={i} className="transport-option">
                               <div className="transport-emoji">{option.emoji}</div>
                               <div className="transport-details">
