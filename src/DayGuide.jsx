@@ -378,10 +378,6 @@ const DayGuide = () => {
       coffeeBreak: '☕',
     };
 
-    const getMessage = () => getPopupMessage({
-      popup: activePopup,
-      t,
-    });
 
     return (
       <div className="popup-overlay" onClick={dismissPopup}>
@@ -389,7 +385,7 @@ const DayGuide = () => {
           <button className="popup-close" onClick={dismissPopup} aria-label="Close">✕</button>
           <div className="popup-icon">{icons[activePopup.type]}</div>
           <h3 className="popup-title">{t(`popups.${activePopup.type}.title`)}</h3>
-          <p className="popup-message">{getMessage()}</p>
+          <p className="popup-message">{getPopupMessage({ popup: activePopup, t })}</p>
           <div className="popup-buttons">
             <button className="popup-btn popup-btn-yes" onClick={() => handlePopupYes(activePopup)}>
               {t(`popups.${activePopup.type}.yes`)}
