@@ -35,6 +35,31 @@ test('hasLongActivityRun resets consecutive duration after a non-activity item',
   })).toBe(false);
 });
 
+test('hasLongActivityRun returns false when a long activity run is followed by food and drinks', () => {
+  const timeline = [
+    { category: 'museums', duration: 2 },
+    { type: 'food_drink', category: 'Food and Drinks', duration: 1 },
+  ];
+
+  expect(hasLongActivityRun({
+    timeline,
+    activityCategories,
+    thresholdHours: 2,
+  })).toBe(false);
+});
+
+test('hasLongActivityRun returns true when food and drinks is followed by a long activity run', () => {
+  const timeline = [
+    { type: 'food_drink', category: 'Food and Drinks', duration: 1 },
+    { category: 'museums', duration: 2 },
+  ];
+
+  expect(hasLongActivityRun({
+    timeline,
+    activityCategories,
+    thresholdHours: 2,
+  })).toBe(true);
+});
 test('shouldSuggestActivityBreak returns true when a multi-item timeline has no activities', () => {
   const timeline = [
     { category: 'cafe', duration: 1 },

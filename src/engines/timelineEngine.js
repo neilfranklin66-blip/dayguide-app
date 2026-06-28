@@ -14,9 +14,12 @@ export const buildTimelineEntries = ({
   startTime,
   getCuisineEmoji,
   gapHours = 0.25,
+  startWith = 'activities',
 }) => {
   let currentTime = startTime;
-  const allItems = [...activities, ...restaurants];
+  const allItems = startWith === 'food_drinks'
+    ? [...restaurants, ...activities]
+    : [...activities, ...restaurants];
 
   return allItems.map((item, index) => {
     const entry = {

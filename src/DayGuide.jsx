@@ -71,6 +71,7 @@ const DayGuide = () => {
   const [availableTime, setAvailableTime] = useState(4);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [hasChildren, setHasChildren] = useState(null);
+  const [startWith, setStartWith] = useState('activities');
   const [startTime, setStartTime] = useState(() => {
     const now = new Date();
       return now.getHours() + now.getMinutes() / 60;
@@ -189,7 +190,9 @@ const DayGuide = () => {
     setSelectedActivities([]);
     setSelectedRestaurants([]);
     selectedRestaurantsRef.current = [];
+    setHasChildren(null);
     setAvailableTime(4);
+    setStartWith('activities');
     const now = new Date();
     setStartTime(now.getHours() + now.getMinutes() / 60);
     setCurrentActivityIndex(0);
@@ -229,6 +232,30 @@ const DayGuide = () => {
       price,
       selectedRestaurants: selectedRestaurantsRef.current,
     });
+  };
+
+  const goToNextSelectionStage = () => {
+    if (startWith === 'food_drinks') {
+      goToRestaurants();
+    } else {
+      goToActivities();
+    }
+  };
+
+  const continueAfterRestaurants = (restaurants = selectedRestaurantsRef.current) => {
+    if (startWith === 'food_drinks') {
+      goToActivities();
+    } else {
+      buildTimeline(restaurants);
+    }
+  };
+
+  const continueAfterActivities = (activities = selectedActivities) => {
+    if (startWith === 'food_drinks') {
+      buildTimeline(selectedRestaurantsRef.current, activities);
+    } else {
+      setStage('meal-prompt');
+    }
   };
 
   const goToActivities = () => {
@@ -283,7 +310,7 @@ const DayGuide = () => {
         popupActivityReturnRef.current = false;
         buildTimeline(selectedRestaurants, newSelected);
       } else {
-        setStage('meal-prompt');
+        continueAfterActivities(newSelected);
       }
     }
   };
@@ -305,7 +332,7 @@ const DayGuide = () => {
     if (currentRestaurantIndex < restaurantQueue.length - 1) {
       setCurrentRestaurantIndex(i => i + 1);
     } else {
-      buildTimeline(newSelected);
+      continueAfterRestaurants(newSelected);
     }
   };
 
@@ -315,6 +342,7 @@ const DayGuide = () => {
       activities,
       startTime,
       getCuisineEmoji,
+      startWith,
     });
 
     setTimeline(newTimeline);
@@ -507,8 +535,26 @@ const DayGuide = () => {
               </div>
             </div>
 
+            <div className="time-selector">
+              <label>{t('interests.startWithTitle')}</label>
+              <div className="price-options">
+                <button
+                  className={startWith === 'activities' ? 'price-btn selected' : 'price-btn'}
+                  onClick={() => setStartWith('activities')}
+                >
+                  {t('interests.startWithActivities')}
+                </button>
+                <button
+                  className={startWith === 'food_drinks' ? 'price-btn selected' : 'price-btn'}
+                  onClick={() => setStartWith('food_drinks')}
+                >
+                  {t('interests.startWithFoodDrinks')}
+                </button>
+              </div>
+            </div>
+
             <button
-              onClick={goToActivities}
+              onClick={goToNextSelectionStage}
               disabled={selectedInterests.length === 0 || hasChildren === null}
               className="btn-primary"
             >
@@ -549,7 +595,7 @@ const DayGuide = () => {
           <div className="dayguide-container">
             <div className="card">
               <h2>{t('activities.noMore')}</h2>
-              <button onClick={() => setStage('meal-prompt')} className="btn-primary">
+              <button onClick={() => continueAfterActivities()} className="btn-primary">
                 {t('interests.next')}
               </button>
             </div>
@@ -591,7 +637,7 @@ const DayGuide = () => {
               <button onClick={goToRestaurants} className="btn-primary">
                 {t('mealPrompt.yes')}
               </button>
-              <button onClick={() => buildTimeline([])} className="btn-secondary">
+              <button onClick={() => continueAfterRestaurants([])} className="btn-secondary">
                 {t('mealPrompt.no')}
               </button>
             </div>
@@ -654,7 +700,7 @@ const DayGuide = () => {
                     {t('restaurants.removePriceFilter')}
                   </button>
                 )}
-                <button onClick={() => buildTimeline([])} className="btn-secondary">
+                <button onClick={() => continueAfterRestaurants([])} className="btn-secondary">
                   {t('restaurants.skipAndContinue')}
                 </button>
               </div>
@@ -670,7 +716,7 @@ const DayGuide = () => {
           <div className="dayguide-container">
             <div className="card">
               <h2>{t('restaurants.noMore')}</h2>
-              <button onClick={() => buildTimeline(selectedRestaurants)} className="btn-primary">
+              <button onClick={() => continueAfterRestaurants(selectedRestaurants)} className="btn-primary">
                 {t('restaurants.buildItinerary')}
               </button>
             </div>

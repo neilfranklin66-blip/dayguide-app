@@ -140,6 +140,43 @@ test('buildTimelineEntries creates timeline fields and times', () => {
   ]);
 });
 
+test('buildTimelineEntries supports food and drinks first ordering', () => {
+  const entries = buildTimelineEntries({
+    startTime: 9,
+    getCuisineEmoji: () => 'food-icon',
+    startWith: 'food_drinks',
+    activities: [
+      {
+        id: 'museum-1',
+        name: 'Museum',
+        duration: 1,
+        distance: 0.4,
+        category: 'museums',
+        image: 'museum-icon',
+        address: '1 Museum Street',
+        rating: 4.7,
+      },
+    ],
+    restaurants: [
+      {
+        id: 'cafe-1',
+        name: 'Cafe',
+        duration: 0.5,
+        distance: 0.2,
+        type: 'food_drink',
+        category: 'Food and Drinks',
+        cuisine: ['cafe'],
+        image: 'https://placehold.co/400x300/cafe',
+        address: '2 Cafe Street',
+        rating: 4.4,
+      },
+    ],
+  });
+
+  expect(entries.map(entry => entry.activity)).toEqual(['Cafe', 'Museum']);
+  expect(entries[0].time).toBe('9:00');
+  expect(entries[1].time).toBe('9:45');
+});
 test('updateTimelineItemDuration updates only the selected item duration', () => {
   const timeline = [
     { id: 'first', duration: 1, activity: 'Museum' },

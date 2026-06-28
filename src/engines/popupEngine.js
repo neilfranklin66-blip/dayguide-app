@@ -20,16 +20,12 @@ export const hasLongActivityRun = ({
   for (const item of timeline) {
     if (activityCategories.has(item.category)) {
       consecutive += item.duration;
-
-      if (consecutive >= thresholdHours) {
-        return true;
-      }
     } else {
       consecutive = 0;
     }
   }
 
-  return false;
+  return consecutive >= thresholdHours;
 };
 
 export const shouldSuggestActivityBreak = ({
