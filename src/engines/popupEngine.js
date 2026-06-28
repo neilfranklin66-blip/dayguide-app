@@ -40,6 +40,53 @@ export const shouldSuggestActivityBreak = ({
   timeline.length >= minItems &&
   !timeline.some(item => activityCategories.has(item.category));
 
+export const getTimelinePopupSuggestion = ({
+  restaurants = [],
+  timeline = [],
+  activityCategories = new Set(),
+  canShowPopup = () => true,
+  maxDistanceKm = 0.5,
+  minRating = 4.3,
+  activityThresholdHours = 2,
+  activityBreakMinItems = 2,
+}) => {
+  if (canShowPopup('nearbyRestaurant')) {
+    const nearby = findNearbyRestaurantSuggestion({
+      restaurants,
+      timeline,
+      maxDistanceKm,
+      minRating,
+    });
+
+    if (nearby) {
+      return { type: 'nearbyRestaurant', restaurant: nearby };
+    }
+  }
+
+  if (
+    canShowPopup('coffeeBreak') &&
+    hasLongActivityRun({
+      timeline,
+      activityCategories,
+      thresholdHours: activityThresholdHours,
+    })
+  ) {
+    return { type: 'coffeeBreak' };
+  }
+
+  if (
+    canShowPopup('activityBreak') &&
+    shouldSuggestActivityBreak({
+      timeline,
+      activityCategories,
+      minItems: activityBreakMinItems,
+    })
+  ) {
+    return { type: 'activityBreak' };
+  }
+
+  return null;
+};
 export const getPopupMessage = ({
   popup,
   t,

@@ -23,10 +23,8 @@ import {
   updateTimelineItemDuration,
 } from './engines/timelineEngine';
 import {
-  findNearbyRestaurantSuggestion,
   getPopupMessage,
-  hasLongActivityRun,
-  shouldSuggestActivityBreak,
+  getTimelinePopupSuggestion,
 } from './engines/popupEngine';
 import './DayGuide.css';
 
@@ -156,44 +154,16 @@ const DayGuide = () => {
     const timer = setTimeout(() => {
       if (activePopupRef.current) return;
 
-      // Trigger 1: highly-rated restaurant within 500m not already in plan
-      if (canShowPopup('nearbyRestaurant')) {
-        const nearby = findNearbyRestaurantSuggestion({
-          restaurants: mockRestaurantData,
-          timeline,
-          maxDistanceKm: 0.5,
-          minRating: 4.3,
-        });
+      const popup = getTimelinePopupSuggestion({
+        restaurants: mockRestaurantData,
+        timeline,
+        activityCategories: ACTIVITY_CATEGORIES,
+        canShowPopup,
+      });
 
-        if (nearby) {
-          showPopup('nearbyRestaurant', { restaurant: nearby });
-          return;
-        }
-      }
-
-      // Trigger 3: 2+ consecutive hours of activities without a food break
-      if (
-        canShowPopup('coffeeBreak') &&
-        hasLongActivityRun({
-          timeline,
-          activityCategories: ACTIVITY_CATEGORIES,
-          thresholdHours: 2,
-        })
-      ) {
-        showPopup('coffeeBreak');
-        return;
-      }
-
-      // Trigger 2: plan has restaurants but zero activities - only when 2+ items (single restaurant is intentional)
-      if (
-        canShowPopup('activityBreak') &&
-        shouldSuggestActivityBreak({
-          timeline,
-          activityCategories: ACTIVITY_CATEGORIES,
-          minItems: 2,
-        })
-      ) {
-        showPopup('activityBreak');
+      if (popup) {
+        const { type, ...data } = popup;
+        showPopup(type, data);
       }
     }, 1500);
 
@@ -872,4 +842,3 @@ const DayGuide = () => {
 };
 
 export default DayGuide;
-

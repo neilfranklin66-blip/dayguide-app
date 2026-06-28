@@ -1,6 +1,7 @@
 import {
   findNearbyRestaurantSuggestion,
   getPopupMessage,
+  getTimelinePopupSuggestion,
   hasLongActivityRun,
   shouldSuggestActivityBreak,
 } from './popupEngine';
@@ -155,4 +156,60 @@ test('getPopupMessage returns an empty string when there is no popup', () => {
     popup: null,
     t,
   })).toBe('');
+});
+
+test('getTimelinePopupSuggestion returns the nearby restaurant popup first', () => {
+  const restaurants = [
+    { name: 'Good Nearby', distance: 0.4, rating: 4.4 },
+  ];
+  const timeline = [
+    { category: 'museums', duration: 2 },
+  ];
+
+  expect(getTimelinePopupSuggestion({
+    restaurants,
+    timeline,
+    activityCategories,
+    canShowPopup: () => true,
+  })).toEqual({
+    type: 'nearbyRestaurant',
+    restaurant: restaurants[0],
+  });
+});
+
+test('getTimelinePopupSuggestion returns coffee break when nearby restaurant is unavailable', () => {
+  const timeline = [
+    { category: 'museums', duration: 1 },
+    { category: 'parks', duration: 1 },
+  ];
+
+  expect(getTimelinePopupSuggestion({
+    restaurants: [],
+    timeline,
+    activityCategories,
+    canShowPopup: () => true,
+  })).toEqual({ type: 'coffeeBreak' });
+});
+
+test('getTimelinePopupSuggestion returns activity break when there are no activities', () => {
+  const timeline = [
+    { category: 'cafe', duration: 1 },
+    { category: 'thai', duration: 1 },
+  ];
+
+  expect(getTimelinePopupSuggestion({
+    restaurants: [],
+    timeline,
+    activityCategories,
+    canShowPopup: type => type !== 'coffeeBreak',
+  })).toEqual({ type: 'activityBreak' });
+});
+
+test('getTimelinePopupSuggestion returns null when no popup qualifies', () => {
+  expect(getTimelinePopupSuggestion({
+    restaurants: [],
+    timeline: [{ category: 'museums', duration: 0.5 }],
+    activityCategories,
+    canShowPopup: () => true,
+  })).toBeNull();
 });
