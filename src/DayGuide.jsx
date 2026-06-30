@@ -535,20 +535,23 @@ const DayGuide = () => {
               </div>
             </div>
 
-            <div className="time-selector">
+            <div className="time-selector start-order-selector">
               <label>{t('interests.startWithTitle')}</label>
-              <div className="price-options">
+              <p className="start-order-hint">{t('interests.startWithHint')}</p>
+              <div className="price-options start-order-options">
                 <button
-                  className={startWith === 'activities' ? 'price-btn selected' : 'price-btn'}
+                  className={startWith === 'activities' ? 'price-btn start-order-btn selected' : 'price-btn start-order-btn'}
                   onClick={() => setStartWith('activities')}
                 >
-                  {t('interests.startWithActivities')}
+                  <span className="start-order-icon">🎭</span>
+                  <span>{t('interests.startWithActivities')}</span>
                 </button>
                 <button
-                  className={startWith === 'food_drinks' ? 'price-btn selected' : 'price-btn'}
+                  className={startWith === 'food_drinks' ? 'price-btn start-order-btn selected' : 'price-btn start-order-btn'}
                   onClick={() => setStartWith('food_drinks')}
                 >
-                  {t('interests.startWithFoodDrinks')}
+                  <span className="start-order-icon">🍽️</span>
+                  <span>{t('interests.startWithFoodDrinks')}</span>
                 </button>
               </div>
             </div>

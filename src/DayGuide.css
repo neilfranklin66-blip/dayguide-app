@@ -419,6 +419,28 @@ p {
   flex-wrap: wrap;
 }
 
+.start-order-hint {
+  margin: -5px 0 15px;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.start-order-options {
+  margin-bottom: 0;
+}
+
+.start-order-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.start-order-icon {
+  font-size: 1.15em;
+}
+
 .price-btn {
   flex: 1;
   padding: 10px 8px;
