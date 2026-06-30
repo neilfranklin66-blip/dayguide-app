@@ -16,6 +16,11 @@ import { selectTransportOptions } from './engines/transportEngine';
 import { getRestaurantSourceFromError } from './engines/restaurantEngine';
 import { createSwipeSelection, toggleIdSelection } from './engines/selectionEngine';
 import {
+  getInitialSelectionRoute,
+  getRouteAfterActivities,
+  getRouteAfterRestaurants,
+} from './engines/itineraryRouteEngine';
+import {
   buildTimelineEntries,
   buildTimelineShareText,
   calculateTimelineDuration,
@@ -235,7 +240,9 @@ const DayGuide = () => {
   };
 
   const goToNextSelectionStage = () => {
-    if (startWith === 'food_drinks') {
+    const route = getInitialSelectionRoute({ startWith });
+
+    if (route === 'restaurants') {
       goToRestaurants();
     } else {
       goToActivities();
@@ -243,7 +250,9 @@ const DayGuide = () => {
   };
 
   const continueAfterRestaurants = (restaurants = selectedRestaurantsRef.current) => {
-    if (startWith === 'food_drinks') {
+    const route = getRouteAfterRestaurants({ startWith });
+
+    if (route === 'activities') {
       goToActivities();
     } else {
       buildTimeline(restaurants);
@@ -251,10 +260,12 @@ const DayGuide = () => {
   };
 
   const continueAfterActivities = (activities = selectedActivities) => {
-    if (startWith === 'food_drinks') {
+    const route = getRouteAfterActivities({ startWith });
+
+    if (route === 'timeline') {
       buildTimeline(selectedRestaurantsRef.current, activities);
     } else {
-      setStage('meal-prompt');
+      setStage(route);
     }
   };
 
