@@ -1,6 +1,7 @@
 import {
   findNearbyRestaurantSuggestion,
   getPopupMessage,
+  getPopupYesAction,
   getTimelinePopupSuggestion,
   hasLongActivityRun,
   shouldSuggestActivityBreak,
@@ -237,4 +238,22 @@ test('getTimelinePopupSuggestion returns null when no popup qualifies', () => {
     activityCategories,
     canShowPopup: () => true,
   })).toBeNull();
+});
+
+
+test('getPopupYesAction routes nearby restaurant popups to restaurant selection', () => {
+  expect(getPopupYesAction({ type: 'nearbyRestaurant' })).toBe('restaurants');
+});
+
+test('getPopupYesAction routes coffee break popups to restaurant selection', () => {
+  expect(getPopupYesAction({ type: 'coffeeBreak' })).toBe('restaurants');
+});
+
+test('getPopupYesAction routes activity break popups to activities then timeline return', () => {
+  expect(getPopupYesAction({ type: 'activityBreak' })).toBe('activitiesThenTimeline');
+});
+
+test('getPopupYesAction returns null for missing or unknown popups', () => {
+  expect(getPopupYesAction(null)).toBeNull();
+  expect(getPopupYesAction({ type: 'unknownPopup' })).toBeNull();
 });

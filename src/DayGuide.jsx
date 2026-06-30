@@ -29,6 +29,7 @@ import {
 } from './engines/timelineEngine';
 import {
   getPopupMessage,
+  getPopupYesAction,
   getTimelinePopupSuggestion,
 } from './engines/popupEngine';
 import './DayGuide.css';
@@ -368,9 +369,12 @@ const DayGuide = () => {
 
   const handlePopupYes = (popup) => {
     dismissPopup();
-    if (popup.type === 'nearbyRestaurant' || popup.type === 'coffeeBreak') {
+
+    const action = getPopupYesAction(popup);
+
+    if (action === 'restaurants') {
       goToRestaurants();
-    } else if (popup.type === 'activityBreak') {
+    } else if (action === 'activitiesThenTimeline') {
       popupActivityReturnRef.current = true;
       goToActivities();
     }

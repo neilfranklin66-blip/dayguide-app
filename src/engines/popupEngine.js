@@ -83,6 +83,20 @@ export const getTimelinePopupSuggestion = ({
 
   return null;
 };
+export const getPopupYesAction = (popup) => {
+  if (!popup) return null;
+
+  if (popup.type === 'nearbyRestaurant' || popup.type === 'coffeeBreak') {
+    return 'restaurants';
+  }
+
+  if (popup.type === 'activityBreak') {
+    return 'activitiesThenTimeline';
+  }
+
+  return null;
+};
+
 export const getPopupMessage = ({
   popup,
   t,
