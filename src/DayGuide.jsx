@@ -786,11 +786,36 @@ const DayGuide = () => {
               )}
               <h3>{currentRestaurant.name}</h3>
               {currentRestaurant.city && <p className="city-tag">📍 {currentRestaurant.city}</p>}
-              <p className="details recommendation-reason">💡 {recommendationReason}</p>
-              <p className="rating">⭐ {currentRestaurant.rating}</p>
-              <p className="details">💷 {currentRestaurant.priceRange}</p>
-              <p className="details">{t('restaurants.kmAway', { distance: currentRestaurant.distance })}</p>
-              <p className="details">{t('restaurants.duration', { duration: currentRestaurant.duration })}</p>
+              <div className="guide-note">
+                <p className="guide-note-label">{t('restaurants.whyThisFits', 'Why this fits')}</p>
+                <p className="guide-note-text">{recommendationReason}</p>
+              </div>
+              <div className="place-facts">
+                {typeof currentRestaurant.rating === 'number' && (
+                  <div className="place-fact">
+                    <span className="place-fact-label">{t('restaurants.ratingLabel', 'Rating')}</span>
+                    <span className="place-fact-value">⭐ {currentRestaurant.rating} / 5</span>
+                  </div>
+                )}
+                {currentRestaurant.priceRange && (
+                  <div className="place-fact">
+                    <span className="place-fact-label">{t('restaurants.priceLabel', 'Price level')}</span>
+                    <span className="place-fact-value">💷 {currentRestaurant.priceRange}</span>
+                  </div>
+                )}
+                {typeof currentRestaurant.distance === 'number' && (
+                  <div className="place-fact">
+                    <span className="place-fact-label">{t('restaurants.distanceLabel', 'Distance')}</span>
+                    <span className="place-fact-value">{t('restaurants.kmAway', { distance: currentRestaurant.distance })}</span>
+                  </div>
+                )}
+                {typeof currentRestaurant.duration === 'number' && (
+                  <div className="place-fact">
+                    <span className="place-fact-label">{t('restaurants.timeLabel', 'Time to allow')}</span>
+                    <span className="place-fact-value">{t('restaurants.duration', { duration: currentRestaurant.duration })}</span>
+                  </div>
+                )}
+              </div>
               <p className="address">{currentRestaurant.address}</p>
             </div>
             <div className="swipe-buttons">
