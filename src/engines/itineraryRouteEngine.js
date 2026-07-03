@@ -1,4 +1,4 @@
-﻿export const getInitialSelectionRoute = ({ startWith = 'activities' } = {}) =>
+export const getInitialSelectionRoute = ({ startWith = 'activities' } = {}) =>
   startWith === 'food_drinks' ? 'restaurants' : 'activities';
 
 export const getRouteAfterRestaurants = ({ startWith = 'activities' } = {}) =>

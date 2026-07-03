@@ -1,4 +1,4 @@
-﻿const hasSameIdentity = (a, b) => a.id === b.id || a.name === b.name;
+const hasSameIdentity = (a, b) => a.id === b.id || a.name === b.name;
 
 export const excludeAlreadySelected = (items, selectedItems = []) =>
   items.filter(item => !selectedItems.some(selected => hasSameIdentity(item, selected)));
