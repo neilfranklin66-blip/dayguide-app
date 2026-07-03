@@ -144,13 +144,26 @@
       "neutralOrder": "按顺序逐站完成您的选择",
       "fitsTime": "应该能在您的可用时间内完成",
       "tightTime": "对于您的可用时间，行程可能比较紧凑，后面的行程可灵活调整",
-      "preferencesKeptInMind": "已纳入考虑",
       "familyFriendlyPacing": "适合家庭的节奏",
       "priceLabels": {
         "budget": "经济实惠",
         "moderate": "中等价位",
         "higherEnd": "高端"
-      }
+      },
+      "templates": {
+        "openerWithTime": "从 {time} 开始，这个{stopLabel}行程{orderText}。",
+        "openerWithoutTime": "这个{stopLabel}行程{orderText}。",
+        "fitWithPreferences": "{fitText}，并已考虑{preferences}。",
+        "fitOnly": "{fitText}。",
+        "preferencesOnly": "行程中已考虑{preferences}。",
+        "cuisinePreference": "您的{cuisines}偏好",
+        "budgetPreference": "{budgetLabel}预算"
+      },
+      "stopLabelOne": "1站",
+      "stopLabelOther": "{count}站",
+      "listTwoSeparator": "和",
+      "listMiddleSeparator": "、",
+      "listFinalSeparator": "和"
     }
   },
   "transport": {

@@ -144,13 +144,26 @@
       "neutralOrder": "đi qua các lựa chọn của bạn từng điểm một",
       "fitsTime": "Lịch trình sẽ vừa với thời gian bạn có",
       "tightTime": "Lịch trình có thể hơi gấp so với thời gian bạn có, nên hãy xem các điểm dừng sau là linh hoạt",
-      "preferencesKeptInMind": "đã được lưu ý",
       "familyFriendlyPacing": "nhịp độ phù hợp cho gia đình",
       "priceLabels": {
         "budget": "bình dân",
         "moderate": "trung bình",
         "higherEnd": "cao cấp"
-      }
+      },
+      "templates": {
+        "openerWithTime": "Bắt đầu khoảng {time}, kế hoạch {stopLabel} này {orderText}.",
+        "openerWithoutTime": "Kế hoạch {stopLabel} này {orderText}.",
+        "fitWithPreferences": "{fitText}, với {preferences} được lưu ý.",
+        "fitOnly": "{fitText}.",
+        "preferencesOnly": "Kế hoạch này lưu ý đến {preferences} trong suốt hành trình.",
+        "cuisinePreference": "sở thích {cuisines} của bạn",
+        "budgetPreference": "ngân sách {budgetLabel}"
+      },
+      "stopLabelOne": "1 điểm dừng",
+      "stopLabelOther": "{count} điểm dừng",
+      "listTwoSeparator": " và ",
+      "listMiddleSeparator": ", ",
+      "listFinalSeparator": " và "
     }
   },
   "transport": {

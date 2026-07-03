@@ -144,13 +144,26 @@
       "neutralOrder": "parcourt vos choix une étape à la fois",
       "fitsTime": "Cela devrait tenir dans votre temps disponible",
       "tightTime": "Le programme peut sembler serré pour votre temps disponible, considérez donc les dernières étapes comme flexibles",
-      "preferencesKeptInMind": "prises en compte",
       "familyFriendlyPacing": "un rythme adapté aux familles",
       "priceLabels": {
         "budget": "économique",
         "moderate": "modéré",
         "higherEnd": "haut de gamme"
-      }
+      },
+      "templates": {
+        "openerWithTime": "À partir de {time}, ce programme de {stopLabel} {orderText}.",
+        "openerWithoutTime": "Ce programme de {stopLabel} {orderText}.",
+        "fitWithPreferences": "{fitText}, avec {preferences} prises en compte.",
+        "fitOnly": "{fitText}.",
+        "preferencesOnly": "Il tient compte de {preferences} tout au long du parcours.",
+        "cuisinePreference": "vos préférences {cuisines}",
+        "budgetPreference": "un budget {budgetLabel}"
+      },
+      "stopLabelOne": "1 étape",
+      "stopLabelOther": "{count} étapes",
+      "listTwoSeparator": " et ",
+      "listMiddleSeparator": ", ",
+      "listFinalSeparator": " et "
     }
   },
   "transport": {

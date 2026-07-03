@@ -144,13 +144,26 @@
       "neutralOrder": "recorre tus selecciones una parada a la vez",
       "fitsTime": "Debería ajustarse a tu tiempo disponible",
       "tightTime": "El horario puede resultar justo para tu tiempo disponible, así que considera flexibles las últimas paradas",
-      "preferencesKeptInMind": "tenidas en cuenta",
       "familyFriendlyPacing": "un ritmo adecuado para familias",
       "priceLabels": {
         "budget": "económico",
         "moderate": "moderado",
         "higherEnd": "de gama alta"
-      }
+      },
+      "templates": {
+        "openerWithTime": "A partir de las {time}, este plan de {stopLabel} {orderText}.",
+        "openerWithoutTime": "Este plan de {stopLabel} {orderText}.",
+        "fitWithPreferences": "{fitText}, con {preferences} en cuenta.",
+        "fitOnly": "{fitText}.",
+        "preferencesOnly": "Tiene en cuenta {preferences} durante el recorrido.",
+        "cuisinePreference": "tus preferencias de {cuisines}",
+        "budgetPreference": "un presupuesto {budgetLabel}"
+      },
+      "stopLabelOne": "1 parada",
+      "stopLabelOther": "{count} paradas",
+      "listTwoSeparator": " y ",
+      "listMiddleSeparator": ", ",
+      "listFinalSeparator": " y "
     }
   },
   "transport": {
