@@ -145,6 +145,102 @@ test('copy override can replace one price label without losing the others', () =
   expect(untouched).toMatch(/budget-friendly budget/);
 });
 
+test('default English output for a representative full case is unchanged', () => {
+  const narrative = buildDayNarrative({
+    ...baseParams,
+    startWith: 'food_drinks',
+    hasChildren: true,
+    selectedCuisines: ['italian'],
+    selectedPriceRange: '$$',
+    totalDuration: 3,
+    availableTime: 6,
+  });
+  expect(narrative).toBe(
+    'Starting around 10:00, this 3-stop plan begins with food before moving on to the rest of your day. ' +
+    'It should fit within your available time, with your Italian preferences, a moderate budget, and family-friendly pacing kept in mind.',
+  );
+});
+
+test('template override can reshape the first sentence', () => {
+  const narrative = buildDayNarrative(baseParams, {
+    templates: { openerWithTime: '{orderText} — a {stopLabel} outing from {time}.' },
+  });
+  expect(narrative).toContain('starts with activities before any food stops — a 3-stop outing from 10:00.');
+});
+
+test('a ZH-like template produces output without inserted whitespace', () => {
+  const narrative = buildDayNarrative(
+    { timeline: makeTimeline(3), startWith: 'food_drinks' },
+    {
+      foodFirst: '先安排用餐',
+      stopLabelOther: '{count}站',
+      templates: { openerWithoutTime: '这个{stopLabel}行程{orderText}。' },
+    },
+  );
+  expect(narrative).toBe('这个3站行程先安排用餐。');
+});
+
+test('stopLabelOne and stopLabelOther overrides are used', () => {
+  const single = buildDayNarrative(
+    { ...baseParams, timeline: makeTimeline(1) },
+    { stopLabelOne: 'single-stop' },
+  );
+  expect(single).toContain('single-stop plan');
+
+  const multi = buildDayNarrative(baseParams, { stopLabelOther: '{count} etapas' });
+  expect(multi).toContain('3 etapas plan');
+});
+
+test('list separator overrides are used for two and three items', () => {
+  const two = buildDayNarrative(
+    { ...baseParams, selectedCuisines: ['italian', 'japanese'] },
+    { listTwoSeparator: '和' },
+  );
+  expect(two).toContain('Italian和Japanese');
+
+  const three = buildDayNarrative(
+    {
+      ...baseParams,
+      selectedCuisines: ['italian'],
+      selectedPriceRange: '$$',
+      hasChildren: true,
+    },
+    { listMiddleSeparator: '；', listFinalSeparator: '；以及' },
+  );
+  expect(three).toContain('your Italian preferences；a moderate budget；以及family-friendly pacing');
+});
+
+test('unknown placeholders are left visible in the output', () => {
+  const narrative = buildDayNarrative(baseParams, {
+    templates: { openerWithTime: 'Starting around {time}, this {stopLabel} plan {orderText} {mystery}.' },
+  });
+  expect(narrative).toContain('{mystery}');
+});
+
+test('partial template override keeps the other default templates', () => {
+  const narrative = buildDayNarrative(
+    {
+      ...baseParams,
+      selectedCuisines: ['italian'],
+      totalDuration: 3,
+      availableTime: 6,
+    },
+    { templates: { cuisinePreference: 'a taste for {cuisines}' } },
+  );
+  expect(narrative).toContain('a taste for Italian');
+  expect(narrative).toMatch(/^Starting around 10:00, this 3-stop plan/);
+  expect(narrative).toMatch(/kept in mind\.$/);
+});
+
+test('cuisineLabels override replaces the derived English cuisine label', () => {
+  const narrative = buildDayNarrative(
+    { ...baseParams, selectedCuisines: ['middleEastern'] },
+    { cuisineLabels: { middleEastern: '中东' } },
+  );
+  expect(narrative).toContain('中东');
+  expect(narrative).not.toContain('Middle Eastern');
+});
+
 test('narrative never exceeds two sentences', () => {
   const narrative = buildDayNarrative({
     ...baseParams,

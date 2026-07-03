@@ -149,13 +149,26 @@
       "neutralOrder": "moves through your picks one stop at a time",
       "fitsTime": "It should fit within your available time",
       "tightTime": "The schedule may feel tight for your available time, so treat the later stops as flexible",
-      "preferencesKeptInMind": "kept in mind",
       "familyFriendlyPacing": "family-friendly pacing",
       "priceLabels": {
         "budget": "budget-friendly",
         "moderate": "moderate",
         "higherEnd": "higher-end"
-      }
+      },
+      "templates": {
+        "openerWithTime": "Starting around {time}, this {stopLabel} plan {orderText}.",
+        "openerWithoutTime": "This {stopLabel} plan {orderText}.",
+        "fitWithPreferences": "{fitText}, with {preferences} kept in mind.",
+        "fitOnly": "{fitText}.",
+        "preferencesOnly": "It keeps {preferences} in mind along the way.",
+        "cuisinePreference": "your {cuisines} preferences",
+        "budgetPreference": "a {budgetLabel} budget"
+      },
+      "stopLabelOne": "1-stop",
+      "stopLabelOther": "{count}-stop",
+      "listTwoSeparator": " and ",
+      "listMiddleSeparator": ", ",
+      "listFinalSeparator": ", and "
     }
   },
   "transport": {
