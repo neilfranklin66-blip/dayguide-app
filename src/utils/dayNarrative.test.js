@@ -94,6 +94,57 @@ test('unusable start time still produces a narrative without a clock time', () =
   expect(narrative).toMatch(/^This 3-stop plan/);
 });
 
+test('default wording is unchanged when no copy override is passed', () => {
+  const narrative = buildDayNarrative({
+    ...baseParams,
+    startWith: 'food_drinks',
+    selectedPriceRange: '$$',
+    totalDuration: 3,
+    availableTime: 6,
+  });
+  expect(narrative).toContain('begins with food before moving on to the rest of your day');
+  expect(narrative).toMatch(/It should fit within your available time/);
+  expect(narrative).toMatch(/moderate budget/);
+  expect(narrative).toMatch(/kept in mind/);
+});
+
+test('empty copy object behaves the same as no copy argument', () => {
+  expect(buildDayNarrative(baseParams, {})).toBe(buildDayNarrative(baseParams));
+});
+
+test('copy override can replace the food-first phrase', () => {
+  const narrative = buildDayNarrative(
+    { ...baseParams, startWith: 'food_drinks' },
+    { foodFirst: 'kicks off with a bite to eat' },
+  );
+  expect(narrative).toContain('kicks off with a bite to eat');
+  expect(narrative).not.toContain('begins with food');
+});
+
+test('copy override can replace the fits-time phrase', () => {
+  const narrative = buildDayNarrative(
+    { ...baseParams, totalDuration: 3, availableTime: 6 },
+    { fitsTime: 'There is comfortable room in your schedule' },
+  );
+  expect(narrative).toContain('There is comfortable room in your schedule');
+  expect(narrative).not.toContain('It should fit within your available time');
+});
+
+test('copy override can replace one price label without losing the others', () => {
+  const overridden = buildDayNarrative(
+    { ...baseParams, selectedPriceRange: '$$' },
+    { priceLabels: { $$: 'mid-range' } },
+  );
+  expect(overridden).toMatch(/mid-range budget/);
+  expect(overridden).not.toMatch(/moderate budget/);
+
+  const untouched = buildDayNarrative(
+    { ...baseParams, selectedPriceRange: '$' },
+    { priceLabels: { $$: 'mid-range' } },
+  );
+  expect(untouched).toMatch(/budget-friendly budget/);
+});
+
 test('narrative never exceeds two sentences', () => {
   const narrative = buildDayNarrative({
     ...baseParams,

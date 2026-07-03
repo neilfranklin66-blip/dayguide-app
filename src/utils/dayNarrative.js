@@ -9,10 +9,24 @@
  *   leg-to-leg.
  */
 
-const PRICE_LABELS = {
-  $: 'budget-friendly',
-  $$: 'moderate',
-  $$$: 'higher-end',
+/**
+ * Default English phrase pieces. A caller may override any of these via the
+ * optional `copy` argument to buildDayNarrative; sentence assembly (ordering,
+ * joining, punctuation) stays English-shaped in this version.
+ */
+const DEFAULT_COPY = {
+  priceLabels: {
+    $: 'budget-friendly',
+    $$: 'moderate',
+    $$$: 'higher-end',
+  },
+  foodFirst: 'begins with food before moving on to the rest of your day',
+  activitiesFirst: 'starts with activities before any food stops',
+  neutralOrder: 'moves through your picks one stop at a time',
+  fitsTime: 'It should fit within your available time',
+  tightTime: 'The schedule may feel tight for your available time, so treat the later stops as flexible',
+  preferencesKeptInMind: 'kept in mind',
+  familyFriendlyPacing: 'family-friendly pacing',
 };
 
 const MAX_CUISINES_MENTIONED = 2;
@@ -60,6 +74,9 @@ function joinList(items) {
  * @param {string[]} [params.selectedCuisines]
  * @param {string} [params.selectedPriceRange] - '$' | '$$' | '$$$'
  * @param {string} [params.startWith] - 'activities' | 'food_drinks'
+ * @param {object} [copy] - optional phrase overrides, shallow-merged over
+ *   DEFAULT_COPY (priceLabels merged one level deeper). Omitting it keeps the
+ *   existing English output unchanged.
  * @returns {string} at most two sentences, or '' when there is no plan
  */
 export function buildDayNarrative({
@@ -71,8 +88,14 @@ export function buildDayNarrative({
   selectedCuisines,
   selectedPriceRange,
   startWith,
-} = {}) {
+} = {}, copy = {}) {
   if (!Array.isArray(timeline) || timeline.length === 0) return '';
+
+  const text = {
+    ...DEFAULT_COPY,
+    ...copy,
+    priceLabels: { ...DEFAULT_COPY.priceLabels, ...(copy.priceLabels || {}) },
+  };
 
   const stopLabel = timeline.length === 1 ? '1-stop' : `${timeline.length}-stop`;
   const timeText = formatApproxTime(startTime);
@@ -82,11 +105,11 @@ export function buildDayNarrative({
 
   let orderText;
   if (startWith === 'food_drinks') {
-    orderText = 'begins with food before moving on to the rest of your day';
+    orderText = text.foodFirst;
   } else if (startWith === 'activities') {
-    orderText = 'starts with activities before any food stops';
+    orderText = text.activitiesFirst;
   } else {
-    orderText = 'moves through your picks one stop at a time';
+    orderText = text.neutralOrder;
   }
 
   const firstSentence = `${opener} ${orderText}.`;
@@ -94,9 +117,7 @@ export function buildDayNarrative({
   // Time fit: only when both numbers are known.
   let fitText = null;
   if (typeof totalDuration === 'number' && typeof availableTime === 'number') {
-    fitText = totalDuration > availableTime
-      ? 'The schedule may feel tight for your available time, so treat the later stops as flexible'
-      : 'It should fit within your available time';
+    fitText = totalDuration > availableTime ? text.tightTime : text.fitsTime;
   }
 
   // Preferences woven in without repeating every card.
@@ -108,16 +129,16 @@ export function buildDayNarrative({
   if (cuisineLabels.length > 0) {
     preferences.push(`your ${joinList(cuisineLabels)} preferences`);
   }
-  if (selectedPriceRange && PRICE_LABELS[selectedPriceRange]) {
-    preferences.push(`a ${PRICE_LABELS[selectedPriceRange]} budget`);
+  if (selectedPriceRange && text.priceLabels[selectedPriceRange]) {
+    preferences.push(`a ${text.priceLabels[selectedPriceRange]} budget`);
   }
   if (hasChildren === true) {
-    preferences.push('family-friendly pacing');
+    preferences.push(text.familyFriendlyPacing);
   }
 
   let secondSentence = '';
   if (fitText && preferences.length > 0) {
-    secondSentence = `${fitText}, with ${joinList(preferences)} kept in mind.`;
+    secondSentence = `${fitText}, with ${joinList(preferences)} ${text.preferencesKeptInMind}.`;
   } else if (fitText) {
     secondSentence = `${fitText}.`;
   } else if (preferences.length > 0) {

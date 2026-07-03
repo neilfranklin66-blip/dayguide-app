@@ -853,7 +853,7 @@ const DayGuide = () => {
             )}
             {dayNarrative && timeline.length > 0 && (
               <div className="guide-note">
-                <p className="guide-note-label">Day guide</p>
+                <p className="guide-note-label">{t('timeline.dayGuideLabel', 'Day guide')}</p>
                 <p className="guide-note-text">{dayNarrative}</p>
               </div>
             )}

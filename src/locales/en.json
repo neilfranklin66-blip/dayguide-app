@@ -141,7 +141,8 @@
     "shareTitle": "Share Your Day",
     "shareHint": "Scan this QR code to share your itinerary",
     "bookNow": "📱 Book Now",
-    "overTime": "⚠️ This plan exceeds your {{hours}}-hour budget."
+    "overTime": "⚠️ This plan exceeds your {{hours}}-hour budget.",
+    "dayGuideLabel": "Day guide"
   },
   "transport": {
     "walk": "Walk",
