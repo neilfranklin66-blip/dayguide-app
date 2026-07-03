@@ -142,7 +142,21 @@
     "shareHint": "Scan this QR code to share your itinerary",
     "bookNow": "📱 Book Now",
     "overTime": "⚠️ This plan exceeds your {{hours}}-hour budget.",
-    "dayGuideLabel": "Day guide"
+    "dayGuideLabel": "Day guide",
+    "dayNarrative": {
+      "foodFirst": "begins with food before moving on to the rest of your day",
+      "activitiesFirst": "starts with activities before any food stops",
+      "neutralOrder": "moves through your picks one stop at a time",
+      "fitsTime": "It should fit within your available time",
+      "tightTime": "The schedule may feel tight for your available time, so treat the later stops as flexible",
+      "preferencesKeptInMind": "kept in mind",
+      "familyFriendlyPacing": "family-friendly pacing",
+      "priceLabels": {
+        "budget": "budget-friendly",
+        "moderate": "moderate",
+        "higherEnd": "higher-end"
+      }
+    }
   },
   "transport": {
     "walk": "Walk",

@@ -831,16 +831,33 @@ const DayGuide = () => {
     if (stage === 'timeline') {
       const totalDuration = calculateTimelineDuration(timeline);
       const isOverTime = timeline.length > 0 && totalDuration > availableTime;
-      const dayNarrative = buildDayNarrative({
-        timeline,
-        startTime,
-        availableTime,
-        totalDuration,
-        hasChildren,
-        selectedCuisines,
-        selectedPriceRange,
-        startWith,
-      });
+      const narrativeCopy = {
+        foodFirst: t('timeline.dayNarrative.foodFirst', 'begins with food before moving on to the rest of your day'),
+        activitiesFirst: t('timeline.dayNarrative.activitiesFirst', 'starts with activities before any food stops'),
+        neutralOrder: t('timeline.dayNarrative.neutralOrder', 'moves through your picks one stop at a time'),
+        fitsTime: t('timeline.dayNarrative.fitsTime', 'It should fit within your available time'),
+        tightTime: t('timeline.dayNarrative.tightTime', 'The schedule may feel tight for your available time, so treat the later stops as flexible'),
+        preferencesKeptInMind: t('timeline.dayNarrative.preferencesKeptInMind', 'kept in mind'),
+        familyFriendlyPacing: t('timeline.dayNarrative.familyFriendlyPacing', 'family-friendly pacing'),
+        priceLabels: {
+          $: t('timeline.dayNarrative.priceLabels.budget', 'budget-friendly'),
+          $$: t('timeline.dayNarrative.priceLabels.moderate', 'moderate'),
+          $$$: t('timeline.dayNarrative.priceLabels.higherEnd', 'higher-end'),
+        },
+      };
+      const dayNarrative = buildDayNarrative(
+        {
+          timeline,
+          startTime,
+          availableTime,
+          totalDuration,
+          hasChildren,
+          selectedCuisines,
+          selectedPriceRange,
+          startWith,
+        },
+        narrativeCopy,
+      );
 
       return (
         <div className="dayguide-container">
