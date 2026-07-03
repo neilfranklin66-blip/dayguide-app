@@ -33,6 +33,7 @@ import {
   getTimelinePopupSuggestion,
 } from './engines/popupEngine';
 import { buildRecommendationReason } from './utils/recommendationReason';
+import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
 import './DayGuide.css';
 
@@ -830,6 +831,16 @@ const DayGuide = () => {
     if (stage === 'timeline') {
       const totalDuration = calculateTimelineDuration(timeline);
       const isOverTime = timeline.length > 0 && totalDuration > availableTime;
+      const dayNarrative = buildDayNarrative({
+        timeline,
+        startTime,
+        availableTime,
+        totalDuration,
+        hasChildren,
+        selectedCuisines,
+        selectedPriceRange,
+        startWith,
+      });
 
       return (
         <div className="dayguide-container">
@@ -839,6 +850,12 @@ const DayGuide = () => {
               <p className="over-time-warning">
                 {t('timeline.overTime', { hours: availableTime })}
               </p>
+            )}
+            {dayNarrative && timeline.length > 0 && (
+              <div className="guide-note">
+                <p className="guide-note-label">Day guide</p>
+                <p className="guide-note-text">{dayNarrative}</p>
+              </div>
             )}
             <div className="timeline">
               {timeline.length === 0 ? (
