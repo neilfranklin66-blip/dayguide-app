@@ -136,7 +136,22 @@
     "shareTitle": "Partagez votre journée",
     "shareHint": "Scannez ce QR code pour partager votre itinéraire",
     "bookNow": "📱 Réserver maintenant",
-    "overTime": "⚠️ Ce plan dépasse votre budget de {{hours}} heures."
+    "overTime": "⚠️ Ce plan dépasse votre budget de {{hours}} heures.",
+    "dayGuideLabel": "Guide de la journée",
+    "dayNarrative": {
+      "foodFirst": "commence par un repas avant de passer au reste de votre journée",
+      "activitiesFirst": "commence par des activités avant toute pause repas",
+      "neutralOrder": "parcourt vos choix une étape à la fois",
+      "fitsTime": "Cela devrait tenir dans votre temps disponible",
+      "tightTime": "Le programme peut sembler serré pour votre temps disponible, considérez donc les dernières étapes comme flexibles",
+      "preferencesKeptInMind": "prises en compte",
+      "familyFriendlyPacing": "un rythme adapté aux familles",
+      "priceLabels": {
+        "budget": "économique",
+        "moderate": "modéré",
+        "higherEnd": "haut de gamme"
+      }
+    }
   },
   "transport": {
     "walk": "À pied",

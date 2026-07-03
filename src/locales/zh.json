@@ -136,7 +136,22 @@
     "shareTitle": "分享您的行程",
     "shareHint": "扫描二维码分享您的行程",
     "bookNow": "📱 立即预订",
-    "overTime": "⚠️ 此计划超出您 {{hours}} 小时的预算。"
+    "overTime": "⚠️ 此计划超出您 {{hours}} 小时的预算。",
+    "dayGuideLabel": "行程指南",
+    "dayNarrative": {
+      "foodFirst": "先安排用餐，再进行当天的其他行程",
+      "activitiesFirst": "先安排活动，再安排用餐",
+      "neutralOrder": "按顺序逐站完成您的选择",
+      "fitsTime": "应该能在您的可用时间内完成",
+      "tightTime": "对于您的可用时间，行程可能比较紧凑，后面的行程可灵活调整",
+      "preferencesKeptInMind": "已纳入考虑",
+      "familyFriendlyPacing": "适合家庭的节奏",
+      "priceLabels": {
+        "budget": "经济实惠",
+        "moderate": "中等价位",
+        "higherEnd": "高端"
+      }
+    }
   },
   "transport": {
     "walk": "步行",
