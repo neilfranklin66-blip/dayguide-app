@@ -32,6 +32,7 @@ import {
   getPopupYesAction,
   getTimelinePopupSuggestion,
 } from './engines/popupEngine';
+import { buildRecommendationReason } from './utils/recommendationReason';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -742,6 +743,12 @@ const DayGuide = () => {
         );
       }
 
+      const recommendationReason = buildRecommendationReason(currentRestaurant, {
+        selectedCuisines,
+        selectedPriceRange,
+        hasChildren,
+      });
+
       return (
         <div className="dayguide-container">
           <div className="card swipe-card">
@@ -769,6 +776,7 @@ const DayGuide = () => {
               )}
               <h3>{currentRestaurant.name}</h3>
               {currentRestaurant.city && <p className="city-tag">📍 {currentRestaurant.city}</p>}
+              <p className="details recommendation-reason">💡 {recommendationReason}</p>
               <p className="rating">⭐ {currentRestaurant.rating}</p>
               <p className="details">💷 {currentRestaurant.priceRange}</p>
               <p className="details">{t('restaurants.kmAway', { distance: currentRestaurant.distance })}</p>
