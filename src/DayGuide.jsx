@@ -33,6 +33,7 @@ import {
   getTimelinePopupSuggestion,
 } from './engines/popupEngine';
 import { buildRecommendationReason } from './utils/recommendationReason';
+import { rankRecommendations } from './utils/recommendationScore';
 import './DayGuide.css';
 
 const CUISINE_EMOJI = {
@@ -233,11 +234,16 @@ const DayGuide = () => {
 
   const buildRestaurantQueue = (cuisines = selectedCuisines, price = selectedPriceRange) => {
     const normalized = mapFromMockArray(mockRestaurantData);
-    return buildFilteredRestaurantQueue({
+    const queue = buildFilteredRestaurantQueue({
       restaurants: normalized,
       cuisines,
       price,
       selectedRestaurants: selectedRestaurantsRef.current,
+    });
+    return rankRecommendations(queue, {
+      selectedCuisines: cuisines,
+      selectedPriceRange: price,
+      hasChildren,
     });
   };
 
@@ -290,7 +296,11 @@ const DayGuide = () => {
       const placeCards = mapFromPlacesArray(results);
       const deduped = excludeAlreadySelected(placeCards, selectedRestaurantsRef.current);
       if (deduped.length > 0) {
-        setRestaurantQueue(deduped);
+        setRestaurantQueue(rankRecommendations(deduped, {
+          selectedCuisines: cuisineOverride,
+          selectedPriceRange: priceOverride,
+          hasChildren,
+        }));
         setRestaurantSource('live');
       } else {
         setRestaurantQueue(buildRestaurantQueue(cuisineOverride, priceOverride));
