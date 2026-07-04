@@ -33,6 +33,7 @@ import TimelineShareQRModal from './components/TimelineShareQRModal';
 import PopupModal from './components/PopupModal';
 import WelcomeStage from './components/WelcomeStage';
 import ChildrenInPartySelector from './components/ChildrenInPartySelector';
+import StartOrderSelector from './components/StartOrderSelector';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -459,26 +460,11 @@ const DayGuide = () => {
               onChange={setHasChildren}
             />
 
-            <div className="time-selector start-order-selector">
-              <label>{t('interests.startWithTitle')}</label>
-              <p className="start-order-hint">{t('interests.startWithHint')}</p>
-              <div className="price-options start-order-options">
-                <button
-                  className={startWith === 'activities' ? 'price-btn start-order-btn selected' : 'price-btn start-order-btn'}
-                  onClick={() => setStartWith('activities')}
-                >
-                  <span className="start-order-icon">🎭</span>
-                  <span>{t('interests.startWithActivities')}</span>
-                </button>
-                <button
-                  className={startWith === 'food_drinks' ? 'price-btn start-order-btn selected' : 'price-btn start-order-btn'}
-                  onClick={() => setStartWith('food_drinks')}
-                >
-                  <span className="start-order-icon">🍽️</span>
-                  <span>{t('interests.startWithFoodDrinks')}</span>
-                </button>
-              </div>
-            </div>
+            <StartOrderSelector
+              startWith={startWith}
+              onChange={setStartWith}
+              t={t}
+            />
 
             <button
               onClick={goToNextSelectionStage}
