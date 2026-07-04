@@ -1,7 +1,7 @@
 /**
  * Locale consistency guardrail for the day narrative feature.
- * - Imports the five real locale files explicitly. Do NOT glob this folder:
- *   stale edit-conflict copies of fr.json live alongside the real files.
+ * - Imports the five real locale files explicitly.
+ *   This avoids accidentally including stale conflict files if they reappear.
  * - Scoped to timeline.dayGuideLabel and the timeline.dayNarrative subtree;
  *   other sections legitimately use i18next {{...}} placeholders.
  */
