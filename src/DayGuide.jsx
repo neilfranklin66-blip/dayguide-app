@@ -46,6 +46,7 @@ import MealPromptCard from './components/MealPromptCard';
 import RestaurantsLoadingCard from './components/RestaurantsLoadingCard';
 import NoMoreRestaurantsCard from './components/NoMoreRestaurantsCard';
 import RestaurantSwipeCard from './components/RestaurantSwipeCard';
+import RestaurantsNoResultsCard from './components/RestaurantsNoResultsCard';
 import TimelineCard from './components/TimelineCard';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
@@ -509,49 +510,27 @@ const DayGuide = () => {
         const hasPrice = !!selectedPriceRange;
         const hasFilters = hasCuisine || hasPrice;
         return (
-          <div className="dayguide-container">
-            <div className="card no-results-card">
-              <div className="no-results-icon">🍽️</div>
-              <h2>{t('restaurants.noResultsTitle')}</h2>
-              <p className="no-results-msg">
-                {hasFilters ? t('restaurants.noResultsFiltered') : t('restaurants.noResultsArea')}
-              </p>
-              {nearestHint && (
-                <div className="no-results-hint">
-                  {t('restaurants.nearestHint', { name: nearestHint.name, distance: nearestHint.distance })}
-                </div>
-              )}
-              <div className="no-results-actions">
-                {hasFilters && (
-                  <button
-                    onClick={() => { setSelectedCuisines([]); setSelectedPriceRange(null); goToRestaurants([], null); }}
-                    className="btn-primary"
-                  >
-                    {t('restaurants.showAllNearby')}
-                  </button>
-                )}
-                {hasCuisine && hasPrice && (
-                  <button
-                    onClick={() => { setSelectedCuisines([]); goToRestaurants([], selectedPriceRange); }}
-                    className="btn-secondary"
-                  >
-                    {t('restaurants.removeCuisineFilter')}
-                  </button>
-                )}
-                {hasPrice && (
-                  <button
-                    onClick={() => { setSelectedPriceRange(null); goToRestaurants(selectedCuisines, null); }}
-                    className="btn-secondary"
-                  >
-                    {t('restaurants.removePriceFilter')}
-                  </button>
-                )}
-                <button onClick={() => continueAfterRestaurants([])} className="btn-secondary">
-                  {t('restaurants.skipAndContinue')}
-                </button>
-              </div>
-            </div>
-          </div>
+          <RestaurantsNoResultsCard
+            hasCuisine={hasCuisine}
+            hasPrice={hasPrice}
+            hasFilters={hasFilters}
+            nearestHint={nearestHint}
+            onShowAllNearby={() => {
+              setSelectedCuisines([]);
+              setSelectedPriceRange(null);
+              goToRestaurants([], null);
+            }}
+            onRemoveCuisineFilter={() => {
+              setSelectedCuisines([]);
+              goToRestaurants([], selectedPriceRange);
+            }}
+            onRemovePriceFilter={() => {
+              setSelectedPriceRange(null);
+              goToRestaurants(selectedCuisines, null);
+            }}
+            onSkip={() => continueAfterRestaurants([])}
+            t={t}
+          />
         );
       }
 
