@@ -26,11 +26,11 @@ import {
   updateTimelineItemDuration,
 } from './engines/timelineEngine';
 import {
-  getPopupMessage,
   getPopupYesAction,
   getTimelinePopupSuggestion,
 } from './engines/popupEngine';
 import TimelineShareQRModal from './components/TimelineShareQRModal';
+import PopupModal from './components/PopupModal';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -350,41 +350,6 @@ const DayGuide = () => {
 
 
   // --- Render helpers ---
-
-  const renderPopup = () => {
-    if (!activePopup) return null;
-
-    const icons = {
-      nearbyRestaurant: '🍽️',
-      activityBreak: '🎭',
-      coffeeBreak: '☕',
-    };
-
-
-    return (
-      <div className="popup-overlay" onClick={dismissPopup}>
-        <div className="popup-card" onClick={e => e.stopPropagation()}>
-          <button className="popup-close" onClick={dismissPopup} aria-label="Close">✕</button>
-          <div className="popup-icon">{icons[activePopup.type]}</div>
-          <h3 className="popup-title">{t(`popups.${activePopup.type}.title`)}</h3>
-          <p className="popup-message">{getPopupMessage({ popup: activePopup, t })}</p>
-          <div className="popup-buttons">
-            <button className="popup-btn popup-btn-yes" onClick={() => handlePopupYes(activePopup)}>
-              {t(`popups.${activePopup.type}.yes`)}
-            </button>
-            <button className="popup-btn popup-btn-no" onClick={dismissPopup}>
-              {t(`popups.${activePopup.type}.no`)}
-            </button>
-            {activePopup.type === 'nearbyRestaurant' && (
-              <button className="popup-btn popup-btn-skip" onClick={dismissPopup}>
-                {t('popups.nearbyRestaurant.skip')}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   const renderStage = () => {
     if (stage === 'welcome') {
@@ -944,7 +909,12 @@ const DayGuide = () => {
         </div>
       </div>
       {renderStage()}
-      {renderPopup()}
+      <PopupModal
+        activePopup={activePopup}
+        onClose={dismissPopup}
+        onYes={handlePopupYes}
+        t={t}
+      />
       <TimelineShareQRModal
         showQR={showQR}
         onClose={() => setShowQR(false)}
