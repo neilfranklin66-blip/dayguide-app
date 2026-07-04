@@ -37,6 +37,7 @@ import StartOrderSelector from './components/StartOrderSelector';
 import PriceRangeSelector from './components/PriceRangeSelector';
 import AvailableTimeSelector from './components/AvailableTimeSelector';
 import DateSelector from './components/DateSelector';
+import StartTimeSelector from './components/StartTimeSelector';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -433,14 +434,11 @@ const DayGuide = () => {
               onChange={setSelectedDate}
               t={t}
             />
-            <div className="time-selector">
-              <label>{t('interests.startTimeLabel')}</label>
-              <input type="time" value={`${String(Math.floor(startTime)).padStart(2, '0')}:${String(Math.round((startTime % 1) * 60)).padStart(2, '0')}`}
-                onChange={e => {
-                  const [hours, minutes] = e.target.value.split(':').map(Number);
-                  setStartTime(hours + minutes / 60);
-                }} className="time-input" />
-            </div>
+            <StartTimeSelector
+              startTime={startTime}
+              onChange={setStartTime}
+              t={t}
+            />
 
             
             <ChildrenInPartySelector
