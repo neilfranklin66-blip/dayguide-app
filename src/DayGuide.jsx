@@ -47,6 +47,7 @@ import ActivitiesNoResultsCard from './components/ActivitiesNoResultsCard';
 import MealPromptCard from './components/MealPromptCard';
 import RestaurantsLoadingCard from './components/RestaurantsLoadingCard';
 import NoMoreRestaurantsCard from './components/NoMoreRestaurantsCard';
+import RestaurantSwipeCard from './components/RestaurantSwipeCard';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -54,7 +55,6 @@ import {
   CUISINE_EMOJI,
   getCuisineEmoji,
   ACTIVITY_CATEGORIES,
-  SOURCE_BANNER_KEY,
   TRANSPORT_OPTIONS,
   INTEREST_CATEGORY_OPTIONS,
 } from './config/dayGuideOptions';
@@ -575,70 +575,15 @@ const DayGuide = () => {
       });
 
       return (
-        <div className="dayguide-container">
-          <div className="card swipe-card">
-            <h2>{t('restaurants.title')}</h2>
-            <p className="swipe-progress">{currentRestaurantIndex + 1} / {restaurantQueue.length}</p>
-            {restaurantSource && SOURCE_BANNER_KEY[restaurantSource] && (
-              <div className={`api-source-banner api-source-banner--${restaurantSource === 'live' ? 'live' : 'warning'}`}>
-                {t(`restaurants.${SOURCE_BANNER_KEY[restaurantSource]}`)}
-              </div>
-            )}
-            <div className="swipe-item">
-              <div className="restaurant-img-wrapper">
-                <img
-                  src={currentRestaurant.image}
-                  alt={currentRestaurant.name}
-                  className="restaurant-img"
-                  onError={e => { e.target.style.display = 'none'; }}
-                />
-              </div>
-              {currentRestaurant.cuisine.length > 0 && (
-                <p className="card-type-label">
-                  {getCuisineEmoji(currentRestaurant.cuisine)}&nbsp;
-                  {currentRestaurant.cuisine.map(c => t(`cuisine.${c}`)).join(' · ')}
-                </p>
-              )}
-              <h3>{currentRestaurant.name}</h3>
-              {currentRestaurant.city && <p className="city-tag">📍 {currentRestaurant.city}</p>}
-              <div className="guide-note">
-                <p className="guide-note-label">{t('restaurants.whyThisFits', 'Why this fits')}</p>
-                <p className="guide-note-text">{recommendationReason}</p>
-              </div>
-              <div className="place-facts">
-                {typeof currentRestaurant.rating === 'number' && (
-                  <div className="place-fact">
-                    <span className="place-fact-label">{t('restaurants.ratingLabel', 'Rating')}</span>
-                    <span className="place-fact-value">⭐ {currentRestaurant.rating} / 5</span>
-                  </div>
-                )}
-                {currentRestaurant.priceRange && (
-                  <div className="place-fact">
-                    <span className="place-fact-label">{t('restaurants.priceLabel', 'Price level')}</span>
-                    <span className="place-fact-value">💷 {currentRestaurant.priceRange}</span>
-                  </div>
-                )}
-                {typeof currentRestaurant.distance === 'number' && (
-                  <div className="place-fact">
-                    <span className="place-fact-label">{t('restaurants.distanceLabel', 'Distance')}</span>
-                    <span className="place-fact-value">{t('restaurants.kmAway', { distance: currentRestaurant.distance })}</span>
-                  </div>
-                )}
-                {typeof currentRestaurant.duration === 'number' && (
-                  <div className="place-fact">
-                    <span className="place-fact-label">{t('restaurants.timeLabel', 'Time to allow')}</span>
-                    <span className="place-fact-value">{t('restaurants.duration', { duration: currentRestaurant.duration })}</span>
-                  </div>
-                )}
-              </div>
-              <p className="address">{currentRestaurant.address}</p>
-            </div>
-            <div className="swipe-buttons">
-              <button onClick={() => swipeRestaurant(false)} className="btn-reject">{t('restaurants.skip')}</button>
-              <button onClick={() => swipeRestaurant(true)} className="btn-accept">{t('restaurants.yes')}</button>
-            </div>
-          </div>
-        </div>
+        <RestaurantSwipeCard
+          currentRestaurant={currentRestaurant}
+          currentRestaurantIndex={currentRestaurantIndex}
+          restaurantQueueLength={restaurantQueue.length}
+          restaurantSource={restaurantSource}
+          recommendationReason={recommendationReason}
+          onSwipe={swipeRestaurant}
+          t={t}
+        />
       );
     }
 
