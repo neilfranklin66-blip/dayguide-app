@@ -39,6 +39,7 @@ import AvailableTimeSelector from './components/AvailableTimeSelector';
 import DateSelector from './components/DateSelector';
 import StartTimeSelector from './components/StartTimeSelector';
 import ActivityInterestGrid from './components/ActivityInterestGrid';
+import CuisineInterestGrid from './components/CuisineInterestGrid';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -398,19 +399,12 @@ const DayGuide = () => {
               t={t}
             />
 
-            <h3 className="section-title">{t('interests.cuisineTitle')}</h3>
-            <div className="interest-grid cuisine-grid">
-              {cuisineCategories.map(c => (
-                <button
-                  key={c.id}
-                  className={`interest-btn ${selectedCuisines.includes(c.id) ? 'selected' : ''}`}
-                  onClick={() => toggleCuisine(c.id)}
-                >
-                  <span className="icon">{c.icon}</span>
-                  <span>{t(`cuisine.${c.id}`)}</span>
-                </button>
-              ))}
-            </div>
+            <CuisineInterestGrid
+              cuisineCategories={cuisineCategories}
+              selectedCuisines={selectedCuisines}
+              onToggle={toggleCuisine}
+              t={t}
+            />
 
             <PriceRangeSelector
               selectedPriceRange={selectedPriceRange}
