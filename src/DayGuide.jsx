@@ -40,6 +40,7 @@ import DateSelector from './components/DateSelector';
 import StartTimeSelector from './components/StartTimeSelector';
 import ActivityInterestGrid from './components/ActivityInterestGrid';
 import CuisineInterestGrid from './components/CuisineInterestGrid';
+import InterestsNextButton from './components/InterestsNextButton';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -440,13 +441,11 @@ const DayGuide = () => {
               t={t}
             />
 
-            <button
+            <InterestsNextButton
               onClick={goToNextSelectionStage}
               disabled={selectedInterests.length === 0 || hasChildren === null}
-              className="btn-primary"
-            >
-              {t('interests.next')}
-            </button>
+              t={t}
+            />
           </div>
         </div>
       );
