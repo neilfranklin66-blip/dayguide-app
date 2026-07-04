@@ -48,6 +48,7 @@ import MealPromptCard from './components/MealPromptCard';
 import RestaurantsLoadingCard from './components/RestaurantsLoadingCard';
 import NoMoreRestaurantsCard from './components/NoMoreRestaurantsCard';
 import RestaurantSwipeCard from './components/RestaurantSwipeCard';
+import TimelineActionButtons from './components/TimelineActionButtons';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -713,11 +714,11 @@ const DayGuide = () => {
                 ))
               )}
             </div>
-            <div className="action-buttons">
-              <button onClick={resetState} className="btn-secondary">{t('timeline.startOver')}</button>
-              <button onClick={() => setShowQR(true)} className="btn-secondary share-btn">{t('timeline.share')}</button>
-              <button className="btn-primary book-btn">{t('timeline.bookNow')}</button>
-            </div>
+            <TimelineActionButtons
+              onStartOver={resetState}
+              onShare={() => setShowQR(true)}
+              t={t}
+            />
           </div>
         </div>
       );
