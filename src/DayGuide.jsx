@@ -44,6 +44,7 @@ import InterestsNextButton from './components/InterestsNextButton';
 import NoMoreActivitiesCard from './components/NoMoreActivitiesCard';
 import ActivitySwipeCard from './components/ActivitySwipeCard';
 import ActivitiesNoResultsCard from './components/ActivitiesNoResultsCard';
+import MealPromptCard from './components/MealPromptCard';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -490,21 +491,11 @@ const DayGuide = () => {
 
     if (stage === 'meal-prompt') {
       return (
-        <div className="dayguide-container">
-          <div className="card meal-prompt-card">
-            <div className="meal-prompt-icon">🍽️</div>
-            <h2>{t('mealPrompt.title')}</h2>
-            <p className="meal-prompt-subtitle">{t('mealPrompt.subtitle')}</p>
-            <div className="meal-prompt-buttons">
-              <button onClick={goToRestaurants} className="btn-primary">
-                {t('mealPrompt.yes')}
-              </button>
-              <button onClick={() => continueAfterRestaurants([])} className="btn-secondary">
-                {t('mealPrompt.no')}
-              </button>
-            </div>
-          </div>
-        </div>
+        <MealPromptCard
+          onYes={goToRestaurants}
+          onNo={() => continueAfterRestaurants([])}
+          t={t}
+        />
       );
     }
 
