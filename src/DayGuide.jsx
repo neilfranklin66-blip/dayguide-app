@@ -34,6 +34,7 @@ import PopupModal from './components/PopupModal';
 import WelcomeStage from './components/WelcomeStage';
 import ChildrenInPartySelector from './components/ChildrenInPartySelector';
 import StartOrderSelector from './components/StartOrderSelector';
+import PriceRangeSelector from './components/PriceRangeSelector';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -43,7 +44,6 @@ import {
   ACTIVITY_CATEGORIES,
   SOURCE_BANNER_KEY,
   TRANSPORT_OPTIONS,
-  PRICE_OPTIONS,
   INTEREST_CATEGORY_OPTIONS,
 } from './config/dayGuideOptions';
 import './DayGuide.css';
@@ -415,18 +415,11 @@ const DayGuide = () => {
               ))}
             </div>
 
-            <h3 className="section-title">{t('interests.priceTitle')}</h3>
-            <div className="price-options">
-              {PRICE_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  className={`price-btn ${selectedPriceRange === opt.value ? 'selected' : ''}`}
-                  onClick={() => setSelectedPriceRange(selectedPriceRange === opt.value ? null : opt.value)}
-                >
-                  {t(opt.labelKey)}
-                </button>
-              ))}
-            </div>
+            <PriceRangeSelector
+              selectedPriceRange={selectedPriceRange}
+              onChange={setSelectedPriceRange}
+              t={t}
+            />
 
             <div className="time-selector">
               <label>{t('interests.timeLabel')}</label>
