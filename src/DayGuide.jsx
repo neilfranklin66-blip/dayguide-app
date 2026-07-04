@@ -32,6 +32,7 @@ import {
 import TimelineShareQRModal from './components/TimelineShareQRModal';
 import PopupModal from './components/PopupModal';
 import WelcomeStage from './components/WelcomeStage';
+import ChildrenInPartySelector from './components/ChildrenInPartySelector';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -453,23 +454,10 @@ const DayGuide = () => {
             </div>
 
             
-            <div className="time-selector">
-              <label>Are there children in your party?</label>
-              <div className="price-options">
-                <button
-                  className={`price-btn ${hasChildren === true ? 'selected' : ''}`}
-                  onClick={() => setHasChildren(true)}
-                >
-                  Yes
-                </button>
-                <button
-                  className={`price-btn ${hasChildren === false ? 'selected' : ''}`}
-                  onClick={() => setHasChildren(false)}
-                >
-                  No
-                </button>
-              </div>
-            </div>
+            <ChildrenInPartySelector
+              hasChildren={hasChildren}
+              onChange={setHasChildren}
+            />
 
             <div className="time-selector start-order-selector">
               <label>{t('interests.startWithTitle')}</label>
