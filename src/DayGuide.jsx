@@ -48,8 +48,7 @@ import NoMoreRestaurantsCard from './components/NoMoreRestaurantsCard';
 import RestaurantSwipeCard from './components/RestaurantSwipeCard';
 import TimelineActionButtons from './components/TimelineActionButtons';
 import TimelineHeaderSummary from './components/TimelineHeaderSummary';
-import TimelineItemRow from './components/TimelineItemRow';
-import TimelineTransportSection from './components/TimelineTransportSection';
+import TimelineList from './components/TimelineList';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -657,28 +656,11 @@ const DayGuide = () => {
               hasTimelineItems={timeline.length > 0}
               t={t}
             />
-            <div className="timeline">
-              {timeline.length === 0 ? (
-                <p>{t('timeline.empty')}</p>
-              ) : (
-                timeline.map((item, index) => (
-                  <div key={item.id} className="timeline-group">
-                    <TimelineItemRow
-                      item={item}
-                      index={index}
-                      onDurationChange={updateActivityDuration}
-                      t={t}
-                    />
-                    {index < timeline.length - 1 && (
-                      <TimelineTransportSection
-                        distance={item.distance}
-                        t={t}
-                      />
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
+            <TimelineList
+              timeline={timeline}
+              onDurationChange={updateActivityDuration}
+              t={t}
+            />
             <TimelineActionButtons
               onStartOver={resetState}
               onShare={() => setShowQR(true)}
