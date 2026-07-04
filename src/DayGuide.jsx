@@ -35,6 +35,7 @@ import WelcomeStage from './components/WelcomeStage';
 import ChildrenInPartySelector from './components/ChildrenInPartySelector';
 import StartOrderSelector from './components/StartOrderSelector';
 import PriceRangeSelector from './components/PriceRangeSelector';
+import AvailableTimeSelector from './components/AvailableTimeSelector';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -421,12 +422,11 @@ const DayGuide = () => {
               t={t}
             />
 
-            <div className="time-selector">
-              <label>{t('interests.timeLabel')}</label>
-              <input type="range" min="1" max="8" value={availableTime}
-                onChange={e => setAvailableTime(parseInt(e.target.value))} className="slider" />
-              <span>{t('interests.hours', { count: availableTime })}</span>
-            </div>
+            <AvailableTimeSelector
+              availableTime={availableTime}
+              onChange={setAvailableTime}
+              t={t}
+            />
             <div className="time-selector">
               <label>{t('interests.dateLabel') || 'What date do you want to plan?'}</label>
               <input
