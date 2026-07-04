@@ -42,6 +42,7 @@ import ActivityInterestGrid from './components/ActivityInterestGrid';
 import CuisineInterestGrid from './components/CuisineInterestGrid';
 import InterestsNextButton from './components/InterestsNextButton';
 import NoMoreActivitiesCard from './components/NoMoreActivitiesCard';
+import ActivitiesNoResultsCard from './components/ActivitiesNoResultsCard';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -457,23 +458,12 @@ const DayGuide = () => {
 
       if (activityQueue.length === 0) {
         return (
-          <div className="dayguide-container">
-            <div className="card no-results-card">
-              <div className="no-results-icon">🎭</div>
-              <h2>{t('activities.noResultsTitle')}</h2>
-              <p className="no-results-msg">{t('activities.noResults')}</p>
-              <div className="no-results-actions">
-                {selectedInterests.length > 0 && (
-                  <button onClick={() => goToActivities([])} className="btn-primary">
-                    {t('activities.showAll')}
-                  </button>
-                )}
-                <button onClick={() => setStage('interests')} className="btn-secondary">
-                  ← {t('interests.title')}
-                </button>
-              </div>
-            </div>
-          </div>
+          <ActivitiesNoResultsCard
+            hasSelectedInterests={selectedInterests.length > 0}
+            onShowAll={() => goToActivities([])}
+            onBackToInterests={() => setStage('interests')}
+            t={t}
+          />
         );
       }
 
