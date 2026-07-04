@@ -36,6 +36,7 @@ import ChildrenInPartySelector from './components/ChildrenInPartySelector';
 import StartOrderSelector from './components/StartOrderSelector';
 import PriceRangeSelector from './components/PriceRangeSelector';
 import AvailableTimeSelector from './components/AvailableTimeSelector';
+import DateSelector from './components/DateSelector';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -427,17 +428,11 @@ const DayGuide = () => {
               onChange={setAvailableTime}
               t={t}
             />
-            <div className="time-selector">
-              <label>{t('interests.dateLabel') || 'What date do you want to plan?'}</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={e => setSelectedDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                max={new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-                className="date-input"
-              />
-            </div>
+            <DateSelector
+              selectedDate={selectedDate}
+              onChange={setSelectedDate}
+              t={t}
+            />
             <div className="time-selector">
               <label>{t('interests.startTimeLabel')}</label>
               <input type="time" value={`${String(Math.floor(startTime)).padStart(2, '0')}:${String(Math.round((startTime % 1) * 60)).padStart(2, '0')}`}
