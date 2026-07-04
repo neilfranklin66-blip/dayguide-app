@@ -41,6 +41,7 @@ import StartTimeSelector from './components/StartTimeSelector';
 import ActivityInterestGrid from './components/ActivityInterestGrid';
 import CuisineInterestGrid from './components/CuisineInterestGrid';
 import InterestsNextButton from './components/InterestsNextButton';
+import NoMoreActivitiesCard from './components/NoMoreActivitiesCard';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -478,14 +479,10 @@ const DayGuide = () => {
 
       if (!currentActivity) {
         return (
-          <div className="dayguide-container">
-            <div className="card">
-              <h2>{t('activities.noMore')}</h2>
-              <button onClick={() => continueAfterActivities()} className="btn-primary">
-                {t('interests.next')}
-              </button>
-            </div>
-          </div>
+          <NoMoreActivitiesCard
+            onContinue={continueAfterActivities}
+            t={t}
+          />
         );
       }
 
