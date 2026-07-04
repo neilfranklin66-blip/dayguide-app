@@ -46,9 +46,7 @@ import MealPromptCard from './components/MealPromptCard';
 import RestaurantsLoadingCard from './components/RestaurantsLoadingCard';
 import NoMoreRestaurantsCard from './components/NoMoreRestaurantsCard';
 import RestaurantSwipeCard from './components/RestaurantSwipeCard';
-import TimelineActionButtons from './components/TimelineActionButtons';
-import TimelineHeaderSummary from './components/TimelineHeaderSummary';
-import TimelineList from './components/TimelineList';
+import TimelineCard from './components/TimelineCard';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -647,27 +645,17 @@ const DayGuide = () => {
       );
 
       return (
-        <div className="dayguide-container">
-          <div className="card timeline-card">
-            <TimelineHeaderSummary
-              isOverTime={isOverTime}
-              availableTime={availableTime}
-              dayNarrative={dayNarrative}
-              hasTimelineItems={timeline.length > 0}
-              t={t}
-            />
-            <TimelineList
-              timeline={timeline}
-              onDurationChange={updateActivityDuration}
-              t={t}
-            />
-            <TimelineActionButtons
-              onStartOver={resetState}
-              onShare={() => setShowQR(true)}
-              t={t}
-            />
-          </div>
-        </div>
+        <TimelineCard
+          isOverTime={isOverTime}
+          availableTime={availableTime}
+          dayNarrative={dayNarrative}
+          hasTimelineItems={timeline.length > 0}
+          timeline={timeline}
+          onDurationChange={updateActivityDuration}
+          onStartOver={resetState}
+          onShare={() => setShowQR(true)}
+          t={t}
+        />
       );
     }
 
