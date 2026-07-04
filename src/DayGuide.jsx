@@ -45,6 +45,7 @@ import NoMoreActivitiesCard from './components/NoMoreActivitiesCard';
 import ActivitySwipeCard from './components/ActivitySwipeCard';
 import ActivitiesNoResultsCard from './components/ActivitiesNoResultsCard';
 import MealPromptCard from './components/MealPromptCard';
+import RestaurantsLoadingCard from './components/RestaurantsLoadingCard';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -501,14 +502,7 @@ const DayGuide = () => {
 
     if (stage === 'restaurants') {
       if (isRestaurantsLoading) {
-        return (
-          <div className="dayguide-container">
-            <div className="card" style={{ textAlign: 'center' }}>
-              <div className="restaurants-loading-icon">🔍</div>
-              <h2>{t('restaurants.searching')}</h2>
-            </div>
-          </div>
-        );
+        return <RestaurantsLoadingCard t={t} />;
       }
 
       if (restaurantQueue !== null && restaurantQueue.length === 0) {
