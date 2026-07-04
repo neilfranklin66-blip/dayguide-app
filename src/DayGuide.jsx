@@ -35,36 +35,16 @@ import {
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
+import {
+  CUISINE_EMOJI,
+  getCuisineEmoji,
+  ACTIVITY_CATEGORIES,
+  SOURCE_BANNER_KEY,
+  TRANSPORT_OPTIONS,
+  PRICE_OPTIONS,
+  INTEREST_CATEGORY_OPTIONS,
+} from './config/dayGuideOptions';
 import './DayGuide.css';
-
-const CUISINE_EMOJI = {
-  italian: '🍝', indian: '🍛', british: '🍖', japanese: '🍣',
-  mexican: '🌮', mediterranean: '🥗', spanish: '🥘', french: '🥐',
-  chinese: '🥢', asian: '🍜', american: '🍔', middleEastern: '🧆',
-  cafe: '☕',
-};
-
-const getCuisineEmoji = (cuisines) => {
-  const arr = Array.isArray(cuisines) ? cuisines : [cuisines];
-  for (const c of arr) {
-    if (CUISINE_EMOJI[c]) return CUISINE_EMOJI[c];
-  }
-  return '🍽️';
-};
-
-const ACTIVITY_CATEGORIES = new Set([
-  'museums', 'galleries', 'parks', 'shopping', 'theater', 'liveMusic',
-  'sportsEvents', 'nightlife', 'historicalSites', 'foodMarkets', 'cinema', 'comedy',
-]);
-
-const SOURCE_BANNER_KEY = {
-  live: 'liveResults',
-  no_key: 'noKeyWarning',
-  quota: 'quotaWarning',
-  no_location: 'noLocationWarning',
-  no_results: 'noResultsWarning',
-  error: 'errorWarning',
-};
 
 const DayGuide = () => {
   const { currentUser, logout } = useAuth();
@@ -107,36 +87,13 @@ const DayGuide = () => {
   const [restaurantSource, setRestaurantSource] = useState(null);
   const [nearestHint, setNearestHint] = useState(null);
 
-  const transportOptions = [
-    { mode: 'walk', time: 15, cost: '£0', emoji: '🚶' },
-    { mode: 'taxi', time: 8, cost: '£7', emoji: '🚕' },
-    { mode: 'tube', time: 5, cost: '£2.80', emoji: '🚇' },
-    { mode: 'bus', time: 12, cost: '£1.75', emoji: '🚌' },
-  ];
-
-
-  const interestCategories = [
-    { id: 'museums', label: t('interests.museums'), icon: '🏛️' },
-    { id: 'galleries', label: t('interests.galleries'), icon: '🎨' },
-    { id: 'parks', label: t('interests.parks'), icon: '🌳' },
-    { id: 'shopping', label: t('interests.shopping'), icon: '🛍️' },
-    { id: 'theater', label: t('interests.theater'), icon: '🎭' },
-    { id: 'liveMusic', label: t('interests.liveMusic'), icon: '🎵' },
-    { id: 'sportsEvents', label: t('interests.sportsEvents'), icon: '🏟️' },
-    { id: 'nightlife', label: t('interests.nightlife'), icon: '🍸' },
-    { id: 'historicalSites', label: t('interests.historicalSites'), icon: '🏰' },
-    { id: 'foodMarkets', label: t('interests.foodMarkets'), icon: '🥕' },
-    { id: 'cinema', label: t('interests.cinema'), icon: '🎬' },
-    { id: 'comedy', label: t('interests.comedy'), icon: '😂' },
-  ];
+  const interestCategories = INTEREST_CATEGORY_OPTIONS.map(({ id, icon }) => ({
+    id,
+    label: t(`interests.${id}`),
+    icon,
+  }));
 
   const cuisineCategories = Object.entries(CUISINE_EMOJI).map(([id, icon]) => ({ id, icon }));
-
-  const priceOptions = [
-    { value: '$', labelKey: 'priceRange.budget' },
-    { value: '$$', labelKey: 'priceRange.moderate' },
-    { value: '$$$', labelKey: 'priceRange.expensive' },
-  ];
 
   // --- Popup helpers ---
 
@@ -506,7 +463,7 @@ const DayGuide = () => {
 
             <h3 className="section-title">{t('interests.priceTitle')}</h3>
             <div className="price-options">
-              {priceOptions.map(opt => (
+              {PRICE_OPTIONS.map(opt => (
                 <button
                   key={opt.value}
                   className={`price-btn ${selectedPriceRange === opt.value ? 'selected' : ''}`}
@@ -937,7 +894,7 @@ const DayGuide = () => {
                       <div className="transport-section">
                         <div className="transport-label">{t('timeline.howToGetThere')}</div>
                         <div className="transport-options">
-                          {selectTransportOptions(transportOptions, item.distance).map((option, i) => (
+                          {selectTransportOptions(TRANSPORT_OPTIONS, item.distance).map((option, i) => (
                             <div key={i} className="transport-option">
                               <div className="transport-emoji">{option.emoji}</div>
                               <div className="transport-details">
