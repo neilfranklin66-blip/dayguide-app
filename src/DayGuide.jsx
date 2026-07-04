@@ -49,6 +49,7 @@ import RestaurantsLoadingCard from './components/RestaurantsLoadingCard';
 import NoMoreRestaurantsCard from './components/NoMoreRestaurantsCard';
 import RestaurantSwipeCard from './components/RestaurantSwipeCard';
 import TimelineActionButtons from './components/TimelineActionButtons';
+import TimelineHeaderSummary from './components/TimelineHeaderSummary';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -650,18 +651,13 @@ const DayGuide = () => {
       return (
         <div className="dayguide-container">
           <div className="card timeline-card">
-            <h2>{t('timeline.title')}</h2>
-            {isOverTime && (
-              <p className="over-time-warning">
-                {t('timeline.overTime', { hours: availableTime })}
-              </p>
-            )}
-            {dayNarrative && timeline.length > 0 && (
-              <div className="guide-note">
-                <p className="guide-note-label">{t('timeline.dayGuideLabel', 'Day guide')}</p>
-                <p className="guide-note-text">{dayNarrative}</p>
-              </div>
-            )}
+            <TimelineHeaderSummary
+              isOverTime={isOverTime}
+              availableTime={availableTime}
+              dayNarrative={dayNarrative}
+              hasTimelineItems={timeline.length > 0}
+              t={t}
+            />
             <div className="timeline">
               {timeline.length === 0 ? (
                 <p>{t('timeline.empty')}</p>
