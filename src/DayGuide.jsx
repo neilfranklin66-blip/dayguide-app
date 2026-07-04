@@ -46,6 +46,7 @@ import ActivitySwipeCard from './components/ActivitySwipeCard';
 import ActivitiesNoResultsCard from './components/ActivitiesNoResultsCard';
 import MealPromptCard from './components/MealPromptCard';
 import RestaurantsLoadingCard from './components/RestaurantsLoadingCard';
+import NoMoreRestaurantsCard from './components/NoMoreRestaurantsCard';
 import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -560,14 +561,10 @@ const DayGuide = () => {
 
       if (!currentRestaurant) {
         return (
-          <div className="dayguide-container">
-            <div className="card">
-              <h2>{t('restaurants.noMore')}</h2>
-              <button onClick={() => continueAfterRestaurants(selectedRestaurants)} className="btn-primary">
-                {t('restaurants.buildItinerary')}
-              </button>
-            </div>
-          </div>
+          <NoMoreRestaurantsCard
+            onContinue={() => continueAfterRestaurants(selectedRestaurants)}
+            t={t}
+          />
         );
       }
 
