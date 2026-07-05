@@ -68,23 +68,31 @@ function buildPhotoUrl(photoReference) {
   return `${PHOTO_URL}?maxwidth=400&photo_reference=${encodeURIComponent(photoReference)}&key=${API_KEY}`;
 }
 
+// A record without numeric coordinates can't be distance-filtered or routed;
+// skip it rather than letting one malformed result throw away the whole batch.
+function hasUsableGeometry(p) {
+  const loc = p?.geometry?.location;
+  return typeof loc?.lat === 'number' && typeof loc?.lng === 'number';
+}
+
 function parsePlaces(results, lat, lng) {
   return results
-    .filter(p => p.business_status !== 'CLOSED_PERMANENTLY')
+    .filter(p => hasUsableGeometry(p) && p.business_status !== 'CLOSED_PERMANENTLY')
     .map(p => {
+      const name = p.name || '';
       const priceSymbol = PRICE_LEVEL_TO_SYMBOL[p.price_level] ?? '$$';
       const dist = parseFloat(
         haversineKm(lat, lng, p.geometry.location.lat, p.geometry.location.lng).toFixed(1),
       );
       const imgSrc = p.photos?.[0]?.photo_reference
         ? buildPhotoUrl(p.photos[0].photo_reference)
-        : `https://placehold.co/400x300/667eea/ffffff?text=${encodeURIComponent(p.name.slice(0, 14))}`;
+        : `https://placehold.co/400x300/667eea/ffffff?text=${encodeURIComponent(name.slice(0, 14) || 'Restaurant')}`;
 
       return {
         id: p.place_id,
-        name: p.name,
+        name,
         city: '',
-        cuisine: detectCuisine(p.name, p.types),
+        cuisine: detectCuisine(name, p.types),
         priceRange: priceSymbol,
         rating: parseFloat((p.rating || 4.0).toFixed(1)),
         duration: PRICE_TO_DURATION[priceSymbol] ?? 1.5,
@@ -115,6 +123,18 @@ async function nearbySearch(lat, lng, keyword, maxprice) {
   return json.results || [];
 }
 
+// When every cuisine batch fails, surface the most actionable failure so the
+// caller's error-to-source mapping (quota, denied key, …) stays meaningful.
+const BATCH_ERROR_PRIORITY = ['QUOTA_EXCEEDED', 'API_DENIED'];
+
+function pickMostSpecificError(reasons) {
+  for (const message of BATCH_ERROR_PRIORITY) {
+    const match = reasons.find(r => r?.message === message);
+    if (match) return match;
+  }
+  return reasons[0] ?? new Error('ALL_BATCHES_FAILED');
+}
+
 /**
  * Search for nearby restaurants via Google Places Nearby Search.
  * Throws:
@@ -137,9 +157,13 @@ export async function searchRestaurants(lat, lng, cuisineFilters = [], priceFilt
   } else if (cuisinesToQuery.length === 1) {
     raw = await nearbySearch(lat, lng, CUISINE_KEYWORDS[cuisinesToQuery[0]], maxprice);
   } else {
-    const batches = await Promise.all(
+    const settled = await Promise.allSettled(
       cuisinesToQuery.map(c => nearbySearch(lat, lng, CUISINE_KEYWORDS[c] ?? `${c} restaurant`, maxprice)),
     );
+    const batches = settled.filter(s => s.status === 'fulfilled').map(s => s.value);
+    if (batches.length === 0) {
+      throw pickMostSpecificError(settled.map(s => s.reason));
+    }
     const seen = new Set();
     raw = [];
     batches.forEach(batch =>
