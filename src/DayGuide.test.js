@@ -1,6 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import DayGuide from './DayGuide';
 import useGeolocation from './useGeolocation';
+import { SAVED_PLAN_STORAGE_KEY } from './utils/planStorage';
+import { INTEREST_CATEGORY_OPTIONS } from './config/dayGuideOptions';
 
 jest.mock('./useGeolocation');
 
@@ -83,4 +85,86 @@ test('skips the location stage when geolocation is already resolved', () => {
 
   expect(screen.getByText('interests.title')).toBeInTheDocument();
   expect(screen.queryByText('welcome.findingLocation')).not.toBeInTheDocument();
+});
+
+// --- Saved-plan persistence ---
+
+const savedPlanPayload = {
+  version: 1,
+  savedAt: '2026-07-05T09:00:00.000Z',
+  plan: {
+    timeline: [
+      {
+        id: '0-42',
+        time: '9:00',
+        activity: 'Borough Market',
+        duration: 1.5,
+        distance: 1.2,
+        category: 'museums',
+        icon: '🏛️',
+        address: '8 Southwark St',
+        rating: 4.6,
+      },
+    ],
+    startTime: 9,
+    availableTime: 4,
+    hasChildren: false,
+    selectedCuisines: [],
+    selectedPriceRange: null,
+    selectedDate: '2026-07-05',
+    startWith: 'activities',
+  },
+};
+
+afterEach(() => {
+  localStorage.clear();
+});
+
+test('resume button is hidden when no plan is saved', () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  expect(screen.queryByText('welcome.resumePlan')).not.toBeInTheDocument();
+});
+
+test('resuming a seeded saved plan lands on the timeline with its content', () => {
+  localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(savedPlanPayload));
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.resumePlan'));
+
+  expect(screen.getByText('timeline.title')).toBeInTheDocument();
+  expect(screen.getByText('Borough Market')).toBeInTheDocument();
+});
+
+test('building a timeline saves the plan and start over clears it', () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+
+  // Interests stage: pick the first interest and answer the children question.
+  fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+  fireEvent.click(screen.getByRole('button', { name: 'No' }));
+  fireEvent.click(screen.getByText('interests.next'));
+
+  // Like every activity in the queue until the flow moves on.
+  for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
+    fireEvent.click(screen.getByText('activities.yes'));
+  }
+
+  // Decline the meal prompt so the timeline is built from activities alone.
+  fireEvent.click(screen.getByText('mealPrompt.no'));
+  expect(screen.getByText('timeline.title')).toBeInTheDocument();
+
+  const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
+  expect(stored.version).toBe(1);
+  expect(stored.plan.timeline.length).toBeGreaterThan(0);
+
+  fireEvent.click(screen.getByText('timeline.startOver'));
+
+  expect(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).toBeNull();
+  expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
+  expect(screen.queryByText('welcome.resumePlan')).not.toBeInTheDocument();
 });

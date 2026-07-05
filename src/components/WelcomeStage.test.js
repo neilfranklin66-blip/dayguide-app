@@ -27,3 +27,18 @@ test('clicking start planning calls onStartPlanning', () => {
 
   expect(onStartPlanning).toHaveBeenCalledTimes(1);
 });
+
+test('resume button is hidden without a saved plan', () => {
+  render(<WelcomeStage {...baseProps} hasSavedPlan={false} onResume={jest.fn()} />);
+
+  expect(screen.queryByText('welcome.resumePlan')).not.toBeInTheDocument();
+});
+
+test('clicking resume calls onResume when a saved plan exists', () => {
+  const onResume = jest.fn();
+  render(<WelcomeStage {...baseProps} hasSavedPlan={true} onResume={onResume} />);
+
+  fireEvent.click(screen.getByText('welcome.resumePlan'));
+
+  expect(onResume).toHaveBeenCalledTimes(1);
+});

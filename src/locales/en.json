@@ -32,6 +32,7 @@
     "detectingLocation": "📍 Detecting location...",
     "refreshLocation": "Refresh Location",
     "startPlanning": "Start Planning",
+    "resumePlan": "Resume your plan",
     "findingLocation": "📍 Finding your location...",
     "gettingCoordinates": "Getting your GPS coordinates..."
   },

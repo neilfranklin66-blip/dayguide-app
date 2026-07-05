@@ -32,6 +32,7 @@
     "detectingLocation": "📍 Đang phát hiện vị trí...",
     "refreshLocation": "Làm mới vị trí",
     "startPlanning": "Bắt đầu lên kế hoạch",
+    "resumePlan": "Tiếp tục kế hoạch của bạn",
     "findingLocation": "📍 Đang tìm vị trí của bạn...",
     "gettingCoordinates": "Đang lấy tọa độ GPS của bạn..."
   },

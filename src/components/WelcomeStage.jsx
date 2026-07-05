@@ -1,6 +1,6 @@
 import React from 'react';
 
-function WelcomeStage({ t, locationLoading, locationError, position, refreshLocation, onStartPlanning }) {
+function WelcomeStage({ t, locationLoading, locationError, position, refreshLocation, onStartPlanning, hasSavedPlan, onResume }) {
   return (
     <div className="dayguide-container welcome">
       <div className="welcome-card card">
@@ -21,6 +21,9 @@ function WelcomeStage({ t, locationLoading, locationError, position, refreshLoca
           <button onClick={refreshLocation} className="btn-refresh">{t('welcome.refreshLocation')}</button>
         </div>
         <button onClick={onStartPlanning} className="btn-primary">{t('welcome.startPlanning')}</button>
+        {hasSavedPlan && (
+          <button onClick={onResume} className="btn-secondary">{t('welcome.resumePlan')}</button>
+        )}
       </div>
     </div>
   );

@@ -37,6 +37,7 @@ import MealPromptStage from './components/MealPromptStage';
 import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
 import { rankRecommendations } from './utils/recommendationScore';
+import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
 import {
   CUISINE_EMOJI,
   getCuisineEmoji,
@@ -69,6 +70,7 @@ const DayGuide = () => {
   const [activityQueue, setActivityQueue] = useState([]);
   const [restaurantQueue, setRestaurantQueue] = useState(null);
   const [timeline, setTimeline] = useState([]);
+  const [hasSavedPlan, setHasSavedPlan] = useState(() => loadPlan() !== null);
 
   // Popup state
   const [activePopup, setActivePopup] = useState(null);
@@ -181,6 +183,8 @@ const DayGuide = () => {
     setRestaurantSource(null);
     setNearestHint(null);
     setSelectedDate(new Date().toISOString().split('T')[0]);
+    clearPlan();
+    setHasSavedPlan(false);
     setStage('welcome');
   };
 
@@ -336,6 +340,42 @@ const DayGuide = () => {
     }
   };
 
+  // Persist the finished plan (timeline plus the settings TimelineStage needs)
+  // so a refresh never loses a built plan. Queues, selections, and geolocation
+  // are deliberately not saved.
+  const persistPlan = (newTimeline) => {
+    if (!Array.isArray(newTimeline) || newTimeline.length === 0) return;
+    savePlan({
+      timeline: newTimeline,
+      startTime,
+      availableTime,
+      hasChildren,
+      selectedCuisines,
+      selectedPriceRange,
+      selectedDate,
+      startWith,
+    });
+    setHasSavedPlan(true);
+  };
+
+  const resumePlan = () => {
+    const saved = loadPlan();
+    if (!saved) {
+      setHasSavedPlan(false);
+      return;
+    }
+
+    setTimeline(saved.timeline);
+    setStartTime(saved.startTime);
+    if (typeof saved.availableTime === 'number') setAvailableTime(saved.availableTime);
+    setHasChildren(typeof saved.hasChildren === 'boolean' ? saved.hasChildren : null);
+    setSelectedCuisines(Array.isArray(saved.selectedCuisines) ? saved.selectedCuisines : []);
+    setSelectedPriceRange(saved.selectedPriceRange ?? null);
+    if (saved.selectedDate) setSelectedDate(saved.selectedDate);
+    if (saved.startWith) setStartWith(saved.startWith);
+    setStage('timeline');
+  };
+
   const buildTimeline = (restaurants = selectedRestaurants, activities = selectedActivities) => {
     const newTimeline = buildTimelineEntries({
       restaurants,
@@ -346,11 +386,14 @@ const DayGuide = () => {
     });
 
     setTimeline(newTimeline);
+    persistPlan(newTimeline);
     setStage('timeline');
   };
 
   const updateActivityDuration = (index, newDuration) => {
-    setTimeline(prev => updateTimelineItemDuration(prev, index, newDuration, startTime));
+    const updated = updateTimelineItemDuration(timeline, index, newDuration, startTime);
+    setTimeline(updated);
+    persistPlan(updated);
   };
 
   // --- Popup action handlers ---
@@ -381,6 +424,8 @@ const DayGuide = () => {
           position={position}
           refreshLocation={refreshLocation}
           onStartPlanning={handleStartPlanning}
+          hasSavedPlan={hasSavedPlan}
+          onResume={resumePlan}
         />
       );
     }
