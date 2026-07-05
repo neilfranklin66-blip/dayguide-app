@@ -32,7 +32,7 @@ import WelcomeStage from './components/WelcomeStage';
 import LocationStage from './components/LocationStage';
 import InterestsStage from './components/InterestsStage';
 import ActivitiesStage from './components/ActivitiesStage';
-import MealPromptCard from './components/MealPromptCard';
+import MealPromptStage from './components/MealPromptStage';
 import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
 import { rankRecommendations } from './utils/recommendationScore';
@@ -421,9 +421,9 @@ const DayGuide = () => {
 
     if (stage === 'meal-prompt') {
       return (
-        <MealPromptCard
-          onYes={goToRestaurants}
-          onNo={() => continueAfterRestaurants([])}
+        <MealPromptStage
+          goToRestaurants={goToRestaurants}
+          continueAfterRestaurants={continueAfterRestaurants}
           t={t}
         />
       );
