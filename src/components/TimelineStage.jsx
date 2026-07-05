@@ -1,7 +1,7 @@
 import React from 'react';
 import TimelineCard from './TimelineCard';
 import { buildDayNarrative } from '../utils/dayNarrative';
-import { calculateTimelineDuration } from '../engines/timelineEngine';
+import { calculateTimelineDuration, getTimeBudgetStatus } from '../engines/timelineEngine';
 
 export default function TimelineStage({
   timeline,
@@ -18,9 +18,9 @@ export default function TimelineStage({
   t,
 }) {
   const totalDuration = calculateTimelineDuration(timeline);
-  const isOverTime = timeline.length > 0 && totalDuration > availableTime;
+  const timeBudget = getTimeBudgetStatus(timeline, availableTime);
   const narrativeCopy = {
-    foodFirst: t('timeline.dayNarrative.foodFirst', 'begins with food before moving on to the rest of your day'),
+      foodFirst: t('timeline.dayNarrative.foodFirst', 'begins with food before moving on to the rest of your day'),
     activitiesFirst: t('timeline.dayNarrative.activitiesFirst', 'starts with activities before any food stops'),
     neutralOrder: t('timeline.dayNarrative.neutralOrder', 'moves through your picks one stop at a time'),
     fitsTime: t('timeline.dayNarrative.fitsTime', 'It should fit within your available time'),
@@ -77,8 +77,7 @@ export default function TimelineStage({
 
   return (
     <TimelineCard
-      isOverTime={isOverTime}
-      availableTime={availableTime}
+      timeBudget={timeBudget}
       dayNarrative={dayNarrative}
       hasTimelineItems={timeline.length > 0}
       selectedDate={selectedDate}

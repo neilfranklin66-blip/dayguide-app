@@ -136,7 +136,12 @@
     "shareTitle": "分享您的行程",
     "shareHint": "扫描二维码分享您的行程",
     "bookNow": "📱 立即预订",
-    "overTime": "⚠️ 此计划超出您 {{hours}} 小时的预算。",
+    "budget": {
+      "planned": "🕒 计划时长：{{planned}} · 可用时长：{{available}}",
+      "over": "⚠️ 超出可用时间 {{amount}}",
+      "within": "✅ 在可用时间内，剩余 {{amount}}",
+      "exact": "✅ 恰好符合您的可用时间"
+    },
     "dayGuideLabel": "行程指南",
     "dayNarrative": {
       "foodFirst": "先安排用餐，再进行当天的其他行程",

@@ -5,6 +5,34 @@ export const calculateTimelineDuration = (timeline, gapHours = 0.25) => {
   return itemDuration + gapDuration;
 };
 
+export const formatDurationLabel = (hours) => {
+  const totalMinutes = Math.round(hours * 60);
+  const wholeHours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (wholeHours === 0) return `${minutes}m`;
+  return minutes === 0 ? `${wholeHours}h` : `${wholeHours}h ${minutes}m`;
+};
+
+export const getTimeBudgetStatus = (timeline, availableTime, gapHours = 0.25) => {
+  if (timeline.length === 0 || typeof availableTime !== 'number' || availableTime <= 0) {
+    return null;
+  }
+
+  const plannedHours = calculateTimelineDuration(timeline, gapHours);
+  // Compare in whole minutes so summed quarter-hour durations never produce
+  // a false over-budget verdict from floating-point noise.
+  const differenceMinutes = Math.round((plannedHours - availableTime) * 60);
+
+  return {
+    plannedHours,
+    availableHours: availableTime,
+    differenceHours: Math.abs(differenceMinutes) / 60,
+    isOverBudget: differenceMinutes > 0,
+    isExactFit: differenceMinutes === 0,
+  };
+};
+
 export const formatTimelineTime = (decimalHour) =>
   `${Math.floor(decimalHour)}:${String(Math.round((decimalHour % 1) * 60)).padStart(2, '0')}`;
 

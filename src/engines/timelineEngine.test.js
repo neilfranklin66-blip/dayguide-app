@@ -2,7 +2,9 @@ import {
   buildTimelineEntries,
   buildTimelineShareText,
   calculateTimelineDuration,
+  formatDurationLabel,
   formatTimelineTime,
+  getTimeBudgetStatus,
   getTimelineCategoryLabel,
   recalculateTimelineTimes,
   updateTimelineItemDuration,
@@ -33,6 +35,86 @@ test('calculateTimelineDuration supports a custom gap duration', () => {
   ];
 
   expect(calculateTimelineDuration(timeline, 0.5)).toBe(2.5);
+});
+
+test('formatDurationLabel formats whole hours', () => {
+  expect(formatDurationLabel(4)).toBe('4h');
+});
+
+test('formatDurationLabel formats hours with minutes', () => {
+  expect(formatDurationLabel(4.25)).toBe('4h 15m');
+});
+
+test('formatDurationLabel formats sub-hour durations as minutes only', () => {
+  expect(formatDurationLabel(0.5)).toBe('30m');
+});
+
+test('getTimeBudgetStatus returns null for an empty timeline', () => {
+  expect(getTimeBudgetStatus([], 4)).toBeNull();
+});
+
+test('getTimeBudgetStatus returns null without a positive available time', () => {
+  expect(getTimeBudgetStatus([{ duration: 2 }], 0)).toBeNull();
+  expect(getTimeBudgetStatus([{ duration: 2 }], undefined)).toBeNull();
+});
+
+test('getTimeBudgetStatus reports an over-budget plan with the overage', () => {
+  const timeline = [
+    { duration: 2 },
+    { duration: 2 },
+    { duration: 1 },
+  ];
+
+  expect(getTimeBudgetStatus(timeline, 4)).toEqual({
+    plannedHours: 5.5,
+    availableHours: 4,
+    differenceHours: 1.5,
+    isOverBudget: true,
+    isExactFit: false,
+  });
+});
+
+test('getTimeBudgetStatus reports a within-budget plan with the remaining time', () => {
+  const timeline = [
+    { duration: 1 },
+    { duration: 2 },
+  ];
+
+  expect(getTimeBudgetStatus(timeline, 6)).toEqual({
+    plannedHours: 3.25,
+    availableHours: 6,
+    differenceHours: 2.75,
+    isOverBudget: false,
+    isExactFit: false,
+  });
+});
+
+test('getTimeBudgetStatus reports an exact fit', () => {
+  const timeline = [
+    { duration: 2 },
+    { duration: 1.75 },
+  ];
+
+  expect(getTimeBudgetStatus(timeline, 4)).toEqual({
+    plannedHours: 4,
+    availableHours: 4,
+    differenceHours: 0,
+    isOverBudget: false,
+    isExactFit: true,
+  });
+});
+
+test('getTimeBudgetStatus supports a custom gap duration', () => {
+  const timeline = [
+    { duration: 1 },
+    { duration: 1 },
+  ];
+
+  const status = getTimeBudgetStatus(timeline, 2, 0.5);
+
+  expect(status.plannedHours).toBe(2.5);
+  expect(status.isOverBudget).toBe(true);
+  expect(status.differenceHours).toBe(0.5);
 });
 
 test('formatTimelineTime formats whole hours', () => {

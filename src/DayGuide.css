@@ -901,6 +901,22 @@ p {
   margin-bottom: 16px;
 }
 
+.time-budget-summary {
+  color: #555;
+  font-size: 0.875em;
+  margin-bottom: 6px;
+}
+
+.time-budget-within {
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  color: #1b5e20;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.875em;
+  margin-bottom: 16px;
+}
+
 /* Activities grid: 3-column compact layout for 12 categories */
 .activities-grid {
   grid-template-columns: repeat(3, 1fr);

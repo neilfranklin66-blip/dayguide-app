@@ -4,8 +4,7 @@ import TimelineList from './TimelineList';
 import TimelineActionButtons from './TimelineActionButtons';
 
 export default function TimelineCard({
-  isOverTime,
-  availableTime,
+  timeBudget,
   dayNarrative,
   hasTimelineItems,
   selectedDate,
@@ -19,8 +18,7 @@ export default function TimelineCard({
     <div className="dayguide-container">
       <div className="card timeline-card">
         <TimelineHeaderSummary
-          isOverTime={isOverTime}
-          availableTime={availableTime}
+          timeBudget={timeBudget}
           dayNarrative={dayNarrative}
           hasTimelineItems={hasTimelineItems}
           selectedDate={selectedDate}

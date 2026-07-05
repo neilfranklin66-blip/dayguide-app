@@ -136,7 +136,12 @@
     "shareTitle": "Comparte tu día",
     "shareHint": "Escanea este código QR para compartir tu itinerario",
     "bookNow": "📱 Reservar ahora",
-    "overTime": "⚠️ Este plan supera tu presupuesto de {{hours}} horas.",
+    "budget": {
+      "planned": "🕒 Planificado: {{planned}} · Disponible: {{available}}",
+      "over": "⚠️ Supera tu tiempo disponible en {{amount}}",
+      "within": "✅ Cabe en tu tiempo disponible con {{amount}} de margen",
+      "exact": "✅ Encaja exactamente en tu tiempo disponible"
+    },
     "dayGuideLabel": "Guía del día",
     "dayNarrative": {
       "foodFirst": "comienza con comida antes de pasar al resto del día",
