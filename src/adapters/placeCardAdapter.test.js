@@ -1,4 +1,10 @@
-import { mapFromMockArray, mapFromPlacesArray } from '../adapters/placeCardAdapter';
+import {
+  fromMockRestaurant,
+  fromPlacesParsed,
+  mapFromMockArray,
+  mapFromPlacesArray,
+} from '../adapters/placeCardAdapter';
+import mockRestaurantData from '../mockRestaurantData.json';
 
 const mockRestaurant = {
   id: 1,
@@ -69,5 +75,33 @@ test('places adapter preserves compatibility aliases and canonical fields', () =
     walkingTimeMinutes: expect.any(Number),
     vendorData: { raw: mockPlacesItem },
     metadata: expect.any(Object),
+  });
+});
+
+test('mock restaurant adapter maps familyFriendly true to metadata.isFamilyFriendly true', () => {
+  const card = fromMockRestaurant({ ...mockRestaurant, familyFriendly: true });
+  expect(card.metadata.isFamilyFriendly).toBe(true);
+});
+
+test('mock restaurant adapter maps familyFriendly false to metadata.isFamilyFriendly false', () => {
+  const card = fromMockRestaurant({ ...mockRestaurant, familyFriendly: false });
+  expect(card.metadata.isFamilyFriendly).toBe(false);
+});
+
+test('mock restaurant adapter maps missing or non-boolean familyFriendly to null', () => {
+  expect(fromMockRestaurant(mockRestaurant).metadata.isFamilyFriendly).toBeNull();
+  expect(fromMockRestaurant({ ...mockRestaurant, familyFriendly: 'yes' }).metadata.isFamilyFriendly).toBeNull();
+  expect(fromMockRestaurant({ ...mockRestaurant, familyFriendly: 1 }).metadata.isFamilyFriendly).toBeNull();
+});
+
+test('places adapter keeps metadata.isFamilyFriendly null (live data carries no family signal)', () => {
+  const card = fromPlacesParsed({ ...mockPlacesItem, familyFriendly: true });
+  expect(card.metadata.isFamilyFriendly).toBeNull();
+});
+
+test('every mock restaurant entry declares a boolean familyFriendly', () => {
+  expect(mockRestaurantData.length).toBeGreaterThan(0);
+  mockRestaurantData.forEach(entry => {
+    expect(typeof entry.familyFriendly).toBe('boolean');
   });
 });

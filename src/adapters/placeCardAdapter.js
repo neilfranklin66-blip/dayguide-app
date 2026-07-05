@@ -98,7 +98,7 @@ function buildMapsSearchUrl(name, address) {
 
 /**
  * Convert a mock restaurant object (mockRestaurantData.json entry) to a PlaceCard.
- * Assumes mock fields: id (number), name, city, cuisine (array), priceRange, rating, duration (hours), distance (km), address, image
+ * Assumes mock fields: id (number), name, city, cuisine (array), priceRange, rating, duration (hours), distance (km), address, image, familyFriendly (boolean)
  *
  * Maps to:
  *   type: 'food_drink' (supports broader food/drink venues)
@@ -131,7 +131,11 @@ export function fromMockRestaurant(r) {
     reason: null,
     source: PLACE_CARD_SOURCES.MOCK_RESTAURANT,
     vendorData: { raw: r },
-    metadata: getDefaultPlaceCardMetadata(),
+    metadata: {
+      ...getDefaultPlaceCardMetadata(),
+      // tri-state: true/false only when the mock data states it; otherwise null (unknown)
+      isFamilyFriendly: typeof r.familyFriendly === 'boolean' ? r.familyFriendly : null,
+    },
   };
 
   return createPlaceCard({
