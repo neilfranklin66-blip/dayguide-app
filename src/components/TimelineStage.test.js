@@ -22,6 +22,7 @@ const baseProps = {
   hasChildren: false,
   selectedCuisines: [],
   selectedPriceRange: null,
+  selectedDate: '2026-07-05',
   startWith: 'activities',
   updateActivityDuration: jest.fn(),
   resetState: jest.fn(),
@@ -35,6 +36,18 @@ test('renders the timeline with its items', () => {
   expect(screen.getByText('timeline.title')).toBeInTheDocument();
   expect(screen.getByText('City Museum')).toBeInTheDocument();
   expect(screen.getByText('10:00')).toBeInTheDocument();
+});
+
+test('renders the selected date in the header summary', () => {
+  render(<TimelineStage {...baseProps} />);
+
+  expect(screen.getByText('📅 2026-07-05')).toBeInTheDocument();
+});
+
+test('does not render a date line when no date is selected', () => {
+  render(<TimelineStage {...baseProps} selectedDate={undefined} />);
+
+  expect(screen.queryByText(/📅/)).not.toBeInTheDocument();
 });
 
 test('clicking share opens the QR modal', () => {

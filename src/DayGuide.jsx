@@ -458,6 +458,7 @@ const DayGuide = () => {
           hasChildren={hasChildren}
           selectedCuisines={selectedCuisines}
           selectedPriceRange={selectedPriceRange}
+          selectedDate={selectedDate}
           startWith={startWith}
           updateActivityDuration={updateActivityDuration}
           resetState={resetState}
@@ -501,6 +502,7 @@ const DayGuide = () => {
         showQR={showQR}
         onClose={() => setShowQR(false)}
         timeline={timeline}
+        selectedDate={selectedDate}
         t={t}
       />
     </>

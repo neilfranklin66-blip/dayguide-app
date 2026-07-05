@@ -8,6 +8,7 @@ export default function TimelineCard({
   availableTime,
   dayNarrative,
   hasTimelineItems,
+  selectedDate,
   timeline,
   onDurationChange,
   onStartOver,
@@ -22,6 +23,7 @@ export default function TimelineCard({
           availableTime={availableTime}
           dayNarrative={dayNarrative}
           hasTimelineItems={hasTimelineItems}
+          selectedDate={selectedDate}
           t={t}
         />
         <TimelineList

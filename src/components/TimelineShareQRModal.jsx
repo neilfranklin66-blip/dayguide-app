@@ -3,7 +3,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { buildTimelineShareText } from '../engines/timelineEngine';
 import { ACTIVITY_CATEGORIES } from '../config/dayGuideOptions';
 
-const TimelineShareQRModal = ({ showQR, onClose, timeline, t }) => {
+const TimelineShareQRModal = ({ showQR, onClose, timeline, selectedDate, t }) => {
   if (!showQR) return null;
   return (
     <div className="popup-overlay" onClick={onClose}>
@@ -12,7 +12,7 @@ const TimelineShareQRModal = ({ showQR, onClose, timeline, t }) => {
         <div className="popup-icon">📲</div>
         <h3 className="popup-title">{t('timeline.shareTitle')}</h3>
         <div className="qr-wrapper">
-          <QRCodeSVG value={buildTimelineShareText({ timeline, t, activityCategories: ACTIVITY_CATEGORIES })} size={200} />
+          <QRCodeSVG value={buildTimelineShareText({ timeline, t, activityCategories: ACTIVITY_CATEGORIES, selectedDate })} size={200} />
         </div>
         <p className="popup-message qr-hint">{t('timeline.shareHint')}</p>
       </div>

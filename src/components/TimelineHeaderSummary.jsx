@@ -1,9 +1,12 @@
 import React from 'react';
 
-export default function TimelineHeaderSummary({ isOverTime, availableTime, dayNarrative, hasTimelineItems, t }) {
+export default function TimelineHeaderSummary({ isOverTime, availableTime, dayNarrative, hasTimelineItems, selectedDate, t }) {
   return (
     <>
       <h2>{t('timeline.title')}</h2>
+      {selectedDate && (
+        <p className="timeline-date">📅 {selectedDate}</p>
+      )}
       {isOverTime && (
         <p className="over-time-warning">
           {t('timeline.overTime', { hours: availableTime })}

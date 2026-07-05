@@ -54,8 +54,15 @@ export const buildTimelineShareText = ({
   timeline = [],
   t,
   activityCategories = new Set(),
+  selectedDate,
 }) => {
-  const lines = [`DayGuide \u2014 ${t('timeline.title')}`, ''];
+  const lines = [`DayGuide \u2014 ${t('timeline.title')}`];
+
+  if (selectedDate) {
+    lines.push(`\u{1F4C5} ${selectedDate}`);
+  }
+
+  lines.push('');
 
   timeline.forEach(item => {
     const catLabel = getTimelineCategoryLabel({

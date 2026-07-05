@@ -329,6 +329,35 @@ test('buildTimelineShareText formats activity and cuisine timeline lines', () =>
   ].join('\n'));
 });
 
+test('buildTimelineShareText includes the selected date when provided', () => {
+  const t = (key, fallback) => ({
+    'timeline.title': 'Your Plan',
+    'interests.museums': 'Museums',
+  }[key] ?? fallback ?? key);
+
+  const text = buildTimelineShareText({
+    activityCategories: new Set(['museums']),
+    t,
+    selectedDate: '2026-07-05',
+    timeline: [
+      {
+        time: '9:00',
+        icon: 'museum-icon',
+        category: 'museums',
+        activity: 'Museum Visit',
+        duration: 1,
+      },
+    ],
+  });
+
+  expect(text).toBe([
+    'DayGuide — Your Plan',
+    '\u{1F4C5} 2026-07-05',
+    '',
+    '9:00  museum-icon Museums: Museum Visit (1h)',
+  ].join('\n'));
+});
+
 test('buildTimelineShareText falls back to the category for untranslated cuisine', () => {
   const t = (key, fallback) => fallback ?? key;
 

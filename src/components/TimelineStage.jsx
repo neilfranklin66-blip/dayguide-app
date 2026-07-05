@@ -10,6 +10,7 @@ export default function TimelineStage({
   hasChildren,
   selectedCuisines,
   selectedPriceRange,
+  selectedDate,
   startWith,
   updateActivityDuration,
   resetState,
@@ -80,6 +81,7 @@ export default function TimelineStage({
       availableTime={availableTime}
       dayNarrative={dayNarrative}
       hasTimelineItems={timeline.length > 0}
+      selectedDate={selectedDate}
       timeline={timeline}
       onDurationChange={updateActivityDuration}
       onStartOver={resetState}
