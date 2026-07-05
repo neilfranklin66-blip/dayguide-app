@@ -4,6 +4,7 @@ import {
   calculateTimelineDuration,
   formatTimelineTime,
   getTimelineCategoryLabel,
+  recalculateTimelineTimes,
   updateTimelineItemDuration,
 } from './timelineEngine';
 
@@ -203,6 +204,93 @@ test('updateTimelineItemDuration does not mutate the original timeline', () => {
   expect(updated).not.toBe(timeline);
   expect(updated[0]).toBe(timeline[0]);
   expect(updated[1]).not.toBe(timeline[1]);
+});
+
+test('updateTimelineItemDuration recomputes later times when increasing the first item duration', () => {
+  const timeline = [
+    { id: '0-museum-1', time: '9:00', activity: 'Museum', duration: 1, distance: 0.4, category: 'museums' },
+    { id: '1-cafe-1', time: '10:15', activity: 'Cafe', duration: 0.5, distance: 0.2, category: 'Food and Drinks' },
+    { id: '2-park-1', time: '11:00', activity: 'Park', duration: 1, distance: 0.6, category: 'parks' },
+  ];
+
+  const updated = updateTimelineItemDuration(timeline, 0, 3, 9);
+
+  expect(updated[0].duration).toBe(3);
+  expect(updated.map(item => item.time)).toEqual(['9:00', '12:15', '13:00']);
+});
+
+test('updateTimelineItemDuration recomputes later times when decreasing a middle item duration', () => {
+  const timeline = [
+    { id: '0-museum-1', time: '9:00', activity: 'Museum', duration: 1, distance: 0.4, category: 'museums' },
+    { id: '1-cafe-1', time: '10:15', activity: 'Cafe', duration: 2, distance: 0.2, category: 'Food and Drinks' },
+    { id: '2-park-1', time: '12:30', activity: 'Park', duration: 1, distance: 0.6, category: 'parks' },
+  ];
+
+  const updated = updateTimelineItemDuration(timeline, 1, 0.5, 9);
+
+  expect(updated[1].duration).toBe(0.5);
+  expect(updated.map(item => item.time)).toEqual(['9:00', '10:15', '11:00']);
+  expect(updated[0].time).toBe(timeline[0].time);
+});
+
+test('updateTimelineItemDuration preserves item order, ids, and other fields when recomputing times', () => {
+  const timeline = [
+    { id: '0-museum-1', time: '9:00', activity: 'Museum', duration: 1, distance: 0.4, category: 'museums', icon: 'museum-icon', address: '1 Museum Street', rating: 4.7 },
+    { id: '1-cafe-1', time: '10:15', activity: 'Cafe', duration: 0.5, distance: 0.2, category: 'Food and Drinks', icon: 'food-icon', address: '2 Cafe Street', rating: 4.4 },
+  ];
+
+  const updated = updateTimelineItemDuration(timeline, 0, 2, 9);
+
+  expect(updated.map(item => item.id)).toEqual(['0-museum-1', '1-cafe-1']);
+  expect(updated[1]).toEqual({ ...timeline[1], time: '11:15' });
+  expect(timeline[0].duration).toBe(1);
+  expect(timeline[1].time).toBe('10:15');
+});
+
+test('updateTimelineItemDuration recomputes a single-item timeline from the start time', () => {
+  const timeline = [
+    { id: '0-museum-1', time: '9:00', activity: 'Museum', duration: 1, category: 'museums' },
+  ];
+
+  const updated = updateTimelineItemDuration(timeline, 0, 2.5, 9);
+
+  expect(updated).toEqual([
+    { id: '0-museum-1', time: '9:00', activity: 'Museum', duration: 2.5, category: 'museums' },
+  ]);
+});
+
+test('recalculateTimelineTimes matches buildTimelineEntries gap behaviour after a duration change', () => {
+  const activities = [
+    { id: 'museum-1', name: 'Museum', duration: 1, distance: 0.4, category: 'museums', image: 'museum-icon', address: '1 Museum Street', rating: 4.7 },
+    { id: 'park-1', name: 'Park', duration: 0.5, distance: 0.6, category: 'parks', image: 'park-icon', address: '3 Park Street', rating: 4.5 },
+  ];
+
+  const original = buildTimelineEntries({
+    startTime: 9,
+    getCuisineEmoji: () => 'food-icon',
+    activities,
+  });
+
+  const updated = updateTimelineItemDuration(original, 0, 3, 9);
+
+  const rebuilt = buildTimelineEntries({
+    startTime: 9,
+    getCuisineEmoji: () => 'food-icon',
+    activities: [{ ...activities[0], duration: 3 }, activities[1]],
+  });
+
+  expect(updated).toEqual(rebuilt);
+});
+
+test('recalculateTimelineTimes supports a custom gap duration', () => {
+  const timeline = [
+    { id: 'first', duration: 1 },
+    { id: 'second', duration: 1 },
+  ];
+
+  const recalculated = recalculateTimelineTimes(timeline, 9, 0.5);
+
+  expect(recalculated.map(item => item.time)).toEqual(['9:00', '10:30']);
 });
 
 test('buildTimelineShareText formats activity and cuisine timeline lines', () => {

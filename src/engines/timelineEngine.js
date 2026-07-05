@@ -70,9 +70,21 @@ export const buildTimelineShareText = ({
   return lines.join('\n');
 };
 
-export const updateTimelineItemDuration = (timeline, index, newDuration) => {
+export const recalculateTimelineTimes = (timeline, startTime, gapHours = 0.25) => {
+  let currentTime = startTime;
+
+  return timeline.map(item => {
+    const entry = { ...item, time: formatTimelineTime(currentTime) };
+    currentTime += item.duration + gapHours;
+    return entry;
+  });
+};
+
+export const updateTimelineItemDuration = (timeline, index, newDuration, startTime, gapHours = 0.25) => {
   const updated = [...timeline];
   updated[index] = { ...updated[index], duration: newDuration };
 
-  return updated;
+  return startTime == null
+    ? updated
+    : recalculateTimelineTimes(updated, startTime, gapHours);
 };

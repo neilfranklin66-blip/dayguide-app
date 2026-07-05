@@ -328,7 +328,7 @@ const DayGuide = () => {
   };
 
   const updateActivityDuration = (index, newDuration) => {
-    setTimeline(prev => updateTimelineItemDuration(prev, index, newDuration));
+    setTimeline(prev => updateTimelineItemDuration(prev, index, newDuration, startTime));
   };
 
   // --- Popup action handlers ---
