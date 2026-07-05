@@ -2,6 +2,7 @@ import {
   buildRestaurantQueue,
   excludeAlreadySelected,
   filterRestaurants,
+  findNearestRestaurant,
   getActivitiesForInterests,
 } from './filterEngine';
 
@@ -182,4 +183,52 @@ test('buildRestaurantQueue limits restaurant results without shuffling in tests'
   });
 
   expect(result).toEqual([restaurants[0], restaurants[1]]);
+});
+
+test('findNearestRestaurant returns the closest restaurant by distanceKm', () => {
+  const result = findNearestRestaurant([
+    { name: 'Far Place', distanceKm: 3.4 },
+    { name: 'Near Place', distanceKm: 0.6 },
+    { name: 'Mid Place', distanceKm: 1.9 },
+  ]);
+
+  expect(result).toEqual({ name: 'Near Place', distance: 0.6 });
+});
+
+test('findNearestRestaurant keeps the first item on tied distances', () => {
+  const result = findNearestRestaurant([
+    { name: 'First Tied', distanceKm: 1.2 },
+    { name: 'Second Tied', distanceKm: 1.2 },
+  ]);
+
+  expect(result).toEqual({ name: 'First Tied', distance: 1.2 });
+});
+
+test('findNearestRestaurant falls back to the legacy distance field when distanceKm is absent', () => {
+  const result = findNearestRestaurant([
+    { name: 'Legacy Far', distance: 2.5 },
+    { name: 'Legacy Near', distance: 0.9 },
+  ]);
+
+  expect(result).toEqual({ name: 'Legacy Near', distance: 0.9 });
+});
+
+test('findNearestRestaurant returns null for an empty array', () => {
+  expect(findNearestRestaurant([])).toBeNull();
+});
+
+test('findNearestRestaurant returns null for non-array input', () => {
+  expect(findNearestRestaurant(null)).toBeNull();
+  expect(findNearestRestaurant(undefined)).toBeNull();
+  expect(findNearestRestaurant('not an array')).toBeNull();
+});
+
+test('findNearestRestaurant returns null when no card has a usable numeric distance', () => {
+  const result = findNearestRestaurant([
+    { name: 'No Distance' },
+    { name: 'String Distance', distanceKm: '1.2' },
+    { name: 'NaN Distance', distance: NaN },
+  ]);
+
+  expect(result).toBeNull();
 });

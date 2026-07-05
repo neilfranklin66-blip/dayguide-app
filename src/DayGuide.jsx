@@ -9,6 +9,7 @@ import { mapFromMockArray, mapFromPlacesArray } from './adapters/placeCardAdapte
 import {
   buildRestaurantQueue as buildFilteredRestaurantQueue,
   excludeAlreadySelected,
+  findNearestRestaurant,
   getActivitiesForInterests as getFilteredActivitiesForInterests,
 } from './engines/filterEngine';
 import { getRestaurantSourceFromError } from './engines/restaurantEngine';
@@ -249,9 +250,20 @@ const DayGuide = () => {
     setStage('activities');
   };
 
+  // When even the mock fallback queue is empty, surface the nearest venue from
+  // the full unfiltered mock list so the no-results card can suggest it.
+  const applyFallbackRestaurantQueue = (cuisines, price) => {
+    const queue = buildRestaurantQueue(cuisines, price);
+    setRestaurantQueue(queue);
+    if (queue.length === 0) {
+      setNearestHint(findNearestRestaurant(mapFromMockArray(mockRestaurantData)));
+    }
+  };
+
   const goToRestaurants = async (cuisineOverride = selectedCuisines, priceOverride = selectedPriceRange) => {
     setIsRestaurantsLoading(true);
     setRestaurantSource(null);
+    setNearestHint(null);
     setRestaurantQueue(null);
     setCurrentRestaurantIndex(0);
     setStage('restaurants');
@@ -268,11 +280,11 @@ const DayGuide = () => {
         }));
         setRestaurantSource('live');
       } else {
-        setRestaurantQueue(buildRestaurantQueue(cuisineOverride, priceOverride));
+        applyFallbackRestaurantQueue(cuisineOverride, priceOverride);
         setRestaurantSource('no_results');
       }
     } catch (err) {
-      setRestaurantQueue(buildRestaurantQueue(cuisineOverride, priceOverride));
+      applyFallbackRestaurantQueue(cuisineOverride, priceOverride);
       setRestaurantSource(getRestaurantSourceFromError(err));
     } finally {
       setIsRestaurantsLoading(false);

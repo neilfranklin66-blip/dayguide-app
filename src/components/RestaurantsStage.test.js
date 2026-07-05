@@ -55,3 +55,23 @@ test('shows the loading card while restaurants load', () => {
 
   expect(screen.queryByText('Trattoria Roma')).not.toBeInTheDocument();
 });
+
+test('shows the nearest hint on the no-results card when provided', () => {
+  render(
+    <RestaurantsStage
+      {...baseProps}
+      restaurantQueue={[]}
+      nearestHint={{ name: 'Dishoom', distance: 1.2 }}
+    />
+  );
+
+  expect(screen.getByText('restaurants.noResultsTitle')).toBeInTheDocument();
+  expect(screen.getByText('restaurants.nearestHint')).toBeInTheDocument();
+});
+
+test('omits the nearest hint on the no-results card when it is null', () => {
+  render(<RestaurantsStage {...baseProps} restaurantQueue={[]} nearestHint={null} />);
+
+  expect(screen.getByText('restaurants.noResultsTitle')).toBeInTheDocument();
+  expect(screen.queryByText('restaurants.nearestHint')).not.toBeInTheDocument();
+});

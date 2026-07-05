@@ -56,6 +56,32 @@ export const filterRestaurants = ({
     return true;
   });
 
+// The no-results hint reports km because the locale strings are km-based;
+// distanceKm is preferred, with the legacy `distance` field (also km) as backup.
+const getUsableDistanceKm = (restaurant) => {
+  if (Number.isFinite(restaurant?.distanceKm)) return restaurant.distanceKm;
+  if (Number.isFinite(restaurant?.distance)) return restaurant.distance;
+  return null;
+};
+
+export const findNearestRestaurant = (restaurants) => {
+  if (!Array.isArray(restaurants)) return null;
+
+  let nearest = null;
+  let nearestDistance = null;
+
+  restaurants.forEach(restaurant => {
+    const distance = getUsableDistanceKm(restaurant);
+    if (distance === null) return;
+    if (nearestDistance === null || distance < nearestDistance) {
+      nearest = restaurant;
+      nearestDistance = distance;
+    }
+  });
+
+  return nearest ? { name: nearest.name, distance: nearestDistance } : null;
+};
+
 export const buildRestaurantQueue = ({
   restaurants,
   cuisines = [],
