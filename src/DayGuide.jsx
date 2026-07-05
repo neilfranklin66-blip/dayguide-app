@@ -83,6 +83,11 @@ const DayGuide = () => {
   // always read the current list regardless of closure capture timing.
   const selectedRestaurantsRef = useRef([]);
 
+  // True while showing a resumed saved plan. Resumed plans do not restore
+  // selections or queues, so popup actions would rebuild the timeline from
+  // empty selections and overwrite the saved plan — suppress popups instead.
+  const isResumedPlanRef = useRef(false);
+
   // Restaurant API state
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(false);
   const [restaurantSource, setRestaurantSource] = useState(null);
@@ -118,6 +123,7 @@ const DayGuide = () => {
   // Popup triggers: fire once after entering timeline with a populated plan
   useEffect(() => {
     if (stage !== 'timeline' || timeline.length === 0) return;
+    if (isResumedPlanRef.current) return;
 
     const timer = setTimeout(() => {
       if (activePopupRef.current) return;
@@ -183,6 +189,7 @@ const DayGuide = () => {
     setRestaurantSource(null);
     setNearestHint(null);
     setSelectedDate(new Date().toISOString().split('T')[0]);
+    isResumedPlanRef.current = false;
     clearPlan();
     setHasSavedPlan(false);
     setStage('welcome');
@@ -373,6 +380,7 @@ const DayGuide = () => {
     setSelectedPriceRange(saved.selectedPriceRange ?? null);
     if (saved.selectedDate) setSelectedDate(saved.selectedDate);
     if (saved.startWith) setStartWith(saved.startWith);
+    isResumedPlanRef.current = true;
     setStage('timeline');
   };
 
@@ -387,6 +395,7 @@ const DayGuide = () => {
 
     setTimeline(newTimeline);
     persistPlan(newTimeline);
+    isResumedPlanRef.current = false;
     setStage('timeline');
   };
 

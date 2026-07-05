@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import DayGuide from './DayGuide';
 import useGeolocation from './useGeolocation';
 import { SAVED_PLAN_STORAGE_KEY } from './utils/planStorage';
@@ -167,4 +167,80 @@ test('building a timeline saves the plan and start over clears it', () => {
   expect(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).toBeNull();
   expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
   expect(screen.queryByText('welcome.resumePlan')).not.toBeInTheDocument();
+});
+
+// --- Popup suppression for resumed plans ---
+
+const popupTitlePattern = /^popups\.(nearbyRestaurant|coffeeBreak|activityBreak)\.title$/;
+
+// Walks the planning flow from the welcome screen to an activities-only
+// timeline, matching the steps in the persistence test above.
+const buildPlanFromWelcome = () => {
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+
+  fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+  fireEvent.click(screen.getByRole('button', { name: 'No' }));
+  fireEvent.click(screen.getByText('interests.next'));
+
+  for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
+    fireEvent.click(screen.getByText('activities.yes'));
+  }
+
+  fireEvent.click(screen.getByText('mealPrompt.no'));
+  expect(screen.getByText('timeline.title')).toBeInTheDocument();
+};
+
+describe('timeline popup suggestions', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  test('a resumed plan does not trigger a popup suggestion', () => {
+    localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(savedPlanPayload));
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    fireEvent.click(screen.getByText('welcome.resumePlan'));
+    expect(screen.getByText('timeline.title')).toBeInTheDocument();
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(screen.queryByText(popupTitlePattern)).not.toBeInTheDocument();
+  });
+
+  test('a freshly built plan still triggers a popup suggestion', () => {
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    buildPlanFromWelcome();
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
+  });
+
+  test('building a fresh plan after resume and start over re-enables popups', () => {
+    localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(savedPlanPayload));
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    fireEvent.click(screen.getByText('welcome.resumePlan'));
+    fireEvent.click(screen.getByText('timeline.startOver'));
+
+    buildPlanFromWelcome();
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
+  });
 });
