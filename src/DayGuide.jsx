@@ -29,15 +29,7 @@ import {
 import TimelineShareQRModal from './components/TimelineShareQRModal';
 import PopupModal from './components/PopupModal';
 import WelcomeStage from './components/WelcomeStage';
-import ChildrenInPartySelector from './components/ChildrenInPartySelector';
-import StartOrderSelector from './components/StartOrderSelector';
-import PriceRangeSelector from './components/PriceRangeSelector';
-import AvailableTimeSelector from './components/AvailableTimeSelector';
-import DateSelector from './components/DateSelector';
-import StartTimeSelector from './components/StartTimeSelector';
-import ActivityInterestGrid from './components/ActivityInterestGrid';
-import CuisineInterestGrid from './components/CuisineInterestGrid';
-import InterestsNextButton from './components/InterestsNextButton';
+import InterestsStage from './components/InterestsStage';
 import ActivitiesStage from './components/ActivitiesStage';
 import MealPromptCard from './components/MealPromptCard';
 import RestaurantsStage from './components/RestaurantsStage';
@@ -385,66 +377,28 @@ const DayGuide = () => {
 
     if (stage === 'interests') {
       return (
-        <div className="dayguide-container">
-          <div className="card">
-            <h2>{t('interests.title')}</h2>
-            <p>{t('interests.subtitle')}</p>
-
-            <ActivityInterestGrid
-              interestCategories={interestCategories}
-              selectedInterests={selectedInterests}
-              onToggle={toggleInterest}
-              t={t}
-            />
-
-            <CuisineInterestGrid
-              cuisineCategories={cuisineCategories}
-              selectedCuisines={selectedCuisines}
-              onToggle={toggleCuisine}
-              t={t}
-            />
-
-            <PriceRangeSelector
-              selectedPriceRange={selectedPriceRange}
-              onChange={setSelectedPriceRange}
-              t={t}
-            />
-
-            <AvailableTimeSelector
-              availableTime={availableTime}
-              onChange={setAvailableTime}
-              t={t}
-            />
-            <DateSelector
-              selectedDate={selectedDate}
-              onChange={setSelectedDate}
-              t={t}
-            />
-            <StartTimeSelector
-              startTime={startTime}
-              onChange={setStartTime}
-              t={t}
-            />
-
-            
-            <ChildrenInPartySelector
-              hasChildren={hasChildren}
-              onChange={setHasChildren}
-            />
-
-            <StartOrderSelector
-              startWith={startWith}
-              onChange={setStartWith}
-              t={t}
-            />
-
-            <InterestsNextButton
-              onClick={goToNextSelectionStage}
-              disabled={selectedInterests.length === 0 || hasChildren === null}
-              t={t}
-            />
-          </div>
-        </div>
+        <InterestsStage
+          interestCategories={interestCategories}
+          selectedInterests={selectedInterests}
+          toggleInterest={toggleInterest}
+          cuisineCategories={cuisineCategories}
+          selectedCuisines={selectedCuisines}
+          toggleCuisine={toggleCuisine}
+          selectedPriceRange={selectedPriceRange}
+          setSelectedPriceRange={setSelectedPriceRange}
+          availableTime={availableTime}
+          setAvailableTime={setAvailableTime}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          startTime={startTime}
+          setStartTime={setStartTime}
+          hasChildren={hasChildren}
+          setHasChildren={setHasChildren}
+          startWith={startWith}
+          setStartWith={setStartWith}
+          goToNextSelectionStage={goToNextSelectionStage}
+          t={t}
+        />
       );
     }
 
