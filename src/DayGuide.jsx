@@ -185,6 +185,7 @@ const DayGuide = () => {
       activityData: mockActivityData,
       interests,
       selectedActivities,
+      hasChildren,
     });
 
   const buildRestaurantQueue = (cuisines = selectedCuisines, price = selectedPriceRange) => {

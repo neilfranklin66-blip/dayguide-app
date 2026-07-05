@@ -18,6 +18,10 @@ export const ACTIVITY_CATEGORIES = new Set([
   'sportsEvents', 'nightlife', 'historicalSites', 'foodMarkets', 'cinema', 'comedy',
 ]);
 
+// Excluded from the implicit all-categories activity pool when children are in
+// the party. An explicitly selected interest is still respected.
+export const ADULT_ONLY_CATEGORIES = ['nightlife'];
+
 export const SOURCE_BANNER_KEY = {
   live: 'liveResults',
   no_key: 'noKeyWarning',

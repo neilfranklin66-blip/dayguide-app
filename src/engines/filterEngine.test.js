@@ -90,6 +90,66 @@ test('getActivitiesForInterests falls back to all matching activities when all a
   expect(result).toEqual(activities.culture);
 });
 
+const activitiesWithNightlife = {
+  ...activities,
+  nightlife: [
+    { id: 'bar-1', name: 'Cocktail Bar', category: 'nightlife' },
+  ],
+};
+
+test('getActivitiesForInterests excludes nightlife from the implicit pool when children are in the party', () => {
+  const result = getActivitiesForInterests({
+    activityData: activitiesWithNightlife,
+    interests: [],
+    hasChildren: true,
+    shuffle: false,
+  });
+
+  expect(result.map(a => a.id)).not.toContain('bar-1');
+  expect(result.map(a => a.id)).toEqual(['museum-1', 'gallery-1', 'park-1']);
+});
+
+test('getActivitiesForInterests keeps nightlife in the implicit pool when hasChildren is false or null', () => {
+  [false, null].forEach(hasChildren => {
+    const result = getActivitiesForInterests({
+      activityData: activitiesWithNightlife,
+      interests: [],
+      hasChildren,
+      shuffle: false,
+    });
+
+    expect(result.map(a => a.id)).toContain('bar-1');
+  });
+});
+
+test('getActivitiesForInterests respects explicitly selected nightlife even when children are in the party', () => {
+  const result = getActivitiesForInterests({
+    activityData: activitiesWithNightlife,
+    interests: ['nightlife'],
+    hasChildren: true,
+    shuffle: false,
+  });
+
+  expect(result).toEqual(activitiesWithNightlife.nightlife);
+});
+
+test('getActivitiesForInterests fallback pool still excludes nightlife when children are in the party', () => {
+  const result = getActivitiesForInterests({
+    activityData: activitiesWithNightlife,
+    interests: [],
+    hasChildren: true,
+    selectedActivities: [
+      { id: 'museum-1', name: 'Museum' },
+      { id: 'gallery-1', name: 'Gallery' },
+      { id: 'park-1', name: 'Park' },
+    ],
+    shuffle: false,
+  });
+
+  expect(result.length).toBeGreaterThan(0);
+  expect(result.map(a => a.id)).not.toContain('bar-1');
+});
+
 test('filterRestaurants applies distance, cuisine, price, and selected filters', () => {
   const result = filterRestaurants({
     restaurants,

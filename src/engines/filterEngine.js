@@ -1,3 +1,5 @@
+import { ADULT_ONLY_CATEGORIES } from '../config/dayGuideOptions';
+
 const hasSameIdentity = (a, b) => a.id === b.id || a.name === b.name;
 
 export const excludeAlreadySelected = (items, selectedItems = []) =>
@@ -7,12 +9,21 @@ export const getActivitiesForInterests = ({
   activityData,
   interests = [],
   selectedActivities = [],
+  hasChildren = null,
   limit = 10,
   shuffle = true,
 }) => {
   const seen = new Set();
   const all = [];
-  const categories = interests.length > 0 ? interests : Object.keys(activityData);
+  // Explicit interests are respected as-is; the implicit all-categories pool
+  // drops adult-only categories when children are in the party. The
+  // already-selected fallback below draws from the same pool, so adult-only
+  // categories cannot be reintroduced there.
+  const categories = interests.length > 0
+    ? interests
+    : Object.keys(activityData).filter(
+        category => !(hasChildren === true && ADULT_ONLY_CATEGORIES.includes(category))
+      );
 
   categories.forEach(category => {
     (activityData[category] || []).forEach(activity => {
