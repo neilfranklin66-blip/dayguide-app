@@ -1,5 +1,5 @@
 import React from 'react';
-import { selectTransportOptions } from '../engines/transportEngine';
+import { estimateTransportMinutes, selectTransportOptions } from '../engines/transportEngine';
 import { TRANSPORT_OPTIONS } from '../config/dayGuideOptions';
 
 export default function TimelineTransportSection({ distance, t }) {
@@ -12,7 +12,11 @@ export default function TimelineTransportSection({ distance, t }) {
             <div className="transport-emoji">{option.emoji}</div>
             <div className="transport-details">
               <div className="transport-mode">{t(`transport.${option.mode}`)}</div>
-              <div className="transport-time">{t('timeline.minutes', { count: option.time })}</div>
+              <div className="transport-time">
+                {t('timeline.minutes', {
+                  count: estimateTransportMinutes(option.mode, distance, option.time),
+                })}
+              </div>
               <div className="transport-cost">{option.cost}</div>
             </div>
           </div>
