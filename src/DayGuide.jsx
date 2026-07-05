@@ -137,6 +137,14 @@ const DayGuide = () => {
 
   // --- Navigation ---
 
+  // Auto-advance past the location screen once geolocation resolves
+  // (success or error both end the loading state).
+  useEffect(() => {
+    if (stage === 'location' && !locationLoading) {
+      setStage('interests');
+    }
+  }, [stage, locationLoading]);
+
   const handleStartPlanning = () => {
     setStage(locationLoading ? 'location' : 'interests');
   };
@@ -365,7 +373,6 @@ const DayGuide = () => {
     }
 
     if (stage === 'location') {
-      if (!locationLoading) { setTimeout(() => setStage('interests'), 0); return null; }
       return (
         <div className="dayguide-container">
           <div className="loading">
