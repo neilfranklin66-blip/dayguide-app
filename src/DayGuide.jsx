@@ -43,12 +43,8 @@ import NoMoreActivitiesCard from './components/NoMoreActivitiesCard';
 import ActivitySwipeCard from './components/ActivitySwipeCard';
 import ActivitiesNoResultsCard from './components/ActivitiesNoResultsCard';
 import MealPromptCard from './components/MealPromptCard';
-import RestaurantsLoadingCard from './components/RestaurantsLoadingCard';
-import NoMoreRestaurantsCard from './components/NoMoreRestaurantsCard';
-import RestaurantSwipeCard from './components/RestaurantSwipeCard';
-import RestaurantsNoResultsCard from './components/RestaurantsNoResultsCard';
+import RestaurantsStage from './components/RestaurantsStage';
 import TimelineCard from './components/TimelineCard';
-import { buildRecommendationReason } from './utils/recommendationReason';
 import { buildDayNarrative } from './utils/dayNarrative';
 import { rankRecommendations } from './utils/recommendationScore';
 import {
@@ -501,64 +497,22 @@ const DayGuide = () => {
     }
 
     if (stage === 'restaurants') {
-      if (isRestaurantsLoading) {
-        return <RestaurantsLoadingCard t={t} />;
-      }
-
-      if (restaurantQueue !== null && restaurantQueue.length === 0) {
-        const hasCuisine = selectedCuisines.length > 0;
-        const hasPrice = !!selectedPriceRange;
-        const hasFilters = hasCuisine || hasPrice;
-        return (
-          <RestaurantsNoResultsCard
-            hasCuisine={hasCuisine}
-            hasPrice={hasPrice}
-            hasFilters={hasFilters}
-            nearestHint={nearestHint}
-            onShowAllNearby={() => {
-              setSelectedCuisines([]);
-              setSelectedPriceRange(null);
-              goToRestaurants([], null);
-            }}
-            onRemoveCuisineFilter={() => {
-              setSelectedCuisines([]);
-              goToRestaurants([], selectedPriceRange);
-            }}
-            onRemovePriceFilter={() => {
-              setSelectedPriceRange(null);
-              goToRestaurants(selectedCuisines, null);
-            }}
-            onSkip={() => continueAfterRestaurants([])}
-            t={t}
-          />
-        );
-      }
-
-      const currentRestaurant = restaurantQueue ? restaurantQueue[currentRestaurantIndex] : null;
-
-      if (!currentRestaurant) {
-        return (
-          <NoMoreRestaurantsCard
-            onContinue={() => continueAfterRestaurants(selectedRestaurants)}
-            t={t}
-          />
-        );
-      }
-
-      const recommendationReason = buildRecommendationReason(currentRestaurant, {
-        selectedCuisines,
-        selectedPriceRange,
-        hasChildren,
-      });
-
       return (
-        <RestaurantSwipeCard
-          currentRestaurant={currentRestaurant}
+        <RestaurantsStage
+          isRestaurantsLoading={isRestaurantsLoading}
+          restaurantQueue={restaurantQueue}
+          selectedCuisines={selectedCuisines}
+          selectedPriceRange={selectedPriceRange}
+          nearestHint={nearestHint}
+          setSelectedCuisines={setSelectedCuisines}
+          setSelectedPriceRange={setSelectedPriceRange}
+          goToRestaurants={goToRestaurants}
+          continueAfterRestaurants={continueAfterRestaurants}
+          selectedRestaurants={selectedRestaurants}
           currentRestaurantIndex={currentRestaurantIndex}
-          restaurantQueueLength={restaurantQueue.length}
           restaurantSource={restaurantSource}
-          recommendationReason={recommendationReason}
-          onSwipe={swipeRestaurant}
+          hasChildren={hasChildren}
+          swipeRestaurant={swipeRestaurant}
           t={t}
         />
       );
