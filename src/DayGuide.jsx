@@ -188,6 +188,7 @@ const DayGuide = () => {
     setActivePopup(null);
     activePopupRef.current = null;
     popupActivityReturnRef.current = false;
+    popupCooldowns.current = {};
     setShowQR(false);
     setIsRestaurantsLoading(false);
     setRestaurantSource(null);

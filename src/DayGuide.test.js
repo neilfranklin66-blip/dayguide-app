@@ -231,6 +231,31 @@ describe('timeline popup suggestions', () => {
     expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
   });
 
+  test('a popup shown in one plan can appear again in a fresh plan after start over', () => {
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    buildPlanFromWelcome();
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    // Assert the specific popup type: the generic pattern could pass with a
+    // lower-priority popup even if nearbyRestaurant were still on cooldown.
+    expect(screen.getByText('popups.nearbyRestaurant.title')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('timeline.startOver'));
+
+    buildPlanFromWelcome();
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(screen.getByText('popups.nearbyRestaurant.title')).toBeInTheDocument();
+  });
+
   test('building a fresh plan after resume and start over re-enables popups', () => {
     localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(savedPlanPayload));
     useGeolocation.mockReturnValue(resolvedGeo);
