@@ -33,6 +33,7 @@
     "refreshLocation": "Làm mới vị trí",
     "startPlanning": "Bắt đầu lên kế hoạch",
     "resumePlan": "Tiếp tục kế hoạch của bạn",
+    "resumePlanDetails": "{{count}} điểm dừng đã lên kế hoạch",
     "findingLocation": "📍 Đang tìm vị trí của bạn...",
     "gettingCoordinates": "Đang lấy tọa độ GPS của bạn..."
   },

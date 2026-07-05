@@ -33,6 +33,7 @@
     "refreshLocation": "Refresh Location",
     "startPlanning": "Start Planning",
     "resumePlan": "Resume your plan",
+    "resumePlanDetails": "{{count}} planned stops",
     "findingLocation": "📍 Finding your location...",
     "gettingCoordinates": "Getting your GPS coordinates..."
   },

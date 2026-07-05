@@ -33,6 +33,7 @@
     "refreshLocation": "Actualiser la position",
     "startPlanning": "Commencer à planifier",
     "resumePlan": "Reprendre votre plan",
+    "resumePlanDetails": "{{count}} étapes prévues",
     "findingLocation": "📍 Localisation en cours...",
     "gettingCoordinates": "Récupération de vos coordonnées GPS..."
   },

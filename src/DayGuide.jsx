@@ -46,6 +46,10 @@ import {
 } from './config/dayGuideOptions';
 import './DayGuide.css';
 
+// Welcome-screen summary of the saved plan (null when there is none).
+const summarizeSavedPlan = (plan) =>
+  plan ? { selectedDate: plan.selectedDate, itemCount: plan.timeline.length } : null;
+
 const DayGuide = () => {
   const { currentUser, logout } = useAuth();
   const { t, i18n } = useTranslation();
@@ -70,7 +74,7 @@ const DayGuide = () => {
   const [activityQueue, setActivityQueue] = useState([]);
   const [restaurantQueue, setRestaurantQueue] = useState(null);
   const [timeline, setTimeline] = useState([]);
-  const [hasSavedPlan, setHasSavedPlan] = useState(() => loadPlan() !== null);
+  const [savedPlanSummary, setSavedPlanSummary] = useState(() => summarizeSavedPlan(loadPlan()));
 
   // Popup state
   const [activePopup, setActivePopup] = useState(null);
@@ -191,7 +195,7 @@ const DayGuide = () => {
     setSelectedDate(new Date().toISOString().split('T')[0]);
     isResumedPlanRef.current = false;
     clearPlan();
-    setHasSavedPlan(false);
+    setSavedPlanSummary(null);
     setStage('welcome');
   };
 
@@ -362,16 +366,17 @@ const DayGuide = () => {
       selectedDate,
       startWith,
     });
-    setHasSavedPlan(true);
+    setSavedPlanSummary({ selectedDate, itemCount: newTimeline.length });
   };
 
   const resumePlan = () => {
     const saved = loadPlan();
     if (!saved) {
-      setHasSavedPlan(false);
+      setSavedPlanSummary(null);
       return;
     }
 
+    setSavedPlanSummary(summarizeSavedPlan(saved));
     setTimeline(saved.timeline);
     setStartTime(saved.startTime);
     if (typeof saved.availableTime === 'number') setAvailableTime(saved.availableTime);
@@ -433,7 +438,7 @@ const DayGuide = () => {
           position={position}
           refreshLocation={refreshLocation}
           onStartPlanning={handleStartPlanning}
-          hasSavedPlan={hasSavedPlan}
+          savedPlanSummary={savedPlanSummary}
           onResume={resumePlan}
         />
       );

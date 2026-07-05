@@ -132,6 +132,9 @@ test('resuming a seeded saved plan lands on the timeline with its content', () =
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);
 
+  expect(screen.getByText(/📅 2026-07-05/)).toBeInTheDocument();
+  expect(screen.getByText(/welcome\.resumePlanDetails/)).toBeInTheDocument();
+
   fireEvent.click(screen.getByText('welcome.resumePlan'));
 
   expect(screen.getByText('timeline.title')).toBeInTheDocument();
@@ -167,6 +170,7 @@ test('building a timeline saves the plan and start over clears it', () => {
   expect(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).toBeNull();
   expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
   expect(screen.queryByText('welcome.resumePlan')).not.toBeInTheDocument();
+  expect(screen.queryByText(/welcome\.resumePlanDetails/)).not.toBeInTheDocument();
 });
 
 // --- Popup suppression for resumed plans ---

@@ -33,6 +33,7 @@
     "refreshLocation": "刷新位置",
     "startPlanning": "开始规划",
     "resumePlan": "继续您的计划",
+    "resumePlanDetails": "已规划 {{count}} 个地点",
     "findingLocation": "📍 正在定位...",
     "gettingCoordinates": "正在获取 GPS 坐标..."
   },
