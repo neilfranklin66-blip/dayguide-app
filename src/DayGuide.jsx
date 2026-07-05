@@ -29,6 +29,7 @@ import {
 import TimelineShareQRModal from './components/TimelineShareQRModal';
 import PopupModal from './components/PopupModal';
 import WelcomeStage from './components/WelcomeStage';
+import LocationStage from './components/LocationStage';
 import InterestsStage from './components/InterestsStage';
 import ActivitiesStage from './components/ActivitiesStage';
 import MealPromptCard from './components/MealPromptCard';
@@ -373,14 +374,7 @@ const DayGuide = () => {
     }
 
     if (stage === 'location') {
-      return (
-        <div className="dayguide-container">
-          <div className="loading">
-            <h2>{t('welcome.findingLocation')}</h2>
-            <p>{t('welcome.gettingCoordinates')}</p>
-          </div>
-        </div>
-      );
+      return <LocationStage t={t} />;
     }
 
     if (stage === 'interests') {
