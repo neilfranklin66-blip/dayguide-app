@@ -38,9 +38,7 @@ import StartTimeSelector from './components/StartTimeSelector';
 import ActivityInterestGrid from './components/ActivityInterestGrid';
 import CuisineInterestGrid from './components/CuisineInterestGrid';
 import InterestsNextButton from './components/InterestsNextButton';
-import NoMoreActivitiesCard from './components/NoMoreActivitiesCard';
-import ActivitySwipeCard from './components/ActivitySwipeCard';
-import ActivitiesNoResultsCard from './components/ActivitiesNoResultsCard';
+import ActivitiesStage from './components/ActivitiesStage';
 import MealPromptCard from './components/MealPromptCard';
 import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
@@ -451,34 +449,15 @@ const DayGuide = () => {
     }
 
     if (stage === 'activities') {
-      const currentActivity = activityQueue[currentActivityIndex];
-
-      if (activityQueue.length === 0) {
-        return (
-          <ActivitiesNoResultsCard
-            hasSelectedInterests={selectedInterests.length > 0}
-            onShowAll={() => goToActivities([])}
-            onBackToInterests={() => setStage('interests')}
-            t={t}
-          />
-        );
-      }
-
-      if (!currentActivity) {
-        return (
-          <NoMoreActivitiesCard
-            onContinue={continueAfterActivities}
-            t={t}
-          />
-        );
-      }
-
       return (
-        <ActivitySwipeCard
-          currentActivity={currentActivity}
+        <ActivitiesStage
+          activityQueue={activityQueue}
           currentActivityIndex={currentActivityIndex}
-          activityQueueLength={activityQueue.length}
-          onSwipe={swipeActivity}
+          selectedInterests={selectedInterests}
+          goToActivities={goToActivities}
+          setStage={setStage}
+          continueAfterActivities={continueAfterActivities}
+          swipeActivity={swipeActivity}
           t={t}
         />
       );
