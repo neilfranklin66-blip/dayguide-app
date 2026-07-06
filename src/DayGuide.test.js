@@ -167,7 +167,7 @@ test('building a timeline saves the plan and start over clears it', () => {
 
   // Interests stage: pick the first interest and answer the children question.
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
-  fireEvent.click(screen.getByRole('button', { name: 'No' }));
+  fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
 
   // Like every activity in the queue until the flow moves on.
@@ -201,7 +201,7 @@ const buildPlanFromWelcome = () => {
   fireEvent.click(screen.getByText('welcome.startPlanning'));
 
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
-  fireEvent.click(screen.getByRole('button', { name: 'No' }));
+  fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
 
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
@@ -305,7 +305,7 @@ test('show all broadens an empty filtered activity queue to all activity types',
 
   fireEvent.click(screen.getByText('welcome.startPlanning'));
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
-  fireEvent.click(screen.getByRole('button', { name: 'No' }));
+  fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
 
   expect(screen.getByText('activities.noResultsTitle')).toBeInTheDocument();
@@ -325,7 +325,7 @@ describe('restaurant selection flow', () => {
     fireEvent.click(screen.getByText('welcome.startPlanning'));
 
     fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
-    fireEvent.click(screen.getByRole('button', { name: 'No' }));
+    fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
     fireEvent.click(screen.getByText('interests.next'));
 
     for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {

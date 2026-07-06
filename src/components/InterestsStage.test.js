@@ -43,6 +43,19 @@ test('clicking an interest calls toggleInterest with its id', () => {
   expect(toggleInterest).toHaveBeenCalledWith('museums');
 });
 
+test('children selector renders via t keys and reports the choice', () => {
+  const setHasChildren = jest.fn();
+  render(<InterestsStage {...baseProps} hasChildren={null} setHasChildren={setHasChildren} />);
+
+  expect(screen.getByText('interests.childrenLabel')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('interests.childrenYes'));
+  expect(setHasChildren).toHaveBeenCalledWith(true);
+
+  fireEvent.click(screen.getByText('interests.childrenNo'));
+  expect(setHasChildren).toHaveBeenCalledWith(false);
+});
+
 test('next button is disabled until an interest is selected', () => {
   const { rerender } = render(<InterestsStage {...baseProps} />);
   expect(screen.getByText('interests.next')).toBeDisabled();

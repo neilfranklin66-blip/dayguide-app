@@ -76,6 +76,7 @@ function InterestsStage({
         <ChildrenInPartySelector
           hasChildren={hasChildren}
           onChange={setHasChildren}
+          t={t}
         />
 
         <StartOrderSelector

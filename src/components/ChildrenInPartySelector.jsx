@@ -1,21 +1,21 @@
 import React from 'react';
 
-export default function ChildrenInPartySelector({ hasChildren, onChange }) {
+export default function ChildrenInPartySelector({ hasChildren, onChange, t }) {
   return (
     <div className="time-selector">
-      <label>Are there children in your party?</label>
+      <label>{t('interests.childrenLabel')}</label>
       <div className="price-options">
         <button
           className={`price-btn ${hasChildren === true ? 'selected' : ''}`}
           onClick={() => onChange(true)}
         >
-          Yes
+          {t('interests.childrenYes')}
         </button>
         <button
           className={`price-btn ${hasChildren === false ? 'selected' : ''}`}
           onClick={() => onChange(false)}
         >
-          No
+          {t('interests.childrenNo')}
         </button>
       </div>
     </div>
