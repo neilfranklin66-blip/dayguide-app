@@ -11,9 +11,9 @@ function PopupModal({ activePopup, onClose, onYes, onSkip = onClose, t }) {
   };
 
   return (
-    <div className="popup-overlay" onClick={onClose}>
+    <div className="popup-overlay" onClick={() => onClose(activePopup)}>
       <div className="popup-card" onClick={e => e.stopPropagation()}>
-        <button className="popup-close" onClick={onClose} aria-label="Close">✕</button>
+        <button className="popup-close" onClick={() => onClose(activePopup)} aria-label="Close">✕</button>
         <div className="popup-icon">{icons[activePopup.type]}</div>
         <h3 className="popup-title">{t(`popups.${activePopup.type}.title`)}</h3>
         <p className="popup-message">{getPopupMessage({ popup: activePopup, t })}</p>
@@ -21,7 +21,7 @@ function PopupModal({ activePopup, onClose, onYes, onSkip = onClose, t }) {
           <button className="popup-btn popup-btn-yes" onClick={() => onYes(activePopup)}>
             {t(`popups.${activePopup.type}.yes`)}
           </button>
-          <button className="popup-btn popup-btn-no" onClick={onClose}>
+          <button className="popup-btn popup-btn-no" onClick={() => onClose(activePopup)}>
             {t(`popups.${activePopup.type}.no`)}
           </button>
           {activePopup.type === 'nearbyRestaurant' && (

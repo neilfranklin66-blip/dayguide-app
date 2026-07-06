@@ -110,15 +110,23 @@ const DayGuide = () => {
     setActivePopup(null);
   };
 
-  const skipNearbyRestaurantPopup = (popup) => {
-    if (popup?.type === 'nearbyRestaurant') {
-      const restaurantKey = getRestaurantSuggestionKey(popup.restaurant);
+  const rememberDismissedNearbyRestaurant = (popup) => {
+    if (popup?.type !== 'nearbyRestaurant') return;
 
-      if (restaurantKey) {
-        dismissedRestaurantKeysRef.current.add(restaurantKey);
-      }
+    const restaurantKey = getRestaurantSuggestionKey(popup.restaurant);
+
+    if (restaurantKey) {
+      dismissedRestaurantKeysRef.current.add(restaurantKey);
     }
+  };
 
+  const closePopup = (popup = activePopupRef.current) => {
+    rememberDismissedNearbyRestaurant(popup);
+    dismissPopup();
+  };
+
+  const skipNearbyRestaurantPopup = (popup) => {
+    rememberDismissedNearbyRestaurant(popup);
     dismissPopup();
   };
 
@@ -571,7 +579,7 @@ const DayGuide = () => {
       {renderStage()}
       <PopupModal
         activePopup={activePopup}
-        onClose={dismissPopup}
+        onClose={closePopup}
         onYes={handlePopupYes}
         onSkip={skipNearbyRestaurantPopup}
         t={t}
