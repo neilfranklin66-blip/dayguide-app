@@ -142,8 +142,8 @@
     "title": "Tu día perfecto",
     "empty": "Tu itinerario está vacío. Empieza de nuevo o cambia tus selecciones para crear tu día.",
     "slideToAdjust": "Desliza para ajustar la duración",
-    "howToGetThere": "↓ ¿Cómo llegar a tu próxima parada?",
-    "minutes": "{{count}} min",
+    "howToGetThere": "↓ Opciones de transporte cercanas (estimaciones aproximadas)",
+    "minutes": "~{{count}} min",
     "startOver": "Empezar de nuevo",
     "share": "📲 Compartir",
     "shareTitle": "Comparte tu día",
@@ -186,7 +186,7 @@
   "transport": {
     "walk": "A pie",
     "taxi": "Taxi/Uber",
-    "tube": "Metro",
+    "tube": "Tren/Metro",
     "bus": "Autobús"
   },
   "popups": {

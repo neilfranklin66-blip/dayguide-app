@@ -31,11 +31,13 @@ export const SOURCE_BANNER_KEY = {
   error: 'errorWarning',
 };
 
+// Costs are indicative starting fares, not exact prices — the app does not
+// know the user's city or the actual route, so avoid implying precision.
 export const TRANSPORT_OPTIONS = [
-  { mode: 'walk', time: 15, cost: '£0', emoji: '🚶' },
-  { mode: 'taxi', time: 8, cost: '£7', emoji: '🚕' },
-  { mode: 'tube', time: 5, cost: '£2.80', emoji: '🚇' },
-  { mode: 'bus', time: 12, cost: '£1.75', emoji: '🚌' },
+  { mode: 'walk', time: 15, cost: 'Free', emoji: '🚶' },
+  { mode: 'taxi', time: 8, cost: 'from £7', emoji: '🚕' },
+  { mode: 'tube', time: 5, cost: 'from £2.80', emoji: '🚇' },
+  { mode: 'bus', time: 12, cost: 'from £1.75', emoji: '🚌' },
 ];
 
 export const PRICE_OPTIONS = [

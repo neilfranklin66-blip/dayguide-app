@@ -142,8 +142,8 @@
     "title": "Votre journée parfaite",
     "empty": "Votre itinéraire est vide. Recommencez ou modifiez vos choix pour construire votre journée.",
     "slideToAdjust": "Faites glisser pour ajuster la durée",
-    "howToGetThere": "↓ Comment se rendre à votre prochain arrêt ?",
-    "minutes": "{{count}} min",
+    "howToGetThere": "↓ Options de transport à proximité (estimations approximatives)",
+    "minutes": "~{{count}} min",
     "startOver": "Recommencer",
     "share": "📲 Partager",
     "shareTitle": "Partagez votre journée",
@@ -186,7 +186,7 @@
   "transport": {
     "walk": "À pied",
     "taxi": "Taxi/Uber",
-    "tube": "Métro",
+    "tube": "Train/Métro",
     "bus": "Bus"
   },
   "popups": {

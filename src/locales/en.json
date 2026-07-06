@@ -143,8 +143,8 @@
     "title": "Your Perfect Day",
     "empty": "Your itinerary is empty. Start over or change your selections to build your day.",
     "slideToAdjust": "Slide to adjust duration",
-    "howToGetThere": "↓ How to get to your next stop?",
-    "minutes": "{{count}} min",
+    "howToGetThere": "↓ Travel options nearby (rough estimates)",
+    "minutes": "~{{count}} min",
     "startOver": "Start Over",
     "share": "📲 Share",
     "shareTitle": "Share Your Day",
@@ -187,7 +187,7 @@
   "transport": {
     "walk": "Walk",
     "taxi": "Taxi/Uber",
-    "tube": "Tube",
+    "tube": "Train/Tube",
     "bus": "Bus"
   },
   "popups": {
