@@ -9,7 +9,7 @@ export default function NoMoreRestaurantsCard({ onContinue, nextRoute, t }) {
     <div className="dayguide-container">
       <div className="card">
         <h2>{t('restaurants.noMore')}</h2>
-        <button onClick={onContinue} className="btn-primary">
+        <button onClick={() => onContinue()} className="btn-primary">
           {continueLabel}
         </button>
       </div>
