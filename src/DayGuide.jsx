@@ -126,7 +126,9 @@ const DayGuide = () => {
       if (activePopupRef.current) return;
 
       const popup = getTimelinePopupSuggestion({
-        restaurants: mockRestaurantData,
+        // Only live search results may back the "restaurant nearby" popup;
+        // mock/fallback venues would claim a nearby restaurant that isn't.
+        restaurants: restaurantSource === 'live' ? (restaurantQueue || []) : [],
         timeline,
         activityCategories: ACTIVITY_CATEGORIES,
         canShowPopup,
