@@ -4,7 +4,7 @@ import MealPromptCard from './MealPromptCard';
 function MealPromptStage({ goToRestaurants, continueAfterRestaurants, t }) {
   return (
     <MealPromptCard
-      onYes={goToRestaurants}
+      onYes={() => goToRestaurants()}
       onNo={() => continueAfterRestaurants([])}
       t={t}
     />

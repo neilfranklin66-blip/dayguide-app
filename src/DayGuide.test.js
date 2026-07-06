@@ -554,6 +554,25 @@ describe('restaurant selection flow', () => {
       );
     });
 
+    test('accepting the meal prompt searches with the cuisine defaults, not the click event', async () => {
+      searchRestaurants.mockResolvedValue([liveSearchResult]);
+      useGeolocation.mockReturnValue(resolvedGeo);
+      render(<DayGuide />);
+
+      walkToMealPrompt();
+      fireEvent.click(screen.getByText('mealPrompt.yes'));
+
+      expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
+
+      expect(searchRestaurants).toHaveBeenCalledTimes(1);
+      expect(searchRestaurants).toHaveBeenCalledWith(
+        resolvedGeo.position.lat,
+        resolvedGeo.position.lng,
+        [],
+        null,
+      );
+    });
+
     test('skips the live search and falls back to mocks when no position is available', async () => {
       searchRestaurants.mockResolvedValue([liveSearchResult]);
       useGeolocation.mockReturnValue(erroredGeo);

@@ -16,13 +16,14 @@ test('renders the meal prompt copy', () => {
   expect(screen.getByText('mealPrompt.subtitle')).toBeInTheDocument();
 });
 
-test('choosing yes calls goToRestaurants', () => {
+test('choosing yes calls goToRestaurants without forwarding the click event', () => {
   const goToRestaurants = jest.fn();
   render(<MealPromptStage {...baseProps} goToRestaurants={goToRestaurants} />);
 
   fireEvent.click(screen.getByText('mealPrompt.yes'));
 
-  expect(goToRestaurants).toHaveBeenCalled();
+  expect(goToRestaurants).toHaveBeenCalledTimes(1);
+  expect(goToRestaurants).toHaveBeenCalledWith();
 });
 
 test('choosing no calls continueAfterRestaurants with no restaurants', () => {
