@@ -491,6 +491,7 @@ const DayGuide = () => {
           currentRestaurantIndex={currentRestaurantIndex}
           restaurantSource={restaurantSource}
           hasChildren={hasChildren}
+          startWith={startWith}
           swipeRestaurant={swipeRestaurant}
           t={t}
         />

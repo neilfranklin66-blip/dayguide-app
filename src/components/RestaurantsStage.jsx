@@ -4,6 +4,7 @@ import RestaurantsNoResultsCard from './RestaurantsNoResultsCard';
 import NoMoreRestaurantsCard from './NoMoreRestaurantsCard';
 import RestaurantSwipeCard from './RestaurantSwipeCard';
 import { buildRecommendationReason } from '../utils/recommendationReason';
+import { getRouteAfterRestaurants } from '../engines/itineraryRouteEngine';
 
 export default function RestaurantsStage({
   isRestaurantsLoading,
@@ -19,6 +20,7 @@ export default function RestaurantsStage({
   currentRestaurantIndex,
   restaurantSource,
   hasChildren,
+  startWith,
   swipeRestaurant,
   t,
 }) {
@@ -61,6 +63,7 @@ export default function RestaurantsStage({
     return (
       <NoMoreRestaurantsCard
         onContinue={() => continueAfterRestaurants(selectedRestaurants)}
+        nextRoute={getRouteAfterRestaurants({ startWith })}
         t={t}
       />
     );
