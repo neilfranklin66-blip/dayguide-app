@@ -1,8 +1,10 @@
 /**
- * Locale consistency guardrail for the day narrative feature.
+ * Locale consistency guardrail.
  * - Imports the five real locale files explicitly.
  *   This avoids accidentally including stale conflict files if they reappear.
- * - Scoped to timeline.dayGuideLabel and the timeline.dayNarrative subtree;
+ * - REQUIRED_KEYS covers the day narrative subtree plus the important
+ *   flow-label keys every locale must translate.
+ * - Placeholder and brace checks stay scoped to timeline.dayNarrative;
  *   other sections legitimately use i18next {{...}} placeholders.
  */
 import en from './en.json';
@@ -15,6 +17,25 @@ const LOCALES = { en, es, fr, zh, vi };
 const LOCALE_CODES = Object.keys(LOCALES);
 
 const REQUIRED_KEYS = [
+  // Flow labels shown along the planning journey.
+  'interests.startWithTitle',
+  'interests.startWithHint',
+  'interests.startWithActivities',
+  'interests.startWithFoodDrinks',
+  'interests.childrenLabel',
+  'interests.childrenYes',
+  'interests.childrenNo',
+  'activities.continueLabel',
+  'restaurants.continueToActivities',
+  'restaurants.whyThisFits',
+  'restaurants.ratingLabel',
+  'restaurants.priceLabel',
+  'restaurants.distanceLabel',
+  'restaurants.timeLabel',
+  'timeline.empty',
+  'timeline.shareHint',
+  'timeline.howToGetThere',
+  // Day narrative subtree.
   'timeline.dayGuideLabel',
   'timeline.dayNarrative.foodFirst',
   'timeline.dayNarrative.activitiesFirst',
