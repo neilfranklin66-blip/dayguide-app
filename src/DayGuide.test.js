@@ -1,10 +1,12 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import DayGuide from './DayGuide';
 import useGeolocation from './useGeolocation';
+import { searchRestaurants } from './api/placesApi';
 import { SAVED_PLAN_STORAGE_KEY } from './utils/planStorage';
 import { INTEREST_CATEGORY_OPTIONS } from './config/dayGuideOptions';
 
 jest.mock('./useGeolocation');
+jest.mock('./api/placesApi');
 
 jest.mock('./AuthContext', () => ({
   useAuth: () => ({
@@ -271,5 +273,92 @@ describe('timeline popup suggestions', () => {
     });
 
     expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
+  });
+});
+
+// --- Restaurant selection flow ---
+
+describe('restaurant selection flow', () => {
+  // Walks from the welcome screen to the meal prompt: pick the first interest,
+  // answer the children question, and like every offered activity.
+  const walkToMealPrompt = () => {
+    fireEvent.click(screen.getByText('welcome.startPlanning'));
+
+    fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+    fireEvent.click(screen.getByRole('button', { name: 'No' }));
+    fireEvent.click(screen.getByText('interests.next'));
+
+    for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
+      fireEvent.click(screen.getByText('activities.yes'));
+    }
+
+    expect(screen.getByText('mealPrompt.title')).toBeInTheDocument();
+  };
+
+  // Declines restaurant cards until the queue is exhausted and the flow
+  // moves on to the timeline. Bounded like the activity loop above.
+  const skipRemainingRestaurants = () => {
+    for (let i = 0; i < 50 && screen.queryByText('restaurants.skip'); i += 1) {
+      fireEvent.click(screen.getByText('restaurants.skip'));
+    }
+  };
+
+  test('falls back to mock restaurants when the live search fails and puts the liked one on the timeline', async () => {
+    searchRestaurants.mockRejectedValue(new Error('NO_API_KEY'));
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    walkToMealPrompt();
+    fireEvent.click(screen.getByText('mealPrompt.yes'));
+
+    expect(await screen.findByText('restaurants.noKeyWarning')).toBeInTheDocument();
+
+    // The fallback queue is shuffled, so capture whichever restaurant is
+    // showing rather than asserting a hard-coded venue name.
+    const likedName = screen.getByRole('heading', { level: 3 }).textContent;
+    expect(likedName).not.toBe('');
+
+    fireEvent.click(screen.getByText('restaurants.yes'));
+    skipRemainingRestaurants();
+
+    expect(screen.getByText('timeline.title')).toBeInTheDocument();
+    expect(screen.getByText(likedName)).toBeInTheDocument();
+
+    const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
+    expect(stored.plan.timeline.map(item => item.activity)).toContain(likedName);
+  });
+
+  test('shows live results when the search succeeds and puts the liked one on the timeline', async () => {
+    searchRestaurants.mockResolvedValue([
+      {
+        id: 'live-1',
+        place_id: 'live-1',
+        name: 'Live Bistro',
+        cuisine: ['italian'],
+        rating: 4.6,
+        priceRange: '$$',
+        distance: 0.6,
+        duration: 1.5,
+        address: '1 Test Street',
+        image: 'https://example.com/live.jpg',
+      },
+    ]);
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    walkToMealPrompt();
+    fireEvent.click(screen.getByText('mealPrompt.yes'));
+
+    expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
+    expect(screen.getByText('Live Bistro')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('restaurants.yes'));
+    skipRemainingRestaurants();
+
+    expect(screen.getByText('timeline.title')).toBeInTheDocument();
+    expect(screen.getByText('Live Bistro')).toBeInTheDocument();
+
+    const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
+    expect(stored.plan.timeline.map(item => item.activity)).toContain('Live Bistro');
   });
 });
