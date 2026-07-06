@@ -32,6 +32,8 @@
     "detectingLocation": "📍 Detectando ubicación...",
     "refreshLocation": "Actualizar ubicación",
     "startPlanning": "Empezar a planificar",
+    "resumePlan": "Reanudar tu plan",
+    "resumePlanDetails": "{{count}} paradas planificadas",
     "findingLocation": "📍 Encontrando tu ubicación...",
     "gettingCoordinates": "Obteniendo tus coordenadas GPS..."
   },
@@ -136,7 +138,40 @@
     "shareTitle": "Comparte tu día",
     "shareHint": "Escanea este código QR para compartir tu itinerario",
     "bookNow": "📱 Reservar ahora",
-    "overTime": "⚠️ Este plan supera tu presupuesto de {{hours}} horas."
+    "budget": {
+      "planned": "🕒 Planificado: {{planned}} · Disponible: {{available}}",
+      "over": "⚠️ Supera tu tiempo disponible en {{amount}}",
+      "within": "✅ Cabe en tu tiempo disponible con {{amount}} de margen",
+      "exact": "✅ Encaja exactamente en tu tiempo disponible"
+    },
+    "dayGuideLabel": "Guía del día",
+    "dayNarrative": {
+      "foodFirst": "comienza con comida antes de pasar al resto del día",
+      "activitiesFirst": "empieza con actividades antes de las paradas para comer",
+      "neutralOrder": "recorre tus selecciones una parada a la vez",
+      "fitsTime": "Debería ajustarse a tu tiempo disponible",
+      "tightTime": "El horario puede resultar justo para tu tiempo disponible, así que considera flexibles las últimas paradas",
+      "familyFriendlyPacing": "un ritmo adecuado para familias",
+      "priceLabels": {
+        "budget": "económico",
+        "moderate": "moderado",
+        "higherEnd": "de gama alta"
+      },
+      "templates": {
+        "openerWithTime": "A partir de las {time}, este plan de {stopLabel} {orderText}.",
+        "openerWithoutTime": "Este plan de {stopLabel} {orderText}.",
+        "fitWithPreferences": "{fitText}, con {preferences} en cuenta.",
+        "fitOnly": "{fitText}.",
+        "preferencesOnly": "Tiene en cuenta {preferences} durante el recorrido.",
+        "cuisinePreference": "tus preferencias de {cuisines}",
+        "budgetPreference": "un presupuesto {budgetLabel}"
+      },
+      "stopLabelOne": "1 parada",
+      "stopLabelOther": "{count} paradas",
+      "listTwoSeparator": " y ",
+      "listMiddleSeparator": ", ",
+      "listFinalSeparator": " y "
+    }
   },
   "transport": {
     "walk": "A pie",

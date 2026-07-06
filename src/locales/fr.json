@@ -32,6 +32,8 @@
     "detectingLocation": "📍 Détection de l'emplacement...",
     "refreshLocation": "Actualiser la position",
     "startPlanning": "Commencer à planifier",
+    "resumePlan": "Reprendre votre plan",
+    "resumePlanDetails": "{{count}} étapes prévues",
     "findingLocation": "📍 Localisation en cours...",
     "gettingCoordinates": "Récupération de vos coordonnées GPS..."
   },
@@ -136,7 +138,40 @@
     "shareTitle": "Partagez votre journée",
     "shareHint": "Scannez ce QR code pour partager votre itinéraire",
     "bookNow": "📱 Réserver maintenant",
-    "overTime": "⚠️ Ce plan dépasse votre budget de {{hours}} heures."
+    "budget": {
+      "planned": "🕒 Prévu : {{planned}} · Disponible : {{available}}",
+      "over": "⚠️ Dépasse votre temps disponible de {{amount}}",
+      "within": "✅ Tient dans votre temps disponible avec {{amount}} de marge",
+      "exact": "✅ Correspond exactement à votre temps disponible"
+    },
+    "dayGuideLabel": "Guide de la journée",
+    "dayNarrative": {
+      "foodFirst": "commence par un repas avant de passer au reste de votre journée",
+      "activitiesFirst": "commence par des activités avant toute pause repas",
+      "neutralOrder": "parcourt vos choix une étape à la fois",
+      "fitsTime": "Cela devrait tenir dans votre temps disponible",
+      "tightTime": "Le programme peut sembler serré pour votre temps disponible, considérez donc les dernières étapes comme flexibles",
+      "familyFriendlyPacing": "un rythme adapté aux familles",
+      "priceLabels": {
+        "budget": "économique",
+        "moderate": "modéré",
+        "higherEnd": "haut de gamme"
+      },
+      "templates": {
+        "openerWithTime": "À partir de {time}, ce programme de {stopLabel} {orderText}.",
+        "openerWithoutTime": "Ce programme de {stopLabel} {orderText}.",
+        "fitWithPreferences": "{fitText}, avec {preferences} prises en compte.",
+        "fitOnly": "{fitText}.",
+        "preferencesOnly": "Il tient compte de {preferences} tout au long du parcours.",
+        "cuisinePreference": "vos préférences {cuisines}",
+        "budgetPreference": "un budget {budgetLabel}"
+      },
+      "stopLabelOne": "1 étape",
+      "stopLabelOther": "{count} étapes",
+      "listTwoSeparator": " et ",
+      "listMiddleSeparator": ", ",
+      "listFinalSeparator": " et "
+    }
   },
   "transport": {
     "walk": "À pied",

@@ -32,6 +32,8 @@
     "detectingLocation": "📍 正在检测位置...",
     "refreshLocation": "刷新位置",
     "startPlanning": "开始规划",
+    "resumePlan": "继续您的计划",
+    "resumePlanDetails": "已规划 {{count}} 个地点",
     "findingLocation": "📍 正在定位...",
     "gettingCoordinates": "正在获取 GPS 坐标..."
   },
@@ -136,7 +138,40 @@
     "shareTitle": "分享您的行程",
     "shareHint": "扫描二维码分享您的行程",
     "bookNow": "📱 立即预订",
-    "overTime": "⚠️ 此计划超出您 {{hours}} 小时的预算。"
+    "budget": {
+      "planned": "🕒 计划时长：{{planned}} · 可用时长：{{available}}",
+      "over": "⚠️ 超出可用时间 {{amount}}",
+      "within": "✅ 在可用时间内，剩余 {{amount}}",
+      "exact": "✅ 恰好符合您的可用时间"
+    },
+    "dayGuideLabel": "行程指南",
+    "dayNarrative": {
+      "foodFirst": "先安排用餐，再进行当天的其他行程",
+      "activitiesFirst": "先安排活动，再安排用餐",
+      "neutralOrder": "按顺序逐站完成您的选择",
+      "fitsTime": "应该能在您的可用时间内完成",
+      "tightTime": "对于您的可用时间，行程可能比较紧凑，后面的行程可灵活调整",
+      "familyFriendlyPacing": "适合家庭的节奏",
+      "priceLabels": {
+        "budget": "经济实惠",
+        "moderate": "中等价位",
+        "higherEnd": "高端"
+      },
+      "templates": {
+        "openerWithTime": "从 {time} 开始，这个{stopLabel}行程{orderText}。",
+        "openerWithoutTime": "这个{stopLabel}行程{orderText}。",
+        "fitWithPreferences": "{fitText}，并已考虑{preferences}。",
+        "fitOnly": "{fitText}。",
+        "preferencesOnly": "行程中已考虑{preferences}。",
+        "cuisinePreference": "您的{cuisines}偏好",
+        "budgetPreference": "{budgetLabel}预算"
+      },
+      "stopLabelOne": "1站",
+      "stopLabelOther": "{count}站",
+      "listTwoSeparator": "和",
+      "listMiddleSeparator": "、",
+      "listFinalSeparator": "和"
+    }
   },
   "transport": {
     "walk": "步行",

@@ -32,6 +32,8 @@
     "detectingLocation": "📍 Đang phát hiện vị trí...",
     "refreshLocation": "Làm mới vị trí",
     "startPlanning": "Bắt đầu lên kế hoạch",
+    "resumePlan": "Tiếp tục kế hoạch của bạn",
+    "resumePlanDetails": "{{count}} điểm dừng đã lên kế hoạch",
     "findingLocation": "📍 Đang tìm vị trí của bạn...",
     "gettingCoordinates": "Đang lấy tọa độ GPS của bạn..."
   },
@@ -136,7 +138,40 @@
     "shareTitle": "Chia sẻ ngày của bạn",
     "shareHint": "Quét mã QR này để chia sẻ lịch trình",
     "bookNow": "📱 Đặt ngay",
-    "overTime": "⚠️ Kế hoạch này vượt quá ngân sách {{hours}} giờ của bạn."
+    "budget": {
+      "planned": "🕒 Dự kiến: {{planned}} · Thời gian có: {{available}}",
+      "over": "⚠️ Vượt quá thời gian có sẵn {{amount}}",
+      "within": "✅ Vừa với thời gian của bạn, còn dư {{amount}}",
+      "exact": "✅ Vừa khớp với thời gian có sẵn của bạn"
+    },
+    "dayGuideLabel": "Hướng dẫn trong ngày",
+    "dayNarrative": {
+      "foodFirst": "bắt đầu bằng bữa ăn trước khi chuyển sang phần còn lại của ngày",
+      "activitiesFirst": "bắt đầu bằng các hoạt động trước khi dừng ăn uống",
+      "neutralOrder": "đi qua các lựa chọn của bạn từng điểm một",
+      "fitsTime": "Lịch trình sẽ vừa với thời gian bạn có",
+      "tightTime": "Lịch trình có thể hơi gấp so với thời gian bạn có, nên hãy xem các điểm dừng sau là linh hoạt",
+      "familyFriendlyPacing": "nhịp độ phù hợp cho gia đình",
+      "priceLabels": {
+        "budget": "bình dân",
+        "moderate": "trung bình",
+        "higherEnd": "cao cấp"
+      },
+      "templates": {
+        "openerWithTime": "Bắt đầu khoảng {time}, kế hoạch {stopLabel} này {orderText}.",
+        "openerWithoutTime": "Kế hoạch {stopLabel} này {orderText}.",
+        "fitWithPreferences": "{fitText}, với {preferences} được lưu ý.",
+        "fitOnly": "{fitText}.",
+        "preferencesOnly": "Kế hoạch này lưu ý đến {preferences} trong suốt hành trình.",
+        "cuisinePreference": "sở thích {cuisines} của bạn",
+        "budgetPreference": "ngân sách {budgetLabel}"
+      },
+      "stopLabelOne": "1 điểm dừng",
+      "stopLabelOther": "{count} điểm dừng",
+      "listTwoSeparator": " và ",
+      "listMiddleSeparator": ", ",
+      "listFinalSeparator": " và "
+    }
   },
   "transport": {
     "walk": "Đi bộ",
