@@ -33,17 +33,17 @@ import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
 import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
 import {
+  createPlanPayload,
+  getRestoredPlanState,
+  summarizeSavedPlan,
+} from './utils/planLifecycle';
+import {
   CUISINE_EMOJI,
   getCuisineEmoji,
   ACTIVITY_CATEGORIES,
   INTEREST_CATEGORY_OPTIONS,
 } from './config/dayGuideOptions';
 import './DayGuide.css';
-
-// Welcome-screen summary of the saved plan (null when there is none).
-const summarizeSavedPlan = (plan) =>
-  plan ? { selectedDate: plan.selectedDate, itemCount: plan.timeline.length } : null;
-
 const DayGuide = () => {
   const { currentUser, logout } = useAuth();
   const { t, i18n } = useTranslation();
@@ -366,7 +366,8 @@ const DayGuide = () => {
   // are deliberately not saved.
   const persistPlan = (newTimeline) => {
     if (!Array.isArray(newTimeline) || newTimeline.length === 0) return;
-    savePlan({
+
+    const plan = createPlanPayload({
       timeline: newTimeline,
       startTime,
       availableTime,
@@ -376,7 +377,9 @@ const DayGuide = () => {
       selectedDate,
       startWith,
     });
-    setSavedPlanSummary({ selectedDate, itemCount: newTimeline.length });
+
+    savePlan(plan);
+    setSavedPlanSummary(summarizeSavedPlan(plan));
   };
 
   const resumePlan = () => {
@@ -386,15 +389,17 @@ const DayGuide = () => {
       return;
     }
 
-    setSavedPlanSummary(summarizeSavedPlan(saved));
-    setTimeline(saved.timeline);
-    setStartTime(saved.startTime);
-    if (typeof saved.availableTime === 'number') setAvailableTime(saved.availableTime);
-    setHasChildren(typeof saved.hasChildren === 'boolean' ? saved.hasChildren : null);
-    setSelectedCuisines(Array.isArray(saved.selectedCuisines) ? saved.selectedCuisines : []);
-    setSelectedPriceRange(saved.selectedPriceRange ?? null);
-    if (saved.selectedDate) setSelectedDate(saved.selectedDate);
-    if (saved.startWith) setStartWith(saved.startWith);
+    const restored = getRestoredPlanState(saved);
+
+    setSavedPlanSummary(restored.summary);
+    setTimeline(restored.timeline);
+    setStartTime(restored.startTime);
+    if (typeof restored.availableTime === 'number') setAvailableTime(restored.availableTime);
+    setHasChildren(restored.hasChildren);
+    setSelectedCuisines(restored.selectedCuisines);
+    setSelectedPriceRange(restored.selectedPriceRange);
+    if (restored.selectedDate) setSelectedDate(restored.selectedDate);
+    if (restored.startWith) setStartWith(restored.startWith);
     isResumedPlanRef.current = true;
     setStage('timeline');
   };
