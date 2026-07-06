@@ -459,6 +459,7 @@ const DayGuide = () => {
           goToActivities={goToActivities}
           setStage={setStage}
           continueAfterActivities={continueAfterActivities}
+          startWith={startWith}
           swipeActivity={swipeActivity}
           t={t}
         />

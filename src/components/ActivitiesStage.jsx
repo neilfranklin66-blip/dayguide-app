@@ -2,6 +2,7 @@ import React from 'react';
 import ActivitiesNoResultsCard from './ActivitiesNoResultsCard';
 import NoMoreActivitiesCard from './NoMoreActivitiesCard';
 import ActivitySwipeCard from './ActivitySwipeCard';
+import { getRouteAfterActivities } from '../engines/itineraryRouteEngine';
 
 export default function ActivitiesStage({
   activityQueue,
@@ -10,6 +11,7 @@ export default function ActivitiesStage({
   goToActivities,
   setStage,
   continueAfterActivities,
+  startWith,
   swipeActivity,
   t,
 }) {
@@ -30,6 +32,7 @@ export default function ActivitiesStage({
     return (
       <NoMoreActivitiesCard
         onContinue={continueAfterActivities}
+        nextRoute={getRouteAfterActivities({ startWith })}
         t={t}
       />
     );

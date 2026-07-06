@@ -21,6 +21,7 @@ const baseProps = {
   goToActivities: jest.fn(),
   setStage: jest.fn(),
   continueAfterActivities: jest.fn(),
+  startWith: 'activities',
   swipeActivity: jest.fn(),
   t,
 };
@@ -48,7 +49,7 @@ test('shows the no-more card when the queue is exhausted', () => {
   expect(screen.getByText('activities.noMore')).toBeInTheDocument();
 });
 
-test('no-more card uses the activities continue label and continues the flow', () => {
+test('activity-first no-more card points to restaurants and continues the flow', () => {
   const continueAfterActivities = jest.fn();
   render(
     <ActivitiesStage
@@ -59,8 +60,27 @@ test('no-more card uses the activities continue label and continues the flow', (
   );
 
   expect(screen.queryByText('interests.next')).not.toBeInTheDocument();
+  expect(screen.queryByText('restaurants.buildItinerary')).not.toBeInTheDocument();
 
-  fireEvent.click(screen.getByText('activities.continueLabel'));
+  fireEvent.click(screen.getByText('activities.continueToRestaurants'));
+
+  expect(continueAfterActivities).toHaveBeenCalled();
+});
+
+test('food-first no-more card uses the build-itinerary label because the timeline is next', () => {
+  const continueAfterActivities = jest.fn();
+  render(
+    <ActivitiesStage
+      {...baseProps}
+      currentActivityIndex={1}
+      startWith="food_drinks"
+      continueAfterActivities={continueAfterActivities}
+    />,
+  );
+
+  expect(screen.queryByText('activities.continueToRestaurants')).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('restaurants.buildItinerary'));
 
   expect(continueAfterActivities).toHaveBeenCalled();
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getTimelineCategoryLabel } from '../engines/timelineEngine';
+import { formatDurationLabel, getTimelineCategoryLabel } from '../engines/timelineEngine';
 import { ACTIVITY_CATEGORIES } from '../config/dayGuideOptions';
 
 export default function TimelineItemRow({ item, index, onDurationChange, t }) {
@@ -21,7 +21,7 @@ export default function TimelineItemRow({ item, index, onDurationChange, t }) {
             <input type="range" min="0.25" max="4" step="0.25" value={item.duration}
               onChange={e => onDurationChange(index, parseFloat(e.target.value))}
               className="duration-slider" />
-            <div className="duration-display">{t('timeline.hoursDisplay', { duration: item.duration.toFixed(2) })}</div>
+            <div className="duration-display">{formatDurationLabel(item.duration)}</div>
           </div>
           <p className="duration-hint">{t('timeline.slideToAdjust')}</p>
           <p className="activity-info">⭐ {item.rating} | 📍 {item.distance}km</p>
