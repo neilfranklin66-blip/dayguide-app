@@ -78,3 +78,65 @@ test('nearby restaurant overlay closes with the popup context', () => {
   expect(onYes).not.toHaveBeenCalled();
   expect(onSkip).not.toHaveBeenCalled();
 });
+
+const renderBasicPopup = (type) => {
+  const activePopup = { type };
+  const onClose = jest.fn();
+  const onYes = jest.fn();
+  const onSkip = jest.fn();
+  const t = key => key;
+
+  const result = render(
+    <PopupModal
+      activePopup={activePopup}
+      onClose={onClose}
+      onYes={onYes}
+      onSkip={onSkip}
+      t={t}
+    />
+  );
+
+  return {
+    ...result,
+    activePopup,
+    onClose,
+    onYes,
+    onSkip,
+  };
+};
+
+test.each(['coffeeBreak', 'activityBreak'])('non-restaurant popup no closes with the popup context', (type) => {
+  const { activePopup, onClose, onYes, onSkip } = renderBasicPopup(type);
+
+  fireEvent.click(screen.getByRole('button', { name: `popups.${type}.no` }));
+
+  expect(onClose).toHaveBeenCalledWith(activePopup);
+  expect(onYes).not.toHaveBeenCalled();
+  expect(onSkip).not.toHaveBeenCalled();
+});
+
+test.each(['coffeeBreak', 'activityBreak'])('non-restaurant popup close button closes with the popup context', (type) => {
+  const { activePopup, onClose, onYes, onSkip } = renderBasicPopup(type);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+  expect(onClose).toHaveBeenCalledWith(activePopup);
+  expect(onYes).not.toHaveBeenCalled();
+  expect(onSkip).not.toHaveBeenCalled();
+});
+
+test.each(['coffeeBreak', 'activityBreak'])('non-restaurant popup overlay closes with the popup context', (type) => {
+  const { activePopup, container, onClose, onYes, onSkip } = renderBasicPopup(type);
+
+  fireEvent.click(container.querySelector('.popup-overlay'));
+
+  expect(onClose).toHaveBeenCalledWith(activePopup);
+  expect(onYes).not.toHaveBeenCalled();
+  expect(onSkip).not.toHaveBeenCalled();
+});
+
+test.each(['coffeeBreak', 'activityBreak'])('non-restaurant popup does not render nearby restaurant skip', (type) => {
+  renderBasicPopup(type);
+
+  expect(screen.queryByRole('button', { name: 'popups.nearbyRestaurant.skip' })).not.toBeInTheDocument();
+});
