@@ -1,7 +1,7 @@
 import React from 'react';
 import { getPopupMessage } from '../engines/popupEngine';
 
-function PopupModal({ activePopup, onClose, onYes, t }) {
+function PopupModal({ activePopup, onClose, onYes, onSkip = onClose, t }) {
   if (!activePopup) return null;
 
   const icons = {
@@ -25,7 +25,7 @@ function PopupModal({ activePopup, onClose, onYes, t }) {
             {t(`popups.${activePopup.type}.no`)}
           </button>
           {activePopup.type === 'nearbyRestaurant' && (
-            <button className="popup-btn popup-btn-skip" onClick={onClose}>
+            <button className="popup-btn popup-btn-skip" onClick={() => onSkip(activePopup)}>
               {t('popups.nearbyRestaurant.skip')}
             </button>
           )}

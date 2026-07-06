@@ -110,6 +110,18 @@ const DayGuide = () => {
     setActivePopup(null);
   };
 
+  const skipNearbyRestaurantPopup = (popup) => {
+    if (popup?.type === 'nearbyRestaurant') {
+      const restaurantKey = getRestaurantSuggestionKey(popup.restaurant);
+
+      if (restaurantKey) {
+        dismissedRestaurantKeysRef.current.add(restaurantKey);
+      }
+    }
+
+    dismissPopup();
+  };
+
   const showPopup = (type, data = {}) => {
     const popup = { type, ...data };
     popupCooldowns.current[type] = Date.now();
@@ -561,6 +573,7 @@ const DayGuide = () => {
         activePopup={activePopup}
         onClose={dismissPopup}
         onYes={handlePopupYes}
+        onSkip={skipNearbyRestaurantPopup}
         t={t}
       />
       <TimelineShareQRModal
