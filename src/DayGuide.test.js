@@ -4,6 +4,7 @@ import useGeolocation from './useGeolocation';
 import { searchRestaurants } from './api/placesApi';
 import { SAVED_PLAN_STORAGE_KEY } from './utils/planStorage';
 import { INTEREST_CATEGORY_OPTIONS } from './config/dayGuideOptions';
+import * as popupEngine from './engines/popupEngine';
 
 jest.mock('./useGeolocation');
 jest.mock('./api/placesApi');
@@ -358,6 +359,52 @@ describe('timeline popup suggestions', () => {
 
     expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
   });
+
+  test('closing a nearby restaurant popup dismisses that restaurant across timeline updates', () => {
+    jest.spyOn(popupEngine, 'getTimelinePopupSuggestion').mockImplementation(({
+      canShowPopup,
+      dismissedRestaurantKeys,
+    }) => {
+      if (!canShowPopup('nearbyRestaurant')) return null;
+
+      const restaurantKey = liveRestaurantResult.place_id;
+
+      if (dismissedRestaurantKeys.has(restaurantKey)) return null;
+
+      return {
+        type: 'nearbyRestaurant',
+        restaurant: liveRestaurantResult,
+      };
+    });
+
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    buildPlanFromWelcome();
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(screen.getByText('popups.nearbyRestaurant.title')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'popups.nearbyRestaurant.no' }));
+
+    expect(screen.queryByText('popups.nearbyRestaurant.title')).not.toBeInTheDocument();
+
+    act(() => {
+      jest.advanceTimersByTime(7200001);
+    });
+
+    fireEvent.change(screen.getAllByRole('slider')[0], { target: { value: '2' } });
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(screen.queryByText('popups.nearbyRestaurant.title')).not.toBeInTheDocument();
+  });
+
 });
 
 // --- Activities no-results "show all" ---
