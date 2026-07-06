@@ -19,6 +19,7 @@ import {
 } from './engines/timelineEngine';
 import {
   getPopupYesAction,
+  getRestaurantSuggestionKey,
   getTimelinePopupSuggestion,
 } from './engines/popupEngine';
 import TimelineShareQRModal from './components/TimelineShareQRModal';
@@ -80,6 +81,10 @@ const DayGuide = () => {
   // the current list regardless of closure capture timing.
   const selectedRestaurantsRef = useRef([]);
 
+  // Restaurants skipped during swiping should not be re-suggested later by
+  // the nearby restaurant popup in the same plan.
+  const dismissedRestaurantKeysRef = useRef(new Set());
+
   // True while showing a resumed saved plan. Resumed plans do not restore
   // selections or queues, so popup actions would rebuild the timeline from
   // empty selections and overwrite the saved plan — suppress popups instead.
@@ -132,6 +137,7 @@ const DayGuide = () => {
         timeline,
         activityCategories: ACTIVITY_CATEGORIES,
         canShowPopup,
+        dismissedRestaurantKeys: dismissedRestaurantKeysRef.current,
       });
 
       if (popup) {
@@ -170,6 +176,7 @@ const DayGuide = () => {
     setSelectedActivities([]);
     setSelectedRestaurants([]);
     selectedRestaurantsRef.current = [];
+    dismissedRestaurantKeysRef.current = new Set();
     setHasChildren(null);
     setAvailableTime(4);
     setStartWith('activities');
@@ -314,6 +321,12 @@ const DayGuide = () => {
       currentItem: currentRestaurant,
       selectedItems: selectedRestaurants,
     });
+
+    const restaurantKey = getRestaurantSuggestionKey(currentRestaurant);
+
+    if (!liked && restaurantKey) {
+      dismissedRestaurantKeysRef.current.add(restaurantKey);
+    }
 
     if (liked && currentRestaurant) {
       popupCooldowns.current.nearbyRestaurant = Date.now();

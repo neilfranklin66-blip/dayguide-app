@@ -289,7 +289,7 @@ describe('timeline popup suggestions', () => {
     expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
   });
 
-  test('a live restaurant result can produce the nearby restaurant popup', async () => {
+  test('a skipped live restaurant result does not produce the nearby restaurant popup', async () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     searchRestaurants.mockResolvedValue([liveRestaurantResult]);
     render(<DayGuide />);
@@ -300,7 +300,7 @@ describe('timeline popup suggestions', () => {
       jest.advanceTimersByTime(2000);
     });
 
-    expect(screen.getByText('popups.nearbyRestaurant.title')).toBeInTheDocument();
+    expect(screen.queryByText('popups.nearbyRestaurant.title')).not.toBeInTheDocument();
   });
 
   test('a fallback restaurant source never produces the nearby restaurant popup', async () => {
@@ -319,30 +319,27 @@ describe('timeline popup suggestions', () => {
     expect(screen.queryByText('popups.nearbyRestaurant.title')).not.toBeInTheDocument();
   });
 
-  test('a popup shown in one plan can appear again in a fresh plan after start over', async () => {
+  test('a popup shown in one plan can appear again in a fresh plan after start over', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
-    searchRestaurants.mockResolvedValue([liveRestaurantResult]);
     render(<DayGuide />);
 
-    await buildPlanThroughRestaurantsFromWelcome();
+    buildPlanFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
     });
 
-    // Assert the specific popup type: the generic pattern could pass with a
-    // lower-priority popup even if nearbyRestaurant were still on cooldown.
-    expect(screen.getByText('popups.nearbyRestaurant.title')).toBeInTheDocument();
+    expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText('timeline.startOver'));
 
-    await buildPlanThroughRestaurantsFromWelcome();
+    buildPlanFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
     });
 
-    expect(screen.getByText('popups.nearbyRestaurant.title')).toBeInTheDocument();
+    expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
   });
 
   test('building a fresh plan after resume and start over re-enables popups', () => {

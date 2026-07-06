@@ -1,14 +1,23 @@
+export const getRestaurantSuggestionKey = (restaurant) =>
+  restaurant?.place_id || restaurant?.id || restaurant?.name || null;
+
 export const findNearbyRestaurantSuggestion = ({
   restaurants = [],
   timeline = [],
+  dismissedRestaurantKeys = new Set(),
   maxDistanceKm = 0.5,
   minRating = 4.3,
 }) =>
-  restaurants.find(restaurant =>
-    restaurant.distance <= maxDistanceKm &&
-    restaurant.rating >= minRating &&
-    !timeline.some(item => item.activity === restaurant.name)
-  );
+  restaurants.find(restaurant => {
+    const restaurantKey = getRestaurantSuggestionKey(restaurant);
+
+    return (
+      restaurant.distance <= maxDistanceKm &&
+      restaurant.rating >= minRating &&
+      !timeline.some(item => item.activity === restaurant.name) &&
+      (!restaurantKey || !dismissedRestaurantKeys.has(restaurantKey))
+    );
+  });
 
 export const hasLongActivityRun = ({
   timeline = [],
@@ -45,6 +54,7 @@ export const getTimelinePopupSuggestion = ({
   minRating = 4.3,
   activityThresholdHours = 2,
   activityBreakMinItems = 2,
+  dismissedRestaurantKeys = new Set(),
 }) => {
   if (canShowPopup('nearbyRestaurant')) {
     const nearby = findNearbyRestaurantSuggestion({
@@ -52,6 +62,7 @@ export const getTimelinePopupSuggestion = ({
       timeline,
       maxDistanceKm,
       minRating,
+      dismissedRestaurantKeys,
     });
 
     if (nearby) {
