@@ -483,6 +483,91 @@ describe('restaurant selection flow', () => {
     expect(stored.plan.timeline.map(item => item.activity)).toContain(likedName);
   });
 
+  // --- Search request wiring (getRestaurantSearchRequestOutcome callsite) ---
+  //
+  // goToRestaurants delegates the API call to the extracted helper; these
+  // tests pin the arguments crossing the searchRestaurants boundary rather
+  // than asserting broadly on the rendered queue.
+  describe('search request wiring', () => {
+    // Fills in the interests stage with the start order flipped to food &
+    // drinks, so interests.next routes straight into the restaurant search
+    // with the state-held cuisine/price defaults (no override arguments).
+    const walkToInterestsRestaurantsFirst = () => {
+      fireEvent.click(screen.getByText('welcome.startPlanning'));
+
+      fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+      fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
+      fireEvent.click(screen.getByText('interests.startWithFoodDrinks'));
+    };
+
+    const liveSearchResult = {
+      id: 'live-wiring-1',
+      place_id: 'live-wiring-1',
+      name: 'Wired Bistro',
+      city: '',
+      cuisine: ['italian'],
+      priceRange: '$$',
+      rating: 4.5,
+      duration: 1.5,
+      distance: 0.4,
+      address: '2 Test Street',
+      image: null,
+    };
+
+    test('passes the geolocated position and selected cuisine and price to the live search', async () => {
+      searchRestaurants.mockResolvedValue([liveSearchResult]);
+      useGeolocation.mockReturnValue(resolvedGeo);
+      render(<DayGuide />);
+
+      walkToInterestsRestaurantsFirst();
+      fireEvent.click(screen.getByText('cuisine.italian'));
+      fireEvent.click(screen.getByText('priceRange.moderate'));
+      fireEvent.click(screen.getByText('interests.next'));
+
+      expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
+
+      expect(searchRestaurants).toHaveBeenCalledTimes(1);
+      expect(searchRestaurants).toHaveBeenCalledWith(
+        resolvedGeo.position.lat,
+        resolvedGeo.position.lng,
+        ['italian'],
+        '$$',
+      );
+    });
+
+    test('searches with an empty cuisine list and no price when nothing is selected', async () => {
+      searchRestaurants.mockResolvedValue([liveSearchResult]);
+      useGeolocation.mockReturnValue(resolvedGeo);
+      render(<DayGuide />);
+
+      walkToInterestsRestaurantsFirst();
+      fireEvent.click(screen.getByText('interests.next'));
+
+      expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
+
+      expect(searchRestaurants).toHaveBeenCalledTimes(1);
+      expect(searchRestaurants).toHaveBeenCalledWith(
+        resolvedGeo.position.lat,
+        resolvedGeo.position.lng,
+        [],
+        null,
+      );
+    });
+
+    test('skips the live search and falls back to mocks when no position is available', async () => {
+      searchRestaurants.mockResolvedValue([liveSearchResult]);
+      useGeolocation.mockReturnValue(erroredGeo);
+      render(<DayGuide />);
+
+      walkToInterestsRestaurantsFirst();
+      fireEvent.click(screen.getByText('interests.next'));
+
+      expect(await screen.findByText('restaurants.noLocationWarning')).toBeInTheDocument();
+
+      expect(searchRestaurants).not.toHaveBeenCalled();
+    });
+  });
+
   test('shows live results when the search succeeds and puts the liked one on the timeline', async () => {
     searchRestaurants.mockResolvedValue([
       {
