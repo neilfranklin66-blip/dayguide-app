@@ -212,6 +212,46 @@ const buildPlanFromWelcome = () => {
   expect(screen.getByText('timeline.title')).toBeInTheDocument();
 };
 
+// A close, high-rated live result in the shape searchRestaurants resolves
+// with; qualifies for the nearbyRestaurant popup once it reaches the queue.
+const liveRestaurantResult = {
+  id: 'live-1',
+  place_id: 'live-1',
+  name: 'Test Live Bistro',
+  city: '',
+  cuisine: [],
+  priceRange: '$$',
+  rating: 4.8,
+  duration: 1.5,
+  distance: 0.2,
+  address: '1 Test Street',
+  image: null,
+};
+
+// Same walk as buildPlanFromWelcome, but accepts the meal prompt and skips
+// every restaurant card, so the queue and source stay populated without
+// putting nearbyRestaurant on the liked-a-restaurant cooldown.
+const buildPlanThroughRestaurantsFromWelcome = async () => {
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+
+  fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+  fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
+  fireEvent.click(screen.getByText('interests.next'));
+
+  for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
+    fireEvent.click(screen.getByText('activities.yes'));
+  }
+
+  fireEvent.click(screen.getByText('mealPrompt.yes'));
+  await act(async () => {}); // flush the restaurant search promise
+
+  for (let i = 0; i < 50 && screen.queryByText('restaurants.skip'); i += 1) {
+    fireEvent.click(screen.getByText('restaurants.skip'));
+  }
+
+  expect(screen.getByText('timeline.title')).toBeInTheDocument();
+};
+
 describe('timeline popup suggestions', () => {
   beforeEach(() => {
     jest.useFakeTimers();
@@ -249,11 +289,42 @@ describe('timeline popup suggestions', () => {
     expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
   });
 
-  test('a popup shown in one plan can appear again in a fresh plan after start over', () => {
+  test('a live restaurant result can produce the nearby restaurant popup', async () => {
     useGeolocation.mockReturnValue(resolvedGeo);
+    searchRestaurants.mockResolvedValue([liveRestaurantResult]);
     render(<DayGuide />);
 
-    buildPlanFromWelcome();
+    await buildPlanThroughRestaurantsFromWelcome();
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(screen.getByText('popups.nearbyRestaurant.title')).toBeInTheDocument();
+  });
+
+  test('a fallback restaurant source never produces the nearby restaurant popup', async () => {
+    useGeolocation.mockReturnValue(resolvedGeo);
+    // No API key: the queue the user swipes is built from mock data, which
+    // must not be presented as a restaurant that is actually nearby.
+    searchRestaurants.mockRejectedValue(new Error('NO_API_KEY'));
+    render(<DayGuide />);
+
+    await buildPlanThroughRestaurantsFromWelcome();
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(screen.queryByText('popups.nearbyRestaurant.title')).not.toBeInTheDocument();
+  });
+
+  test('a popup shown in one plan can appear again in a fresh plan after start over', async () => {
+    useGeolocation.mockReturnValue(resolvedGeo);
+    searchRestaurants.mockResolvedValue([liveRestaurantResult]);
+    render(<DayGuide />);
+
+    await buildPlanThroughRestaurantsFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
@@ -265,7 +336,7 @@ describe('timeline popup suggestions', () => {
 
     fireEvent.click(screen.getByText('timeline.startOver'));
 
-    buildPlanFromWelcome();
+    await buildPlanThroughRestaurantsFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
