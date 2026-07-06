@@ -20,12 +20,39 @@ describe('restaurantSearchRequest', () => {
     );
   });
 
+  test('defaults cuisines to an empty list and price to null when omitted', async () => {
+    const results = [{ name: 'Default Diner' }];
+    const searchRestaurantsFn = jest.fn().mockResolvedValue(results);
+
+    await expect(getRestaurantSearchRequestOutcome({
+      position: { lat: 51.5, lng: -0.1 },
+      searchRestaurantsFn,
+    })).resolves.toEqual({ results });
+
+    expect(searchRestaurantsFn).toHaveBeenCalledWith(51.5, -0.1, [], null);
+  });
+
   test('returns a NO_LOCATION error outcome when latitude is missing', async () => {
     const searchRestaurantsFn = jest.fn();
 
     const outcome = await getRestaurantSearchRequestOutcome({
       position: null,
       cuisines: ['indian'],
+      price: null,
+      searchRestaurantsFn,
+    });
+
+    expect(outcome.error).toBeInstanceOf(Error);
+    expect(outcome.error.message).toBe('NO_LOCATION');
+    expect(searchRestaurantsFn).not.toHaveBeenCalled();
+  });
+
+  test('returns a NO_LOCATION error outcome when position has no lat property', async () => {
+    const searchRestaurantsFn = jest.fn();
+
+    const outcome = await getRestaurantSearchRequestOutcome({
+      position: { lng: -0.1 },
+      cuisines: [],
       price: null,
       searchRestaurantsFn,
     });
