@@ -61,7 +61,7 @@ const DayGuide = () => {
   const [startWith, setStartWith] = useState('activities');
   const [startTime, setStartTime] = useState(() => {
     const now = new Date();
-      return now.getHours() + now.getMinutes() / 60;
+    return now.getHours() + now.getMinutes() / 60;
   });
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [currentRestaurantIndex, setCurrentRestaurantIndex] = useState(0);
@@ -74,7 +74,7 @@ const DayGuide = () => {
   const [activePopup, setActivePopup] = useState(null);
   const [showQR, setShowQR] = useState(false);
   const popupCooldowns = useRef({});
-    const activePopupRef = useRef(null);
+  const activePopupRef = useRef(null);
   const popupActivityReturnRef = useRef(false);
 
   // Mirror of selectedRestaurants in a ref so goToRestaurants always reads
@@ -439,7 +439,6 @@ const DayGuide = () => {
       goToActivities();
     }
   };
-
 
   // --- Render helpers ---
 
