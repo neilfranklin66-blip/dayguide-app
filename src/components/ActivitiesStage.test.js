@@ -45,6 +45,24 @@ test('shows the no-more card when the queue is exhausted', () => {
   render(<ActivitiesStage {...baseProps} currentActivityIndex={1} />);
 
   expect(screen.queryByText('City Museum')).not.toBeInTheDocument();
+  expect(screen.getByText('activities.noMore')).toBeInTheDocument();
+});
+
+test('no-more card uses the activities continue label and continues the flow', () => {
+  const continueAfterActivities = jest.fn();
+  render(
+    <ActivitiesStage
+      {...baseProps}
+      currentActivityIndex={1}
+      continueAfterActivities={continueAfterActivities}
+    />,
+  );
+
+  expect(screen.queryByText('interests.next')).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('activities.continueLabel'));
+
+  expect(continueAfterActivities).toHaveBeenCalled();
 });
 
 test('renders the no-results card when the queue is empty', () => {

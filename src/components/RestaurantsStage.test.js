@@ -30,6 +30,7 @@ const baseProps = {
   currentRestaurantIndex: 0,
   restaurantSource: null,
   hasChildren: false,
+  startWith: 'activities',
   swipeRestaurant: jest.fn(),
   t,
 };
@@ -54,6 +55,39 @@ test('shows the loading card while restaurants load', () => {
   render(<RestaurantsStage {...baseProps} isRestaurantsLoading={true} restaurantQueue={null} />);
 
   expect(screen.queryByText('Trattoria Roma')).not.toBeInTheDocument();
+});
+
+test('exhausted queue in activity-first order offers to build the itinerary', () => {
+  render(
+    <RestaurantsStage
+      {...baseProps}
+      currentRestaurantIndex={1}
+      startWith="activities"
+    />
+  );
+
+  expect(screen.getByText('restaurants.noMore')).toBeInTheDocument();
+  expect(screen.getByText('restaurants.buildItinerary')).toBeInTheDocument();
+  expect(screen.queryByText('restaurants.continueToActivities')).not.toBeInTheDocument();
+});
+
+test('exhausted queue in food-first order offers to continue to activities', () => {
+  const continueAfterRestaurants = jest.fn();
+  const selectedRestaurants = [restaurant];
+  render(
+    <RestaurantsStage
+      {...baseProps}
+      currentRestaurantIndex={1}
+      startWith="food_drinks"
+      selectedRestaurants={selectedRestaurants}
+      continueAfterRestaurants={continueAfterRestaurants}
+    />
+  );
+
+  expect(screen.queryByText('restaurants.buildItinerary')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText('restaurants.continueToActivities'));
+
+  expect(continueAfterRestaurants).toHaveBeenCalledWith(selectedRestaurants);
 });
 
 test('shows the nearest hint on the no-results card when provided', () => {

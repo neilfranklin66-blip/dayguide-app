@@ -6,7 +6,7 @@ export default function NoMoreActivitiesCard({ onContinue, t }) {
       <div className="card">
         <h2>{t('activities.noMore')}</h2>
         <button onClick={() => onContinue()} className="btn-primary">
-          {t('interests.next')}
+          {t('activities.continueLabel')}
         </button>
       </div>
     </div>
