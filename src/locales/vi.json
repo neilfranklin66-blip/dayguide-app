@@ -142,8 +142,8 @@
     "title": "Ngày hoàn hảo của bạn",
     "empty": "Lịch trình của bạn đang trống. Hãy bắt đầu lại hoặc thay đổi lựa chọn để xây dựng ngày của bạn.",
     "slideToAdjust": "Trượt để điều chỉnh thời gian",
-    "howToGetThere": "↓ Làm thế nào để đến điểm dừng tiếp theo?",
-    "minutes": "{{count}} phút",
+    "howToGetThere": "↓ Lựa chọn di chuyển gần bạn (ước tính sơ bộ)",
+    "minutes": "~{{count}} phút",
     "startOver": "Bắt đầu lại",
     "share": "📲 Chia sẻ",
     "shareTitle": "Chia sẻ ngày của bạn",
@@ -186,7 +186,7 @@
   "transport": {
     "walk": "Đi bộ",
     "taxi": "Taxi/Uber",
-    "tube": "Tàu điện ngầm",
+    "tube": "Tàu hỏa/Tàu điện ngầm",
     "bus": "Xe buýt"
   },
   "popups": {

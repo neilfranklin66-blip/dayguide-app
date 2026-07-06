@@ -142,8 +142,8 @@
     "title": "您的完美一天",
     "empty": "您的行程还是空的。请重新开始或更改您的选择来安排这一天。",
     "slideToAdjust": "滑动调整时长",
-    "howToGetThere": "↓ 如何前往下一站？",
-    "minutes": "{{count}} 分钟",
+    "howToGetThere": "↓ 附近的出行方式（粗略估计）",
+    "minutes": "约 {{count}} 分钟",
     "startOver": "重新开始",
     "share": "📲 分享",
     "shareTitle": "分享您的行程",
@@ -186,7 +186,7 @@
   "transport": {
     "walk": "步行",
     "taxi": "出租车/Uber",
-    "tube": "地铁",
+    "tube": "火车/地铁",
     "bus": "公交车"
   },
   "popups": {
