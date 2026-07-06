@@ -32,6 +32,7 @@ import MealPromptStage from './components/MealPromptStage';
 import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
 import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
+import { getRestaurantSearchRequestOutcome } from './utils/restaurantSearchRequest';
 import {
   createPlanPayload,
   getRestoredPlanState,
@@ -299,15 +300,15 @@ const DayGuide = () => {
       setNearestHint(hint);
     };
 
-    try {
-      if (!position?.lat) throw new Error('NO_LOCATION');
-      const results = await searchRestaurants(position.lat, position.lng, cuisineOverride, priceOverride);
-      applyOutcome(resolveOutcome({ results }));
-    } catch (err) {
-      applyOutcome(resolveOutcome({ error: err }));
-    } finally {
-      setIsRestaurantsLoading(false);
-    }
+    const searchOutcome = await getRestaurantSearchRequestOutcome({
+      position,
+      cuisines: cuisineOverride,
+      price: priceOverride,
+      searchRestaurantsFn: searchRestaurants,
+    });
+
+    applyOutcome(resolveOutcome(searchOutcome));
+    setIsRestaurantsLoading(false);
   };
 
   const swipeActivity = (liked) => {
