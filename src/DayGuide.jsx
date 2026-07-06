@@ -5,14 +5,8 @@ import useGeolocation from './useGeolocation';
 import mockRestaurantData from './mockRestaurantData.json';
 import mockActivityData from './mockActivityData.json';
 import { searchRestaurants } from './api/placesApi';
-import { mapFromMockArray, mapFromPlacesArray } from './adapters/placeCardAdapter';
-import {
-  buildRestaurantQueue as buildFilteredRestaurantQueue,
-  excludeAlreadySelected,
-  findNearestRestaurant,
-  getActivitiesForInterests as getFilteredActivitiesForInterests,
-} from './engines/filterEngine';
-import { getRestaurantSourceFromError } from './engines/restaurantEngine';
+import { getActivitiesForInterests as getFilteredActivitiesForInterests } from './engines/filterEngine';
+import { resolveRestaurantSearchOutcome } from './engines/restaurantEngine';
 import { createSwipeSelection, toggleIdSelection } from './engines/selectionEngine';
 import {
   getInitialSelectionRoute,
@@ -36,7 +30,6 @@ import ActivitiesStage from './components/ActivitiesStage';
 import MealPromptStage from './components/MealPromptStage';
 import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
-import { rankRecommendations } from './utils/recommendationScore';
 import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
 import {
   CUISINE_EMOJI,
@@ -83,8 +76,8 @@ const DayGuide = () => {
     const activePopupRef = useRef(null);
   const popupActivityReturnRef = useRef(false);
 
-  // Mirror of selectedRestaurants in a ref so goToRestaurants/buildRestaurantQueue
-  // always read the current list regardless of closure capture timing.
+  // Mirror of selectedRestaurants in a ref so goToRestaurants always reads
+  // the current list regardless of closure capture timing.
   const selectedRestaurantsRef = useRef([]);
 
   // True while showing a resumed saved plan. Resumed plans do not restore
@@ -214,21 +207,6 @@ const DayGuide = () => {
       hasChildren,
     });
 
-  const buildRestaurantQueue = (cuisines = selectedCuisines, price = selectedPriceRange) => {
-    const normalized = mapFromMockArray(mockRestaurantData);
-    const queue = buildFilteredRestaurantQueue({
-      restaurants: normalized,
-      cuisines,
-      price,
-      selectedRestaurants: selectedRestaurantsRef.current,
-    });
-    return rankRecommendations(queue, {
-      selectedCuisines: cuisines,
-      selectedPriceRange: price,
-      hasChildren,
-    });
-  };
-
   const goToNextSelectionStage = () => {
     const route = getInitialSelectionRoute({ startWith });
 
@@ -266,16 +244,6 @@ const DayGuide = () => {
     setStage('activities');
   };
 
-  // When even the mock fallback queue is empty, surface the nearest venue from
-  // the full unfiltered mock list so the no-results card can suggest it.
-  const applyFallbackRestaurantQueue = (cuisines, price) => {
-    const queue = buildRestaurantQueue(cuisines, price);
-    setRestaurantQueue(queue);
-    if (queue.length === 0) {
-      setNearestHint(findNearestRestaurant(mapFromMockArray(mockRestaurantData)));
-    }
-  };
-
   const goToRestaurants = async (cuisineOverride = selectedCuisines, priceOverride = selectedPriceRange) => {
     setIsRestaurantsLoading(true);
     setRestaurantSource(null);
@@ -283,25 +251,31 @@ const DayGuide = () => {
     setRestaurantQueue(null);
     setCurrentRestaurantIndex(0);
     setStage('restaurants');
+
+    // Reads selectedRestaurantsRef at invocation time so dedupe always sees
+    // the current list, matching the pre-extraction closure behaviour.
+    const resolveOutcome = (searchOutcome) =>
+      resolveRestaurantSearchOutcome({
+        ...searchOutcome,
+        mockRestaurants: mockRestaurantData,
+        selectedRestaurants: selectedRestaurantsRef.current,
+        cuisines: cuisineOverride,
+        price: priceOverride,
+        hasChildren,
+      });
+
+    const applyOutcome = ({ queue, source, nearestHint: hint }) => {
+      setRestaurantQueue(queue);
+      setRestaurantSource(source);
+      setNearestHint(hint);
+    };
+
     try {
       if (!position?.lat) throw new Error('NO_LOCATION');
       const results = await searchRestaurants(position.lat, position.lng, cuisineOverride, priceOverride);
-      const placeCards = mapFromPlacesArray(results);
-      const deduped = excludeAlreadySelected(placeCards, selectedRestaurantsRef.current);
-      if (deduped.length > 0) {
-        setRestaurantQueue(rankRecommendations(deduped, {
-          selectedCuisines: cuisineOverride,
-          selectedPriceRange: priceOverride,
-          hasChildren,
-        }));
-        setRestaurantSource('live');
-      } else {
-        applyFallbackRestaurantQueue(cuisineOverride, priceOverride);
-        setRestaurantSource('no_results');
-      }
+      applyOutcome(resolveOutcome({ results }));
     } catch (err) {
-      applyFallbackRestaurantQueue(cuisineOverride, priceOverride);
-      setRestaurantSource(getRestaurantSourceFromError(err));
+      applyOutcome(resolveOutcome({ error: err }));
     } finally {
       setIsRestaurantsLoading(false);
     }
