@@ -114,6 +114,21 @@ test('plan that exactly matches the budget says it fits', () => {
   expect(screen.getByText('Fits exactly')).toBeInTheDocument();
 });
 
+test('slider duration display uses the same h/m format as the header summary', () => {
+  render(
+    <TimelineStage
+      {...baseProps}
+      timeline={[{ ...timelineItem, duration: 1.5 }]}
+      t={tWithBudgetValues}
+    />,
+  );
+
+  expect(screen.getByText('Planned: 1h 30m · Available: 6h')).toBeInTheDocument();
+  expect(screen.getByText('1h 30m')).toBeInTheDocument();
+  expect(screen.queryByText(/1\.50/)).not.toBeInTheDocument();
+  expect(screen.queryByText('timeline.hoursDisplay')).not.toBeInTheDocument();
+});
+
 test('empty timeline shows no time-budget text', () => {
   render(<TimelineStage {...baseProps} timeline={[]} t={tWithBudgetValues} />);
 
