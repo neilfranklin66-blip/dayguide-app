@@ -85,6 +85,26 @@ test('food-first no-more card uses the build-itinerary label because the timelin
   expect(continueAfterActivities).toHaveBeenCalled();
 });
 
+test('no-more card continue does not forward the click event into continueAfterActivities', () => {
+  // continueAfterActivities is passed bare as onContinue; its activities
+  // parameter defaults only when it is invoked with no arguments, so a
+  // forwarded click event would reach buildTimeline as the activities list.
+  const continueAfterActivities = jest.fn();
+  render(
+    <ActivitiesStage
+      {...baseProps}
+      currentActivityIndex={1}
+      startWith="food_drinks"
+      continueAfterActivities={continueAfterActivities}
+    />,
+  );
+
+  fireEvent.click(screen.getByText('restaurants.buildItinerary'));
+
+  expect(continueAfterActivities).toHaveBeenCalledTimes(1);
+  expect(continueAfterActivities).toHaveBeenCalledWith();
+});
+
 test('renders the no-results card when the queue is empty', () => {
   render(<ActivitiesStage {...baseProps} activityQueue={[]} />);
 
