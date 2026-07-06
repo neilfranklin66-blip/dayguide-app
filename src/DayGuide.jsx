@@ -259,8 +259,8 @@ const DayGuide = () => {
     }
   };
 
-  const goToActivities = () => {
-    const activities = getActivitiesForInterests();
+  const goToActivities = (interestsOverride = selectedInterests) => {
+    const activities = getActivitiesForInterests(interestsOverride);
     setActivityQueue(activities);
     setCurrentActivityIndex(0);
     setStage('activities');

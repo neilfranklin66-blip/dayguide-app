@@ -22,6 +22,21 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
+// Delegates to the real filter engine unless a test installs an override.
+// Declared with `var` (hoisted, `mock` prefix) so the hoisted factory may
+// reference it; plain functions keep CRA's resetMocks from clearing it.
+var mockGetActivitiesOverride = null;
+jest.mock('./engines/filterEngine', () => {
+  const actual = jest.requireActual('./engines/filterEngine');
+  return {
+    ...actual,
+    getActivitiesForInterests: (params) =>
+      mockGetActivitiesOverride
+        ? mockGetActivitiesOverride(params, actual.getActivitiesForInterests)
+        : actual.getActivitiesForInterests(params),
+  };
+});
+
 const loadingGeo = {
   position: null,
   error: null,
@@ -120,6 +135,7 @@ const savedPlanPayload = {
 
 afterEach(() => {
   localStorage.clear();
+  mockGetActivitiesOverride = null;
 });
 
 test('resume button is hidden when no plan is saved', () => {
@@ -274,6 +290,30 @@ describe('timeline popup suggestions', () => {
 
     expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
   });
+});
+
+// --- Activities no-results "show all" ---
+
+test('show all broadens an empty filtered activity queue to all activity types', () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  // Return no activities while interests are selected, but delegate to the
+  // real engine for the broadened empty-interests query, so this fails if
+  // the show-all override is ignored and the same filtered query re-runs.
+  mockGetActivitiesOverride = (params, actualFn) =>
+    params.interests.length > 0 ? [] : actualFn(params);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+  fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+  fireEvent.click(screen.getByRole('button', { name: 'No' }));
+  fireEvent.click(screen.getByText('interests.next'));
+
+  expect(screen.getByText('activities.noResultsTitle')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('activities.showAll'));
+
+  expect(screen.queryByText('activities.noResultsTitle')).not.toBeInTheDocument();
+  expect(screen.getByText('activities.yes')).toBeInTheDocument();
 });
 
 // --- Restaurant selection flow ---
