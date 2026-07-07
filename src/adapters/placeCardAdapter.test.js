@@ -134,6 +134,27 @@ test('places adapter omits mapsUrl when both name and address are missing', () =
   expect(card.mapsUrl).toBeNull();
 });
 
+test('places adapter builds a precise maps URL with query_place_id from a parsed live id', () => {
+  const card = fromPlacesParsed(mockPlacesItem);
+
+  expect(card.mapsUrl).toContain('query_place_id=abc123');
+  expect(card.mapsUrl).toContain(`query=${encodeURIComponent('Live Cafe')}`);
+});
+
+test('places adapter prefers an explicit place_id over id for query_place_id', () => {
+  const card = fromPlacesParsed({ ...mockPlacesItem, place_id: 'manual-pid' });
+
+  expect(card.mapsUrl).toContain('query_place_id=manual-pid');
+});
+
+test('places adapter falls back to a plain name search when no id of any kind is present', () => {
+  const { id, ...noId } = mockPlacesItem;
+  const card = fromPlacesParsed(noId);
+
+  expect(card.mapsUrl).toContain(encodeURIComponent('Live Cafe'));
+  expect(card.mapsUrl).not.toContain('query_place_id');
+});
+
 test('places adapter nulls out a non-numeric rating instead of passing it through', () => {
   const card = fromPlacesParsed({ ...mockPlacesItem, rating: 'not-a-number' });
 

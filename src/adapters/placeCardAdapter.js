@@ -163,8 +163,12 @@ export function fromPlacesParsed(p) {
   const distanceMeters = kmToMeters(p.distance);
   const durationMinutes = hoursToMinutes(p.duration);
   const photoUrl = p.image || null;
-  const mapsUrl = p.place_id
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}&query_place_id=${encodeURIComponent(p.id)}`
+  // parsePlaces emits the Places ID as `id`; accept an explicit `place_id` first.
+  // query_place_id is only valid alongside a query, so a record without a name
+  // falls back to the plain name/address search (possibly null).
+  const placeId = p.place_id ?? p.id;
+  const mapsUrl = placeId != null && p.name
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}&query_place_id=${encodeURIComponent(placeId)}`
     : buildMapsSearchUrl(p.name, p.address);
   const cuisineArray = p.cuisine ?? [];
 
