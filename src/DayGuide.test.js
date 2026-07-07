@@ -672,4 +672,37 @@ describe('restaurant selection flow', () => {
     const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
     expect(stored.plan.timeline.map(item => item.activity)).toContain('Live Bistro');
   });
+
+  // --- Full-journey smoke test ---
+  //
+  // Higher-altitude than the per-source failure tests above: one end-to-end
+  // walk proving the whole journey stays coherent when restaurants are
+  // unavailable — no mock venue is passed off as a real nearby recommendation,
+  // the honest notice is shown, and skipping still lands the user on a
+  // populated activities timeline. A single failure source stands in for the
+  // set; the per-source reason copy is asserted above and in RestaurantsStage.
+  test('the full flow stays coherent when restaurants are unavailable: no mock card, honest notice, and a safe skip to a populated timeline', async () => {
+    searchRestaurants.mockRejectedValue(new Error('NO_API_KEY'));
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    walkToMealPrompt();
+    fireEvent.click(screen.getByText('mealPrompt.yes'));
+
+    // The honest unavailable notice, not a mock venue dressed up as real.
+    expect(await screen.findByText('restaurants.unavailableTitle')).toBeInTheDocument();
+    // No swipe card: no accept action and no restaurant-name heading (h3).
+    expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument();
+    // A known mock venue must never surface as a nearby recommendation.
+    expect(screen.queryByText('Dishoom')).not.toBeInTheDocument();
+
+    // The user can safely skip restaurants and continue.
+    fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
+
+    // The journey lands on a coherent, populated activities timeline.
+    expect(screen.getByText('timeline.title')).toBeInTheDocument();
+    const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
+    expect(stored.plan.timeline.length).toBeGreaterThan(0);
+  });
 });
