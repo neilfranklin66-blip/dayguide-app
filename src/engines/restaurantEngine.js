@@ -1,9 +1,5 @@
-import { mapFromMockArray, mapFromPlacesArray } from '../adapters/placeCardAdapter';
-import {
-  buildRestaurantQueue,
-  excludeAlreadySelected,
-  findNearestRestaurant,
-} from './filterEngine';
+import { mapFromPlacesArray } from '../adapters/placeCardAdapter';
+import { excludeAlreadySelected } from './filterEngine';
 import { rankRecommendations } from '../utils/recommendationScore';
 
 export const getRestaurantSourceFromError = (error) => {
@@ -16,45 +12,16 @@ export const getRestaurantSourceFromError = (error) => {
   return 'error';
 };
 
-// Filtered + ranked queue from the mock data; when even that is empty, the
-// nearest venue from the full unfiltered mock list is surfaced as a hint for
-// the no-results card.
-const buildMockFallbackOutcome = ({
-  mockRestaurants,
-  selectedRestaurants,
-  cuisines,
-  price,
-  hasChildren,
-  source,
-}) => {
-  const normalized = mapFromMockArray(mockRestaurants);
-  const queue = rankRecommendations(
-    buildRestaurantQueue({
-      restaurants: normalized,
-      cuisines,
-      price,
-      selectedRestaurants,
-    }),
-    { selectedCuisines: cuisines, selectedPriceRange: price, hasChildren },
-  );
-
-  return {
-    queue,
-    source,
-    nearestHint: queue.length === 0 ? findNearestRestaurant(normalized) : null,
-  };
-};
-
 /**
- * Decide the restaurant queue, source label, and no-results hint for one
- * search attempt. Pass `results` on a successful live search or `error` on a
- * failed one; the mock fallback covers errors and live searches that yield
- * nothing usable after dedupe.
+ * Decide the restaurant queue and source label for one search attempt. Pass
+ * `results` on a successful live search or `error` on a failed one. When live
+ * results are unavailable or empty after dedupe, the queue stays empty so the
+ * UI shows an honest unavailable/no-results state — mock venues must never be
+ * presented to users as real nearby recommendations.
  */
 export const resolveRestaurantSearchOutcome = ({
   results = null,
   error = null,
-  mockRestaurants = [],
   selectedRestaurants = [],
   cuisines = [],
   price = null,
@@ -74,17 +41,12 @@ export const resolveRestaurantSearchOutcome = ({
           hasChildren,
         }),
         source: 'live',
-        nearestHint: null,
       };
     }
   }
 
-  return buildMockFallbackOutcome({
-    mockRestaurants,
-    selectedRestaurants,
-    cuisines,
-    price,
-    hasChildren,
+  return {
+    queue: [],
     source: error ? getRestaurantSourceFromError(error) : 'no_results',
-  });
+  };
 };

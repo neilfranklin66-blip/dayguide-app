@@ -33,6 +33,13 @@ const REQUIRED_KEYS = [
   'restaurants.distanceLabel',
   'restaurants.timeLabel',
   'restaurants.openInMaps',
+  // Honest unavailable-state copy shown when the live search fails.
+  'restaurants.unavailableTitle',
+  'restaurants.noKeyWarning',
+  'restaurants.quotaWarning',
+  'restaurants.noLocationWarning',
+  'restaurants.errorWarning',
+  'restaurants.skipAndContinue',
   'timeline.empty',
   'timeline.shareHint',
   'timeline.howToGetThere',

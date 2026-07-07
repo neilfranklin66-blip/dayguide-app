@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import useGeolocation from './useGeolocation';
-import mockRestaurantData from './mockRestaurantData.json';
 import mockActivityData from './mockActivityData.json';
 import { searchRestaurants } from './api/placesApi';
 import { getActivitiesForInterests as getFilteredActivitiesForInterests } from './engines/filterEngine';
@@ -94,7 +93,6 @@ const DayGuide = () => {
   // Restaurant API state
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(false);
   const [restaurantSource, setRestaurantSource] = useState(null);
-  const [nearestHint, setNearestHint] = useState(null);
 
   const interestCategories = INTEREST_CATEGORY_OPTIONS.map(({ id, icon }) => ({
     id,
@@ -215,7 +213,6 @@ const DayGuide = () => {
     setShowQR(false);
     setIsRestaurantsLoading(false);
     setRestaurantSource(null);
-    setNearestHint(null);
     setSelectedDate(new Date().toISOString().split('T')[0]);
     isResumedPlanRef.current = false;
     clearPlan();
@@ -277,7 +274,6 @@ const DayGuide = () => {
   const goToRestaurants = async (cuisineOverride = selectedCuisines, priceOverride = selectedPriceRange) => {
     setIsRestaurantsLoading(true);
     setRestaurantSource(null);
-    setNearestHint(null);
     setRestaurantQueue(null);
     setCurrentRestaurantIndex(0);
     setStage('restaurants');
@@ -287,17 +283,15 @@ const DayGuide = () => {
     const resolveOutcome = (searchOutcome) =>
       resolveRestaurantSearchOutcome({
         ...searchOutcome,
-        mockRestaurants: mockRestaurantData,
         selectedRestaurants: selectedRestaurantsRef.current,
         cuisines: cuisineOverride,
         price: priceOverride,
         hasChildren,
       });
 
-    const applyOutcome = ({ queue, source, nearestHint: hint }) => {
+    const applyOutcome = ({ queue, source }) => {
       setRestaurantQueue(queue);
       setRestaurantSource(source);
-      setNearestHint(hint);
     };
 
     const searchOutcome = await getRestaurantSearchRequestOutcome({
@@ -523,7 +517,6 @@ const DayGuide = () => {
           restaurantQueue={restaurantQueue}
           selectedCuisines={selectedCuisines}
           selectedPriceRange={selectedPriceRange}
-          nearestHint={nearestHint}
           setSelectedCuisines={setSelectedCuisines}
           setSelectedPriceRange={setSelectedPriceRange}
           goToRestaurants={goToRestaurants}

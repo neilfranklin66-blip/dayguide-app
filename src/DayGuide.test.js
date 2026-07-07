@@ -250,6 +250,11 @@ const buildPlanThroughRestaurantsFromWelcome = async () => {
     fireEvent.click(screen.getByText('restaurants.skip'));
   }
 
+  // A failed live search leaves no cards to swipe, only the unavailable
+  // card's skip-and-continue route to the timeline.
+  const skipAndContinue = screen.queryByText('restaurants.skipAndContinue');
+  if (skipAndContinue) fireEvent.click(skipAndContinue);
+
   expect(screen.getByText('timeline.title')).toBeInTheDocument();
 };
 
@@ -306,8 +311,8 @@ describe('timeline popup suggestions', () => {
 
   test('a fallback restaurant source never produces the nearby restaurant popup', async () => {
     useGeolocation.mockReturnValue(resolvedGeo);
-    // No API key: the queue the user swipes is built from mock data, which
-    // must not be presented as a restaurant that is actually nearby.
+    // No API key: the restaurant queue stays empty, so nothing mock-backed
+    // may be presented as a restaurant that is actually nearby.
     searchRestaurants.mockRejectedValue(new Error('NO_API_KEY'));
     render(<DayGuide />);
 
@@ -458,7 +463,13 @@ describe('restaurant selection flow', () => {
     }
   };
 
-  test('falls back to mock restaurants when the live search fails and puts the liked one on the timeline', async () => {
+  // --- Honest behaviour when the live search cannot return results ---
+  //
+  // Mock venues must never be shown as real nearby recommendations. Every
+  // failure mode must land the user on an honest unavailable/no-results state
+  // that explains why and still offers a safe route to the timeline.
+
+  test('a failed live search shows the unavailable notice with no restaurant cards and can be skipped to the timeline', async () => {
     searchRestaurants.mockRejectedValue(new Error('NO_API_KEY'));
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
@@ -466,30 +477,19 @@ describe('restaurant selection flow', () => {
     walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
-    expect(await screen.findByText('restaurants.noKeyWarning')).toBeInTheDocument();
+    expect(await screen.findByText('restaurants.unavailableTitle')).toBeInTheDocument();
+    expect(screen.getByText('restaurants.noKeyWarning')).toBeInTheDocument();
 
-    // The fallback queue is shuffled, so capture whichever restaurant is
-    // showing rather than asserting a hard-coded venue name.
-    const likedName = screen.getByRole('heading', { level: 3 }).textContent;
-    expect(likedName).not.toBe('');
+    // No mock venue may be offered for swiping as a recommendation.
+    expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('restaurants.yes'));
-    skipRemainingRestaurants();
+    fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
 
     expect(screen.getByText('timeline.title')).toBeInTheDocument();
-    expect(screen.getByText(likedName)).toBeInTheDocument();
-
-    const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
-    expect(stored.plan.timeline.map(item => item.activity)).toContain(likedName);
   });
 
-  // --- Fallback behaviour when the live search cannot return results ---
-  //
-  // Every failure mode must land the user on a usable restaurants state (the
-  // mock fallback queue with the matching source banner), never a crash. The
-  // NO_API_KEY path is pinned above; these pin the remaining sources.
-
-  test('falls back to mock restaurants with the quota warning when the search hits the API quota', async () => {
+  test('hitting the API quota shows the unavailable notice with the quota reason and no restaurant cards', async () => {
     searchRestaurants.mockRejectedValue(new Error('QUOTA_EXCEEDED'));
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
@@ -498,10 +498,11 @@ describe('restaurant selection flow', () => {
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     expect(await screen.findByText('restaurants.quotaWarning')).toBeInTheDocument();
-    expect(screen.getByText('restaurants.yes')).toBeInTheDocument();
+    expect(screen.getByText('restaurants.unavailableTitle')).toBeInTheDocument();
+    expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
   });
 
-  test('falls back to mock restaurants when the search fails unexpectedly and still reaches the timeline', async () => {
+  test('an unexpected search failure shows the unavailable notice and still reaches the timeline', async () => {
     searchRestaurants.mockRejectedValue(new TypeError('Failed to fetch'));
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
@@ -510,13 +511,14 @@ describe('restaurant selection flow', () => {
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     expect(await screen.findByText('restaurants.errorWarning')).toBeInTheDocument();
+    expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
 
-    skipRemainingRestaurants();
+    fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
 
     expect(screen.getByText('timeline.title')).toBeInTheDocument();
   });
 
-  test('falls back to mock restaurants with the no-results warning when the live search returns nothing', async () => {
+  test('an empty live search shows the no-results card with no mock restaurant cards and can be skipped', async () => {
     searchRestaurants.mockResolvedValue([]);
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
@@ -524,8 +526,13 @@ describe('restaurant selection flow', () => {
     walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
-    expect(await screen.findByText('restaurants.noResultsWarning')).toBeInTheDocument();
-    expect(screen.getByText('restaurants.yes')).toBeInTheDocument();
+    expect(await screen.findByText('restaurants.noResultsTitle')).toBeInTheDocument();
+    expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
+
+    expect(screen.getByText('timeline.title')).toBeInTheDocument();
   });
 
   // --- Search request wiring (getRestaurantSearchRequestOutcome callsite) ---
@@ -618,7 +625,7 @@ describe('restaurant selection flow', () => {
       );
     });
 
-    test('skips the live search and falls back to mocks when no position is available', async () => {
+    test('skips the live search and shows the unavailable notice when no position is available', async () => {
       searchRestaurants.mockResolvedValue([liveSearchResult]);
       useGeolocation.mockReturnValue(erroredGeo);
       render(<DayGuide />);

@@ -31,6 +31,13 @@ export const SOURCE_BANNER_KEY = {
   error: 'errorWarning',
 };
 
+// Sources meaning the live restaurant search could not run or reach Google
+// Places at all (as opposed to running and finding nothing). These get the
+// "live results unavailable" card rather than the filter-tweaking card.
+export const LIVE_SEARCH_FAILURE_SOURCES = new Set([
+  'no_key', 'quota', 'no_location', 'error',
+]);
+
 // Costs are indicative starting fares, not exact prices — the app does not
 // know the user's city or the actual route, so avoid implying precision.
 export const TRANSPORT_OPTIONS = [

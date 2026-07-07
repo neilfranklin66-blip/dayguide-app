@@ -22,7 +22,6 @@ const baseProps = {
   restaurantQueue: [restaurant],
   selectedCuisines: ['italian'],
   selectedPriceRange: '$$',
-  nearestHint: null,
   setSelectedCuisines: jest.fn(),
   setSelectedPriceRange: jest.fn(),
   goToRestaurants: jest.fn(),
@@ -91,24 +90,44 @@ test('exhausted queue in food-first order offers to continue to activities', () 
   expect(continueAfterRestaurants).toHaveBeenCalledWith(selectedRestaurants);
 });
 
-test('shows the nearest hint on the no-results card when provided', () => {
+test('an empty live search shows the no-results card, never a mock restaurant card', () => {
+  render(<RestaurantsStage {...baseProps} restaurantQueue={[]} restaurantSource="no_results" />);
+
+  expect(screen.getByText('restaurants.noResultsTitle')).toBeInTheDocument();
+  expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
+  expect(screen.queryByText('Trattoria Roma')).not.toBeInTheDocument();
+});
+
+// --- Honest unavailable state after a live search failure ---
+
+test.each([
+  ['no_key', 'restaurants.noKeyWarning'],
+  ['quota', 'restaurants.quotaWarning'],
+  ['no_location', 'restaurants.noLocationWarning'],
+  ['error', 'restaurants.errorWarning'],
+])('a failed live search (%s) shows the unavailable card with its reason, not a restaurant card', (source, reasonKey) => {
+  render(<RestaurantsStage {...baseProps} restaurantQueue={[]} restaurantSource={source} />);
+
+  expect(screen.getByText('restaurants.unavailableTitle')).toBeInTheDocument();
+  expect(screen.getByText(reasonKey)).toBeInTheDocument();
+  expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
+  expect(screen.queryByText('restaurants.noResultsTitle')).not.toBeInTheDocument();
+});
+
+test('the unavailable card lets the user continue without selecting a restaurant', () => {
+  const continueAfterRestaurants = jest.fn();
   render(
     <RestaurantsStage
       {...baseProps}
       restaurantQueue={[]}
-      nearestHint={{ name: 'Dishoom', distance: 1.2 }}
+      restaurantSource="error"
+      continueAfterRestaurants={continueAfterRestaurants}
     />
   );
 
-  expect(screen.getByText('restaurants.noResultsTitle')).toBeInTheDocument();
-  expect(screen.getByText('restaurants.nearestHint')).toBeInTheDocument();
-});
+  fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
 
-test('omits the nearest hint on the no-results card when it is null', () => {
-  render(<RestaurantsStage {...baseProps} restaurantQueue={[]} nearestHint={null} />);
-
-  expect(screen.getByText('restaurants.noResultsTitle')).toBeInTheDocument();
-  expect(screen.queryByText('restaurants.nearestHint')).not.toBeInTheDocument();
+  expect(continueAfterRestaurants).toHaveBeenCalledWith([]);
 });
 
 test('a live places card keeps its exact query_place_id maps URL through the stage render', () => {

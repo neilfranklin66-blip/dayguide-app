@@ -4,7 +4,6 @@ export default function RestaurantsNoResultsCard({
   hasCuisine,
   hasPrice,
   hasFilters,
-  nearestHint,
   onShowAllNearby,
   onRemoveCuisineFilter,
   onRemovePriceFilter,
@@ -19,11 +18,6 @@ export default function RestaurantsNoResultsCard({
         <p className="no-results-msg">
           {hasFilters ? t('restaurants.noResultsFiltered') : t('restaurants.noResultsArea')}
         </p>
-        {nearestHint && (
-          <div className="no-results-hint">
-            {t('restaurants.nearestHint', { name: nearestHint.name, distance: nearestHint.distance })}
-          </div>
-        )}
         <div className="no-results-actions">
           {hasFilters && (
             <button onClick={onShowAllNearby} className="btn-primary">
