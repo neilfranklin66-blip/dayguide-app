@@ -32,6 +32,7 @@ const REQUIRED_KEYS = [
   'restaurants.priceLabel',
   'restaurants.distanceLabel',
   'restaurants.timeLabel',
+  'restaurants.openInMaps',
   'timeline.empty',
   'timeline.shareHint',
   'timeline.howToGetThere',

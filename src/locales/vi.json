@@ -100,6 +100,7 @@
     "timeLabel": "Thời gian dự kiến",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} giờ",
+    "openInMaps": "🗺️ Mở trong Bản đồ",
     "skip": "❌ Bỏ qua",
     "yes": "✅ Có!",
     "searching": "🔍 Đang tìm kiếm nhà hàng gần đây...",

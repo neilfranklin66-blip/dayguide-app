@@ -142,10 +142,7 @@ test('a live places card keeps its exact query_place_id maps URL through the sta
   );
 });
 
-test('the swipe card does not yet render the maps URL as a link (known gap)', () => {
-  // Characterisation test: mapsUrl is produced by the adapter but no component
-  // renders it. When an "open in maps" link ships, flip this to assert an
-  // anchor whose href equals the card's mapsUrl.
+test('the swipe card renders the maps URL as an open-in-maps link', () => {
   const liveCard = fromPlacesParsed({
     id: 'ChIJlive123',
     name: 'Live Cafe',
@@ -154,6 +151,18 @@ test('the swipe card does not yet render the maps URL as a link (known gap)', ()
 
   render(<RestaurantsStage {...baseProps} restaurantQueue={[liveCard]} selectedCuisines={[]} selectedPriceRange={null} />);
 
-  expect(liveCard.mapsUrl).toContain('query_place_id=ChIJlive123');
+  const link = screen.getByRole('link', { name: 'restaurants.openInMaps' });
+  expect(link).toHaveAttribute(
+    'href',
+    'https://www.google.com/maps/search/?api=1&query=Live%20Cafe&query_place_id=ChIJlive123'
+  );
+  expect(link).toHaveAttribute('target', '_blank');
+  expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+});
+
+test('no maps link renders when the restaurant has no mapsUrl', () => {
+  render(<RestaurantsStage {...baseProps} />);
+
+  expect(screen.getByText('Trattoria Roma')).toBeInTheDocument();
   expect(screen.queryByRole('link')).not.toBeInTheDocument();
 });

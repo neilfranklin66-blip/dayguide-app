@@ -68,6 +68,16 @@ export default function RestaurantSwipeCard({
             )}
           </div>
           <p className="address">{currentRestaurant.address}</p>
+          {currentRestaurant.mapsUrl && (
+            <a
+              className="maps-link"
+              href={currentRestaurant.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('restaurants.openInMaps', 'Open in Maps')}
+            </a>
+          )}
         </div>
         <div className="swipe-buttons">
           <button onClick={() => onSwipe(false)} className="btn-reject">{t('restaurants.skip')}</button>

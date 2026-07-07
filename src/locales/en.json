@@ -101,6 +101,7 @@
     "timeLabel": "Time to allow",
     "kmAway": "📍 {{distance}} km away",
     "duration": "⏱️ {{duration}} hours",
+    "openInMaps": "🗺️ Open in Maps",
     "skip": "❌ Skip",
     "yes": "✅ Yes!",
     "searching": "🔍 Searching for restaurants nearby...",

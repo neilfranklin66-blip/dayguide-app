@@ -100,6 +100,7 @@
     "timeLabel": "预留时间",
     "kmAway": "📍 {{distance}} 公里",
     "duration": "⏱️ {{duration}} 小时",
+    "openInMaps": "🗺️ 在地图中打开",
     "skip": "❌ 跳过",
     "yes": "✅ 好的！",
     "searching": "🔍 正在搜索附近餐厅...",
