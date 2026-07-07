@@ -62,6 +62,9 @@ export const buildTimelineEntries = ({
         : item.image,
       address: item.address,
       rating: item.rating,
+      // Sample activities carry this flag so the timeline row can withhold the
+      // fabricated nearby distance; live items (restaurants) never set it.
+      ...(item.isSample ? { isSample: true } : {}),
     };
 
     currentTime += item.duration + gapHours;

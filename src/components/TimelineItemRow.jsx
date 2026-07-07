@@ -24,7 +24,17 @@ export default function TimelineItemRow({ item, index, onDurationChange, t }) {
             <div className="duration-display">{formatDurationLabel(item.duration)}</div>
           </div>
           <p className="duration-hint">{t('timeline.slideToAdjust')}</p>
-          <p className="activity-info">⭐ {item.rating} | 📍 {item.distance}km</p>
+          {/* Sample activities carry London demo distances, so we drop the
+              "km" proximity claim and flag them; restaurants (live results)
+              keep their real distance. */}
+          {item.isSample ? (
+            <>
+              <p className="activity-info">⭐ {item.rating}</p>
+              <p className="sample-note">{t('timeline.sampleActivity')}</p>
+            </>
+          ) : (
+            <p className="activity-info">⭐ {item.rating} | 📍 {item.distance}km</p>
+          )}
           <p className="address">{item.address}</p>
         </div>
       </div>

@@ -192,6 +192,33 @@ test('building a timeline saves the plan and start over clears it', () => {
   expect(screen.queryByText(/welcome\.resumePlanDetails/)).not.toBeInTheDocument();
 });
 
+test('selecting sample activities still reaches the timeline with honest sample labels, not real distances', () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+
+  fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+  fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
+  fireEvent.click(screen.getByText('interests.next'));
+
+  // The activity swipe card flags its venues as sample ideas, not live nearby results.
+  expect(screen.getByText('activities.sampleBadge')).toBeInTheDocument();
+
+  for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
+    fireEvent.click(screen.getByText('activities.yes'));
+  }
+
+  fireEvent.click(screen.getByText('mealPrompt.no'));
+
+  // The user still reaches the timeline...
+  expect(screen.getByText('timeline.title')).toBeInTheDocument();
+  // ...where activity rows are labelled as sample and never present a
+  // fabricated km distance as a real travel fact.
+  expect(screen.getAllByText('timeline.sampleActivity').length).toBeGreaterThan(0);
+  expect(screen.queryByText(/\d+(\.\d+)?km/)).not.toBeInTheDocument();
+});
+
 // --- Popup suppression for resumed plans ---
 
 const popupTitlePattern = /^popups\.(nearbyRestaurant|coffeeBreak|activityBreak)\.title$/;

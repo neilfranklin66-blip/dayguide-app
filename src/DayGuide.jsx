@@ -227,12 +227,16 @@ const DayGuide = () => {
     setSelectedCuisines(prev => toggleIdSelection(prev, id));
 
   const getActivitiesForInterests = (interests = selectedInterests) =>
+    // Activities are still sample London demo data (no live activity search
+    // yet), so flag every one as sample. The flag rides along into the
+    // timeline entries so cards and rows never present them as real nearby
+    // recommendations.
     getFilteredActivitiesForInterests({
       activityData: mockActivityData,
       interests,
       selectedActivities,
       hasChildren,
-    });
+    }).map(activity => ({ ...activity, isSample: true }));
 
   const goToNextSelectionStage = () => {
     const route = getInitialSelectionRoute({ startWith });

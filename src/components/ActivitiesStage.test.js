@@ -12,6 +12,7 @@ const activity = {
   distance: 1.2,
   duration: 2,
   address: '1 Museum Street',
+  isSample: true,
 };
 
 const baseProps = {
@@ -31,6 +32,24 @@ test('renders the current activity card', () => {
 
   expect(screen.getByText('City Museum')).toBeInTheDocument();
   expect(screen.getByText('1 / 1')).toBeInTheDocument();
+});
+
+test('sample activity card shows an honest sample indication and hides the km-away proximity claim', () => {
+  render(<ActivitiesStage {...baseProps} />);
+
+  expect(screen.getByText('activities.sampleBadge')).toBeInTheDocument();
+  expect(screen.getByText('activities.sampleNote')).toBeInTheDocument();
+  // The fabricated "km away" proximity line must not be presented for sample data.
+  expect(screen.queryByText('activities.kmAway')).not.toBeInTheDocument();
+});
+
+test('a non-sample activity keeps its real distance and shows no sample badge', () => {
+  const liveActivity = { ...activity, isSample: false };
+  render(<ActivitiesStage {...baseProps} activityQueue={[liveActivity]} />);
+
+  expect(screen.getByText('activities.kmAway')).toBeInTheDocument();
+  expect(screen.queryByText('activities.sampleBadge')).not.toBeInTheDocument();
+  expect(screen.queryByText('activities.sampleNote')).not.toBeInTheDocument();
 });
 
 test('accepting an activity calls swipeActivity(true)', () => {

@@ -16,8 +16,17 @@ export default function ActivitySwipeCard({
           <div className="item-icon">{currentActivity.image}</div>
           <p className="card-type-label">{t(`interests.${currentActivity.category}`)}</p>
           <h3>{currentActivity.name}</h3>
+          {currentActivity.isSample && (
+            <p className="sample-badge">{t('activities.sampleBadge')}</p>
+          )}
           <p className="rating">⭐ {currentActivity.rating}</p>
-          <p className="details">{t('activities.kmAway', { distance: currentActivity.distance })}</p>
+          {/* Sample activities are London demo venues, so we never claim a real
+              nearby distance; live activity results (none yet) would show one. */}
+          {currentActivity.isSample ? (
+            <p className="details sample-note">{t('activities.sampleNote')}</p>
+          ) : (
+            <p className="details">{t('activities.kmAway', { distance: currentActivity.distance })}</p>
+          )}
           <p className="details">{t('activities.duration', { duration: currentActivity.duration })}</p>
           <p className="address">{currentActivity.address}</p>
         </div>

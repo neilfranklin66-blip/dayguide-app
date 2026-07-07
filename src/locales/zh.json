@@ -78,6 +78,8 @@
     "showAll": "显示所有活动类型",
     "kmAway": "📍 {{distance}} 公里",
     "duration": "⏱️ {{duration}} 小时",
+    "sampleBadge": "💡 示例建议",
+    "sampleNote": "供参考的示例建议，并非真实的附近结果。",
     "skip": "❌ 跳过",
     "yes": "✅ 好的！"
   },
@@ -143,6 +145,7 @@
     "title": "您的完美一天",
     "empty": "您的行程还是空的。请重新开始或更改您的选择来安排这一天。",
     "slideToAdjust": "滑动调整时长",
+    "sampleActivity": "💡 示例建议 — 仅为示例地点，并非真实的附近结果",
     "howToGetThere": "↓ 附近的出行方式（粗略估计）",
     "minutes": "约 {{count}} 分钟",
     "startOver": "重新开始",

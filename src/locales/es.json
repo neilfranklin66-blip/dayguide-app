@@ -78,6 +78,8 @@
     "showAll": "Mostrar todos los tipos de actividad",
     "kmAway": "📍 {{distance}} km de distancia",
     "duration": "⏱️ {{duration}} horas",
+    "sampleBadge": "💡 Idea de muestra",
+    "sampleNote": "Idea de muestra para inspirar tu día, no un resultado real cercano.",
     "skip": "❌ Omitir",
     "yes": "✅ ¡Sí!"
   },
@@ -143,6 +145,7 @@
     "title": "Tu día perfecto",
     "empty": "Tu itinerario está vacío. Empieza de nuevo o cambia tus selecciones para crear tu día.",
     "slideToAdjust": "Desliza para ajustar la duración",
+    "sampleActivity": "💡 Idea de muestra — ubicación de ejemplo, no un resultado real cercano",
     "howToGetThere": "↓ Opciones de transporte cercanas (estimaciones aproximadas)",
     "minutes": "~{{count}} min",
     "startOver": "Empezar de nuevo",

@@ -26,6 +26,10 @@ const REQUIRED_KEYS = [
   'interests.childrenYes',
   'interests.childrenNo',
   'activities.continueLabel',
+  // Honest sample-data copy shown on activity cards and timeline rows.
+  'activities.sampleBadge',
+  'activities.sampleNote',
+  'timeline.sampleActivity',
   'restaurants.continueToActivities',
   'restaurants.whyThisFits',
   'restaurants.ratingLabel',

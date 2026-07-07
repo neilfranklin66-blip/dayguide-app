@@ -38,6 +38,22 @@ test('renders the timeline with its items', () => {
   expect(screen.getByText('10:00')).toBeInTheDocument();
 });
 
+test('a sample activity row shows an honest sample note and hides the fabricated km distance', () => {
+  render(<TimelineStage {...baseProps} timeline={[{ ...timelineItem, isSample: true }]} />);
+
+  expect(screen.getByText('timeline.sampleActivity')).toBeInTheDocument();
+  // The London demo distance must not be presented as real proximity.
+  expect(screen.queryByText(/1\.2km/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/📍/)).not.toBeInTheDocument();
+});
+
+test('a non-sample (live) row keeps its real distance and shows no sample note', () => {
+  render(<TimelineStage {...baseProps} timeline={[timelineItem]} />);
+
+  expect(screen.getByText(/1\.2km/)).toBeInTheDocument();
+  expect(screen.queryByText('timeline.sampleActivity')).not.toBeInTheDocument();
+});
+
 test('renders the selected date in the header summary', () => {
   render(<TimelineStage {...baseProps} />);
 

@@ -78,6 +78,8 @@
     "showAll": "Hiển thị tất cả loại hoạt động",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} giờ",
+    "sampleBadge": "💡 Gợi ý mẫu",
+    "sampleNote": "Gợi ý mẫu để khơi nguồn cảm hứng, không phải kết quả gần bạn thực tế.",
     "skip": "❌ Bỏ qua",
     "yes": "✅ Có!"
   },
@@ -143,6 +145,7 @@
     "title": "Ngày hoàn hảo của bạn",
     "empty": "Lịch trình của bạn đang trống. Hãy bắt đầu lại hoặc thay đổi lựa chọn để xây dựng ngày của bạn.",
     "slideToAdjust": "Trượt để điều chỉnh thời gian",
+    "sampleActivity": "💡 Gợi ý mẫu — địa điểm ví dụ, không phải kết quả gần bạn thực tế",
     "howToGetThere": "↓ Lựa chọn di chuyển gần bạn (ước tính sơ bộ)",
     "minutes": "~{{count}} phút",
     "startOver": "Bắt đầu lại",

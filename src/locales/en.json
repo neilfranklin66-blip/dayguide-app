@@ -79,6 +79,8 @@
     "showAll": "Show all activity types",
     "kmAway": "📍 {{distance}} km away",
     "duration": "⏱️ {{duration}} hours",
+    "sampleBadge": "💡 Sample idea",
+    "sampleNote": "Sample idea to inspire your day — not a live nearby result.",
     "skip": "❌ Skip",
     "yes": "✅ Yes!"
   },
@@ -144,6 +146,7 @@
     "title": "Your Perfect Day",
     "empty": "Your itinerary is empty. Start over or change your selections to build your day.",
     "slideToAdjust": "Slide to adjust duration",
+    "sampleActivity": "💡 Sample idea — example location, not a live nearby result",
     "howToGetThere": "↓ Travel options nearby (rough estimates)",
     "minutes": "~{{count}} min",
     "startOver": "Start Over",
