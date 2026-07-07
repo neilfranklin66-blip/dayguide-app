@@ -1,6 +1,8 @@
-const API_KEY = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
+// All Google Places calls go through Netlify functions so the private
+// GOOGLE_PLACES_API_KEY never reaches the client bundle. No REACT_APP_*
+// key may be read here — REACT_APP_ values are embedded into the built JS.
 const NEARBY_URL = '/.netlify/functions/places-nearby';
-const PHOTO_URL = 'https://maps.googleapis.com/maps/api/place/photo';
+const PHOTO_URL = '/.netlify/functions/places-photo';
 
 const CUISINE_KEYWORDS = {
   italian: 'Italian restaurant',
@@ -65,7 +67,7 @@ function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 function buildPhotoUrl(photoReference) {
-  return `${PHOTO_URL}?maxwidth=400&photo_reference=${encodeURIComponent(photoReference)}&key=${API_KEY}`;
+  return `${PHOTO_URL}?ref=${encodeURIComponent(photoReference)}&maxwidth=400`;
 }
 
 // A record without numeric coordinates can't be distance-filtered or routed;
@@ -113,10 +115,16 @@ async function nearbySearch(lat, lng, keyword, maxprice) {
   if (maxprice != null) params.set('maxprice', String(maxprice));
 
   const res = await fetch(`${NEARBY_URL}?${params}`);
+  // 404 means the Netlify function isn't deployed/running — live search is
+  // unconfigured, which is the same user-facing state as a missing key.
+  if (res.status === 404) throw new Error('NO_API_KEY');
   if (!res.ok) throw new Error(`HTTP_${res.status}`);
 
   const json = await res.json();
-  if (json.status === 'REQUEST_DENIED') throw new Error('API_DENIED');
+  if (json.status === 'REQUEST_DENIED') {
+    // The proxy reports its own missing server-side key as NO_API_KEY.
+    throw new Error(json.error_message === 'NO_API_KEY' ? 'NO_API_KEY' : 'API_DENIED');
+  }
   if (json.status === 'OVER_QUERY_LIMIT') throw new Error('QUOTA_EXCEEDED');
   if (json.status === 'ZERO_RESULTS') return [];
   if (json.status !== 'OK') throw new Error(`STATUS_${json.status}`);
@@ -125,7 +133,7 @@ async function nearbySearch(lat, lng, keyword, maxprice) {
 
 // When every cuisine batch fails, surface the most actionable failure so the
 // caller's error-to-source mapping (quota, denied key, …) stays meaningful.
-const BATCH_ERROR_PRIORITY = ['QUOTA_EXCEEDED', 'API_DENIED'];
+const BATCH_ERROR_PRIORITY = ['NO_API_KEY', 'QUOTA_EXCEEDED', 'API_DENIED'];
 
 function pickMostSpecificError(reasons) {
   for (const message of BATCH_ERROR_PRIORITY) {
@@ -136,9 +144,11 @@ function pickMostSpecificError(reasons) {
 }
 
 /**
- * Search for nearby restaurants via Google Places Nearby Search.
+ * Search for nearby restaurants via the places-nearby Netlify function
+ * (which holds the private Google key server-side).
  * Throws:
- *   'NO_API_KEY'     — REACT_APP_GOOGLE_PLACES_API_KEY not set
+ *   'NO_API_KEY'     — server-side GOOGLE_PLACES_API_KEY not set, or the
+ *                      Netlify function is not deployed (HTTP 404)
  *   'QUOTA_EXCEEDED' — daily quota hit
  *   'API_DENIED'     — key or referrer restriction problem
  *   other Error      — network / unexpected status
@@ -146,8 +156,6 @@ function pickMostSpecificError(reasons) {
  * Returns array of restaurant objects shaped like mockRestaurantData entries.
  */
 export async function searchRestaurants(lat, lng, cuisineFilters = [], priceFilter = null) {
-  if (!API_KEY) throw new Error('NO_API_KEY');
-
   const maxprice = priceFilter != null ? SYMBOL_TO_MAXPRICE[priceFilter] : null;
   const cuisinesToQuery = cuisineFilters.slice(0, 3); // cap at 3 concurrent calls
 

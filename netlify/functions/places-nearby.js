@@ -1,5 +1,7 @@
 exports.handler = async (event) => {
-  const API_KEY = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
+  // Server-side only — must NOT use a REACT_APP_* name, or CRA would embed
+  // the key into the client bundle.
+  const API_KEY = process.env.GOOGLE_PLACES_API_KEY;
   if (!API_KEY) {
     return {
       statusCode: 200,

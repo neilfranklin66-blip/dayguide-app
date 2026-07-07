@@ -2,8 +2,10 @@ import { getRestaurantSourceFromError } from '../engines/restaurantEngine';
 
 /**
  * placesApi tests
- * - The module reads REACT_APP_GOOGLE_PLACES_API_KEY at import time, so each
- *   test loads a fresh copy via loadModule() after arranging the environment.
+ * - The private Google key lives server-side only (GOOGLE_PLACES_API_KEY in
+ *   the Netlify functions). The client module must work with NO key in its
+ *   environment, so every test here runs with REACT_APP_GOOGLE_PLACES_API_KEY
+ *   deliberately unset.
  * - fetch is mocked globally; multi-cuisine tests route responses per keyword.
  */
 
@@ -25,9 +27,15 @@ const okResponse = (results) => ({
   json: async () => ({ status: 'OK', results }),
 });
 
-const statusResponse = (status) => ({
+const statusResponse = (status, error_message) => ({
   ok: true,
-  json: async () => ({ status }),
+  json: async () => ({ status, ...(error_message ? { error_message } : {}) }),
+});
+
+const httpErrorResponse = (status) => ({
+  ok: false,
+  status,
+  json: async () => ({}),
 });
 
 const makePlace = (id, name, overrides = {}) => ({
@@ -53,7 +61,8 @@ const mockFetchByKeyword = (handlers) => {
 };
 
 beforeEach(() => {
-  process.env.REACT_APP_GOOGLE_PLACES_API_KEY = 'test-key';
+  // Prove the client module never needs the old client-side key.
+  delete process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
   global.fetch = jest.fn();
   loadModule();
 });
@@ -195,7 +204,7 @@ describe('searchRestaurants incomplete result normalisation', () => {
 
     expect(byId['empty-photos'].image).toContain('placehold.co');
     expect(byId['no-ref'].image).toContain('placehold.co');
-    expect(byId['with-ref'].image).toContain('photo_reference=ref-1');
+    expect(byId['with-ref'].image).toContain('/.netlify/functions/places-photo?ref=ref-1');
   });
 
   it('maps the valid-but-falsy price_level 0 to $ rather than the missing-value default', async () => {
@@ -244,12 +253,46 @@ describe('searchRestaurants existing behaviour', () => {
     await expect(searchRestaurants(LAT, LNG, [])).rejects.toThrow('QUOTA_EXCEEDED');
   });
 
-  it('throws NO_API_KEY without calling fetch when the key is missing', async () => {
-    delete process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
-    loadModule();
+  it('maps the proxy\'s missing-server-key response to NO_API_KEY → no_key', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(statusResponse('REQUEST_DENIED', 'NO_API_KEY')),
+    });
 
-    await expect(searchRestaurants(LAT, LNG, [])).rejects.toThrow('NO_API_KEY');
-    expect(global.fetch).not.toHaveBeenCalled();
+    let thrown;
+    await searchRestaurants(LAT, LNG, []).catch(e => { thrown = e; });
+
+    expect(thrown.message).toBe('NO_API_KEY');
+    expect(getRestaurantSourceFromError(thrown)).toBe('no_key');
+  });
+
+  it('maps a missing Netlify function (HTTP 404) to NO_API_KEY → no_key', async () => {
+    mockFetchByKeyword({ '': () => Promise.resolve(httpErrorResponse(404)) });
+
+    let thrown;
+    await searchRestaurants(LAT, LNG, []).catch(e => { thrown = e; });
+
+    expect(thrown.message).toBe('NO_API_KEY');
+    expect(getRestaurantSourceFromError(thrown)).toBe('no_key');
+  });
+
+  it('maps other HTTP failures to a generic error source', async () => {
+    mockFetchByKeyword({ '': () => Promise.resolve(httpErrorResponse(500)) });
+
+    let thrown;
+    await searchRestaurants(LAT, LNG, []).catch(e => { thrown = e; });
+
+    expect(thrown.message).toBe('HTTP_500');
+    expect(getRestaurantSourceFromError(thrown)).toBe('error');
+  });
+
+  it('prefers NO_API_KEY over other failures when all cuisine batches reject', async () => {
+    mockFetchByKeyword({
+      'Italian restaurant': () => Promise.reject(new Error('network down')),
+      'Indian restaurant': () => Promise.resolve(statusResponse('REQUEST_DENIED', 'NO_API_KEY')),
+    });
+
+    await expect(searchRestaurants(LAT, LNG, ['italian', 'indian']))
+      .rejects.toThrow('NO_API_KEY');
   });
 
   it('filters out low ratings and far-away places', async () => {
@@ -287,5 +330,37 @@ describe('searchRestaurants existing behaviour', () => {
     const results = await searchRestaurants(LAT, LNG, []);
 
     expect(results).toHaveLength(12);
+  });
+});
+
+describe('API-key safety (launch blocker guard, Packet 118)', () => {
+  it('produces no request or image URL containing a key parameter', async () => {
+    mockFetchByKeyword({
+      'Italian restaurant': () => Promise.resolve(okResponse([
+        makePlace('photo', 'Pizza Roma', { photos: [{ photo_reference: 'ref-9' }] }),
+      ])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, ['italian'], '$$');
+
+    // Every outgoing request targets the proxy, never Google directly.
+    for (const [url] of global.fetch.mock.calls) {
+      expect(url).toMatch(/^\/\.netlify\/functions\/places-nearby\?/);
+      expect(url).not.toMatch(/[?&]key=/);
+    }
+
+    // Photo URLs point at the proxy and carry no key either.
+    const photo = results.find(r => r.id === 'photo');
+    expect(photo.image).toMatch(/^\/\.netlify\/functions\/places-photo\?/);
+    expect(photo.image).not.toMatch(/[?&]key=/);
+  });
+
+  it('placesApi.js source references neither REACT_APP key nor Google hosts directly', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const source = fs.readFileSync(path.join(__dirname, 'placesApi.js'), 'utf8');
+
+    expect(source).not.toContain('REACT_APP_GOOGLE_PLACES_API_KEY');
+    expect(source).not.toContain('maps.googleapis.com');
   });
 });
