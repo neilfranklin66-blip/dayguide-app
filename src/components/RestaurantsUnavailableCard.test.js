@@ -44,17 +44,16 @@ test('clicking skip and continue calls onSkip exactly once', () => {
   expect(onSkip).toHaveBeenCalledTimes(1);
 });
 
-// onSkip is wired straight to onClick, so it receives the raw click event.
-// Callers must therefore supply a zero-argument wrapper — plugging a
-// data-taking handler in directly would repeat the Packet 103 bug where a
-// click event was consumed as cuisines.
-test('onSkip receives the click event, so callers must wrap data-taking handlers', () => {
+// The card swallows the click event so onSkip never sees a SyntheticEvent —
+// plugging a data-taking handler in directly can't repeat the Packet 103 bug
+// where a click event was consumed as cuisines.
+test('onSkip is called with zero arguments, never the click event', () => {
   const onSkip = jest.fn();
   renderCard({ onSkip });
 
   fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
 
-  expect(onSkip.mock.calls[0][0]).toHaveProperty('type', 'click');
+  expect(onSkip).toHaveBeenCalledWith();
 });
 
 test('with the stage-style wrapper, the continue handler gets [] and never the click event', () => {

@@ -14,7 +14,7 @@ export default function RestaurantsUnavailableCard({ restaurantSource, onSkip, t
         <h2>{t('restaurants.unavailableTitle')}</h2>
         <p className="no-results-msg">{t(`restaurants.${reasonKey}`)}</p>
         <div className="no-results-actions">
-          <button onClick={onSkip} className="btn-primary">
+          <button onClick={() => onSkip()} className="btn-primary">
             {t('restaurants.skipAndContinue')}
           </button>
         </div>
