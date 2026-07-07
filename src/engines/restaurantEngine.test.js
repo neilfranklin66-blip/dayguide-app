@@ -70,6 +70,25 @@ test('live results produce a ranked queue with source live and no nearest hint',
   expect(outcome.nearestHint).toBeNull();
 });
 
+test('a sparse live result missing all optional fields still produces a live queue without crashing', () => {
+  const outcome = resolveRestaurantSearchOutcome({
+    results: [{ id: 'sparse-1', name: 'Sparse Bistro' }],
+    mockRestaurants: [mockRestaurant()],
+    selectedRestaurants: [],
+    cuisines: ['italian'],
+    price: '$$',
+    hasChildren: true,
+  });
+
+  expect(outcome.source).toBe('live');
+  expect(outcome.nearestHint).toBeNull();
+  const card = outcome.queue.find(c => c.id === 'sparse-1');
+  expect(card).toBeDefined();
+  expect(card.rating).toBeNull();
+  expect(card.priceRange).toBeNull();
+  expect(card.cuisine).toEqual([]);
+});
+
 test('live results fully deduped by prior selections fall back to the mock queue with source no_results', () => {
   const outcome = resolveRestaurantSearchOutcome({
     results: [liveResult()],

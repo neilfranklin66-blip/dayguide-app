@@ -151,6 +151,80 @@ describe('searchRestaurants malformed record handling', () => {
   });
 });
 
+describe('searchRestaurants incomplete result normalisation', () => {
+  it('normalises a minimal valid record missing all optional fields with safe fallbacks', async () => {
+    // Only place_id, name, and geometry — no rating, price_level, photos,
+    // vicinity, types, opening_hours, website, or user_ratings_total.
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        {
+          place_id: 'bare',
+          name: 'Bare Minimum',
+          geometry: { location: { lat: LAT, lng: LNG } },
+        },
+      ])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, []);
+
+    expect(results).toHaveLength(1);
+    const bare = results[0];
+    expect(bare.id).toBe('bare');
+    expect(bare.name).toBe('Bare Minimum');
+    expect(bare.rating).toBe(4.0); // default keeps it above the 3.5 rating filter
+    expect(bare.priceRange).toBe('$$');
+    expect(bare.duration).toBe(1.5);
+    expect(bare.distance).toBe(0);
+    expect(bare.address).toBeUndefined();
+    expect(bare.cuisine).toEqual([]);
+    expect(bare.image).toContain('placehold.co');
+    expect(bare.image).toContain(encodeURIComponent('Bare Minimum'));
+  });
+
+  it('falls back to the placeholder image when photos are empty or lack a photo_reference', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('empty-photos', 'Empty Photos', { photos: [] }),
+        makePlace('no-ref', 'No Reference', { photos: [{ width: 400 }] }),
+        makePlace('with-ref', 'With Reference', { photos: [{ photo_reference: 'ref-1' }] }),
+      ])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, []);
+    const byId = Object.fromEntries(results.map(r => [r.id, r]));
+
+    expect(byId['empty-photos'].image).toContain('placehold.co');
+    expect(byId['no-ref'].image).toContain('placehold.co');
+    expect(byId['with-ref'].image).toContain('photo_reference=ref-1');
+  });
+
+  it('maps the valid-but-falsy price_level 0 to $ rather than the missing-value default', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('free-tier', 'Cheap Eats', { price_level: 0 }),
+      ])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, []);
+
+    expect(results[0].priceRange).toBe('$');
+    expect(results[0].duration).toBe(1);
+  });
+
+  it('applies the 4.0 default rating to unrated (rating 0) places', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('unrated', 'New Opening', { rating: 0 }),
+      ])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, []);
+
+    expect(results.map(r => r.id)).toEqual(['unrated']);
+    expect(results[0].rating).toBe(4.0);
+  });
+});
+
 describe('searchRestaurants existing behaviour', () => {
   it('returns [] on ZERO_RESULTS', async () => {
     mockFetchByKeyword({ '': () => Promise.resolve(statusResponse('ZERO_RESULTS')) });

@@ -99,6 +99,52 @@ test('places adapter keeps metadata.isFamilyFriendly null (live data carries no 
   expect(card.metadata.isFamilyFriendly).toBeNull();
 });
 
+test('places adapter normalises a sparse parsed result (id and name only) without crashing', () => {
+  const card = fromPlacesParsed({ id: 'sparse-1', name: 'Sparse Bistro' });
+
+  expect(card).toMatchObject({
+    id: 'sparse-1',
+    name: 'Sparse Bistro',
+    type: 'food_drink',
+    category: 'Food and Drinks',
+    subCategory: 'Restaurant',
+    source: 'google_places',
+    cuisine: [],
+    rating: null,
+    priceRange: null,
+    distanceMeters: null,
+    distanceKm: null,
+    distanceMiles: null,
+    distance: null,
+    walkingTimeMinutes: null,
+    durationMinutes: null,
+    duration: null,
+    address: null,
+    photoUrl: null,
+    image: null,
+  });
+  expect(card.mapsUrl).toContain(encodeURIComponent('Sparse Bistro'));
+  expect(card.metadata.isOpenNow).toBeNull();
+});
+
+test('places adapter omits mapsUrl when both name and address are missing', () => {
+  const card = fromPlacesParsed({ id: 'anon-1' });
+
+  expect(card.name).toBeNull();
+  expect(card.mapsUrl).toBeNull();
+});
+
+test('places adapter nulls out a non-numeric rating instead of passing it through', () => {
+  const card = fromPlacesParsed({ ...mockPlacesItem, rating: 'not-a-number' });
+
+  expect(card.rating).toBeNull();
+});
+
+test('places batch helper returns [] for non-array input', () => {
+  expect(mapFromPlacesArray(null)).toEqual([]);
+  expect(mapFromPlacesArray(undefined)).toEqual([]);
+});
+
 test('every mock restaurant entry declares a boolean familyFriendly', () => {
   expect(mockRestaurantData.length).toBeGreaterThan(0);
   mockRestaurantData.forEach(entry => {
