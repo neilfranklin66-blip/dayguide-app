@@ -62,6 +62,10 @@ export const buildTimelineEntries = ({
         : item.image,
       address: item.address,
       rating: item.rating,
+      // Carry the Google Maps deep link through to the plan screen so the
+      // timeline row can offer an Open in Maps action; only live items
+      // (restaurants) supply one, sample activities never do.
+      ...(item.mapsUrl ? { mapsUrl: item.mapsUrl } : {}),
       // Sample activities carry this flag so the timeline row can withhold the
       // fabricated nearby distance; live items (restaurants) never set it.
       ...(item.isSample ? { isSample: true } : {}),

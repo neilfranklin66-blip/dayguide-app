@@ -223,6 +223,68 @@ test('buildTimelineEntries creates timeline fields and times', () => {
   ]);
 });
 
+test('buildTimelineEntries preserves the restaurant mapsUrl on its timeline entry', () => {
+  const entries = buildTimelineEntries({
+    startTime: 9,
+    getCuisineEmoji: () => 'food-icon',
+    activities: [
+      {
+        id: 'museum-1',
+        name: 'Museum',
+        duration: 1,
+        distance: 0.4,
+        category: 'museums',
+        image: 'museum-icon',
+        address: '1 Museum Street',
+        rating: 4.7,
+      },
+    ],
+    restaurants: [
+      {
+        id: 'cafe-1',
+        name: 'Cafe',
+        duration: 0.5,
+        distance: 0.2,
+        type: 'food_drink',
+        category: 'Food and Drinks',
+        cuisine: ['cafe'],
+        image: 'https://placehold.co/400x300/cafe',
+        address: '2 Cafe Street',
+        rating: 4.4,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cafe&query_place_id=abc123',
+      },
+    ],
+  });
+
+  // The live restaurant keeps its deep link; the sample-less activity has none.
+  expect(entries[0].mapsUrl).toBeUndefined();
+  expect(entries[1].mapsUrl).toBe(
+    'https://www.google.com/maps/search/?api=1&query=Cafe&query_place_id=abc123',
+  );
+});
+
+test('buildTimelineEntries omits mapsUrl for items that do not supply one', () => {
+  const entries = buildTimelineEntries({
+    startTime: 9,
+    getCuisineEmoji: () => 'food-icon',
+    activities: [
+      {
+        id: 'museum-1',
+        name: 'Museum',
+        duration: 1,
+        distance: 0.4,
+        category: 'museums',
+        image: 'museum-icon',
+        address: '1 Museum Street',
+        rating: 4.7,
+        isSample: true,
+      },
+    ],
+  });
+
+  expect(entries[0]).not.toHaveProperty('mapsUrl');
+});
+
 test('buildTimelineEntries supports food and drinks first ordering', () => {
   const entries = buildTimelineEntries({
     startTime: 9,

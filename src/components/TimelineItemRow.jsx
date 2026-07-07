@@ -36,6 +36,16 @@ export default function TimelineItemRow({ item, index, onDurationChange, t }) {
             <p className="activity-info">⭐ {item.rating} | 📍 {item.distance}km</p>
           )}
           <p className="address">{item.address}</p>
+          {item.mapsUrl && (
+            <a
+              className="maps-link"
+              href={item.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('restaurants.openInMaps', 'Open in Maps')}
+            </a>
+          )}
         </div>
       </div>
     </div>
