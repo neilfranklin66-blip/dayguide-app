@@ -191,7 +191,12 @@
     "walk": "Đi bộ",
     "taxi": "Taxi/Uber",
     "tube": "Tàu hỏa/Tàu điện ngầm",
-    "bus": "Xe buýt"
+    "bus": "Xe buýt",
+    "cost": {
+      "free": "Miễn phí",
+      "transit": "Vé phương tiện",
+      "taxi": "Cước tính theo đồng hồ"
+    }
   },
   "popups": {
     "nearbyRestaurant": {

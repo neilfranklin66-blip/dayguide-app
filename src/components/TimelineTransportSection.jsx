@@ -17,7 +17,7 @@ export default function TimelineTransportSection({ distance, t }) {
                   count: estimateTransportMinutes(option.mode, distance, option.time),
                 })}
               </div>
-              <div className="transport-cost">{option.cost}</div>
+              <div className="transport-cost">{t(`transport.cost.${option.costKey}`)}</div>
             </div>
           </div>
         ))}

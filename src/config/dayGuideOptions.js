@@ -38,13 +38,15 @@ export const LIVE_SEARCH_FAILURE_SOURCES = new Set([
   'no_key', 'quota', 'no_location', 'error',
 ]);
 
-// Costs are indicative starting fares, not exact prices — the app does not
-// know the user's city or the actual route, so avoid implying precision.
+// Costs are shown as a fare *type*, not a price. The app does not know the
+// user's city, currency, or the actual route, so it must not quote specific
+// London fares (e.g. "from £2.80") as if they applied everywhere. costKey maps
+// to a locale-backed, currency-free label under transport.cost.
 export const TRANSPORT_OPTIONS = [
-  { mode: 'walk', time: 15, cost: 'Free', emoji: '🚶' },
-  { mode: 'taxi', time: 8, cost: 'from £7', emoji: '🚕' },
-  { mode: 'tube', time: 5, cost: 'from £2.80', emoji: '🚇' },
-  { mode: 'bus', time: 12, cost: 'from £1.75', emoji: '🚌' },
+  { mode: 'walk', time: 15, costKey: 'free', emoji: '🚶' },
+  { mode: 'taxi', time: 8, costKey: 'taxi', emoji: '🚕' },
+  { mode: 'tube', time: 5, costKey: 'transit', emoji: '🚇' },
+  { mode: 'bus', time: 12, costKey: 'transit', emoji: '🚌' },
 ];
 
 export const PRICE_OPTIONS = [

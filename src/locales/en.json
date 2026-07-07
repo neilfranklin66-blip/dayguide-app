@@ -192,7 +192,12 @@
     "walk": "Walk",
     "taxi": "Taxi/Uber",
     "tube": "Train/Tube",
-    "bus": "Bus"
+    "bus": "Bus",
+    "cost": {
+      "free": "Free",
+      "transit": "Transit fare",
+      "taxi": "Metered fare"
+    }
   },
   "popups": {
     "nearbyRestaurant": {

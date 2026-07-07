@@ -47,6 +47,10 @@ const REQUIRED_KEYS = [
   'timeline.empty',
   'timeline.shareHint',
   'timeline.howToGetThere',
+  // Currency-free transport fare labels (no city-specific prices).
+  'transport.cost.free',
+  'transport.cost.transit',
+  'transport.cost.taxi',
   // Day narrative subtree.
   'timeline.dayGuideLabel',
   'timeline.dayNarrative.foodFirst',

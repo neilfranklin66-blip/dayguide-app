@@ -191,7 +191,12 @@
     "walk": "步行",
     "taxi": "出租车/Uber",
     "tube": "火车/地铁",
-    "bus": "公交车"
+    "bus": "公交车",
+    "cost": {
+      "free": "免费",
+      "transit": "车票费用",
+      "taxi": "计价车费"
+    }
   },
   "popups": {
     "nearbyRestaurant": {

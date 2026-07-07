@@ -34,16 +34,30 @@ test('travel times render as approximate minutes', () => {
   expect(screen.queryByText(/^\d+ min$/)).not.toBeInTheDocument();
 });
 
-test('paid fares render as indicative starting prices and walking stays free', () => {
+test('fares describe the fare type, not a hardcoded London price', () => {
   renderSection();
 
-  expect(screen.getByText('from £7')).toBeInTheDocument();
-  expect(screen.getByText('from £2.80')).toBeInTheDocument();
-  expect(screen.getByText('from £1.75')).toBeInTheDocument();
+  // Walking is genuinely free; paid modes describe their fare type only.
   expect(screen.getByText('Free')).toBeInTheDocument();
+  expect(screen.getByText('Metered fare')).toBeInTheDocument();
+  expect(screen.getAllByText('Transit fare')).toHaveLength(2); // tube + bus
 
-  // No fare should render as an exact price.
-  expect(screen.queryByText(/^£[\d.]+$/)).not.toBeInTheDocument();
+  // No option may present a specific London GBP fare as a universal fact.
+  // (Digits still legitimately appear in the ~N min time labels.)
+  expect(screen.queryByText(/£/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/from £2\.80/)).not.toBeInTheDocument();
+});
+
+test('all four transport options still render with mode, time, and cost', () => {
+  renderSection();
+
+  // Structure preserved: four options each with a mode label, a ~min time,
+  // and a fare label.
+  expect(screen.getByText('Walk')).toBeInTheDocument();
+  expect(screen.getByText('Taxi/Uber')).toBeInTheDocument();
+  expect(screen.getByText('Train/Tube')).toBeInTheDocument();
+  expect(screen.getByText('Bus')).toBeInTheDocument();
+  expect(screen.getAllByText(/^~\d+ min$/)).toHaveLength(4);
 });
 
 test('the tube option uses the broader Train/Tube label', () => {

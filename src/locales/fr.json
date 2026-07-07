@@ -191,7 +191,12 @@
     "walk": "À pied",
     "taxi": "Taxi/Uber",
     "tube": "Train/Métro",
-    "bus": "Bus"
+    "bus": "Bus",
+    "cost": {
+      "free": "Gratuit",
+      "transit": "Ticket de transport",
+      "taxi": "Tarif au compteur"
+    }
   },
   "popups": {
     "nearbyRestaurant": {
