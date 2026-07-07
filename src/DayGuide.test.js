@@ -483,6 +483,51 @@ describe('restaurant selection flow', () => {
     expect(stored.plan.timeline.map(item => item.activity)).toContain(likedName);
   });
 
+  // --- Fallback behaviour when the live search cannot return results ---
+  //
+  // Every failure mode must land the user on a usable restaurants state (the
+  // mock fallback queue with the matching source banner), never a crash. The
+  // NO_API_KEY path is pinned above; these pin the remaining sources.
+
+  test('falls back to mock restaurants with the quota warning when the search hits the API quota', async () => {
+    searchRestaurants.mockRejectedValue(new Error('QUOTA_EXCEEDED'));
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    walkToMealPrompt();
+    fireEvent.click(screen.getByText('mealPrompt.yes'));
+
+    expect(await screen.findByText('restaurants.quotaWarning')).toBeInTheDocument();
+    expect(screen.getByText('restaurants.yes')).toBeInTheDocument();
+  });
+
+  test('falls back to mock restaurants when the search fails unexpectedly and still reaches the timeline', async () => {
+    searchRestaurants.mockRejectedValue(new TypeError('Failed to fetch'));
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    walkToMealPrompt();
+    fireEvent.click(screen.getByText('mealPrompt.yes'));
+
+    expect(await screen.findByText('restaurants.errorWarning')).toBeInTheDocument();
+
+    skipRemainingRestaurants();
+
+    expect(screen.getByText('timeline.title')).toBeInTheDocument();
+  });
+
+  test('falls back to mock restaurants with the no-results warning when the live search returns nothing', async () => {
+    searchRestaurants.mockResolvedValue([]);
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    walkToMealPrompt();
+    fireEvent.click(screen.getByText('mealPrompt.yes'));
+
+    expect(await screen.findByText('restaurants.noResultsWarning')).toBeInTheDocument();
+    expect(screen.getByText('restaurants.yes')).toBeInTheDocument();
+  });
+
   // --- Search request wiring (getRestaurantSearchRequestOutcome callsite) ---
   //
   // goToRestaurants delegates the API call to the extracted helper; these
