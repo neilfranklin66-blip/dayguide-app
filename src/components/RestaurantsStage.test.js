@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import RestaurantsStage from './RestaurantsStage';
+import { fromPlacesParsed } from '../adapters/placeCardAdapter';
 
 const t = (key) => key;
 
@@ -108,4 +109,51 @@ test('omits the nearest hint on the no-results card when it is null', () => {
 
   expect(screen.getByText('restaurants.noResultsTitle')).toBeInTheDocument();
   expect(screen.queryByText('restaurants.nearestHint')).not.toBeInTheDocument();
+});
+
+test('a live places card keeps its exact query_place_id maps URL through the stage render', () => {
+  const liveCard = fromPlacesParsed({
+    id: 'ChIJlive123',
+    name: 'Live Cafe',
+    cuisine: ['cafe'],
+    priceRange: '$',
+    rating: 4.0,
+    duration: 1,
+    distance: 0.8,
+    address: '456 Live Rd',
+    image: 'https://placehold.co/400x300/live',
+  });
+  const restaurantQueue = [liveCard];
+
+  render(
+    <RestaurantsStage
+      {...baseProps}
+      restaurantQueue={restaurantQueue}
+      restaurantSource="live"
+      selectedCuisines={[]}
+      selectedPriceRange={null}
+    />
+  );
+
+  expect(screen.getByText('Live Cafe')).toBeInTheDocument();
+  expect(screen.getByText('456 Live Rd')).toBeInTheDocument();
+  expect(restaurantQueue[0].mapsUrl).toBe(
+    'https://www.google.com/maps/search/?api=1&query=Live%20Cafe&query_place_id=ChIJlive123'
+  );
+});
+
+test('the swipe card does not yet render the maps URL as a link (known gap)', () => {
+  // Characterisation test: mapsUrl is produced by the adapter but no component
+  // renders it. When an "open in maps" link ships, flip this to assert an
+  // anchor whose href equals the card's mapsUrl.
+  const liveCard = fromPlacesParsed({
+    id: 'ChIJlive123',
+    name: 'Live Cafe',
+    address: '456 Live Rd',
+  });
+
+  render(<RestaurantsStage {...baseProps} restaurantQueue={[liveCard]} selectedCuisines={[]} selectedPriceRange={null} />);
+
+  expect(liveCard.mapsUrl).toContain('query_place_id=ChIJlive123');
+  expect(screen.queryByRole('link')).not.toBeInTheDocument();
 });
