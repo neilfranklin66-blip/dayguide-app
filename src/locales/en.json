@@ -3,6 +3,7 @@
   "login": {
     "tagline": "Plan your perfect day in the UK",
     "googleSignIn": "Sign in with Google",
+    "guestSignIn": "Continue as guest",
     "or": "or",
     "signIn": "Sign In",
     "createAccount": "Create Account",
@@ -18,7 +19,8 @@
       "weakPassword": "Password must be at least 6 characters.",
       "invalidEmail": "Please enter a valid email address.",
       "authFailed": "Authentication failed. Please try again.",
-      "googleFailed": "Google sign-in failed. Please try again."
+      "googleFailed": "Google sign-in failed. Please try again.",
+      "guestFailed": "Guest sign-in failed. Please try again."
     }
   },
   "location": {

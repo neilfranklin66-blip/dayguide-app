@@ -3,6 +3,7 @@
   "login": {
     "tagline": "Planifica tu día perfecto en el Reino Unido",
     "googleSignIn": "Iniciar sesión con Google",
+    "guestSignIn": "Continuar como invitado",
     "or": "o",
     "signIn": "Iniciar sesión",
     "createAccount": "Crear cuenta",
@@ -18,7 +19,8 @@
       "weakPassword": "La contraseña debe tener al menos 6 caracteres.",
       "invalidEmail": "Por favor ingresa un correo electrónico válido.",
       "authFailed": "Error de autenticación. Por favor intenta de nuevo.",
-      "googleFailed": "Error al iniciar sesión con Google. Por favor intenta de nuevo."
+      "googleFailed": "Error al iniciar sesión con Google. Por favor intenta de nuevo.",
+      "guestFailed": "Error al iniciar sesión como invitado. Por favor intenta de nuevo."
     }
   },
   "location": {

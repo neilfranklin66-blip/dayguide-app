@@ -3,6 +3,7 @@
   "login": {
     "tagline": "Lên kế hoạch ngày hoàn hảo tại Anh",
     "googleSignIn": "Đăng nhập bằng Google",
+    "guestSignIn": "Tiếp tục với tư cách khách",
     "or": "hoặc",
     "signIn": "Đăng nhập",
     "createAccount": "Tạo tài khoản",
@@ -18,7 +19,8 @@
       "weakPassword": "Mật khẩu phải có ít nhất 6 ký tự.",
       "invalidEmail": "Vui lòng nhập địa chỉ email hợp lệ.",
       "authFailed": "Xác thực thất bại. Vui lòng thử lại.",
-      "googleFailed": "Đăng nhập Google thất bại. Vui lòng thử lại."
+      "googleFailed": "Đăng nhập Google thất bại. Vui lòng thử lại.",
+      "guestFailed": "Đăng nhập khách thất bại. Vui lòng thử lại."
     }
   },
   "location": {

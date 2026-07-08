@@ -4,6 +4,7 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInAnonymously,
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth';
@@ -43,7 +44,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        localStorage.setItem('dayguide_user_email', user.email);
+        // Anonymous (guest) users have no email — never store the string "null".
+        if (user.email) {
+          localStorage.setItem('dayguide_user_email', user.email);
+        } else {
+          localStorage.removeItem('dayguide_user_email');
+        }
         const prefs = await loadUserPrefs(user.uid);
         if (prefs?.language) {
           applyLanguage(prefs.language);
@@ -71,9 +77,11 @@ export const AuthProvider = ({ children }) => {
     return result;
   };
 
+  const signInAsGuest = () => signInAnonymously(auth);
+
   const logout = () => signOut(auth);
 
-  const value = { currentUser, signInWithGoogle, signInWithEmail, signUpWithEmail, logout };
+  const value = { currentUser, signInWithGoogle, signInWithEmail, signUpWithEmail, signInAsGuest, logout };
 
   return (
     <AuthContext.Provider value={value}>

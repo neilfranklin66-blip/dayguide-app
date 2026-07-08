@@ -30,7 +30,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+  const { signInWithGoogle, signInWithEmail, signUpWithEmail, signInAsGuest } = useAuth();
 
   const handleLangChange = (lang) => {
     setSelectedLang(lang);
@@ -47,6 +47,17 @@ const Login = () => {
       if (err.code !== 'auth/popup-closed-by-user') {
         setError(t('login.errors.googleFailed'));
       }
+      setLoading(false);
+    }
+  };
+
+  const handleGuestSignIn = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      await signInAsGuest();
+    } catch (err) {
+      setError(t('login.errors.guestFailed'));
       setLoading(false);
     }
   };
@@ -147,6 +158,10 @@ const Login = () => {
             {loading ? t('login.pleaseWait') : mode === 'login' ? t('login.signIn') : t('login.createAccount')}
           </button>
         </form>
+
+        <button onClick={handleGuestSignIn} disabled={loading} className="btn-guest">
+          {t('login.guestSignIn')}
+        </button>
       </div>
     </div>
   );

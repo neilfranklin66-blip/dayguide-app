@@ -3,6 +3,7 @@
   "login": {
     "tagline": "在英国规划您完美的一天",
     "googleSignIn": "使用 Google 登录",
+    "guestSignIn": "以访客身份继续",
     "or": "或",
     "signIn": "登录",
     "createAccount": "创建账户",
@@ -18,7 +19,8 @@
       "weakPassword": "密码至少需要 6 个字符。",
       "invalidEmail": "请输入有效的电子邮件地址。",
       "authFailed": "认证失败，请重试。",
-      "googleFailed": "Google 登录失败，请重试。"
+      "googleFailed": "Google 登录失败，请重试。",
+      "guestFailed": "访客登录失败，请重试。"
     }
   },
   "location": {

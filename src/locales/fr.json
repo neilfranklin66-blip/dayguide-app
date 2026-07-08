@@ -3,6 +3,7 @@
   "login": {
     "tagline": "Planifiez votre journée parfaite au Royaume-Uni",
     "googleSignIn": "Se connecter avec Google",
+    "guestSignIn": "Continuer en tant qu'invité",
     "or": "ou",
     "signIn": "Se connecter",
     "createAccount": "Créer un compte",
@@ -18,7 +19,8 @@
       "weakPassword": "Le mot de passe doit comporter au moins 6 caractères.",
       "invalidEmail": "Veuillez saisir une adresse e-mail valide.",
       "authFailed": "Échec de l'authentification. Veuillez réessayer.",
-      "googleFailed": "Échec de la connexion Google. Veuillez réessayer."
+      "googleFailed": "Échec de la connexion Google. Veuillez réessayer.",
+      "guestFailed": "Échec de la connexion invité. Veuillez réessayer."
     }
   },
   "location": {
