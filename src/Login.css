@@ -236,6 +236,14 @@
   cursor: not-allowed;
 }
 
+/* While guest sign-in is actually in flight, signal progress rather than a
+   blocked "no entry" cursor, and keep the button legible. */
+.btn-guest.is-loading:disabled {
+  opacity: 0.8;
+  cursor: progress;
+  text-decoration: none;
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 30px 24px;

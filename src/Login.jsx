@@ -28,7 +28,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [selectedLang, setSelectedLang] = useState(i18n.language.split('-')[0]);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  // Which auth path is in flight ('google' | 'guest' | 'email'), or null.
+  // Tracking the specific action lets each button show its own feedback while
+  // still disabling every button to block duplicate submissions.
+  const [pendingAction, setPendingAction] = useState(null);
+  const loading = pendingAction !== null;
 
   const { signInWithGoogle, signInWithEmail, signUpWithEmail, signInAsGuest } = useAuth();
 
@@ -40,25 +44,25 @@ const Login = () => {
 
   const handleGoogleSignIn = async () => {
     setError('');
-    setLoading(true);
+    setPendingAction('google');
     try {
       await signInWithGoogle();
     } catch (err) {
       if (err.code !== 'auth/popup-closed-by-user') {
         setError(t('login.errors.googleFailed'));
       }
-      setLoading(false);
+      setPendingAction(null);
     }
   };
 
   const handleGuestSignIn = async () => {
     setError('');
-    setLoading(true);
+    setPendingAction('guest');
     try {
       await signInAsGuest();
     } catch (err) {
       setError(t('login.errors.guestFailed'));
-      setLoading(false);
+      setPendingAction(null);
     }
   };
 
@@ -66,7 +70,7 @@ const Login = () => {
     e.preventDefault();
     if (!email || !password) return;
     setError('');
-    setLoading(true);
+    setPendingAction('email');
     try {
       if (mode === 'signup') {
         await signUpWithEmail(email, password, selectedLang);
@@ -83,7 +87,7 @@ const Login = () => {
         'auth/invalid-email': 'login.errors.invalidEmail',
       };
       setError(t(errorKeys[err.code] || 'login.errors.authFailed'));
-      setLoading(false);
+      setPendingAction(null);
     }
   };
 
@@ -159,8 +163,14 @@ const Login = () => {
           </button>
         </form>
 
-        <button onClick={handleGuestSignIn} disabled={loading} className="btn-guest">
-          {t('login.guestSignIn')}
+        <button
+          onClick={handleGuestSignIn}
+          disabled={loading}
+          className={`btn-guest ${pendingAction === 'guest' ? 'is-loading' : ''}`}
+        >
+          {pendingAction === 'guest'
+            ? t('login.guestSigningIn')
+            : t('login.guestSignIn')}
         </button>
       </div>
     </div>

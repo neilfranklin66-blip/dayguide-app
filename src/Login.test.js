@@ -83,4 +83,48 @@ describe('Login — guest / demo sign-in (Packet 121)', () => {
       await screen.findByText('login.errors.guestFailed'),
     ).toBeInTheDocument();
   });
+
+  test('guest button shows the signing-in label while sign-in is pending', async () => {
+    // Keep the promise pending so the loading state stays visible.
+    let resolveGuest;
+    mockSignInAsGuest.mockReturnValueOnce(
+      new Promise((resolve) => { resolveGuest = resolve; }),
+    );
+    render(<Login />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'login.guestSignIn' }));
+
+    // The label flips to the in-progress copy and the original is gone.
+    expect(
+      await screen.findByRole('button', { name: 'login.guestSigningIn' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'login.guestSignIn' }),
+    ).not.toBeInTheDocument();
+
+    resolveGuest({ user: { uid: 'guest-1', email: null } });
+    await waitFor(() => expect(mockSignInAsGuest).toHaveBeenCalledTimes(1));
+  });
+
+  test('duplicate guest clicks are ignored while sign-in is pending', async () => {
+    let resolveGuest;
+    mockSignInAsGuest.mockReturnValueOnce(
+      new Promise((resolve) => { resolveGuest = resolve; }),
+    );
+    render(<Login />);
+
+    const guestButton = screen.getByRole('button', { name: 'login.guestSignIn' });
+    fireEvent.click(guestButton);
+
+    // Button is disabled while pending; further clicks must not re-invoke.
+    const pendingButton = await screen.findByRole('button', {
+      name: 'login.guestSigningIn',
+    });
+    expect(pendingButton).toBeDisabled();
+    fireEvent.click(pendingButton);
+    fireEvent.click(pendingButton);
+
+    resolveGuest({ user: { uid: 'guest-1', email: null } });
+    await waitFor(() => expect(mockSignInAsGuest).toHaveBeenCalledTimes(1));
+  });
 });
