@@ -106,6 +106,27 @@ describe('Login — guest / demo sign-in (Packet 121)', () => {
     await waitFor(() => expect(mockSignInAsGuest).toHaveBeenCalledTimes(1));
   });
 
+  test('guest button is re-enabled after a failed sign-in (not left blocked)', async () => {
+    mockSignInAsGuest.mockRejectedValueOnce(new Error('network-request-failed'));
+    render(<Login />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'login.guestSignIn' }));
+
+    // Once the failure surfaces, the button returns to its normal label and is
+    // interactive again — guarding against the "stuck / blocked" regression.
+    await screen.findByText('login.errors.guestFailed');
+    const guestButton = screen.getByRole('button', { name: 'login.guestSignIn' });
+    expect(guestButton).toBeEnabled();
+    expect(
+      screen.queryByRole('button', { name: 'login.guestSigningIn' }),
+    ).not.toBeInTheDocument();
+
+    // And it can be used again: a second attempt re-invokes the sign-in path.
+    mockSignInAsGuest.mockResolvedValueOnce({ user: { uid: 'guest-1', email: null } });
+    fireEvent.click(guestButton);
+    await waitFor(() => expect(mockSignInAsGuest).toHaveBeenCalledTimes(2));
+  });
+
   test('duplicate guest clicks are ignored while sign-in is pending', async () => {
     let resolveGuest;
     mockSignInAsGuest.mockReturnValueOnce(
