@@ -9,12 +9,20 @@ import * as popupEngine from './engines/popupEngine';
 jest.mock('./useGeolocation');
 jest.mock('./api/placesApi');
 
+// Records logout invocations. A plain array + function rather than a jest.fn():
+// the factory returns a fresh object per render, and CRA's resetMocks would
+// clear a jest.fn()'s recorded calls. Named `mock*` so the factory may use it.
+var mockLogoutCalls = [];
 jest.mock('./AuthContext', () => ({
   useAuth: () => ({
     currentUser: { email: 'test@example.com' },
-    logout: jest.fn(),
+    logout: (...args) => mockLogoutCalls.push(args),
   }),
 }));
+
+beforeEach(() => {
+  mockLogoutCalls = [];
+});
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -103,6 +111,36 @@ test('skips the location stage when geolocation is already resolved', () => {
 
   expect(screen.getByText('interests.title')).toBeInTheDocument();
   expect(screen.queryByText('welcome.findingLocation')).not.toBeInTheDocument();
+});
+
+// --- Header logout (Packet 124) ---
+
+describe('header logout', () => {
+  test('the header exposes an enabled logout button that calls the auth context logout once', () => {
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    const logoutButton = screen.getByRole('button', { name: 'header.logout' });
+    expect(logoutButton).toBeEnabled();
+
+    fireEvent.click(logoutButton);
+
+    expect(mockLogoutCalls).toHaveLength(1);
+  });
+
+  test('the logout button is still reachable once the user is deep in the planning flow', () => {
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    fireEvent.click(screen.getByText('welcome.startPlanning'));
+    fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+    fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
+    fireEvent.click(screen.getByText('interests.next'));
+
+    fireEvent.click(screen.getByRole('button', { name: 'header.logout' }));
+
+    expect(mockLogoutCalls).toHaveLength(1);
+  });
 });
 
 // --- Saved-plan persistence ---

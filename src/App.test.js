@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import App from './App';
-import { signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { signInAnonymously, signOut, onAuthStateChanged } from 'firebase/auth';
 
 // Real AuthProvider + Login are exercised; only the external Firebase SDK and
 // the heavy DayGuide subtree are stubbed so the test can focus on the
@@ -35,9 +35,23 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-// Stub the authenticated app so the test asserts the Login -> DayGuide swap
-// without mounting DayGuide's real (geo/API-dependent) subtree.
-jest.mock('./DayGuide', () => () => <div data-testid="dayguide-stub">DayGuide</div>);
+// Stub the authenticated app so the test asserts the Login <-> DayGuide swap
+// without mounting DayGuide's real (geo/API-dependent) subtree. The stub reads
+// the real auth context and wires its logout button the same way the real
+// header does (`onClick={logout}`), so the context -> signOut path is exercised
+// end-to-end while the heavy subtree stays out of the way.
+jest.mock('./DayGuide', () => {
+  const { useAuth } = require('./AuthContext');
+  return function DayGuideStub() {
+    const { logout } = useAuth();
+    return (
+      <div data-testid="dayguide-stub">
+        DayGuide
+        <button onClick={logout}>header.logout</button>
+      </div>
+    );
+  };
+});
 
 // Captures the Firebase auth-state listener so the test can deliver sign-in
 // transitions exactly as the real SDK would.
@@ -52,6 +66,7 @@ beforeEach(() => {
     return jest.fn(); // unsubscribe
   });
   signInAnonymously.mockResolvedValue({ user: { uid: 'guest-1', email: null } });
+  signOut.mockResolvedValue(undefined);
 });
 
 async function fireAuthState(user) {
@@ -97,5 +112,84 @@ describe('App — guest sign-in end-to-end (Packet 123)', () => {
     expect(
       screen.queryByRole('button', { name: 'login.guestSignIn' }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('App — logout end-to-end (Packet 124)', () => {
+  // Puts the app in the authenticated state a logged-in user sees.
+  async function signIn(user = { uid: 'user-1', email: 'real@example.com' }) {
+    render(<App />);
+    await fireAuthState(user);
+    expect(screen.getByTestId('dayguide-stub')).toBeInTheDocument();
+  }
+
+  const clickLogout = () =>
+    fireEvent.click(screen.getByRole('button', { name: 'header.logout' }));
+
+  test('clicking logout calls Firebase signOut with auth', async () => {
+    await signIn();
+
+    clickLogout();
+
+    await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
+    expect(signOut).toHaveBeenCalledWith(expect.objectContaining({ __tag: 'auth' }));
+  });
+
+  test('a guest user can log out through the same path', async () => {
+    await signIn({ uid: 'guest-1', email: null });
+
+    clickLogout();
+
+    await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
+    expect(signOut).toHaveBeenCalledWith(expect.objectContaining({ __tag: 'auth' }));
+  });
+
+  test('the app stays in the authenticated view until Firebase reports signed out', async () => {
+    await signIn();
+
+    clickLogout();
+    await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
+
+    // signOut has been requested but the auth-state listener has not fired yet;
+    // the app must not blank out or half-render Login in the meantime.
+    expect(screen.getByTestId('dayguide-stub')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'login.guestSignIn' }),
+    ).not.toBeInTheDocument();
+  });
+
+  test('when auth state becomes signed out the app returns to the Login screen', async () => {
+    await signIn();
+
+    clickLogout();
+    await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
+
+    // Firebase then reports the signed-out state.
+    await fireAuthState(null);
+
+    expect(screen.getByRole('button', { name: 'login.guestSignIn' })).toBeInTheDocument();
+    expect(screen.queryByTestId('dayguide-stub')).not.toBeInTheDocument();
+    expect(localStorage.getItem('dayguide_user_email')).toBeNull();
+  });
+
+  // The clearest evidence the app is not stuck: the Login screen it returns to
+  // is fully interactive, not a disabled or in-progress shell.
+  test('the Login screen after logout is interactive and can sign in again', async () => {
+    await signIn();
+
+    clickLogout();
+    await waitFor(() => expect(signOut).toHaveBeenCalledTimes(1));
+    await fireAuthState(null);
+
+    const guestButton = screen.getByRole('button', { name: 'login.guestSignIn' });
+    expect(guestButton).toBeEnabled();
+
+    // A second sign-in works, so no stale in-progress state survived logout.
+    fireEvent.click(guestButton);
+    await waitFor(() => expect(signInAnonymously).toHaveBeenCalledTimes(1));
+
+    await fireAuthState({ uid: 'guest-1', email: null });
+
+    expect(screen.getByTestId('dayguide-stub')).toBeInTheDocument();
   });
 });
