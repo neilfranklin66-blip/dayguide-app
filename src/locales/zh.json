@@ -223,6 +223,7 @@
     }
   },
   "header": {
-    "logout": "退出登录"
+    "logout": "退出登录",
+    "logoutFailed": "退出登录失败，请重试。"
   }
 }

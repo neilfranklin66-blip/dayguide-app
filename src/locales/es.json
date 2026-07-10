@@ -223,6 +223,7 @@
     }
   },
   "header": {
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "logoutFailed": "No se pudo cerrar la sesión. Inténtalo de nuevo."
   }
 }

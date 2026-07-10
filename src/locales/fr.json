@@ -223,6 +223,7 @@
     }
   },
   "header": {
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "logoutFailed": "Échec de la déconnexion. Veuillez réessayer."
   }
 }

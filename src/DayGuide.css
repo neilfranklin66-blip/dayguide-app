@@ -11,6 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   padding: 10px 20px;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
@@ -77,6 +78,16 @@
 .btn-logout:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: translateY(-1px);
+}
+
+/* Full-width row below the header controls, which wrap above it. */
+.logout-error {
+  flex-basis: 100%;
+  margin-top: 6px;
+  color: #fff5f5;
+  font-size: 0.8em;
+  font-weight: 600;
+  text-align: right;
 }
 
 body {

@@ -38,16 +38,27 @@ jest.mock('react-i18next', () => ({
 // Stub the authenticated app so the test asserts the Login <-> DayGuide swap
 // without mounting DayGuide's real (geo/API-dependent) subtree. The stub reads
 // the real auth context and wires its logout button the same way the real
-// header does (`onClick={logout}`), so the context -> signOut path is exercised
-// end-to-end while the heavy subtree stays out of the way.
+// header does (await inside a try/catch), so the context -> signOut path is
+// exercised end-to-end while the heavy subtree stays out of the way.
 jest.mock('./DayGuide', () => {
+  const React = require('react');
   const { useAuth } = require('./AuthContext');
   return function DayGuideStub() {
     const { logout } = useAuth();
+    const [logoutError, setLogoutError] = React.useState(null);
+    const handleLogout = async () => {
+      setLogoutError(null);
+      try {
+        await logout();
+      } catch {
+        setLogoutError('header.logoutFailed');
+      }
+    };
     return (
       <div data-testid="dayguide-stub">
         DayGuide
-        <button onClick={logout}>header.logout</button>
+        <button onClick={handleLogout}>header.logout</button>
+        {logoutError && <p role="alert">{logoutError}</p>}
       </div>
     );
   };
@@ -191,5 +202,54 @@ describe('App — logout end-to-end (Packet 124)', () => {
     await fireAuthState({ uid: 'guest-1', email: null });
 
     expect(screen.getByTestId('dayguide-stub')).toBeInTheDocument();
+  });
+});
+
+describe('App — logout failure end-to-end (Packet 125)', () => {
+  const networkFailure = () => Object.assign(new Error('network'), {
+    code: 'auth/network-request-failed',
+  });
+
+  async function signIn(user = { uid: 'user-1', email: 'real@example.com' }) {
+    render(<App />);
+    await fireAuthState(user);
+  }
+
+  const clickLogout = () =>
+    act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'header.logout' }));
+    });
+
+  test('a failed signOut keeps the user in the authenticated app', async () => {
+    signOut.mockRejectedValue(networkFailure());
+    await signIn();
+
+    await clickLogout();
+
+    // No auth-state change arrives, so the session survives and Login stays away.
+    expect(screen.getByTestId('dayguide-stub')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'login.guestSignIn' }),
+    ).not.toBeInTheDocument();
+    expect(localStorage.getItem('dayguide_user_email')).toBe('real@example.com');
+    expect(screen.getByRole('alert')).toHaveTextContent('header.logoutFailed');
+  });
+
+  test('the user can retry after a failed logout and reach the Login screen', async () => {
+    signOut.mockRejectedValueOnce(networkFailure()).mockResolvedValueOnce(undefined);
+    await signIn();
+
+    await clickLogout();
+    expect(screen.getByTestId('dayguide-stub')).toBeInTheDocument();
+
+    // The button is still live, so a second attempt goes through.
+    await clickLogout();
+    expect(signOut).toHaveBeenCalledTimes(2);
+
+    await fireAuthState(null);
+
+    expect(screen.getByRole('button', { name: 'login.guestSignIn' })).toBeInTheDocument();
+    expect(screen.queryByTestId('dayguide-stub')).not.toBeInTheDocument();
+    expect(localStorage.getItem('dayguide_user_email')).toBeNull();
   });
 });

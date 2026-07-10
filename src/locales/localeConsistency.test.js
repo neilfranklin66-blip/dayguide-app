@@ -17,6 +17,9 @@ const LOCALES = { en, es, fr, zh, vi };
 const LOCALE_CODES = Object.keys(LOCALES);
 
 const REQUIRED_KEYS = [
+  // Header controls and the failure notice shown when signing out breaks.
+  'header.logout',
+  'header.logoutFailed',
   // Flow labels shown along the planning journey.
   'interests.startWithTitle',
   'interests.startWithHint',

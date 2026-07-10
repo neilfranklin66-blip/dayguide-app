@@ -69,6 +69,7 @@ const DayGuide = () => {
   const [restaurantQueue, setRestaurantQueue] = useState(null);
   const [timeline, setTimeline] = useState([]);
   const [savedPlanSummary, setSavedPlanSummary] = useState(() => summarizeSavedPlan(loadPlan()));
+  const [logoutError, setLogoutError] = useState(null);
 
   // Popup state
   const [activePopup, setActivePopup] = useState(null);
@@ -558,6 +559,16 @@ const DayGuide = () => {
     return null;
   };
 
+  // signOut rejects on network/token failure. Awaiting it here keeps the
+  // rejection from escaping unhandled; the user simply stays signed in.
+  const handleLogout = async () => {
+    setLogoutError(null);
+    try {
+      await logout();
+    } catch {
+      setLogoutError(t('header.logoutFailed'));
+    }
+  };
 
   return (
     <>
@@ -575,8 +586,9 @@ const DayGuide = () => {
             <option value="zh">中文</option>
             <option value="vi">Tiếng Việt</option>
           </select>
-          <button onClick={logout} className="btn-logout">{t('header.logout')}</button>
+          <button onClick={handleLogout} className="btn-logout">{t('header.logout')}</button>
         </div>
+        {logoutError && <p className="logout-error" role="alert">⚠️ {logoutError}</p>}
       </div>
       {renderStage()}
       <PopupModal

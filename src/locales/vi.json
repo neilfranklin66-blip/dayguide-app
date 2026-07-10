@@ -223,6 +223,7 @@
     }
   },
   "header": {
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "logoutFailed": "Đăng xuất không thành công. Vui lòng thử lại."
   }
 }

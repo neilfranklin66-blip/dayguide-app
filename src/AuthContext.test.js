@@ -203,3 +203,62 @@ describe('AuthContext — logout (Packet 124)', () => {
     expect(ctx.signInAsGuest).toEqual(expect.any(Function));
   });
 });
+
+describe('AuthContext — logout failure (Packet 125)', () => {
+  async function renderSignedIn(user = { uid: 'user-1', email: 'real@example.com' }) {
+    render(
+      <AuthProvider>
+        <Consumer />
+      </AuthProvider>,
+    );
+    await fireAuthState(user);
+  }
+
+  const networkFailure = () => Object.assign(new Error('network'), {
+    code: 'auth/network-request-failed',
+  });
+
+  // logout must hand the rejection back to its caller rather than swallowing
+  // it, so the UI callsite can decide what to show.
+  test('logout rejects to the caller when Firebase signOut fails', async () => {
+    signOut.mockRejectedValue(networkFailure());
+    await renderSignedIn();
+
+    await act(async () => {
+      await expect(ctx.logout()).rejects.toMatchObject({
+        code: 'auth/network-request-failed',
+      });
+    });
+  });
+
+  test('a failed logout leaves the user signed in with their stored email intact', async () => {
+    signOut.mockRejectedValue(networkFailure());
+    await renderSignedIn();
+
+    await act(async () => {
+      await ctx.logout().catch(() => {});
+    });
+
+    // Firebase never reports a signed-out state, so nothing clears the session.
+    expect(screen.getByTestId('uid')).toHaveTextContent('user-1');
+    expect(localStorage.getItem('dayguide_user_email')).toBe('real@example.com');
+  });
+
+  test('logout stays callable after a failure and signs out on a successful retry', async () => {
+    signOut.mockRejectedValueOnce(networkFailure()).mockResolvedValueOnce(undefined);
+    await renderSignedIn();
+
+    await act(async () => {
+      await ctx.logout().catch(() => {});
+    });
+    await act(async () => {
+      await ctx.logout();
+    });
+
+    expect(signOut).toHaveBeenCalledTimes(2);
+
+    // The retry succeeds, so Firebase reports the signed-out state as usual.
+    await fireAuthState(null);
+    expect(screen.getByTestId('uid')).toHaveTextContent('none');
+  });
+});

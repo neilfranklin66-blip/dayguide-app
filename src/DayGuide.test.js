@@ -12,16 +12,23 @@ jest.mock('./api/placesApi');
 // Records logout invocations. A plain array + function rather than a jest.fn():
 // the factory returns a fresh object per render, and CRA's resetMocks would
 // clear a jest.fn()'s recorded calls. Named `mock*` so the factory may use it.
+// `mockLogoutImpl` lets a test make signOut reject, as Firebase does on a
+// network or token failure. It resolves by default.
 var mockLogoutCalls = [];
+var mockLogoutImpl = () => Promise.resolve();
 jest.mock('./AuthContext', () => ({
   useAuth: () => ({
     currentUser: { email: 'test@example.com' },
-    logout: (...args) => mockLogoutCalls.push(args),
+    logout: (...args) => {
+      mockLogoutCalls.push(args);
+      return mockLogoutImpl(...args);
+    },
   }),
 }));
 
 beforeEach(() => {
   mockLogoutCalls = [];
+  mockLogoutImpl = () => Promise.resolve();
 });
 
 jest.mock('react-i18next', () => ({
@@ -140,6 +147,79 @@ describe('header logout', () => {
     fireEvent.click(screen.getByRole('button', { name: 'header.logout' }));
 
     expect(mockLogoutCalls).toHaveLength(1);
+  });
+});
+
+// --- Header logout failure (Packet 125) ---
+
+describe('header logout failure', () => {
+  const failingLogout = () => Promise.reject(new Error('auth/network-request-failed'));
+
+  const clickLogout = () =>
+    act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'header.logout' }));
+    });
+
+  beforeEach(() => {
+    useGeolocation.mockReturnValue(resolvedGeo);
+  });
+
+  test('a rejected logout shows the failure notice instead of escaping unhandled', async () => {
+    mockLogoutImpl = failingLogout;
+    render(<DayGuide />);
+
+    await clickLogout();
+
+    // The message rendering is the observable proof the rejection was caught:
+    // it is only set from the catch block around `await logout()`.
+    expect(screen.getByRole('alert')).toHaveTextContent('header.logoutFailed');
+  });
+
+  test('a failed logout leaves the user signed in, still inside the app', async () => {
+    mockLogoutImpl = failingLogout;
+    render(<DayGuide />);
+
+    await clickLogout();
+
+    // The authenticated header and the planning flow are both still present;
+    // nothing tore the session down optimistically.
+    expect(screen.getByText('👤 test@example.com')).toBeInTheDocument();
+    expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
+  });
+
+  test('the logout button stays enabled after a failure and retries on the next click', async () => {
+    mockLogoutImpl = failingLogout;
+    render(<DayGuide />);
+
+    await clickLogout();
+    expect(screen.getByRole('button', { name: 'header.logout' })).toBeEnabled();
+
+    await clickLogout();
+
+    expect(mockLogoutCalls).toHaveLength(2);
+  });
+
+  test('a retry that succeeds clears the failure notice', async () => {
+    mockLogoutImpl = failingLogout;
+    render(<DayGuide />);
+
+    await clickLogout();
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+
+    mockLogoutImpl = () => Promise.resolve();
+    await clickLogout();
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  test('a successful logout never shows the failure notice', async () => {
+    render(<DayGuide />);
+
+    await clickLogout();
+
+    expect(mockLogoutCalls).toHaveLength(1);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByText('header.logoutFailed')).not.toBeInTheDocument();
   });
 });
 
