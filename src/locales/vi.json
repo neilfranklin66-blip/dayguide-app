@@ -224,6 +224,7 @@
   },
   "header": {
     "logout": "Đăng xuất",
+    "loggingOut": "Đang đăng xuất…",
     "logoutFailed": "Đăng xuất không thành công. Vui lòng thử lại."
   }
 }

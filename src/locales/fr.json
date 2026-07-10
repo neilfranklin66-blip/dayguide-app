@@ -224,6 +224,7 @@
   },
   "header": {
     "logout": "Se déconnecter",
+    "loggingOut": "Déconnexion…",
     "logoutFailed": "Échec de la déconnexion. Veuillez réessayer."
   }
 }

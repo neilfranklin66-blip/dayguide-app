@@ -223,6 +223,106 @@ describe('header logout failure', () => {
   });
 });
 
+// --- Header logout pending state (Packet 126) ---
+
+describe('header logout pending state', () => {
+  // Holds logout in flight so the pending window can be observed rather than
+  // raced past: the test decides when Firebase answers.
+  function deferLogout() {
+    let settle;
+    const pending = new Promise((resolve, reject) => {
+      settle = { resolve, reject };
+    });
+    mockLogoutImpl = () => pending;
+    return {
+      succeed: () => act(async () => settle.resolve(undefined)),
+      fail: () => act(async () => {
+        settle.reject(new Error('auth/network-request-failed'));
+      }),
+    };
+  }
+
+  const clickLogout = (name = 'header.logout') =>
+    act(async () => {
+      fireEvent.click(screen.getByRole('button', { name }));
+    });
+
+  beforeEach(() => {
+    useGeolocation.mockReturnValue(resolvedGeo);
+  });
+
+  test('before any click the button is enabled and shows the idle label', () => {
+    render(<DayGuide />);
+
+    expect(screen.getByRole('button', { name: 'header.logout' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'header.loggingOut' })).not.toBeInTheDocument();
+  });
+
+  test('an in-flight logout disables the button and swaps in the pending label', async () => {
+    deferLogout();
+    render(<DayGuide />);
+
+    await clickLogout();
+
+    expect(screen.getByRole('button', { name: 'header.loggingOut' })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'header.logout' })).not.toBeInTheDocument();
+    expect(mockLogoutCalls).toHaveLength(1);
+  });
+
+  test('repeated clicks while logout is pending call logout only once', async () => {
+    deferLogout();
+    render(<DayGuide />);
+
+    await clickLogout();
+    await clickLogout('header.loggingOut');
+    await clickLogout('header.loggingOut');
+
+    expect(mockLogoutCalls).toHaveLength(1);
+  });
+
+  test('the pending state survives a resolved logout, so no second signOut can fire', async () => {
+    const logoutCall = deferLogout();
+    render(<DayGuide />);
+
+    await clickLogout();
+    await logoutCall.succeed();
+
+    // The auth-state listener replaces this tree; until it does the button must
+    // not flick back to a live "Logout".
+    expect(screen.getByRole('button', { name: 'header.loggingOut' })).toBeDisabled();
+    expect(mockLogoutCalls).toHaveLength(1);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  test('a failed logout clears the pending state and shows the failure notice', async () => {
+    const logoutCall = deferLogout();
+    render(<DayGuide />);
+
+    await clickLogout();
+    await logoutCall.fail();
+
+    expect(screen.getByRole('button', { name: 'header.logout' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'header.loggingOut' })).not.toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent('header.logoutFailed');
+    expect(screen.getByText('👤 test@example.com')).toBeInTheDocument();
+  });
+
+  test('a retry after a failure re-enters the pending state and clears the notice', async () => {
+    const failedCall = deferLogout();
+    render(<DayGuide />);
+
+    await clickLogout();
+    await failedCall.fail();
+
+    deferLogout();
+    await clickLogout();
+
+    expect(screen.getByRole('button', { name: 'header.loggingOut' })).toBeDisabled();
+    expect(mockLogoutCalls).toHaveLength(2);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+});
+
 // --- Saved-plan persistence ---
 
 const savedPlanPayload = {

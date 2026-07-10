@@ -70,6 +70,7 @@ const DayGuide = () => {
   const [timeline, setTimeline] = useState([]);
   const [savedPlanSummary, setSavedPlanSummary] = useState(() => summarizeSavedPlan(loadPlan()));
   const [logoutError, setLogoutError] = useState(null);
+  const [logoutPending, setLogoutPending] = useState(false);
 
   // Popup state
   const [activePopup, setActivePopup] = useState(null);
@@ -561,12 +562,19 @@ const DayGuide = () => {
 
   // signOut rejects on network/token failure. Awaiting it here keeps the
   // rejection from escaping unhandled; the user simply stays signed in.
+  //
+  // The pending flag is not cleared on success: Firebase's auth-state listener
+  // swaps this whole tree for the Login screen, so re-enabling the button would
+  // only offer a second, pointless signOut in the frames before that happens.
   const handleLogout = async () => {
+    if (logoutPending) return;
     setLogoutError(null);
+    setLogoutPending(true);
     try {
       await logout();
     } catch {
       setLogoutError(t('header.logoutFailed'));
+      setLogoutPending(false);
     }
   };
 
@@ -586,7 +594,13 @@ const DayGuide = () => {
             <option value="zh">中文</option>
             <option value="vi">Tiếng Việt</option>
           </select>
-          <button onClick={handleLogout} className="btn-logout">{t('header.logout')}</button>
+          <button
+            onClick={handleLogout}
+            disabled={logoutPending}
+            className={`btn-logout ${logoutPending ? 'is-loading' : ''}`}
+          >
+            {logoutPending ? t('header.loggingOut') : t('header.logout')}
+          </button>
         </div>
         {logoutError && <p className="logout-error" role="alert">⚠️ {logoutError}</p>}
       </div>

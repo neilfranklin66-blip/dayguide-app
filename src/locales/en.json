@@ -225,6 +225,7 @@
   },
   "header": {
     "logout": "Logout",
+    "loggingOut": "Logging out…",
     "logoutFailed": "Logout failed. Please try again."
   }
 }
