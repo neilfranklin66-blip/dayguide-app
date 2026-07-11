@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+> **Project status:** see [`docs/CURRENT_STATE.md`](docs/CURRENT_STATE.md) for the current-state and launch-gap register.
+
 ## Available Scripts
 
 In the project directory, you can run:
