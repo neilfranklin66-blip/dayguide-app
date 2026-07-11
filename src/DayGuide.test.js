@@ -4,6 +4,7 @@ import useGeolocation from './useGeolocation';
 import { searchRestaurants } from './api/placesApi';
 import { SAVED_PLAN_STORAGE_KEY } from './utils/planStorage';
 import { INTEREST_CATEGORY_OPTIONS } from './config/dayGuideOptions';
+import mockActivityData from './mockActivityData.json';
 import * as popupEngine from './engines/popupEngine';
 
 jest.mock('./useGeolocation');
@@ -782,6 +783,38 @@ describe('restaurant selection flow', () => {
     fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
 
     expect(screen.getByText('timeline.title')).toBeInTheDocument();
+  });
+
+  // Beyond reaching the timeline: the itinerary the user keeps must be a clean,
+  // activities-only plan. The earlier activity selections survive, and no
+  // restaurant — mock, placeholder, or stale — is written into the stored plan.
+  test('skipping an empty live search lands on a timeline that keeps the activities and adds no restaurant', async () => {
+    searchRestaurants.mockResolvedValue([]);
+    useGeolocation.mockReturnValue(resolvedGeo);
+    render(<DayGuide />);
+
+    walkToMealPrompt();
+    fireEvent.click(screen.getByText('mealPrompt.yes'));
+
+    expect(await screen.findByText('restaurants.noResultsTitle')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
+
+    expect(screen.getByText('timeline.title')).toBeInTheDocument();
+
+    const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
+    expect(stored.plan.timeline.length).toBeGreaterThan(0);
+    // The activities chosen during walkToMealPrompt are all preserved: it likes
+    // every offered activity for the first interest, so every venue in that
+    // category's fixture should still be in the stored timeline.
+    const storedActivityNames = stored.plan.timeline.map(item => item.activity);
+    const expectedActivityNames = mockActivityData[INTEREST_CATEGORY_OPTIONS[0].id]
+      .map(activity => activity.name);
+    expectedActivityNames.forEach(name => {
+      expect(storedActivityNames).toContain(name);
+    });
+    // No restaurant was added: the skipped search contributes no food entry.
+    expect(stored.plan.timeline.some(item => item.category === 'Food and Drinks')).toBe(false);
   });
 
   // --- Search request wiring (getRestaurantSearchRequestOutcome callsite) ---

@@ -191,6 +191,48 @@ test('no_unseen_results shows the exhausted-unseen filter card with distinct cop
   expect(screen.queryByText('restaurants.unavailableTitle')).not.toBeInTheDocument();
 });
 
+// Proceeding from an empty-result card must never carry a restaurant forward:
+// the empty list is passed explicitly so the timeline is built with no
+// restaurant rather than leaking a stale selection or a fabricated venue.
+test('skipping the no-results card continues with no restaurant', () => {
+  const continueAfterRestaurants = jest.fn();
+  render(
+    <RestaurantsStage
+      {...baseProps}
+      restaurantQueue={[]}
+      restaurantSource="no_results"
+      continueAfterRestaurants={continueAfterRestaurants}
+    />
+  );
+
+  fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
+
+  expect(continueAfterRestaurants).toHaveBeenCalledWith([]);
+});
+
+// Exhausting the unseen matches is a distinct, honest state — but it still
+// lets the user reach the timeline without a restaurant, and without claiming
+// none existed.
+test('skipping the exhausted-unseen card continues with no restaurant', () => {
+  const continueAfterRestaurants = jest.fn();
+  render(
+    <RestaurantsStage
+      {...baseProps}
+      restaurantQueue={[]}
+      restaurantSource="no_unseen_results"
+      continueAfterRestaurants={continueAfterRestaurants}
+    />
+  );
+
+  // The distinct exhausted copy is shown, not the "none found" copy.
+  expect(screen.getByText('restaurants.noUnseenResultsTitle')).toBeInTheDocument();
+  expect(screen.queryByText('restaurants.noResultsTitle')).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
+
+  expect(continueAfterRestaurants).toHaveBeenCalledWith([]);
+});
+
 test('a live places card keeps its exact query_place_id maps URL through the stage render', () => {
   const liveCard = fromPlacesParsed({
     id: 'ChIJlive123',

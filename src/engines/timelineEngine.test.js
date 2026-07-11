@@ -322,6 +322,42 @@ test('buildTimelineEntries supports food and drinks first ordering', () => {
   expect(entries[0].time).toBe('9:00');
   expect(entries[1].time).toBe('9:45');
 });
+// When the restaurant stage cannot supply a recommendation the timeline is
+// rebuilt from the activities alone. The rebuild must stay clean: only the
+// activities appear, in order, with no fabricated or placeholder food entry.
+test('buildTimelineEntries builds an activities-only timeline when no restaurants are supplied', () => {
+  const entries = buildTimelineEntries({
+    startTime: 9,
+    getCuisineEmoji: () => 'food-icon',
+    activities: [
+      { id: 'museum-1', name: 'Museum', duration: 1, distance: 0.4, category: 'museums', image: 'museum-icon', address: '1 Museum Street', rating: 4.7, isSample: true },
+      { id: 'park-1', name: 'Park', duration: 0.5, distance: 0.6, category: 'parks', image: 'park-icon', address: '3 Park Street', rating: 4.5, isSample: true },
+    ],
+    restaurants: [],
+  });
+
+  expect(entries.map(entry => entry.activity)).toEqual(['Museum', 'Park']);
+  // No food/drink entry may be invented to stand in for the missing restaurant.
+  expect(entries.some(entry => entry.category === 'Food and Drinks')).toBe(false);
+  expect(entries.every(entry => entry.isSample === true)).toBe(true);
+});
+
+test('buildTimelineEntries omits the restaurant slot in food-first order when no restaurants are supplied', () => {
+  const entries = buildTimelineEntries({
+    startTime: 9,
+    getCuisineEmoji: () => 'food-icon',
+    startWith: 'food_drinks',
+    activities: [
+      { id: 'museum-1', name: 'Museum', duration: 1, distance: 0.4, category: 'museums', image: 'museum-icon', address: '1 Museum Street', rating: 4.7 },
+    ],
+    restaurants: [],
+  });
+
+  // The activity still starts the day; nothing is inserted ahead of it.
+  expect(entries.map(entry => entry.activity)).toEqual(['Museum']);
+  expect(entries[0].time).toBe('9:00');
+});
+
 test('updateTimelineItemDuration updates only the selected item duration', () => {
   const timeline = [
     { id: 'first', duration: 1, activity: 'Museum' },
