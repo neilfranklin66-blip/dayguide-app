@@ -99,7 +99,10 @@ test('a sparse live result missing all optional fields still produces a live que
 // failed or empty live search yields an empty queue and only the source label
 // for the UI to explain what happened.
 
-test('live results fully deduped by prior selections produce an empty queue with source no_results', () => {
+// Suitable candidates existed but every one was already shown/selected. This is
+// "no more unseen options", distinct from finding nothing nearby: the queue is
+// empty but the source must not claim no matches exist.
+test('live results all excluded as already selected produce an empty queue with source no_unseen_results', () => {
   const outcome = resolveRestaurantSearchOutcome({
     results: [liveResult()],
     selectedRestaurants: [{ id: 'live-1', name: 'Live Bistro' }],
@@ -108,10 +111,12 @@ test('live results fully deduped by prior selections produce an empty queue with
     hasChildren: null,
   });
 
-  expect(outcome.source).toBe('no_results');
+  expect(outcome.source).toBe('no_unseen_results');
   expect(outcome.queue).toEqual([]);
 });
 
+// The search ran and returned nothing suitable at all — a genuine no-match, not
+// an exhausted-unseen case.
 test('an empty live search produces an empty queue with source no_results, never mock cards', () => {
   const outcome = resolveRestaurantSearchOutcome({
     results: [],
@@ -123,6 +128,21 @@ test('an empty live search produces an empty queue with source no_results, never
 
   expect(outcome.source).toBe('no_results');
   expect(outcome.queue).toEqual([]);
+});
+
+// At least one candidate survives exclusion, so the normal live flow runs even
+// though a different prior selection was excluded.
+test('a remaining unseen candidate yields the normal live queue despite an excluded one', () => {
+  const outcome = resolveRestaurantSearchOutcome({
+    results: [liveResult(), liveResult({ id: 'live-2', place_id: 'live-2', name: 'Second Bistro' })],
+    selectedRestaurants: [{ id: 'live-1', name: 'Live Bistro' }],
+    cuisines: [],
+    price: null,
+    hasChildren: null,
+  });
+
+  expect(outcome.source).toBe('live');
+  expect(outcome.queue.map(card => card.name)).toEqual(['Second Bistro']);
 });
 
 test.each([

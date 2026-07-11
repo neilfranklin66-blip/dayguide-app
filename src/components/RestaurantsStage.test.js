@@ -179,6 +179,18 @@ test('no_results shows the filter card, never the unavailable card', () => {
   expect(screen.getByText('restaurants.showAllNearby')).toBeInTheDocument();
 });
 
+// no_unseen_results means matches existed but were all already shown/selected:
+// the filter card again, but with its own honest copy — never "none found" and
+// never the unavailable card.
+test('no_unseen_results shows the exhausted-unseen filter card with distinct copy', () => {
+  render(<RestaurantsStage {...baseProps} restaurantQueue={[]} restaurantSource="no_unseen_results" />);
+
+  expect(screen.getByText('restaurants.noUnseenResultsTitle')).toBeInTheDocument();
+  expect(screen.getByText('restaurants.noUnseenResults')).toBeInTheDocument();
+  expect(screen.queryByText('restaurants.noResultsTitle')).not.toBeInTheDocument();
+  expect(screen.queryByText('restaurants.unavailableTitle')).not.toBeInTheDocument();
+});
+
 test('a live places card keeps its exact query_place_id maps URL through the stage render', () => {
   const liveCard = fromPlacesParsed({
     id: 'ChIJlive123',

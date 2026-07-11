@@ -137,6 +137,8 @@
     "noResultsTitle": "Không tìm thấy nhà hàng",
     "noResultsFiltered": "Không có nhà hàng nào gần đây phù hợp với bộ lọc của bạn.",
     "noResultsArea": "Không tìm thấy nhà hàng gần vị trí của bạn.",
+    "noUnseenResultsTitle": "Bạn đã xem hết các kết quả phù hợp",
+    "noUnseenResults": "Các nhà hàng gần đây phù hợp đã được hiển thị hoặc thêm vào. Hãy nới lỏng một bộ lọc để có thêm lựa chọn, hoặc tiếp tục với các lựa chọn của bạn.",
     "showAllNearby": "Hiển thị tất cả nhà hàng gần đây",
     "removeCuisineFilter": "Mọi ẩm thực (xóa bộ lọc)",
     "removePriceFilter": "Mọi giá (xóa bộ lọc)"

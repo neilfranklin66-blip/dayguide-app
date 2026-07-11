@@ -60,9 +60,10 @@ test('LIVE_SEARCH_FAILURE_SOURCES is exactly the set of unavailable reasons', ()
     .toEqual(Object.keys(RESTAURANT_UNAVAILABLE_REASONS).sort());
 });
 
-// no_results means "searched, found nothing" — the filter card handles it, and
-// live is a success. Neither may be pulled into the unavailable card.
-test.each(['no_results', 'live'])('%s is not an unavailable reason', (source) => {
+// no_results ("searched, found nothing") and no_unseen_results ("matches all
+// already shown/selected") are both handled by the filter card, and live is a
+// success. None may be pulled into the unavailable card.
+test.each(['no_results', 'no_unseen_results', 'live'])('%s is not an unavailable reason', (source) => {
   expect(RESTAURANT_UNAVAILABLE_REASONS).not.toHaveProperty(source);
   expect(LIVE_SEARCH_FAILURE_SOURCES.has(source)).toBe(false);
 });

@@ -60,6 +60,10 @@ const REQUIRED_KEYS = [
   'restaurants.skipAndContinue',
   'restaurants.tryAgain',
   'restaurants.whatCanITryTitle',
+  // The search ran and found matches, but all had already been shown/selected —
+  // a distinct, honest message from "nothing found nearby".
+  'restaurants.noUnseenResultsTitle',
+  'restaurants.noUnseenResults',
   ...UNAVAILABLE_REASON_KEYS,
   'timeline.empty',
   'timeline.shareHint',

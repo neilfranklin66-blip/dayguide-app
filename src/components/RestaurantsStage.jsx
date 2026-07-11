@@ -50,8 +50,13 @@ export default function RestaurantsStage({
     const hasCuisine = selectedCuisines.length > 0;
     const hasPrice = !!selectedPriceRange;
     const hasFilters = hasCuisine || hasPrice;
+    // The search ran and returned suitable matches, but every one had already
+    // been shown or selected. That is materially different from finding nothing
+    // nearby, so the card tells the honest story rather than "none found".
+    const isExhaustedUnseen = restaurantSource === 'no_unseen_results';
     return (
       <RestaurantsNoResultsCard
+        isExhaustedUnseen={isExhaustedUnseen}
         hasCuisine={hasCuisine}
         hasPrice={hasPrice}
         hasFilters={hasFilters}

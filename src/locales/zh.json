@@ -137,6 +137,8 @@
     "noResultsTitle": "未找到餐厅",
     "noResultsFiltered": "附近没有符合您筛选条件的餐厅。",
     "noResultsArea": "您位置附近未找到餐厅。",
+    "noUnseenResultsTitle": "您已看过所有匹配的餐厅",
+    "noUnseenResults": "附近符合条件的餐厅都已展示或添加。放宽某个筛选条件可查看更多选项，或继续使用当前选择。",
     "showAllNearby": "显示附近所有餐厅",
     "removeCuisineFilter": "任意菜系（移除筛选）",
     "removePriceFilter": "任意价位（移除筛选）"

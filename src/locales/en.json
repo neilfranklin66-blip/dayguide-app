@@ -138,6 +138,8 @@
     "noResultsTitle": "No restaurants found",
     "noResultsFiltered": "No restaurants match your cuisine or price filters in this area.",
     "noResultsArea": "No restaurants found near your location.",
+    "noUnseenResultsTitle": "You've seen every match",
+    "noUnseenResults": "The nearby restaurants that fit have already been shown or added. Loosen a filter for more options, or continue with your picks.",
     "showAllNearby": "Show all nearby restaurants",
     "removeCuisineFilter": "Any cuisine (remove filter)",
     "removePriceFilter": "Any price (remove filter)"

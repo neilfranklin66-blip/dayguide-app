@@ -40,10 +40,10 @@ export const resolveRestaurantSearchOutcome = ({
   hasChildren = null,
 }) => {
   if (!error) {
-    const deduped = excludeAlreadySelected(
-      mapFromPlacesArray(results),
-      selectedRestaurants,
-    );
+    // `candidates` are the suitable matches the live search returned, *before*
+    // any seen/selected exclusion. `deduped` is what survives that exclusion.
+    const candidates = mapFromPlacesArray(results);
+    const deduped = excludeAlreadySelected(candidates, selectedRestaurants);
 
     if (deduped.length > 0) {
       return {
@@ -54,6 +54,13 @@ export const resolveRestaurantSearchOutcome = ({
         }),
         source: 'live',
       };
+    }
+
+    // Suitable candidates existed but every one was already shown or selected:
+    // that is "no more unseen options", not "no matches exist nearby". Telling
+    // the user no restaurants were found would be untrue.
+    if (candidates.length > 0) {
+      return { queue: [], source: 'no_unseen_results' };
     }
   }
 

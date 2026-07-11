@@ -137,6 +137,8 @@
     "noResultsTitle": "Aucun restaurant trouvé",
     "noResultsFiltered": "Aucun restaurant à proximité ne correspond à vos filtres.",
     "noResultsArea": "Aucun restaurant trouvé près de votre position.",
+    "noUnseenResultsTitle": "Vous avez vu toutes les correspondances",
+    "noUnseenResults": "Les restaurants proches qui correspondent ont déjà été affichés ou ajoutés. Retirez un filtre pour plus d'options, ou continuez avec vos choix.",
     "showAllNearby": "Afficher tous les restaurants à proximité",
     "removeCuisineFilter": "Toute cuisine (supprimer le filtre)",
     "removePriceFilter": "Tout prix (supprimer le filtre)"

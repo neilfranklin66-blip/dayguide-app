@@ -137,6 +137,8 @@
     "noResultsTitle": "No se encontraron restaurantes",
     "noResultsFiltered": "Ningún restaurante cerca coincide con tu cocina o rango de precio.",
     "noResultsArea": "No se encontraron restaurantes cerca de tu ubicación.",
+    "noUnseenResultsTitle": "Has visto todas las coincidencias",
+    "noUnseenResults": "Los restaurantes cercanos que encajan ya se han mostrado o añadido. Quita un filtro para ver más opciones, o continúa con tus elecciones.",
     "showAllNearby": "Mostrar todos los restaurantes cercanos",
     "removeCuisineFilter": "Cualquier cocina (quitar filtro)",
     "removePriceFilter": "Cualquier precio (quitar filtro)"
