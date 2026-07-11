@@ -3,6 +3,7 @@ import {
   savePlan,
   loadPlan,
   clearPlan,
+  isPlanDateExpired,
 } from './planStorage';
 
 const validPlan = {
@@ -35,7 +36,9 @@ afterEach(() => {
 test('save/load round trip returns the persisted plan fields', () => {
   savePlan(validPlan);
 
-  expect(loadPlan()).toEqual(validPlan);
+  // validPlan.selectedDate is a fixed fixture date; pass a matching fixed
+  // "today" so this structural round-trip test does not depend on expiry.
+  expect(loadPlan(new Date('2026-07-05T12:00:00'))).toEqual(validPlan);
 });
 
 test('saved payload is versioned with a savedAt timestamp', () => {
@@ -92,6 +95,78 @@ test('clearPlan removes the key', () => {
   clearPlan();
 
   expect(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).toBeNull();
+});
+
+describe('isPlanDateExpired', () => {
+  test('a date before today is expired', () => {
+    expect(isPlanDateExpired('2026-07-04', new Date('2026-07-05T12:00:00'))).toBe(true);
+  });
+
+  test('a date equal to today is not expired', () => {
+    expect(isPlanDateExpired('2026-07-05', new Date('2026-07-05T12:00:00'))).toBe(false);
+  });
+
+  test('a future date is not expired', () => {
+    expect(isPlanDateExpired('2026-07-06', new Date('2026-07-05T12:00:00'))).toBe(false);
+  });
+
+  test('a same-day plan is not expired even after its start time has passed', () => {
+    // "today" is late in the evening; the plan's own start time is irrelevant
+    // to isPlanDateExpired, which only compares calendar dates.
+    expect(isPlanDateExpired('2026-07-05', new Date('2026-07-05T23:45:00'))).toBe(false);
+  });
+
+  test('local calendar comparison does not shift with UTC midnight conversion', () => {
+    // Local midnight-ish "today": a naive `new Date(selectedDate) < today`
+    // comparison via toISOString()/UTC parsing could push this either side
+    // of the boundary depending on the machine's timezone offset. Using the
+    // local Date constructor (not toISOString) keeps this deterministic.
+    const justAfterLocalMidnight = new Date(2026, 6, 5, 0, 30);
+
+    expect(isPlanDateExpired('2026-07-05', justAfterLocalMidnight)).toBe(false);
+    expect(isPlanDateExpired('2026-07-04', justAfterLocalMidnight)).toBe(true);
+  });
+
+  test('malformed or missing dates are not treated as expired', () => {
+    expect(isPlanDateExpired(undefined, new Date('2026-07-05'))).toBe(false);
+    expect(isPlanDateExpired(null, new Date('2026-07-05'))).toBe(false);
+    expect(isPlanDateExpired('05/07/2026', new Date('2026-07-05'))).toBe(false);
+    expect(isPlanDateExpired('not-a-date', new Date('2026-07-05'))).toBe(false);
+  });
+});
+
+describe('loadPlan expiry', () => {
+  test('a plan dated yesterday is not returned', () => {
+    savePlan({ ...validPlan, selectedDate: '2026-07-04' });
+
+    expect(loadPlan(new Date('2026-07-05T09:00:00'))).toBeNull();
+  });
+
+  test('an expired plan is cleared from storage', () => {
+    savePlan({ ...validPlan, selectedDate: '2026-07-04' });
+
+    loadPlan(new Date('2026-07-05T09:00:00'));
+
+    expect(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).toBeNull();
+  });
+
+  test('a plan dated today is returned', () => {
+    savePlan({ ...validPlan, selectedDate: '2026-07-05' });
+
+    expect(loadPlan(new Date('2026-07-05T09:00:00'))).toEqual({
+      ...validPlan,
+      selectedDate: '2026-07-05',
+    });
+  });
+
+  test('a future-dated plan is returned', () => {
+    savePlan({ ...validPlan, selectedDate: '2026-07-06' });
+
+    expect(loadPlan(new Date('2026-07-05T09:00:00'))).toEqual({
+      ...validPlan,
+      selectedDate: '2026-07-06',
+    });
+  });
 });
 
 describe('when localStorage throws', () => {

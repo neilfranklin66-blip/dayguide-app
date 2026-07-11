@@ -7,13 +7,13 @@ application actually does as implemented in tracked source code, configuration
 and tests — not what is planned, hoped for, or described elsewhere.
 
 - **Verification date:** 2026-07-11
-- **Verification point:** Packet 132
+- **Verification point:** Packet 133
 - **Scope:** tracked files only. Untracked notes were not consulted.
 - **Future ideas are excluded.** Anything not implemented is either omitted or
   explicitly marked *Not implemented*. No capability is described as present
   unless repository evidence supports it.
 
-This document should be read as a snapshot at the Packet 132 verification point.
+This document should be read as a snapshot at the Packet 133 verification point.
 Test and suite counts in §7 are dated snapshots, not permanent facts.
 
 ## 2. Current user journey
@@ -62,7 +62,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Timeline | **Implemented** | `TimelineStage`/`TimelineCard`: editable per-item durations, day narrative (`src/utils/dayNarrative.js`), time-budget status, date display. |
 | Transport | **Implemented — approximate** | `src/engines/transportEngine.js` estimates minutes from venue distance via urban speed profiles; `distanceKm` is venue-to-user distance, not true leg-to-leg. Costs are fare *types*, not currency amounts (`TRANSPORT_OPTIONS`). |
 | Maps / deep links | **Implemented** | Google Maps search URLs built in `src/adapters/placeCardAdapter.js`; live restaurants include `query_place_id`. Carried into the timeline row's "Open in Maps" link (`TimelineItemRow.jsx`). Sample activities have no maps link. |
-| Plan persistence & resume | **Implemented** | `src/utils/planStorage.js` writes one versioned `localStorage` key (`dayguide_saved_plan_v1`); persists timeline + render settings only (no queues, selections, or geolocation). Resume restores a read-only plan view. |
+| Plan persistence & resume | **Implemented** | `src/utils/planStorage.js` writes one versioned `localStorage` key (`dayguide_saved_plan_v1`); persists timeline + render settings only (no queues, selections, or geolocation). Resume restores a read-only plan view. A plan dated before the local calendar day is discarded on load and excluded from Resume (`isPlanDateExpired`/`loadPlan`, `planStorage.js`). |
 | Sharing | **Implemented (QR text)** | `TimelineShareQRModal.jsx` encodes a plain-text itinerary summary (`buildTimelineShareText`) as a QR code. No server-side share link or export. |
 | Localisation | **Implemented** | Five locales (`en`, `es`, `fr`, `zh`, `vi`) in `src/i18n.js`; language selector in header and login; choice persisted to `localStorage` and, for signed-up users, to Firestore. Key parity checked by `src/locales/localeConsistency.test.js`. |
 | Deployment / API handling | **Manual launch requirement** | `GOOGLE_PLACES_API_KEY` is server-side only, read by `netlify/functions/*`; documented in `.env.local.example`. Live restaurants require this key set in the Netlify environment and the functions deployed. |

@@ -366,6 +366,9 @@ test('resume button is hidden when no plan is saved', () => {
 });
 
 test('resuming a seeded saved plan lands on the timeline with its content', () => {
+  // Pin "today" to the saved plan's own date so this test is deterministic
+  // regardless of the real calendar day it runs on.
+  jest.useFakeTimers().setSystemTime(new Date('2026-07-05T09:00:00'));
   localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(savedPlanPayload));
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);
@@ -377,6 +380,51 @@ test('resuming a seeded saved plan lands on the timeline with its content', () =
 
   expect(screen.getByText('timeline.title')).toBeInTheDocument();
   expect(screen.getByText('Borough Market')).toBeInTheDocument();
+
+  jest.useRealTimers();
+});
+
+test('an expired saved plan is not offered for resume', () => {
+  const expiredPlanPayload = {
+    ...savedPlanPayload,
+    plan: { ...savedPlanPayload.plan, selectedDate: '2026-07-04' },
+  };
+  jest.useFakeTimers().setSystemTime(new Date('2026-07-05T09:00:00'));
+  localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(expiredPlanPayload));
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  expect(screen.queryByText('welcome.resumePlan')).not.toBeInTheDocument();
+  expect(screen.queryByText(/welcome\.resumePlanDetails/)).not.toBeInTheDocument();
+  expect(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).toBeNull();
+
+  jest.useRealTimers();
+});
+
+test('a plan dated today via the welcome journey remains resumable', () => {
+  jest.useFakeTimers().setSystemTime(new Date('2026-07-05T09:00:00'));
+  localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(savedPlanPayload));
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  expect(screen.getByText('welcome.resumePlan')).toBeInTheDocument();
+
+  jest.useRealTimers();
+});
+
+test('a future-dated saved plan remains resumable', () => {
+  const futurePlanPayload = {
+    ...savedPlanPayload,
+    plan: { ...savedPlanPayload.plan, selectedDate: '2026-07-06' },
+  };
+  jest.useFakeTimers().setSystemTime(new Date('2026-07-05T09:00:00'));
+  localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(futurePlanPayload));
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  expect(screen.getByText('welcome.resumePlan')).toBeInTheDocument();
+
+  jest.useRealTimers();
 });
 
 test('building a timeline saves the plan and start over clears it', () => {
@@ -506,7 +554,9 @@ const buildPlanThroughRestaurantsFromWelcome = async () => {
 
 describe('timeline popup suggestions', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    // Pinned so savedPlanPayload's fixed date is never seen as expired,
+    // regardless of the real calendar day this suite runs on.
+    jest.useFakeTimers().setSystemTime(new Date('2026-07-05T09:00:00'));
   });
 
   afterEach(() => {
