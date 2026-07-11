@@ -7,13 +7,13 @@ application actually does as implemented in tracked source code, configuration
 and tests — not what is planned, hoped for, or described elsewhere.
 
 - **Verification date:** 2026-07-11
-- **Verification point:** Packet 131
+- **Verification point:** Packet 132
 - **Scope:** tracked files only. Untracked notes were not consulted.
 - **Future ideas are excluded.** Anything not implemented is either omitted or
   explicitly marked *Not implemented*. No capability is described as present
   unless repository evidence supports it.
 
-This document should be read as a snapshot at the Packet 131 verification point.
+This document should be read as a snapshot at the Packet 132 verification point.
 Test and suite counts in §7 are dated snapshots, not permanent facts.
 
 ## 2. Current user journey
@@ -145,12 +145,16 @@ Only gaps supported by repository evidence are listed.
 - **Sharing is a QR-encoded text summary**, not a hosted/shareable plan link.
 
 ### Operational / manual requirements
-- **Netlify environment configuration is manual.** The Places key must be set in
-  the Netlify site environment; `.env.local.example` documents local `netlify dev`
-  usage.
-- **No `netlify.toml` is tracked in the repository.** Build/deploy/function
-  configuration is not captured in version control and must be supplied at deploy
-  time.
+- **`netlify.toml` tracks build, publish and functions configuration.** The
+  root `netlify.toml` sets `command = "npm run build"`, `publish = "build"`,
+  and `functions = "netlify/functions"`, matching `package.json`'s build
+  script, Create React App's default output directory, and the tracked
+  function files (`netlify/functions/places-nearby.js`,
+  `places-photo.js`). `GOOGLE_PLACES_API_KEY` still requires manual
+  configuration in the Netlify site's environment variables — it is not, and
+  must not be, set in tracked configuration. Deploying the functions and
+  maintaining the external services (Google Places, Firebase) remain
+  operational requirements outside version control.
 - **Firebase project configuration is committed** in `src/firebase.js` (web app
   config, which Firebase treats as public). A live deployment depends on that
   Firebase project remaining provisioned.

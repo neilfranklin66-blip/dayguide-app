@@ -4,6 +4,17 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 > **Project status:** see [`docs/CURRENT_STATE.md`](docs/CURRENT_STATE.md) for the current-state and launch-gap register.
 
+## Deployment
+
+This app deploys to Netlify, which reads the tracked root [`netlify.toml`](netlify.toml)
+for the build command, publish directory and functions directory — no manual
+build configuration is required in the Netlify UI.
+
+`GOOGLE_PLACES_API_KEY` must still be configured manually as a Netlify site
+environment variable; it is read only by the server-side functions in
+`netlify/functions/`. Never commit secrets — see
+[`.env.local.example`](.env.local.example) for local setup.
+
 ## Available Scripts
 
 In the project directory, you can run:
