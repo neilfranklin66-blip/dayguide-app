@@ -285,6 +285,65 @@ describe('searchRestaurants existing behaviour', () => {
     expect(getRestaurantSourceFromError(thrown)).toBe('error');
   });
 
+  // fetch itself rejecting means the request never reached the server: offline,
+  // DNS failure, connection reset. That is a connectivity problem the user can
+  // act on, not the same as the provider answering with a failure status.
+  it('maps a rejected fetch to NETWORK_ERROR → network', async () => {
+    mockFetchByKeyword({ '': () => Promise.reject(new TypeError('Failed to fetch')) });
+
+    let thrown;
+    await searchRestaurants(LAT, LNG, []).catch(e => { thrown = e; });
+
+    expect(thrown.message).toBe('NETWORK_ERROR');
+    expect(getRestaurantSourceFromError(thrown)).toBe('network');
+  });
+
+  // A server that answers 500 is reachable, so it must not be reported as an
+  // offline device.
+  it('does not report a reachable server returning 500 as a network failure', async () => {
+    mockFetchByKeyword({ '': () => Promise.resolve(httpErrorResponse(500)) });
+
+    let thrown;
+    await searchRestaurants(LAT, LNG, []).catch(e => { thrown = e; });
+
+    expect(getRestaurantSourceFromError(thrown)).not.toBe('network');
+  });
+
+  it('reports NETWORK_ERROR when every cuisine batch fails to connect', async () => {
+    mockFetchByKeyword({
+      'Italian restaurant': () => Promise.reject(new TypeError('Failed to fetch')),
+      'Indian restaurant': () => Promise.reject(new TypeError('Failed to fetch')),
+    });
+
+    let thrown;
+    await searchRestaurants(LAT, LNG, ['italian', 'indian']).catch(e => { thrown = e; });
+
+    expect(thrown.message).toBe('NETWORK_ERROR');
+    expect(getRestaurantSourceFromError(thrown)).toBe('network');
+  });
+
+  // A concrete configuration fault is more actionable than "you may be offline".
+  it('prefers NO_API_KEY over NETWORK_ERROR when batches fail differently', async () => {
+    mockFetchByKeyword({
+      'Italian restaurant': () => Promise.reject(new TypeError('Failed to fetch')),
+      'Indian restaurant': () => Promise.resolve(httpErrorResponse(404)),
+    });
+
+    await expect(searchRestaurants(LAT, LNG, ['italian', 'indian']))
+      .rejects.toThrow('NO_API_KEY');
+  });
+
+  // NETWORK_ERROR is named, an opaque STATUS_ string is not.
+  it('prefers NETWORK_ERROR over an opaque provider status when batches fail differently', async () => {
+    mockFetchByKeyword({
+      'Italian restaurant': () => Promise.resolve(statusResponse('INVALID_REQUEST')),
+      'Indian restaurant': () => Promise.reject(new TypeError('Failed to fetch')),
+    });
+
+    await expect(searchRestaurants(LAT, LNG, ['italian', 'indian']))
+      .rejects.toThrow('NETWORK_ERROR');
+  });
+
   it('prefers NO_API_KEY over other failures when all cuisine batches reject', async () => {
     mockFetchByKeyword({
       'Italian restaurant': () => Promise.reject(new Error('network down')),

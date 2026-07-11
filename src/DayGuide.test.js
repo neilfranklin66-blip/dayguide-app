@@ -870,7 +870,10 @@ describe('restaurant selection flow', () => {
       );
     });
 
-    test('skips the live search and shows the unavailable notice when no position is available', async () => {
+    // erroredGeo is a *denied* permission, which the user can fix in browser
+    // settings — so it must not be reported as the generic "we couldn't get
+    // your location".
+    test('skips the live search and explains the denied location permission', async () => {
       searchRestaurants.mockResolvedValue([liveSearchResult]);
       useGeolocation.mockReturnValue(erroredGeo);
       render(<DayGuide />);
@@ -878,9 +881,64 @@ describe('restaurant selection flow', () => {
       walkToInterestsRestaurantsFirst();
       fireEvent.click(screen.getByText('interests.next'));
 
-      expect(await screen.findByText('restaurants.noLocationWarning')).toBeInTheDocument();
+      expect(await screen.findByText('restaurants.locationDeniedWarning')).toBeInTheDocument();
+      expect(screen.getByText('restaurants.locationDeniedHint')).toBeInTheDocument();
+      expect(screen.queryByText('restaurants.noLocationWarning')).not.toBeInTheDocument();
 
       expect(searchRestaurants).not.toHaveBeenCalled();
+    });
+
+    test('skips the live search and shows the generic notice when the position never arrives', async () => {
+      searchRestaurants.mockResolvedValue([liveSearchResult]);
+      useGeolocation.mockReturnValue({
+        position: null,
+        error: 'location.unavailable',
+        isLoading: false,
+        refresh: jest.fn(),
+      });
+      render(<DayGuide />);
+
+      walkToInterestsRestaurantsFirst();
+      fireEvent.click(screen.getByText('interests.next'));
+
+      expect(await screen.findByText('restaurants.noLocationWarning')).toBeInTheDocument();
+      expect(screen.queryByText('restaurants.locationDeniedWarning')).not.toBeInTheDocument();
+
+      expect(searchRestaurants).not.toHaveBeenCalled();
+    });
+
+    // The provider failing is outside DayGuide's control, so a retry is honest
+    // and must re-issue the search rather than surface mock restaurants.
+    test('a network failure explains the connection and retries the real search', async () => {
+      searchRestaurants.mockRejectedValueOnce(new Error('NETWORK_ERROR'));
+      useGeolocation.mockReturnValue(resolvedGeo);
+      render(<DayGuide />);
+
+      walkToInterestsRestaurantsFirst();
+      fireEvent.click(screen.getByText('interests.next'));
+
+      expect(await screen.findByText('restaurants.networkWarning')).toBeInTheDocument();
+      expect(screen.queryByText('Trattoria Roma')).not.toBeInTheDocument();
+
+      searchRestaurants.mockResolvedValueOnce([liveSearchResult]);
+      fireEvent.click(screen.getByText('restaurants.tryAgain'));
+
+      expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
+      expect(searchRestaurants).toHaveBeenCalledTimes(2);
+    });
+
+    // Retrying an unconfigured search would fail identically, so don't offer it.
+    test('a missing live-search key explains an app-side fault and offers no retry', async () => {
+      searchRestaurants.mockRejectedValue(new Error('NO_API_KEY'));
+      useGeolocation.mockReturnValue(resolvedGeo);
+      render(<DayGuide />);
+
+      walkToInterestsRestaurantsFirst();
+      fireEvent.click(screen.getByText('interests.next'));
+
+      expect(await screen.findByText('restaurants.noKeyWarning')).toBeInTheDocument();
+      expect(screen.getByText('restaurants.noKeyHint')).toBeInTheDocument();
+      expect(screen.queryByText('restaurants.tryAgain')).not.toBeInTheDocument();
     });
   });
 

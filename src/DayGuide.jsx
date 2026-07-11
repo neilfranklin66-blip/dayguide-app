@@ -300,8 +300,11 @@ const DayGuide = () => {
       setRestaurantSource(source);
     };
 
+    // locationError lets the request layer tell a denied browser permission
+    // (which the user can fix) apart from a location we simply never got.
     const searchOutcome = await getRestaurantSearchRequestOutcome({
       position,
+      locationError,
       cuisines: cuisineOverride,
       price: priceOverride,
       searchRestaurantsFn: searchRestaurants,

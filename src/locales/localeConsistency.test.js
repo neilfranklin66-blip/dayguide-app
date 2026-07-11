@@ -12,9 +12,19 @@ import es from './es.json';
 import fr from './fr.json';
 import zh from './zh.json';
 import vi from './vi.json';
+import { RESTAURANT_UNAVAILABLE_REASONS } from '../config/dayGuideOptions';
 
 const LOCALES = { en, es, fr, zh, vi };
 const LOCALE_CODES = Object.keys(LOCALES);
+
+// Derived, not hand-listed: adding a new restaurant-unavailable reason without
+// translating its message and hint must fail this suite rather than ship a raw
+// key like "restaurants.networkHint" to a non-English user.
+const UNAVAILABLE_REASON_KEYS = Object.values(RESTAURANT_UNAVAILABLE_REASONS)
+  .flatMap(({ messageKey, hintKey }) => [
+    `restaurants.${messageKey}`,
+    `restaurants.${hintKey}`,
+  ]);
 
 const REQUIRED_KEYS = [
   // Header controls, the in-progress label, and the failure notice shown when
@@ -42,13 +52,12 @@ const REQUIRED_KEYS = [
   'restaurants.distanceLabel',
   'restaurants.timeLabel',
   'restaurants.openInMaps',
-  // Honest unavailable-state copy shown when the live search fails.
+  // Honest unavailable-state copy shown when the live search fails. The
+  // per-reason message/hint pairs are appended from the reason table below.
   'restaurants.unavailableTitle',
-  'restaurants.noKeyWarning',
-  'restaurants.quotaWarning',
-  'restaurants.noLocationWarning',
-  'restaurants.errorWarning',
   'restaurants.skipAndContinue',
+  'restaurants.tryAgain',
+  ...UNAVAILABLE_REASON_KEYS,
   'timeline.empty',
   'timeline.shareHint',
   'timeline.howToGetThere',

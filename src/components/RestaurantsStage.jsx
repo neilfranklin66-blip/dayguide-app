@@ -30,13 +30,17 @@ export default function RestaurantsStage({
   }
 
   if (restaurantQueue !== null && restaurantQueue.length === 0) {
-    // The live search failed outright: say why and let the user move on.
-    // Retrying with looser filters would just fail the same way, and mock
-    // venues must not stand in as real recommendations.
+    // The live search failed outright rather than running and finding nothing.
+    // Loosening filters would not help, and mock venues must not stand in as
+    // real recommendations — so explain the cause and offer a retry only where
+    // the card decides one could actually succeed. Retry repeats the same
+    // search with the same filters; the arguments are passed explicitly so a
+    // click event can never arrive as `cuisineOverride`.
     if (LIVE_SEARCH_FAILURE_SOURCES.has(restaurantSource)) {
       return (
         <RestaurantsUnavailableCard
           restaurantSource={restaurantSource}
+          onRetry={() => goToRestaurants(selectedCuisines, selectedPriceRange)}
           onSkip={() => continueAfterRestaurants([])}
           t={t}
         />

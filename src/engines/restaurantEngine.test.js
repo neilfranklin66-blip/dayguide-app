@@ -2,25 +2,50 @@ import {
   getRestaurantSourceFromError,
   resolveRestaurantSearchOutcome,
 } from './restaurantEngine';
+import {
+  RESTAURANT_UNAVAILABLE_REASONS,
+  LIVE_SEARCH_FAILURE_SOURCES,
+} from '../config/dayGuideOptions';
 
-test('getRestaurantSourceFromError maps missing API key errors', () => {
-  expect(getRestaurantSourceFromError(new Error('NO_API_KEY'))).toBe('no_key');
+test.each([
+  // DayGuide's own configuration. A rejected key reads to the user the same as
+  // no key at all: live search is not correctly set up.
+  ['NO_API_KEY', 'no_key'],
+  ['API_DENIED', 'no_key'],
+  ['QUOTA_EXCEEDED', 'quota'],
+  // DayGuide could not even form the request.
+  ['INCOMPLETE_REQUEST', 'bad_request'],
+  // The user can act on these.
+  ['NO_LOCATION', 'no_location'],
+  ['LOCATION_DENIED', 'location_denied'],
+  // Outside DayGuide's control.
+  ['NETWORK_ERROR', 'network'],
+])('getRestaurantSourceFromError maps %s to source %s', (message, source) => {
+  expect(getRestaurantSourceFromError(new Error(message))).toBe(source);
 });
 
-test('getRestaurantSourceFromError maps quota errors', () => {
-  expect(getRestaurantSourceFromError(new Error('QUOTA_EXCEEDED'))).toBe('quota');
+test.each([
+  ['an unrecognised message', new Error('STATUS_INVALID_REQUEST')],
+  ['an HTTP status message', new Error('HTTP_500')],
+  ['no error at all', undefined],
+  ['an error without a message', {}],
+])('getRestaurantSourceFromError falls back to error for %s', (_label, error) => {
+  expect(getRestaurantSourceFromError(error)).toBe('error');
 });
 
-test('getRestaurantSourceFromError maps missing location errors', () => {
-  expect(getRestaurantSourceFromError(new Error('NO_LOCATION'))).toBe('no_location');
-});
+// A source label is only useful if the UI has copy for it. Guard the seam
+// between the two modules rather than trusting them to stay in step.
+test('every source getRestaurantSourceFromError can return has an unavailable reason', () => {
+  const messages = [
+    'NO_API_KEY', 'API_DENIED', 'QUOTA_EXCEEDED', 'INCOMPLETE_REQUEST',
+    'NO_LOCATION', 'LOCATION_DENIED', 'NETWORK_ERROR', 'ANYTHING_ELSE',
+  ];
 
-test('getRestaurantSourceFromError falls back to error for unknown errors', () => {
-  expect(getRestaurantSourceFromError(new Error('NETWORK_ERROR'))).toBe('error');
-});
-
-test('getRestaurantSourceFromError falls back to error when no error is provided', () => {
-  expect(getRestaurantSourceFromError()).toBe('error');
+  messages.forEach(message => {
+    const source = getRestaurantSourceFromError(new Error(message));
+    expect(RESTAURANT_UNAVAILABLE_REASONS).toHaveProperty(source);
+    expect(LIVE_SEARCH_FAILURE_SOURCES.has(source)).toBe(true);
+  });
 });
 
 // --- resolveRestaurantSearchOutcome ---
@@ -104,7 +129,10 @@ test.each([
   ['NO_API_KEY', 'no_key'],
   ['QUOTA_EXCEEDED', 'quota'],
   ['NO_LOCATION', 'no_location'],
-  ['NETWORK_ERROR', 'error'],
+  ['LOCATION_DENIED', 'location_denied'],
+  ['INCOMPLETE_REQUEST', 'bad_request'],
+  ['NETWORK_ERROR', 'network'],
+  ['STATUS_UNKNOWN', 'error'],
 ])('error %s produces an empty queue with source %s, never mock cards', (message, source) => {
   const outcome = resolveRestaurantSearchOutcome({
     error: new Error(message),

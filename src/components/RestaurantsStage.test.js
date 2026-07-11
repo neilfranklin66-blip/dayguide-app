@@ -104,6 +104,9 @@ test.each([
   ['no_key', 'restaurants.noKeyWarning'],
   ['quota', 'restaurants.quotaWarning'],
   ['no_location', 'restaurants.noLocationWarning'],
+  ['location_denied', 'restaurants.locationDeniedWarning'],
+  ['bad_request', 'restaurants.badRequestWarning'],
+  ['network', 'restaurants.networkWarning'],
   ['error', 'restaurants.errorWarning'],
 ])('a failed live search (%s) shows the unavailable card with its reason, not a restaurant card', (source, reasonKey) => {
   render(<RestaurantsStage {...baseProps} restaurantQueue={[]} restaurantSource={source} />);
@@ -112,6 +115,7 @@ test.each([
   expect(screen.getByText(reasonKey)).toBeInTheDocument();
   expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
   expect(screen.queryByText('restaurants.noResultsTitle')).not.toBeInTheDocument();
+  expect(screen.queryByText('Trattoria Roma')).not.toBeInTheDocument();
 });
 
 test('the unavailable card lets the user continue without selecting a restaurant', () => {
@@ -128,6 +132,51 @@ test('the unavailable card lets the user continue without selecting a restaurant
   fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
 
   expect(continueAfterRestaurants).toHaveBeenCalledWith([]);
+});
+
+// Retry repeats the same search with the same filters. Passing the arguments
+// explicitly keeps the click event out of `cuisineOverride` (Packet 103).
+test('retrying a network failure re-runs the search with the current filters', () => {
+  const goToRestaurants = jest.fn();
+  render(
+    <RestaurantsStage
+      {...baseProps}
+      restaurantQueue={[]}
+      restaurantSource="network"
+      goToRestaurants={goToRestaurants}
+    />
+  );
+
+  fireEvent.click(screen.getByText('restaurants.tryAgain'));
+
+  expect(goToRestaurants).toHaveBeenCalledTimes(1);
+  expect(goToRestaurants).toHaveBeenCalledWith(['italian'], '$$');
+});
+
+test('a misconfigured live search offers no retry, only a way to continue', () => {
+  const goToRestaurants = jest.fn();
+  render(
+    <RestaurantsStage
+      {...baseProps}
+      restaurantQueue={[]}
+      restaurantSource="no_key"
+      goToRestaurants={goToRestaurants}
+    />
+  );
+
+  expect(screen.queryByText('restaurants.tryAgain')).not.toBeInTheDocument();
+  expect(screen.getByText('restaurants.skipAndContinue')).toBeInTheDocument();
+  expect(goToRestaurants).not.toHaveBeenCalled();
+});
+
+// no_results means the search ran and found nothing: that is the filter card,
+// which offers filter-loosening actions the unavailable card must not.
+test('no_results shows the filter card, never the unavailable card', () => {
+  render(<RestaurantsStage {...baseProps} restaurantQueue={[]} restaurantSource="no_results" />);
+
+  expect(screen.getByText('restaurants.noResultsTitle')).toBeInTheDocument();
+  expect(screen.queryByText('restaurants.unavailableTitle')).not.toBeInTheDocument();
+  expect(screen.getByText('restaurants.showAllNearby')).toBeInTheDocument();
 });
 
 test('a live places card keeps its exact query_place_id maps URL through the stage render', () => {

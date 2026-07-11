@@ -114,7 +114,15 @@ async function nearbySearch(lat, lng, keyword, maxprice) {
   if (keyword) params.set('keyword', keyword);
   if (maxprice != null) params.set('maxprice', String(maxprice));
 
-  const res = await fetch(`${NEARBY_URL}?${params}`);
+  let res;
+  try {
+    res = await fetch(`${NEARBY_URL}?${params}`);
+  } catch (cause) {
+    // fetch only rejects when the request never completed at all — offline,
+    // DNS failure, connection reset. A request that reached the server and
+    // came back 4xx/5xx resolves, and is handled below as a provider error.
+    throw new Error('NETWORK_ERROR');
+  }
   // 404 means the Netlify function isn't deployed/running — live search is
   // unconfigured, which is the same user-facing state as a missing key.
   if (res.status === 404) throw new Error('NO_API_KEY');
@@ -133,7 +141,9 @@ async function nearbySearch(lat, lng, keyword, maxprice) {
 
 // When every cuisine batch fails, surface the most actionable failure so the
 // caller's error-to-source mapping (quota, denied key, …) stays meaningful.
-const BATCH_ERROR_PRIORITY = ['NO_API_KEY', 'QUOTA_EXCEEDED', 'API_DENIED'];
+// NETWORK_ERROR ranks last: it is the least specific of the named reasons, but
+// still beats an opaque HTTP_/STATUS_ string picked arbitrarily by position.
+const BATCH_ERROR_PRIORITY = ['NO_API_KEY', 'QUOTA_EXCEEDED', 'API_DENIED', 'NETWORK_ERROR'];
 
 function pickMostSpecificError(reasons) {
   for (const message of BATCH_ERROR_PRIORITY) {
