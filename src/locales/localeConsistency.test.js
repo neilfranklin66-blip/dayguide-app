@@ -18,12 +18,14 @@ const LOCALES = { en, es, fr, zh, vi };
 const LOCALE_CODES = Object.keys(LOCALES);
 
 // Derived, not hand-listed: adding a new restaurant-unavailable reason without
-// translating its message and hint must fail this suite rather than ship a raw
-// key like "restaurants.networkHint" to a non-English user.
+// translating its message, hint and "What can I try?" guidance must fail this
+// suite rather than ship a raw key like "restaurants.networkHint" to a
+// non-English user.
 const UNAVAILABLE_REASON_KEYS = Object.values(RESTAURANT_UNAVAILABLE_REASONS)
-  .flatMap(({ messageKey, hintKey }) => [
+  .flatMap(({ messageKey, hintKey, guidanceKey }) => [
     `restaurants.${messageKey}`,
     `restaurants.${hintKey}`,
+    `restaurants.${guidanceKey}`,
   ]);
 
 const REQUIRED_KEYS = [
@@ -57,6 +59,7 @@ const REQUIRED_KEYS = [
   'restaurants.unavailableTitle',
   'restaurants.skipAndContinue',
   'restaurants.tryAgain',
+  'restaurants.whatCanITryTitle',
   ...UNAVAILABLE_REASON_KEYS,
   'timeline.empty',
   'timeline.shareHint',

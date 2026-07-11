@@ -24,6 +24,14 @@ export default function RestaurantsUnavailableCard({ restaurantSource, onRetry, 
         <h2>{t('restaurants.unavailableTitle')}</h2>
         <p className="no-results-msg">{t(`restaurants.${reason.messageKey}`)}</p>
         <p className="no-results-hint">{t(`restaurants.${reason.hintKey}`)}</p>
+        <div className="no-results-guidance">
+          <h3 className="no-results-guidance-title">
+            {t('restaurants.whatCanITryTitle')}
+          </h3>
+          <p className="no-results-guidance-text">
+            {t(`restaurants.${reason.guidanceKey}`)}
+          </p>
+        </div>
         <div className="no-results-actions">
           {showRetry && (
             <button onClick={() => onRetry()} className="btn-primary">

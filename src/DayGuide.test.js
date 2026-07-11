@@ -725,9 +725,13 @@ describe('restaurant selection flow', () => {
     expect(await screen.findByText('restaurants.unavailableTitle')).toBeInTheDocument();
     expect(screen.getByText('restaurants.noKeyWarning')).toBeInTheDocument();
 
-    // No mock venue may be offered for swiping as a recommendation.
+    // No mock venue may be offered for swiping as a recommendation. The only
+    // level-3 heading permitted here is the unavailable card's "What can I try?"
+    // guidance title — never a restaurant-name heading from a swipe card.
     expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
-    expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument();
+    const level3Headings = screen.queryAllByRole('heading', { level: 3 });
+    expect(level3Headings).toHaveLength(1);
+    expect(level3Headings[0]).toHaveTextContent('restaurants.whatCanITryTitle');
 
     fireEvent.click(screen.getByText('restaurants.skipAndContinue'));
 
@@ -994,9 +998,12 @@ describe('restaurant selection flow', () => {
 
     // The honest unavailable notice, not a mock venue dressed up as real.
     expect(await screen.findByText('restaurants.unavailableTitle')).toBeInTheDocument();
-    // No swipe card: no accept action and no restaurant-name heading (h3).
+    // No swipe card: no accept action and no restaurant-name heading. The only
+    // level-3 heading allowed is the unavailable card's "What can I try?" title.
     expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
-    expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument();
+    const level3Headings = screen.queryAllByRole('heading', { level: 3 });
+    expect(level3Headings).toHaveLength(1);
+    expect(level3Headings[0]).toHaveTextContent('restaurants.whatCanITryTitle');
     // A known mock venue must never surface as a nearby recommendation.
     expect(screen.queryByText('Dishoom')).not.toBeInTheDocument();
 

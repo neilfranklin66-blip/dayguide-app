@@ -46,6 +46,48 @@ test('each reason maps to a distinct user-facing message', () => {
   expect(new Set(messages).size).toBe(messages.length);
 });
 
+// --- "What can I try?" guidance is reason-aware ---
+
+test.each(Object.keys(RESTAURANT_UNAVAILABLE_REASONS))(
+  'the %s reason shows a "What can I try?" section with its own guidance',
+  (source) => {
+    const { guidanceKey } = RESTAURANT_UNAVAILABLE_REASONS[source];
+    renderCard({ restaurantSource: source });
+
+    expect(screen.getByText('restaurants.whatCanITryTitle')).toBeInTheDocument();
+    expect(screen.getByText(`restaurants.${guidanceKey}`)).toBeInTheDocument();
+  },
+);
+
+test('every reason declares a guidance key so no failure is left without advice', () => {
+  Object.values(RESTAURANT_UNAVAILABLE_REASONS).forEach((reason) => {
+    expect(typeof reason.guidanceKey).toBe('string');
+    expect(reason.guidanceKey.length).toBeGreaterThan(0);
+  });
+});
+
+// no_key and quota both mean "live data is simply unavailable, carry on", so
+// they deliberately share one honest piece of guidance rather than duplicating
+// near-identical copy across the locales.
+test('no_key and quota share the same live-data-unavailable guidance', () => {
+  expect(RESTAURANT_UNAVAILABLE_REASONS.no_key.guidanceKey)
+    .toBe(RESTAURANT_UNAVAILABLE_REASONS.quota.guidanceKey);
+});
+
+// The user-actionable location reasons must give distinct, tailored advice
+// rather than being flattened into the same guidance.
+test('a denied location permission gives different guidance from a missing location', () => {
+  expect(RESTAURANT_UNAVAILABLE_REASONS.location_denied.guidanceKey)
+    .not.toBe(RESTAURANT_UNAVAILABLE_REASONS.no_location.guidanceKey);
+});
+
+test('the fallback error reason still shows actionable guidance', () => {
+  renderCard({ restaurantSource: 'not_a_real_source' });
+
+  expect(screen.getByText('restaurants.whatCanITryTitle')).toBeInTheDocument();
+  expect(screen.getByText('restaurants.errorGuidance')).toBeInTheDocument();
+});
+
 // The three user-actionable location/network reasons must not be flattened
 // into the same copy as a DayGuide misconfiguration.
 test('a denied location permission reads differently from a missing location', () => {

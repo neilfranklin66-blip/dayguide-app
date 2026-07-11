@@ -48,6 +48,11 @@ export const UNAVAILABLE_CATEGORY = {
 // locale namespace. `canRetry` gates the "Try again" button: it is false where
 // re-running the identical search is guaranteed to fail again.
 //
+// `guidanceKey` backs the compact "What can I try?" section: a reason-aware,
+// practical next step. Where the honest answer is the same — live data is simply
+// unavailable and the fix is to carry on — reasons deliberately share one key
+// (`liveDataUnavailableGuidance`) rather than duplicate near-identical copy.
+//
 // Deliberately excluded: `no_results` (the search ran and found nothing — that
 // is the filter-tweaking card, not this one) and `live` (success).
 export const RESTAURANT_UNAVAILABLE_REASONS = {
@@ -55,6 +60,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     category: UNAVAILABLE_CATEGORY.USER,
     messageKey: 'locationDeniedWarning',
     hintKey: 'locationDeniedHint',
+    guidanceKey: 'locationDeniedGuidance',
     icon: '📍',
     canRetry: true,
   },
@@ -62,6 +68,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     category: UNAVAILABLE_CATEGORY.USER,
     messageKey: 'noLocationWarning',
     hintKey: 'noLocationHint',
+    guidanceKey: 'noLocationGuidance',
     icon: '📍',
     canRetry: true,
   },
@@ -69,6 +76,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     category: UNAVAILABLE_CATEGORY.APP,
     messageKey: 'badRequestWarning',
     hintKey: 'badRequestHint',
+    guidanceKey: 'badRequestGuidance',
     icon: '🛠️',
     canRetry: false,
   },
@@ -76,6 +84,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     category: UNAVAILABLE_CATEGORY.APP,
     messageKey: 'noKeyWarning',
     hintKey: 'noKeyHint',
+    guidanceKey: 'liveDataUnavailableGuidance',
     icon: '🛠️',
     canRetry: false,
   },
@@ -83,6 +92,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     category: UNAVAILABLE_CATEGORY.APP,
     messageKey: 'quotaWarning',
     hintKey: 'quotaHint',
+    guidanceKey: 'liveDataUnavailableGuidance',
     icon: '🛠️',
     canRetry: false,
   },
@@ -90,6 +100,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     category: UNAVAILABLE_CATEGORY.EXTERNAL,
     messageKey: 'networkWarning',
     hintKey: 'networkHint',
+    guidanceKey: 'networkGuidance',
     icon: '📡',
     canRetry: true,
   },
@@ -97,6 +108,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     category: UNAVAILABLE_CATEGORY.EXTERNAL,
     messageKey: 'errorWarning',
     hintKey: 'errorHint',
+    guidanceKey: 'errorGuidance',
     icon: '📡',
     canRetry: true,
   },
