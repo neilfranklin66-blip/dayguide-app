@@ -16,6 +16,12 @@ and tests — not what is planned, hoped for, or described elsewhere.
 This document should be read as a snapshot at the Packet 133 verification point.
 Test and suite counts in §7 are dated snapshots, not permanent facts.
 
+**Repository implementation workflow:** Packet 135 added
+[`docs/DEVELOPMENT_WORKFLOW.md`](DEVELOPMENT_WORKFLOW.md) as the repository-level
+process for implementation authority, packet execution, verification,
+integration separation, and new-chat handover. This process documentation does
+not change the Packet 133 application-capability verification point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
