@@ -7,7 +7,8 @@ risks, operational uncertainties, security and configuration gaps, test and
 accessibility gaps, and explicitly accepted limitations for DayGuide.
 
 - **Current verification date:** 13 July 2026
-- **Current verification point:** Packet 134 corrective compliance review
+- **Register baseline:** Packet 134 corrective compliance review
+- **Latest targeted update:** Packet 136 deployment audit
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository files and the new Packet 134 document
@@ -223,6 +224,29 @@ No other entry is classified as launch blocking.
   settings, authorised domains, service availability, and quota.
 - **Recommended next action:** Verify every exposed sign-in path on the intended
   production domain through an authorised operational check.
+- **Verification date:** 13 July 2026
+
+### OP-003 — Deployment runtime is not pinned in tracked configuration
+
+- **ID:** OP-003
+- **Category:** Deployment reproducibility gap
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** The tracked configuration gap is verified; the
+  runtime currently selected by any live hosting provider is unverified.
+- **Factual evidence:** `package.json` has no root `engines` or
+  `packageManager` field; no `.nvmrc`, `.node-version`, `.tool-versions`,
+  or equivalent runtime file is tracked; and `netlify.toml` declares no Node
+  version. The npm lockfile fixes dependencies but does not select the runtime.
+- **Impact:** Local and hosted builds can use different provider-selected Node
+  or npm versions, and a future default-runtime change can reduce build
+  reproducibility.
+- **Likely dependency:** An approved supported Node version, clean build
+  verification, and the intended hosting configuration.
+- **Recommended next action:** Select and pin the supported runtime in a
+  separately authorised configuration packet, then verify a clean production
+  build.
 - **Verification date:** 13 July 2026
 
 These entries do not assert that production is misconfigured. Netlify deployment,

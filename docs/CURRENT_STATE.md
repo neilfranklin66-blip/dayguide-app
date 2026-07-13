@@ -22,6 +22,12 @@ process for implementation authority, packet execution, verification,
 integration separation, and new-chat handover. This process documentation does
 not change the Packet 133 application-capability verification point above.
 
+**Deployment reality audit:** Packet 136 added
+[`docs/DEPLOYMENT_REALITY_AUDIT.md`](DEPLOYMENT_REALITY_AUDIT.md) as the
+repository-versus-live evidence record. Packet 136 is the latest completed
+documentation packet; it does not change the Packet 133 application-capability
+verification point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
