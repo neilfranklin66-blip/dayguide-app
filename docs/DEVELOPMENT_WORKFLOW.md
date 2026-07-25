@@ -6,6 +6,10 @@ This document is the repository-level implementation workflow for DayGuide. It
 defines how implementation packets are authorised, performed, verified,
 reviewed, integrated, and handed over.
 
+[`PROJECT_GOVERNANCE.md`](PROJECT_GOVERNANCE.md) defines the permanent roles,
+acceptance outcomes, definition of done, and governance responsibilities. This
+document supplies the operational repository procedure and reusable handover.
+
 It controls implementation procedure. It does not override product decisions
 made by the Product Owner or decisions recorded in authoritative project
 documents. When this workflow conflicts with a packet-specific instruction, the

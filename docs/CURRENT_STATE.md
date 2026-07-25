@@ -28,6 +28,12 @@ repository-versus-live evidence record. Packet 136 is the latest completed
 documentation packet; it does not change the Packet 133 application-capability
 verification point above.
 
+**Project governance:** Packet 137 added
+[`docs/PROJECT_GOVERNANCE.md`](PROJECT_GOVERNANCE.md) for permanent authority,
+acceptance, definition-of-done, safety, evidence, and handover rules. Packet 137
+is the latest completed documentation packet; it does not change the Packet 133
+application-capability verification point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
