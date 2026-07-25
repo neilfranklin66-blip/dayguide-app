@@ -77,6 +77,23 @@ Authenticated observations are recorded as authoritative Product
 Owner-transcribed evidence, not misrepresented as independently reproduced by
 Codex.
 
+### Packet 140 subsequent evidence
+
+Packet 139's statement that exact `GOOGLE_PLACES_API_KEY` was absent is a dated
+finding from the authenticated capture. Packet 140 later recorded that the
+Product Owner:
+
+- preserved the current production artifact outside the repository with
+  recorded size and SHA-256 evidence; and
+- created exact `GOOGLE_PLACES_API_KEY` as a secret for the Production context,
+  scoped to Builds, Functions, and Runtime.
+
+The legacy client-prefixed variable remained configured, and no deployment or
+function invocation followed the correction. Current recovery and configuration
+evidence is in
+[`NETLIFY_RECOVERY_AND_SECRET_CONFIGURATION.md`](NETLIFY_RECOVERY_AND_SECRET_CONFIGURATION.md).
+Codex did not access the archive, `.env.local`, Netlify, or a secret value.
+
 ## 3. Project identity
 
 | Field | Authenticated observation |
