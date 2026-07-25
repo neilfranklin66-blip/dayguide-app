@@ -53,6 +53,20 @@ build/environment configuration, deploy provenance/history, and rollback
 capability therefore remain unresolved. No login, deployment, function-provider
 request, environment-value access, or external setting change occurred.
 
+### Packet 139 authenticated evidence supplement
+
+Packet 139 records authenticated Netlify browser observations captured manually
+by the Product Owner on 25 July 2026. Codex did not access Netlify or GitHub.
+The full transcription and evidence limitations are in
+[`NETLIFY_AUTHENTICATED_EVIDENCE.md`](NETLIFY_AUTHENTICATED_EVIDENCE.md).
+
+The authenticated observations identify the project and owner, confirm that no
+Git repository is linked, confirm CLI deployment with skipped build stages,
+identify one deployed function (`places-nearby`), confirm the exact required
+server variable is absent while a `REACT_APP_` name is configured, and identify
+a manual retained-deploy recovery control subject to 90-day automatic deletion.
+No secret value or external setting was accessed or changed.
+
 ## 2. Evidence methodology
 
 The audit used:
@@ -77,15 +91,25 @@ Packet 138 adds **Verified — public live** evidence for the homepage, HTTP-to-
 HTTPS redirect, and unavailable `places-photo` route. It does not promote the
 Packet 137 deployment-method observations to Netlify-confirmed facts.
 
-Excluded evidence included untracked files, secret values, provider consoles,
+Packet 139 adds **Authenticated Product Owner-transcribed Netlify evidence**:
+facts observed by the Product Owner in an authenticated session and supplied to
+Codex for documentation. They are stronger than unauthenticated assumptions but
+are not described as independently reproduced by Codex.
+
+Packet 136 excluded untracked files, secret values, provider consoles,
 authenticated sessions, deployment logs, build logs for the current commit,
 local dependency state, paid API flows, and undocumented operator knowledge.
+Packet 139 adds only the bounded authenticated observations supplied by the
+Product Owner; secret values and unrelated account information remain excluded.
 
 Classifications used throughout:
 
 - **Verified — repository:** directly proven by tracked content or Git metadata.
 - **Verified — public live:** directly demonstrated by a safe unauthenticated
   public check.
+- **Authenticated Product Owner-transcribed:** observed by the Product Owner in
+  an authenticated Netlify session and supplied for documentation; not
+  independently accessed by Codex.
 - **Documented but unverified:** stated in repository documentation without
   independent confirmation.
 - **Unverified:** insufficient evidence.
@@ -262,22 +286,22 @@ establish the state of every function.
 
 ## 11. Repository-to-deployment consistency matrix
 
-| Item | Repository evidence | Public-live evidence | Classification | Risk or follow-up |
+| Item | Repository evidence | Authenticated/public evidence | Classification | Risk or follow-up |
 |---|---|---|---|---|
-| Repository remote | Established GitHub `origin`. | None required for local metadata. | Verified — repository | Confirm provider linkage separately. |
-| Production branch | GitHub default is `master`; no tracked Netlify branch setting. | Packet 137 says automatic GitHub deployment is not established. | Unverified | Confirm whether a provider production branch exists or is relevant to the manual/prebuilt process. |
+| Repository remote | Established GitHub `origin`. | Netlify is not linked to a repository. | Mixed repository and authenticated evidence | Defer provider linkage until the recorded remediation prerequisites are complete. |
+| Production branch | GitHub default is `master`; no tracked Netlify branch setting. | Netlify showed `Current repository — Not linked`; no Netlify production branch applies. | Authenticated Product Owner-transcribed | Define `master` as the production branch only when Git connection is separately authorised. |
 | Build command | `npm run build`. | None. | Verified — repository | Run a separately authorised clean build with the selected runtime. |
 | Publish directory | `build`. | None. | Verified — repository | Confirm Netlify uses tracked configuration. |
-| Function directory | `netlify/functions`. | None. | Verified — repository | Confirm both functions deploy. |
+| Function directory | `netlify/functions`. | Current CLI deploy listed one function; the Functions page listed only `places-nearby`. | Mixed repository and authenticated evidence | Ensure both tracked functions are included in a controlled deployment. |
 | Redirects | No tracked redirect/rewrite. | None. | Verified — repository | Reassess if routing/deep links are introduced. |
 | Runtime version | No root runtime pin. | None. | Risk | Select and pin a supported Node version. |
-| Environment names | One server variable name; client-secret form prohibited. | None. | Verified — repository | Verify provider presence and controls without recording values. |
-| Frontend function URLs | Two relative Netlify function URLs match filenames. | None. | Verified — repository | Perform a separately authorised live function check. |
+| Environment names | Tracked functions require `GOOGLE_PLACES_API_KEY`; client-secret form is prohibited. | Exact required name absent; `REACT_APP_GOOGLE_PLACES_API_KEY` present in four deploy contexts. No values accessed. | Confirmed mismatch — mixed repository and authenticated evidence | Correct naming without exposing the value and review the client-prefixed variable. |
+| Frontend function URLs | Two relative Netlify function URLs match filenames. | `places-nearby` is listed as running; `places-photo` is absent and its public route returned `404`. | Mixed authenticated and Verified — public live | Deploy both tracked functions and verify both routes safely. |
 | External providers | Google, Firebase, GitHub, Maps, and placeholder service are evidenced. | None. | Verified — repository | Verify operational readiness provider by provider. |
-| Deployment method | No tracked deployment trigger or upload script. | Packet 137 says manual or prebuilt upload and skipped Netlify build. | Documented but unverified | Capture the actual upload/build procedure and owner. |
-| Live URL | No tracked URL. | Packet 138 verified that the supplied Netlify URL returned `200` and rendered DayGuide. Provider canonical-domain settings remain unavailable. | Verified — public live for reachability and content; Unverified for provider canonical status | Confirm canonical-domain settings through authenticated read-only evidence. |
-| Deployed commit identity | No tracked mechanism. | Packet 137 says no Git commit is shown. | Unverified | Add release/deploy traceability. |
-| Rollback mechanism | No tracked runbook, workflow, or rollback reference. | None. | Risk | Define ownership and rollback procedure. |
+| Deployment method | No tracked deployment trigger or upload script. | Project showed `Last deployed from CLI`; current deploy skipped all build stages. | Authenticated Product Owner-transcribed | Preserve recovery evidence before replacing the manual process. |
+| Live URL | No tracked URL. | Authenticated production domain matches Packet 138's reachable Netlify hostname; no custom domain is configured. | Authenticated and Verified — public live | Record future domain changes through controlled evidence. |
+| Deployed commit identity | No tracked mechanism. | Project is not Git-linked; no repository, branch, SHA, or commit message was displayed. | Confirmed traceability gap | Establish traceable Git deployment only after remediation. |
+| Rollback mechanism | No tracked runbook, workflow, or rollback reference. | An earlier retained deploy offered `Publish deploy`; automatic deploy deletion is 90 days. | Authenticated Product Owner-transcribed | Preserve a known-good artifact and document rollback before Git connection. |
 
 ## 12. Deployment risks and contradictions
 
@@ -295,6 +319,12 @@ currently present in production.
 - **Deployment traceability — Risk:** the Product Owner-supplied observation
   describes a manual or prebuilt upload, skipped Netlify build, and no displayed
   Git commit. The live artifact cannot be mapped to repository evidence.
+- **Configuration mismatch — Risk:** authenticated evidence confirms that exact
+  `GOOGLE_PLACES_API_KEY` is absent while a client-prefixed name is configured.
+- **Function completeness — Risk:** authenticated evidence lists only
+  `places-nearby`; Packet 138 verified the `places-photo` route returns `404`.
+- **Recovery retention — Risk:** manual rollback is available only through a
+  retained deploy, and automatic deploy deletion is set to 90 days.
 - **Method handling — Risk:** serverless handlers do not restrict request
   methods.
 - **Public identity metadata — Inconsistent:** repository documentation and UI
@@ -303,10 +333,12 @@ currently present in production.
 
 ### Suspected risks requiring validation
 
-- Netlify site linkage, production branch, upload procedure, build runtime, and
-  current deployed commit are **Unverified**.
-- Google key presence, restrictions, billing, quota, and function deployment are
-  **Unverified**.
+- The project is confirmed not Git-linked, the source is confirmed as CLI, and
+  no Netlify production branch applies. The exact upload procedure, build
+  runtime, artifact source, and deployed commit remain **Unverified**.
+- Environment-variable names and deployed function inventory are authenticated;
+  secret controls, billing, quota, deployed function source, and live
+  nearby-search success remain **Unverified**.
 - Firebase project availability, providers, authorised domains, rules, and quota
   are **Unverified**.
 - Public frontend availability is **Verified — public live** at the Packet 138
@@ -328,20 +360,22 @@ currently present in production.
 
 ### Missing operational knowledge
 
-Netlify site identity/linkage, production branch, exact upload procedure,
-deployment owner, selected runtime, environment presence, live function state,
-deployed commit, monitoring, release history, and rollback procedure are
-unrecorded or inaccessible. A candidate public URL is supplied externally but is
-not tracked or independently verified.
+The Netlify project identity, owner label, domain, lack of repository linkage,
+CLI source, deploy history, one running function, configured variable names, and
+manual retained-deploy recovery control are now recorded. Exact upload
+procedure, selected runtime, deployed source/commit, live nearby-search
+behaviour, credential controls, monitoring, and a tested rollback procedure
+remain unavailable.
 
 ### Product Owner decisions
 
-- **Decision required:** confirm whether the supplied URL is canonical and where
-  it should be recorded.
-- **Decision required:** identify the deployment owner and choose the intended
-  manual/prebuilt or Git-connected delivery model.
-- **Decision required:** confirm whether a production branch is relevant and
-  define the deployment trigger or upload procedure.
+- **Decision recorded:** do not connect Git yet.
+- **Decision required:** authorise preservation or download of a known-good
+  deploy before changing production configuration.
+- **Decision required:** authorise correction of the server variable name and a
+  controlled deployment containing both functions.
+- **Decision required:** after remediation, approve Git-connected deployment
+  from `master`.
 - **Decision required:** approve a supported Node runtime for reproducible
   builds.
 - **Decision required:** approve ownership and minimum rollback/runbook
@@ -353,15 +387,15 @@ not tracked or independently verified.
 |---|---|---|
 | Repository configuration | Amber | Core build/publish/function settings exist, but runtime, redirects policy, branch policy, and site identity are incomplete. |
 | Reproducible build knowledge | Amber | npm lock and build script exist; runtime is unpinned and no Packet 136 build ran. |
-| Hosting configuration | Amber | Netlify is intended and partially configured; a URL is supplied externally, but the current deployment appears manual/prebuilt and provider-side settings are unverified. |
+| Hosting configuration | Red | The project is authenticated and reachable, but it is not Git-linked and the current production artifact is an unattributed prebuilt CLI deploy. |
 | Serverless routing | Red | Client paths and function filenames align, but Packet 138 verified that the expected public `places-photo` route returned `404`; the nearby route and method behaviour remain unverified. |
-| Environment configuration | Red | The required variable name is known, but provider presence and controls are entirely unverified. “Red” records missing operational evidence, not a proved missing key. |
+| Environment configuration | Red | Authenticated evidence confirms the exact required server name is absent and only a `REACT_APP_` form is configured; value and operational result were not accessed. |
 | External-service readiness | Red | Google and Firebase are essential to core paths but have no live evidence. |
 | Live frontend availability | Green for bounded reachability only | Packet 138 observed an HTTPS `200` response and DayGuide authentication interface; authenticated behaviour remains unverified. |
 | Live restaurant functionality | Not assessed | Paid/external API flows were explicitly excluded. |
-| Security of secret handling | Amber | Tracked code keeps the Google key server-side; provider controls and deployed bundle/state were not assessed. |
-| Rollback readiness | Red | No tracked rollback mechanism or runbook exists. |
-| Deployment ownership and procedure | Red | No repository-readable owner, trigger, release, or rollback procedure exists. |
+| Security of secret handling | Red | Tracked code keeps the key server-side, but the authenticated environment uses a client-prefixed name that can enter CRA build output; current artifact exposure is not proved. |
+| Rollback readiness | Amber | A retained earlier deploy can be manually published, but recovery was not tested, no runbook exists, and deploys are automatically deleted after 90 days. |
+| Deployment ownership and procedure | Red | The owner label and CLI source are known, but the artifact source, commit, repeatable release procedure, and tested rollback are absent. |
 
 Overall readiness is **Amber with Red operational-knowledge gaps**. The
 repository describes a plausible deployment architecture but does not establish
@@ -372,23 +406,18 @@ deployment exists.
 
 Ranked, bounded later packets:
 
-1. **Urgent — traceable deployment record:** record the confirmed canonical URL,
-   Netlify site/owner, actual upload procedure, production-branch relevance,
-   build status, and deploy trigger without recording secret values.
-2. **Urgent — environment verification:** have an authorised operator verify the
-   required variable's presence, scope, restrictions, billing, quota, and
-   rotation controls without exposing its value.
-3. **High — runtime and production build verification:** select and pin a
-   supported Node version, then run a clean build in a separately authorised
-   product/configuration packet.
-4. **High — deployment and rollback runbook:** document deploy ownership,
-   release evidence, monitoring, rollback steps, and recovery authority.
-5. **High — safe public frontend verification:** after the supplied URL is
-   confirmed canonical, perform a separately authorised single unauthenticated
-   homepage/header/static-asset check and record deployed-commit traceability if
-   available.
-6. **High — controlled live restaurant verification:** separately authorise a
-   minimal provider/function check with cost and credential safeguards.
+1. **Urgent — preserve recovery evidence:** separately authorise preservation or
+   download of a known-good retained deploy before production changes.
+2. **Urgent — correct environment naming:** replace the client-prefixed
+   configuration with the exact server-side name without exposing its value.
+3. **Urgent — controlled function deployment:** ensure both tracked functions
+   are included and verify both routes safely.
+4. **High — Git-connected delivery:** after the first three steps, connect the
+   project to GitHub with `master` as the approved production branch.
+5. **High — traceable release and rollback:** perform a controlled production
+   deploy, verify its commit identity, and test/document the rollback procedure.
+6. **High — runtime and build reproducibility:** select and pin a supported Node
+   version and confirm the hosted build path.
 7. **Medium — public identity metadata:** replace generic Create React App title
    and manifest identity in a bounded product-code/static-assets packet.
 
@@ -405,14 +434,17 @@ Known from Packet 138 public-live evidence: the supplied URL redirects to HTTPS,
 returns `200` from Netlify, visibly renders DayGuide, exposes no observed commit
 identity, and returns `404` for the expected `places-photo` function route.
 
-Known only from Product Owner-supplied external facts: an apparently manual or
-prebuilt production upload, a skipped Netlify build, no displayed Git commit,
-and no established automatic GitHub deployment.
+Known from authenticated Product Owner-transcribed Netlify evidence: the project
+identity and owner label, production domain, absence of custom domains and Git
+linkage, CLI deployment source, skipped build stages, deployment history, one
+running `places-nearby` function, absence of `places-photo`, configured
+client-prefixed variable name, manual publish-deploy recovery, and 90-day
+automatic deletion.
 
-Unknown: whether the URL is configured as canonical, whether Netlify is linked
-to this repository, which branch and runtime it uses, what exact artifact is
-live, whether the nearby function and variable are present, whether Google and
-Firebase are operational, who owns releases, and how rollback works.
+Unknown: the deployed source and Git commit, function runtime, exact CLI upload
+procedure, live nearby-search behaviour, secret controls, Google and Firebase
+operational health, and whether manual republishing restores the intended static
+and function state.
 
 The repository contains the core ingredients of a deployment process but not a
 fully reproducible deployment process: runtime selection, provider linkage,
@@ -421,8 +453,6 @@ reachability and bounded visible content are now evidence at the Packet 138
 capture time, but they do not establish provider canonical-domain settings,
 deployment provenance, complete function availability, or reproducibility.
 
-**Single recommended next action:** commission an operator-attended,
-authenticated, read-only Netlify capture that confirms site ownership and
-linkage, production-branch relevance, deploy history/provenance, build and
-functions settings, rollback evidence, and environment-variable presence
-without values. Do not connect Git before those facts are reviewed.
+**Single recommended next action:** do not connect Git yet; first separately
+authorise preservation or download of a known-good retained deploy so later
+configuration and function remediation has a durable recovery point.

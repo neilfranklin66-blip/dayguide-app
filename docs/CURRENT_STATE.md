@@ -42,6 +42,15 @@ Provider linkage, deploy provenance, environment presence, and rollback remain
 unresolved because authenticated Netlify access was unavailable. This evidence
 does not change the Packet 133 application-capability verification point above.
 
+**Authenticated Netlify evidence:** Packet 139 added
+[`docs/NETLIFY_AUTHENTICATED_EVIDENCE.md`](NETLIFY_AUTHENTICATED_EVIDENCE.md)
+from an authenticated browser session operated by the Product Owner. It confirms
+that production is an unattributed CLI deploy with no Git linkage, only
+`places-nearby` deployed, and a configured environment-variable name that does
+not match tracked function requirements. Codex did not access Netlify, and the
+evidence does not change the Packet 133 application-capability verification
+point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -91,7 +100,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Plan persistence & resume | **Implemented** | `src/utils/planStorage.js` writes one versioned `localStorage` key (`dayguide_saved_plan_v1`); persists timeline + render settings only (no queues, selections, or geolocation). Resume restores a read-only plan view. A plan dated before the local calendar day is discarded on load and excluded from Resume (`isPlanDateExpired`/`loadPlan`, `planStorage.js`). |
 | Sharing | **Implemented (QR text)** | `TimelineShareQRModal.jsx` encodes a plain-text itinerary summary (`buildTimelineShareText`) as a QR code. No server-side share link or export. |
 | Localisation | **Implemented** | Five locales (`en`, `es`, `fr`, `zh`, `vi`) in `src/i18n.js`; language selector in header and login; choice persisted to `localStorage` and, for signed-up users, to Firestore. Key parity checked by `src/locales/localeConsistency.test.js`. |
-| Deployment / API handling | **Manual launch requirement** | `GOOGLE_PLACES_API_KEY` is server-side only, read by `netlify/functions/*`; documented in `.env.local.example`. Live restaurants require this key set in the Netlify environment and the functions deployed. |
+| Deployment / API handling | **Manual launch requirement — confirmed production gaps** | Tracked functions require server-only `GOOGLE_PLACES_API_KEY`. Packet 139 authenticated evidence confirms the exact name is absent, a client-prefixed form is configured, and only `places-nearby` is deployed. The current CLI artifact is not tied to tracked source, and live nearby-search success was not tested. |
 | Multi-day planning | **Not implemented** | No multi-day state, tabs, or routes exist in tracked `DayGuide.jsx`; planning is single-day, single-date. |
 | Favourites / booking | **Not implemented** | No favourites store or booking action is present in tracked source. |
 
@@ -160,7 +169,11 @@ Only gaps supported by repository evidence are listed.
   environment, `places-nearby.js` returns a `REQUEST_DENIED`/`NO_API_KEY` state
   and the app shows the "live data unavailable" card — the restaurant stage has
   no working recommendations. (`netlify/functions/places-nearby.js`,
-  `restaurantEngine.js`.)
+  `restaurantEngine.js`.) Packet 139 authenticated evidence confirms the exact
+  server-side name is absent and only `places-nearby` is listed as deployed.
+  Because the CLI artifact cannot be tied to tracked code and the nearby route
+  was not invoked, the production failure outcome remains operationally
+  untested.
 
 ### Launch limitations that can be disclosed
 - **Activities are sample/demo data, not real local recommendations.** No live
@@ -181,6 +194,12 @@ Only gaps supported by repository evidence are listed.
   must not be, set in tracked configuration. Deploying the functions and
   maintaining the external services (Google Places, Firebase) remain
   operational requirements outside version control.
+- **Current production does not follow a traceable repository deployment.**
+  Packet 139 authenticated evidence shows the Netlify project is not
+  Git-linked, was last deployed from CLI with build stages skipped, lists only
+  `places-nearby`, and lacks the exact server-side variable name. Auto
+  publishing applies to completed manual or CLI deploys; it is not continuous
+  deployment from Git.
 - **Firebase project configuration is committed** in `src/firebase.js` (web app
   config, which Firebase treats as public). A live deployment depends on that
   Firebase project remaining provisioned.

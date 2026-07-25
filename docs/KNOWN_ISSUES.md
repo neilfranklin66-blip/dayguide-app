@@ -6,15 +6,15 @@ This register records evidence-backed known issues, technical debt, architecture
 risks, operational uncertainties, security and configuration gaps, test and
 accessibility gaps, and explicitly accepted limitations for DayGuide.
 
-- **Current verification date:** 13 July 2026
+- **Current verification date:** 25 July 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packet 136 deployment audit
+- **Latest targeted update:** Packet 139 authenticated Netlify evidence
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
-- **Evidence scope:** tracked repository files and the new Packet 134 document
-  only
-- **Runtime scope:** no application tests or production build were run for
-  Packet 134
+- **Evidence scope:** tracked repository evidence plus authenticated Netlify
+  observations captured by the Product Owner and transcribed in Packet 139
+- **Runtime scope:** Packet 139 is documentation-only; its full automated suite
+  result is recorded in section 9
 
 The untracked `.claude/` and `Dayguide#2/` folders are protected and were not
 inspected, listed, searched, opened, modified, moved, renamed, staged, or
@@ -107,9 +107,11 @@ and referenced here without receiving another ID.
 The Critical severity and launch-blocking classification are conditional on the
 production key or Netlify functions being unavailable. Tracked evidence proves
 the failure behaviour and `docs/CURRENT_STATE.md` identifies that condition as
-the Packet 133 launch blocker. Tracked evidence does **not** prove that the
-condition is present in production, so the entry remains an **Unverified
-operational assumption**, not a verified open production defect.
+the Packet 133 launch blocker. Packet 139 authenticated evidence confirms a
+variable-name mismatch and incomplete function deployment, but the deployed
+nearby function cannot be tied to tracked source and was not invoked. The entry
+is therefore **Partially verified**, not a conclusively verified production
+failure.
 
 No other entry is classified as launch blocking.
 
@@ -186,24 +188,32 @@ No other entry is classified as launch blocking.
 - **ID:** OP-001
 - **Category:** Deployment and external-service uncertainty
 - **Severity:** Critical
-- **Status:** Unverified operational assumption
+- **Status:** Partially verified
 - **Launch blocking:** Yes, conditionally — only if the production key or
   required Netlify functions are unavailable
-- **Verification status:** Failure behaviour is verified in tracked evidence;
-  actual production configuration and live success are unverified.
+- **Verification status:** Tracked failure behaviour, authenticated
+  configuration gaps, and incomplete function deployment are verified through
+  their stated evidence sources; live nearby-search success and deployed source
+  remain unverified.
 - **Factual evidence:** `netlify/functions/places-nearby.js` returns
   `REQUEST_DENIED` with `NO_API_KEY` when `GOOGLE_PLACES_API_KEY` is absent.
   `src/api/placesApi.js` maps an undeployed function response (HTTP 404) to the
   same unavailable state. `docs/CURRENT_STATE.md` identifies the condition as
   the launch blocker because restaurant recommendations are live-only.
+  Product Owner-transcribed authenticated Netlify evidence dated 25 July 2026
+  shows only `places-nearby` deployed, exact `GOOGLE_PLACES_API_KEY` absent, and
+  only `REACT_APP_GOOGLE_PLACES_API_KEY` configured. Packet 138 public evidence
+  shows the `places-photo` route returns `404`.
 - **Impact:** If the condition is present, the core restaurant recommendation
-  journey cannot provide live recommendations.
+  journey cannot provide live recommendations; the missing photo function also
+  prevents the tracked photo-proxy route from operating.
 - **Likely dependency:** Netlify deployment state, production environment
-  configuration, Google Places availability, billing, restrictions, and quota.
-- **Recommended next action:** Perform an authorised production smoke check that
-  confirms both functions are deployed and a nearby search succeeds without
-  exposing the key.
-- **Verification date:** 13 July 2026
+  configuration, deployed function source, Google Places availability, billing,
+  restrictions, and quota.
+- **Recommended next action:** In a controlled remediation packet, correct the
+  server variable name without exposing its value, deploy both tracked
+  functions, and verify both routes safely.
+- **Verification date:** 25 July 2026
 
 ### OP-002 — Production Firebase authentication state is unverified
 
@@ -249,10 +259,36 @@ No other entry is classified as launch blocking.
   build.
 - **Verification date:** 13 July 2026
 
-These entries do not assert that production is misconfigured. Netlify deployment,
-Google key presence and controls, Firebase provider state, external-service
-availability, billing, and quotas remain operational assumptions until verified
-in the authorised environment.
+### OP-004 — Production deployment lacks Git provenance
+
+- **ID:** OP-004
+- **Category:** Deployment provenance and recovery risk
+- **Severity:** High
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Product Owner-transcribed authenticated evidence
+  verifies the current delivery and retention configuration; artifact source,
+  commit identity, and recovery effectiveness remain unavailable.
+- **Factual evidence:** On 25 July 2026, authenticated Netlify evidence showed
+  `Current repository — Not linked`, `Last deployed from CLI`, and skipped build
+  stages. No repository, branch, commit SHA, commit message, or deploy message
+  was displayed. An earlier retained deploy offered `Publish deploy`, while
+  automatic deploy deletion was set to 90 days.
+- **Impact:** Production cannot be mapped to reviewed source, and manual
+  recovery points can expire before a reproducible replacement and tested
+  rollback process exist.
+- **Likely dependency:** Preserved known-good deploy evidence, controlled
+  configuration remediation, an approved Git connection, and a deployment and
+  rollback runbook.
+- **Recommended next action:** Preserve or download a known-good deploy under
+  separate authority, remediate function and environment gaps, then establish a
+  traceable deployment from `master` and verify rollback.
+- **Verification date:** 25 July 2026
+
+The Netlify variable-name mismatch, incomplete function deployment, and missing
+Git linkage are confirmed configuration facts. Live nearby-search behaviour,
+credential controls, Firebase provider state, external-service availability,
+billing, and quotas remain operationally unverified.
 
 ## 8. Security, privacy and configuration gaps
 
@@ -282,21 +318,30 @@ in the authorised environment.
 - **ID:** SP-002
 - **Category:** Security and operational configuration uncertainty
 - **Severity:** Medium
-- **Status:** Unverified operational assumption
+- **Status:** Partially verified
 - **Launch blocking:** No
-- **Verification status:** Server-side key handling in code is verified;
-  production restriction, ownership, rotation, billing alerts, and quota
-  monitoring are unverified.
+- **Verification status:** Server-side key handling in tracked code and the
+  authenticated Netlify variable-name mismatch are verified through their
+  stated evidence sources; values, deployed-bundle exposure, restriction,
+  ownership, rotation, billing alerts, and quota monitoring are unverified.
 - **Factual evidence:** `.env.local.example` instructs operators to keep
   `GOOGLE_PLACES_API_KEY` server-side, and the Netlify functions consume it.
-  Tracked files contain no evidence of production control settings.
+  Product Owner-transcribed authenticated evidence dated 25 July 2026 shows
+  exact `GOOGLE_PLACES_API_KEY` absent and
+  `REACT_APP_GOOGLE_PLACES_API_KEY` configured for Builds, Functions, and
+  Runtime in four deploy contexts. No value was accessed. A `REACT_APP_` name
+  can enter CRA browser output during a frontend build; current artifact
+  exposure is not proved.
 - **Impact:** Weak or missing operational controls could create misuse, cost, or
-  service-continuity risk; no such failure is asserted from repository absence.
+  service-continuity risk. A future CRA build with the client-prefixed variable
+  could expose its value; no current exposure is asserted.
 - **Likely dependency:** Google Cloud and Netlify administrative configuration
   and operational ownership.
-- **Recommended next action:** Record an authorised credential, restriction,
-  billing-alert, quota, and rotation review outside this packet.
-- **Verification date:** 13 July 2026
+- **Recommended next action:** Under separate authority, correct the Netlify
+  variable name without exposing its value, remove or neutralise the
+  client-prefixed configuration safely, and complete a restriction,
+  billing-alert, quota, and rotation review.
+- **Verification date:** 25 July 2026
 
 The concrete Firebase web configuration in `src/firebase.js` and its
 “Replace these values” comment are ambiguous: static evidence cannot establish
@@ -353,6 +398,11 @@ or provider governance.
 Packet 134 did not rerun application tests or the production build. The Packet
 131 baseline of 37 passing suites, 914 passing tests, and a successful build is
 dated 11 July 2026 and is not presented as current validation.
+
+Packet 139 documentation validation on 25 July 2026 ran the full automated
+suite: 37 suites and 927 tests passed, with no failures or snapshots. No
+production build was required or run because Packet 139 changed documentation
+only.
 
 ## 10. Deferred or accepted limitations
 

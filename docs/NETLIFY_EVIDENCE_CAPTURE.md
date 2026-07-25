@@ -32,6 +32,15 @@ new permissions. Consequently, account, site, deployment-history, provider-side
 build, environment, and rollback fields that require authenticated Netlify
 access remain unresolved.
 
+### Subsequent authenticated evidence
+
+Packet 139 records later authenticated observations supplied by the Product
+Owner in
+[`NETLIFY_AUTHENTICATED_EVIDENCE.md`](NETLIFY_AUTHENTICATED_EVIDENCE.md).
+That record resolves several Packet 138 unknowns for current project knowledge
+without changing this document's historical capture or claiming that Codex
+independently accessed Netlify.
+
 ## Evidence methodology
 
 Evidence classifications:
