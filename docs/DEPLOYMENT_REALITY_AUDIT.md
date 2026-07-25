@@ -37,6 +37,22 @@ Packet 137 did not access the Netlify UI or API and did not make a public
 network request. Its external observations are recorded as supplied facts,
 separate from repository evidence and independent public-live verification.
 
+### Packet 138 evidence supplement
+
+Packet 138 performed the separately authorised read-only evidence capture on
+25 July 2026 at repository commit `76ec515`. The complete evidence register is
+in [`NETLIFY_EVIDENCE_CAPTURE.md`](NETLIFY_EVIDENCE_CAPTURE.md).
+
+The supplied HTTPS URL returned `200 OK` from Netlify and visibly rendered the
+DayGuide authentication interface. Plain HTTP redirected to HTTPS. The expected
+`places-photo` Netlify Function route returned `404 Not Found`. No authenticated
+Netlify access was available: the CLI was absent, the browser required login,
+the connected Chrome surface was unavailable, and the unauthenticated site API
+returned `401 Access Denied`. Site ownership, repository linkage, provider-side
+build/environment configuration, deploy provenance/history, and rollback
+capability therefore remain unresolved. No login, deployment, function-provider
+request, environment-value access, or external setting change occurred.
+
 ## 2. Evidence methodology
 
 The audit used:
@@ -56,6 +72,10 @@ Packet 137 supplied a public URL and Netlify deployment observations through the
 Product Owner-approved packet. They were not independently reproduced by Codex.
 They are therefore identified as **Product Owner-supplied external facts** and
 remain **Documented but unverified** under this audit's evidence classification.
+
+Packet 138 adds **Verified — public live** evidence for the homepage, HTTP-to-
+HTTPS redirect, and unavailable `places-photo` route. It does not promote the
+Packet 137 deployment-method observations to Netlify-confirmed facts.
 
 Excluded evidence included untracked files, secret values, provider consoles,
 authenticated sessions, deployment logs, build logs for the current commit,
@@ -218,9 +238,27 @@ and no public check occurred.
 | Automatic GitHub deployment has not been established | Approved Packet 137 instruction | Documented but unverified | No Git-connected build may be assumed. |
 
 Packet 137 did not open the URL, inspect public headers or assets, invoke a
-function, test Firebase, submit data, or trigger a paid external API. The
-availability and content of the candidate URL remain **Unverified**, and there
-is still no **Verified — public live** evidence in this audit.
+function, test Firebase, submit data, or trigger a paid external API. At the
+Packet 137 update point, the availability and content of the candidate URL
+remained **Unverified**, and the audit had no **Verified — public live**
+evidence.
+
+### Packet 138 public-live evidence
+
+At 12:13–12:15 UTC on 25 July 2026:
+
+- plain HTTP returned `301 Moved Permanently` to the supplied HTTPS URL;
+- the HTTPS homepage returned `200 OK` with `Server: Netlify`;
+- the rendered page showed the DayGuide authentication interface;
+- its title and description retained generic Create React App identity;
+- no Git commit identity was exposed in the observed headers or page metadata;
+  and
+- `/.netlify/functions/places-photo` returned `404 Not Found`.
+
+The nearby-search function was not invoked because a deployed handler could
+make a paid Google Places request. The photo-route `404` proves that expected
+route was unavailable at capture time; it does not prove why it was absent or
+establish the state of every function.
 
 ## 11. Repository-to-deployment consistency matrix
 
@@ -237,7 +275,7 @@ is still no **Verified — public live** evidence in this audit.
 | Frontend function URLs | Two relative Netlify function URLs match filenames. | None. | Verified — repository | Perform a separately authorised live function check. |
 | External providers | Google, Firebase, GitHub, Maps, and placeholder service are evidenced. | None. | Verified — repository | Verify operational readiness provider by provider. |
 | Deployment method | No tracked deployment trigger or upload script. | Packet 137 says manual or prebuilt upload and skipped Netlify build. | Documented but unverified | Capture the actual upload/build procedure and owner. |
-| Live URL | No tracked URL. | Packet 137 supplies the Netlify URL; Codex made no request. | Documented but unverified | Decide where the canonical URL should be recorded and verify it separately. |
+| Live URL | No tracked URL. | Packet 138 verified that the supplied Netlify URL returned `200` and rendered DayGuide. Provider canonical-domain settings remain unavailable. | Verified — public live for reachability and content; Unverified for provider canonical status | Confirm canonical-domain settings through authenticated read-only evidence. |
 | Deployed commit identity | No tracked mechanism. | Packet 137 says no Git commit is shown. | Unverified | Add release/deploy traceability. |
 | Rollback mechanism | No tracked runbook, workflow, or rollback reference. | None. | Risk | Define ownership and rollback procedure. |
 
@@ -271,7 +309,11 @@ currently present in production.
   **Unverified**.
 - Firebase project availability, providers, authorised domains, rules, and quota
   are **Unverified**.
-- Public frontend and asset availability are **Unverified**.
+- Public frontend availability is **Verified — public live** at the Packet 138
+  capture time; authenticated workflow, Firebase, and full asset/application
+  behaviour remain **Unverified**.
+- The expected public `places-photo` function route returned `404`; the
+  `places-nearby` route was deliberately not invoked.
 
 ### Documentation inconsistencies
 
@@ -312,10 +354,10 @@ not tracked or independently verified.
 | Repository configuration | Amber | Core build/publish/function settings exist, but runtime, redirects policy, branch policy, and site identity are incomplete. |
 | Reproducible build knowledge | Amber | npm lock and build script exist; runtime is unpinned and no Packet 136 build ran. |
 | Hosting configuration | Amber | Netlify is intended and partially configured; a URL is supplied externally, but the current deployment appears manual/prebuilt and provider-side settings are unverified. |
-| Serverless routing | Amber | Client paths and function filenames align; deployed routes and method behaviour are unverified. |
+| Serverless routing | Red | Client paths and function filenames align, but Packet 138 verified that the expected public `places-photo` route returned `404`; the nearby route and method behaviour remain unverified. |
 | Environment configuration | Red | The required variable name is known, but provider presence and controls are entirely unverified. “Red” records missing operational evidence, not a proved missing key. |
 | External-service readiness | Red | Google and Firebase are essential to core paths but have no live evidence. |
-| Live frontend availability | Not assessed | Packet 137 supplied a URL, but no public request was authorised or performed. |
+| Live frontend availability | Green for bounded reachability only | Packet 138 observed an HTTPS `200` response and DayGuide authentication interface; authenticated behaviour remains unverified. |
 | Live restaurant functionality | Not assessed | Paid/external API flows were explicitly excluded. |
 | Security of secret handling | Amber | Tracked code keeps the Google key server-side; provider controls and deployed bundle/state were not assessed. |
 | Rollback readiness | Red | No tracked rollback mechanism or runbook exists. |
@@ -359,22 +401,28 @@ command, build output, Netlify function directory, two function implementations,
 relative client routes, one server-side variable name, and Google/Firebase
 integration boundaries.
 
-Known only from Product Owner-supplied external facts: the candidate live URL,
-an apparently manual or prebuilt production upload, a skipped Netlify build, no
-displayed Git commit, and no established automatic GitHub deployment.
+Known from Packet 138 public-live evidence: the supplied URL redirects to HTTPS,
+returns `200` from Netlify, visibly renders DayGuide, exposes no observed commit
+identity, and returns `404` for the expected `places-photo` function route.
 
-Unknown: whether the URL is currently available and canonical, whether Netlify
-is linked to this repository, which branch and runtime it uses, what exact
-artifact is live, whether functions and variables are present, whether Google
-and Firebase are operational, who owns releases, and how rollback works.
+Known only from Product Owner-supplied external facts: an apparently manual or
+prebuilt production upload, a skipped Netlify build, no displayed Git commit,
+and no established automatic GitHub deployment.
+
+Unknown: whether the URL is configured as canonical, whether Netlify is linked
+to this repository, which branch and runtime it uses, what exact artifact is
+live, whether the nearby function and variable are present, whether Google and
+Firebase are operational, who owns releases, and how rollback works.
 
 The repository contains the core ingredients of a deployment process but not a
 fully reproducible deployment process: runtime selection, provider linkage,
 release traceability, ownership, and rollback are missing or unverified. Live
-behaviour cannot currently be trusted as evidence because no canonical public
-deployment was established and no permitted live observation occurred.
+reachability and bounded visible content are now evidence at the Packet 138
+capture time, but they do not establish provider canonical-domain settings,
+deployment provenance, complete function availability, or reproducibility.
 
-**Single recommended next action:** commission a read-only Netlify evidence
-capture that confirms the supplied URL's site linkage, deployment owner,
-production-branch relevance, build/upload method, environment-variable presence
-without values, and deployed-artifact metadata without changing any setting.
+**Single recommended next action:** commission an operator-attended,
+authenticated, read-only Netlify capture that confirms site ownership and
+linkage, production-branch relevance, deploy history/provenance, build and
+functions settings, rollback evidence, and environment-variable presence
+without values. Do not connect Git before those facts are reviewed.

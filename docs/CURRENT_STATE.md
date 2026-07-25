@@ -34,6 +34,14 @@ acceptance, definition-of-done, safety, evidence, and handover rules. Packet 137
 is the latest completed documentation packet; it does not change the Packet 133
 application-capability verification point above.
 
+**Read-only Netlify evidence:** Packet 138 added
+[`docs/NETLIFY_EVIDENCE_CAPTURE.md`](NETLIFY_EVIDENCE_CAPTURE.md). Its bounded
+public check verified that the supplied Netlify URL returned `200` and rendered
+DayGuide, while the expected `places-photo` function route returned `404`.
+Provider linkage, deploy provenance, environment presence, and rollback remain
+unresolved because authenticated Netlify access was unavailable. This evidence
+does not change the Packet 133 application-capability verification point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
