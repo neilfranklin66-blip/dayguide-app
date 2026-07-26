@@ -108,6 +108,70 @@ No live function was invoked. No repository connection, provider setting,
 deployment, publication, rollback, secret value, local environment file, or
 recovery archive was accessed or changed.
 
+### Packets 142 and 143 production-deployment supplement
+
+Packets 142 and 143 performed the separately authorised provider migration,
+deterministic-install correction, locked candidate verification, and deliberate
+publication on 26 July 2026. The complete evidence record is in
+[`TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md).
+
+The existing Netlify project was retained and linked to GitHub repository
+`neilfranklin66-blip/dayguide-app`, production branch `master`, using the
+tracked root build, publish, and functions settings. Publication was locked
+before the connection and remained locked after publication.
+
+The first Git-connected candidate for Packet 141 commit `f049d39` failed during
+the build with an ESLint/Jest environment-resolution error. Production remained
+the 20 May CLI deploy. Isolated reproduction established a current npm
+peer-resolution conflict in the Create React App 5 dependency tree. Packet 143
+added `.npmrc` with `legacy-peer-deps=true`; clean `npm ci`, 37 suites, 927
+tests, and a CI production build then passed. Packet 143 commit
+`5ef141bf903521dbb9b7c53ff5af682a920ef5be` was fast-forwarded to `master` and
+pushed.
+
+The replacement Google key was created in confirmed project
+`project-7e314c31-0522-4f34-ab8`, limited to `Places API`, and stored by the
+Product Owner as the protected Production value of
+`GOOGLE_PLACES_API_KEY`. Secret values were not supplied to Codex or recorded.
+The Netlify plan did not permit narrowing the variable from Builds, Functions,
+and Runtime to Functions only without an upgrade. No upgrade was authorised.
+
+Authenticated Netlify inspection then established that
+`REACT_APP_GOOGLE_PLACES_API_KEY` still contained values in four hosted
+contexts. A ready candidate built before its deletion was rejected after public
+bundle inspection found the legacy variable name and an additional
+Google-format key. That candidate was never published.
+
+The legacy variable was deleted in full. Netlify rebuilt exact commit
+`5ef141b` without cache. The resulting candidate:
+
+- deploy ID `6a6602bd6c7609eabb08d744`;
+- returned HTTP `200`;
+- deployed both tracked functions;
+- contained no legacy or server Places variable name in the public bundle;
+- contained one Google-format client key, traced to tracked Firebase web
+  configuration; and
+- remained unpublished during inspection.
+
+The bounded Places verification returned `OK` with 20 nearby results and a
+dependent photo redirect to `lh3.googleusercontent.com`. The candidate was then
+published deliberately. Public Netlify metadata confirmed:
+
+- canonical deploy ID `6a6602bd6c7609eabb08d744`;
+- canonical commit
+  `5ef141bf903521dbb9b7c53ff5af682a920ef5be`;
+- publication timestamp `2026-07-26T13:01:48.545Z`;
+- canonical homepage HTTP `200`; and
+- publication lock retained.
+
+After live verification, the historical 11 May credential with access to 33
+APIs was deleted. The 18 May retained Netlify deployment remained `ready`, but
+old-key retirement means it is not claimed as a complete Places-functional
+rollback.
+
+These later facts supersede the operationally unverified state described in the
+Packet 136–141 snapshots. They do not rewrite those dated observations.
+
 ## 2. Evidence methodology
 
 The audit used:
@@ -145,6 +209,12 @@ Packet 141 adds **Verified — repository** chronology, current configuration,
 automated tests, and a clean tracked-source build, plus a deployment procedure
 grounded in current official Netlify guidance. It does not promote prepared
 settings or procedures to live evidence.
+
+Packets 142 and 143 add **Verified — repository**, **Authenticated Product
+Owner-operated**, and **Verified — public live** evidence for exact Git
+provenance, hosted build completion, provider configuration names and controls,
+bounded Places function success, bundle-secret exclusion, deliberate
+publication, and retained locking. Secret values remain excluded.
 
 Packet 136 excluded untracked files, secret values, provider consoles,
 authenticated sessions, deployment logs, build logs for the current commit,
@@ -338,20 +408,20 @@ establish the state of every function.
 
 | Item | Repository evidence | Authenticated/public evidence | Classification | Risk or follow-up |
 |---|---|---|---|---|
-| Repository remote | Established GitHub `origin`. | Netlify is not linked to a repository. | Mixed repository and authenticated evidence | Defer provider linkage until the recorded remediation prerequisites are complete. |
-| Production branch | GitHub default is `master`; no tracked Netlify branch setting. | Netlify showed `Current repository — Not linked`; no Netlify production branch applies. | Authenticated Product Owner-transcribed | Define `master` as the production branch only when Git connection is separately authorised. |
-| Build command | `npm run build`. | None. | Verified — repository | Run a separately authorised clean build with the selected runtime. |
-| Publish directory | `build`. | None. | Verified — repository | Confirm Netlify uses tracked configuration. |
-| Function directory | `netlify/functions`. | Current CLI deploy listed one function; the Functions page listed only `places-nearby`. | Mixed repository and authenticated evidence | Ensure both tracked functions are included in a controlled deployment. |
+| Repository remote | Established GitHub `origin`. | Netlify is linked to `neilfranklin66-blip/dayguide-app`. | Verified — repository and authenticated | Retain linkage. |
+| Production branch | GitHub default and Netlify production branch are `master`. | Published deploy identifies branch `master`. | Verified — repository and public live | Retain deliberate publication lock. |
+| Build command | `npm run build`. | Netlify completed the command for exact commit `5ef141b`. | Verified — repository and hosted build | None beyond normal future build verification. |
+| Publish directory | `build`. | Published deploy contains the expected generated page and assets. | Verified — repository and hosted deploy | None. |
+| Function directory | `netlify/functions`. | Published deploy reports two functions. | Verified — repository and hosted deploy | Reopen only if future inventory changes. |
 | Redirects | No tracked redirect/rewrite. | None. | Verified — repository | Reassess if routing/deep links are introduced. |
-| Runtime version | `.node-version` pins Node major 24; Packet 141 passed a clean build under Node `v24.15.0`. | Hosted version not yet observed. | Verified — repository; hosted consumption unverified | Record exact hosted Node and npm versions in the locked Packet 142 build. |
-| Environment names | Current functions require `GOOGLE_PLACES_API_KEY`; current client code prohibits the client-secret form. Git history proves the May client source read `REACT_APP_GOOGLE_PLACES_API_KEY`. | Packet 139 found only the legacy name; Packet 140 later records exact Production server name added while the legacy variable remains. No deployment followed and no values were accessed. | Mixed repository and Product Owner-supplied evidence | Before the next build, create a replacement credential, update the server variable, and remove the legacy variable from every context; retire the old credential after verification. |
-| Frontend function URLs | Two relative routes match two tracked handlers under the configured directory; focused tests pass. `places-photo` entered Git after the live artifact was published. | `places-nearby` is listed as running; `places-photo` is absent and its public route returned `404`. | Mixed repository, authenticated, and Verified — public live | Build both handlers while publication is locked, inspect inventory, then verify each route safely after deliberate publication. |
-| External providers | Google, Firebase, GitHub, Maps, and placeholder service are evidenced. | None. | Verified — repository | Verify operational readiness provider by provider. |
-| Deployment method | No tracked deployment trigger or upload script. | Project showed `Last deployed from CLI`; current deploy skipped all build stages. | Authenticated Product Owner-transcribed | Preserve recovery evidence before replacing the manual process. |
+| Runtime version | `.node-version` pins Node major 24; Packet 143 passed clean install, tests, and build under Node `v24.15.0`. | Git-connected hosted build completed; exact hosted patch version was not retained. | Verified — repository; bounded hosted evidence | Record hosted patch version only if later diagnosis needs it. |
+| Environment names | Functions require server-only `GOOGLE_PLACES_API_KEY`; current browser code prohibits the client-secret form. | Replacement is a Production secret; legacy variable is deleted; published bundle contains neither variable name nor Places key. | Verified — repository, authenticated, and public live | Functions-only scope remains unavailable without plan upgrade. |
+| Frontend function URLs | Two relative routes match two tracked handlers. | Nearby returned `OK`; dependent photo reached Google's image host. | Verified — repository and bounded provider-live | Do not repeat paid checks without a new reason. |
+| External providers | Google, Firebase, GitHub, Maps, and placeholder service are evidenced. | Google Places and GitHub/Netlify delivery are verified within Packet 142; Firebase journey remains unverified. | Mixed verified and unverified by provider | Audit Firebase separately. |
+| Deployment method | Git linkage and `.npmrc` compatibility requirement are tracked. | Netlify built exact Git commit and publication was deliberate. | Verified — repository and hosted build | Retain reproducible settings and lock. |
 | Live URL | No tracked URL. | Authenticated production domain matches Packet 138's reachable Netlify hostname; no custom domain is configured. | Authenticated and Verified — public live | Record future domain changes through controlled evidence. |
-| Deployed commit identity | No tracked mechanism. | Project is not Git-linked; no repository, branch, SHA, or commit message was displayed. | Confirmed traceability gap | Establish traceable Git deployment only after remediation. |
-| Rollback mechanism | Packet 141 tracks rollback triggers and operator steps. | An earlier retained deploy offered `Publish deploy`; automatic deletion is 90 days. Packet 140 records the current deploy archived outside the repository with size and SHA-256 evidence. | Prepared procedure plus Product Owner-supplied recovery evidence; execution unverified | Confirm retained target, lock publication, and preserve the right to republish it during Packet 142. |
+| Deployed commit identity | Git `master` and `origin/master` identify `5ef141b`. | Canonical Netlify metadata identifies the same full SHA and deploy `6a6602bd6c7609eabb08d744`. | Verified — repository and public live | Record each future release similarly. |
+| Rollback mechanism | Packet 141 tracks rollback triggers and operator steps. | May 18 retained deploy remains `ready`; Packet 140 archive remains external. | Prepared and target-available; complete restoration unverified | Old-key retirement can limit Places functionality in historical artifacts. |
 
 ## 12. Deployment risks and contradictions
 
@@ -362,25 +432,17 @@ currently present in production.
 
 ### Verified non-blocking risks
 
-- **Runtime drift — Residual risk:** Node major 24 is now pinned and locally
-  verified; hosted consumption and exact patch versions remain unverified.
-- **Deployment knowledge gap — Risk:** no tracked deployment trigger, owner,
-  release procedure, deployed-commit marker, or rollback runbook exists.
-- **Deployment traceability — Risk:** the Product Owner-supplied observation
-  describes a manual or prebuilt upload, skipped Netlify build, and no displayed
-  Git commit. The live artifact cannot be mapped to repository evidence.
-- **Configuration transition — Blocking prerequisite for the new build:**
-  Packet 141 proves the May client source read the client-prefixed name.
-  Create a replacement credential, update exact Production
-  `GOOGLE_PLACES_API_KEY`, and remove the legacy name from every context before
-  Packet 142 builds; retire the old credential after live verification.
-- **Function completeness — Prepared but live-unverified:** authenticated
-  evidence lists only `places-nearby`; Packet 138 verified the photo route
-  `404`. Packet 141 establishes that the photo handler postdates the current
-  deploy and verifies both current handlers under the configured directory.
+- **Dependency age — Risk:** Create React App 5 requires tracked legacy peer
+  resolution; the dated clean install reported dependency-audit findings.
+- **Secret process scope — Residual risk:** the Netlify plan requires an upgrade
+  to narrow the Production secret from Builds, Functions, and Runtime to
+  Functions only. The published bundle nevertheless contains no Places key.
+- **Unused wrong-project key — Risk:** entering Google project `dayguide1`
+  during identification generated an unused broad key; it is not used by
+  DayGuide and was not deleted without separate authority.
 - **Recovery validation — Risk:** the current artifact is preserved outside the
   repository with hash evidence, but archive contents and complete restoration
-  are untested; provider deploys remain subject to 90-day deletion.
+  are untested; old-key retirement can limit historical Places functionality.
 - **Method handling — Risk:** serverless handlers do not restrict request
   methods.
 - **Public identity metadata — Inconsistent:** repository documentation and UI
@@ -389,102 +451,77 @@ currently present in production.
 
 ### Suspected risks requiring validation
 
-- The project is confirmed not Git-linked, the source is confirmed as CLI, and
-  no Netlify production branch applies. The exact upload procedure, build
-  runtime, artifact source, and deployed commit remain **Unverified**.
-- Environment-variable names and deployed function inventory are authenticated;
-  Packet 140 records the exact Production secret name added. Deployment
-  consumption, secret controls, billing, quota, deployed function source, and
-  live nearby-search success remain **Unverified**.
 - Firebase project availability, providers, authorised domains, rules, and quota
   are **Unverified**.
-- Public frontend availability is **Verified — public live** at the Packet 138
-  capture time; authenticated workflow, Firebase, and full asset/application
-  behaviour remain **Unverified**.
-- The expected public `places-photo` function route returned `404`; the
-  `places-nearby` route was deliberately not invoked.
+- Google billing alerts and quota governance remain **Unverified**; no financial
+  threshold was changed.
+- Public frontend and Places-function availability are **Verified — public
+  live** within the bounded checks; authenticated workflow and full
+  asset/application behaviour remain **Unverified**.
 
 ### Documentation inconsistencies
 
-- `README.md` says Netlify reads `netlify.toml` for the build, while the
-  Packet 137 external observation says the current production deploy skipped the
-  Netlify build and appears manually/prebuilt uploaded. The tracked configuration
-  and observed production process are **Inconsistent**; neither proves that the
-  configuration itself is defective.
 - Generic Create React App title/manifest metadata conflicts with the DayGuide
-  identity in repository documentation. This is **Inconsistent** in tracked
-  content; live visibility is unverified.
+  identity in repository documentation. This remains **Inconsistent** in
+  tracked and deployed content.
 
 ### Missing operational knowledge
 
-The Netlify project identity, owner label, domain, lack of repository linkage,
-CLI source, deploy history, one running function, current variable-name
-configuration, manual retained-deploy recovery control, and preserved external
-archive are now recorded. Exact upload procedure, selected runtime, deployed
-source/commit, corrected-variable consumption, live nearby-search behaviour,
-credential controls, monitoring, and a tested rollback procedure remain
-unavailable.
+The Netlify project identity, owner label, domain, repository linkage, production
+branch, build settings, exact deployed source/commit, both functions, bounded
+Places behaviour, credential migration, manual lock, retained deploy, and
+preserved external archive are recorded. Exact hosted runtime patch, billing and
+quota monitoring, Firebase operational state, and a fully tested rollback
+remain unavailable.
 
 ### Product Owner decisions
 
-- **Decision recorded:** do not connect Git yet.
-- **Completed operational prerequisite:** the Product Owner preserved the
-  current deploy archive and configured the exact Production secret name.
-- **Decision recorded:** tracked chronology explains the missing photo function;
-  both current handlers are selected and tested, with hosted packaging awaiting
-  Packet 142.
-- **Decision recorded:** create a replacement for the potentially exposed
-  credential and remove the legacy variable before the next build; retire the
-  old credential after live verification.
-- **Decision recorded:** pin Node major version 24.
-- **Decision recorded:** use a locked candidate build, deliberate publication,
-  bounded route checks, and named rollback triggers.
-- **Decision required:** explicitly authorise Packet 142's provider operations,
-  deployment, verification requests, and conditional rollback.
+- **Completed:** preserve the old artifact and retained deploy.
+- **Completed:** pin Node major 24 and track deterministic npm compatibility.
+- **Completed:** connect the existing site to GitHub `master`.
+- **Completed:** replace and restrict the Places credential, remove the legacy
+  variable, verify both functions, publish deliberately, and retire the old key.
+- **Decision retained:** keep auto publishing locked.
+- **Decision deferred:** no Netlify plan upgrade solely for Functions-only scope.
+- **Decision required later:** authorise any Firebase journey audit, dependency
+  modernisation, or cleanup of the unused `dayguide1` key separately.
 
 ## 13. Current deployment-readiness assessment
 
 | Area | Rating | Reason |
 |---|---|---|
-| Repository configuration | Green for deployment preparation | Build, publish, functions, production branch, and Node-major settings are exact; hosted consumption awaits Packet 142. |
-| Reproducible build knowledge | Green locally | Lockfile, Node 24 pin, full suite, and isolated tracked-source build pass; exact hosted versions remain to be recorded. |
-| Hosting configuration | Red | The project is authenticated and reachable, but it is not Git-linked and the current production artifact is an unattributed prebuilt CLI deploy. |
-| Serverless routing | Amber | Both current handlers are selected and tested; production still lacks `places-photo` and neither new hosted route is verified. |
-| Environment configuration | Red until pre-build correction | The server name is configured, but the historical client source read the still-configured legacy name; rotation/removal must precede the new build. |
-| External-service readiness | Red | Google and Firebase are essential to core paths but have no live evidence. |
-| Live frontend availability | Green for bounded reachability only | Packet 138 observed an HTTPS `200` response and DayGuide authentication interface; authenticated behaviour remains unverified. |
-| Live restaurant functionality | Not assessed | Paid/external API flows were explicitly excluded. |
-| Security of secret handling | Amber with mandatory action | Current source is server-only; the historical credential is potentially public and has an explicit rotation/removal sequence. |
-| Rollback readiness | Amber | A retained-deploy rollback runbook and triggers are prepared; target availability and execution remain unverified. |
-| Deployment ownership and procedure | Red | The owner label and CLI source are known, but the artifact source, commit, repeatable release procedure, and tested rollback are absent. |
+| Repository configuration | Green | Build, publish, functions, production branch, Node-major, and npm compatibility settings are exact. |
+| Reproducible build knowledge | Green with legacy debt | Clean install, full suite, CI build, and hosted build pass; the old toolchain still requires compatibility mode. |
+| Hosting configuration | Green | Existing site is Git-linked, exact-commit attributable, published, and locked. |
+| Serverless routing | Green for bounded evidence | Both functions are deployed and passed the authorised nearby/photo checks. |
+| Environment configuration | Green with scope residual | Legacy variable is deleted; replacement is Production-only and Places-only, but Netlify process scope cannot be narrowed without upgrade. |
+| External-service readiness | Mixed | Google Places is verified within scope; Firebase remains unverified. |
+| Live frontend availability | Green for bounded reachability | Canonical HTTPS returns `200` and serves the verified clean bundle. |
+| Live restaurant functionality | Green for bounded provider check | Nearby returned 20 results and dependent photo redirection succeeded. |
+| Security of secret handling | Green with residuals | No Places key is public; old key is retired. Wrong-project unused key and Netlify scope remain separate hygiene items. |
+| Rollback readiness | Amber | Retained deploy and external archive exist; full restoration and old Places behaviour are unverified. |
+| Deployment ownership and procedure | Green | Exact repository, branch, commit, build, deploy, operator, and lock are recorded. |
 
-Overall readiness is **GO for an explicitly controlled Packet 142, with Red
-pre-build credential correction and locked-publication safeguards**. Repository
-preparation is sufficient; production is not yet attributable, complete, or
-runtime-verified.
+Overall deployment readiness is **Green for the Packet 142 objective**, with
+separate Amber work for Firebase assurance, dependency modernisation, and
+rollback completeness.
 
 ## 14. Recommended follow-up work
 
 Ranked, bounded later packets:
 
-1. **Packet 142 — secret-safe pre-build correction:** provision a replacement
-   for the potentially exposed credential, update the exact Production server
-   variable, and remove the legacy client-prefixed variable from every context.
-2. **Packet 142 — locked traceable build:** lock publication, connect the
-   existing site to GitHub `master`, and inspect the candidate commit, build,
-   runtime, and both functions before publication.
-3. **Packet 142 — deliberate publication and bounded verification:** publish
-   only after all pre-publication criteria pass, then make one nearby request
-   and at most one dependent photo request; retire the old credential after
-   both pass.
-4. **Packet 142 — conditional rollback:** republish the retained May deploy if a
-   named trigger occurs.
-5. **Packet 143 — live Private Alpha journey:** verify the complete mobile
-   journey after Packet 142 is accepted.
-6. **Medium — public identity metadata:** replace generic Create React App title
-   and manifest identity in a bounded product-code/static-assets packet.
-
-No follow-up was implemented by Packet 136.
+1. **Live Private Alpha journey:** verify the complete mobile and authenticated
+   journey without changing the locked deployment.
+2. **Firebase security and provider audit:** verify authorised domains,
+   authentication providers, and Firestore rules.
+3. **Dependency modernisation:** replace the legacy Create React App toolchain
+   through a separately reviewed migration; do not use forced audit fixes.
+4. **Credential hygiene:** verify ownership and safe deletion of the unused key
+   in Google project `dayguide1`, and review billing/quota alerts.
+5. **Rollback exercise:** test a bounded restore plan that does not depend on
+   the retired historical Places key.
+6. **Public identity metadata:** replace generic Create React App title and
+   manifest identity in a bounded product-code/static-assets packet.
 
 ## 15. Audit conclusion
 
@@ -516,18 +553,24 @@ production build pass under pinned Node major 24; the May client source read
 the client-prefixed variable; and exact connection, locked-publication,
 verification, and rollback procedures are prepared.
 
-Unknown: the deployed source and Git commit, function runtime, exact CLI upload
-procedure, corrected-variable consumption, live nearby-search behaviour,
-whether the old credential entered the May browser bundle, Google and Firebase
-operational health, archive restoration, and whether manual republishing
-restores the intended static and function state.
+Known from Packets 142 and 143: the existing site is linked to GitHub
+`master`; exact commit `5ef141b` built successfully after the tracked
+dependency-resolution correction; both functions are deployed; the replacement
+Places-only credential passed bounded nearby and photo checks; the legacy
+client variable is deleted; the clean public bundle contains no Places secret;
+the old 33-API credential is retired; deploy
+`6a6602bd6c7609eabb08d744` is canonical; and publication remains locked.
 
-The repository now contains a locally verified, runtime-pinned deployment
-definition and a controlled operating procedure. Production remains unchanged:
-provider linkage, hosted commit/build evidence, complete live function
-availability, bounded route success, and rollback execution are unverified.
+Still unknown or outside this audit: the complete authenticated user journey,
+Firebase provider and Firestore-rule readiness, Google billing-alert and quota
+governance, the exact hosted Node patch version, restoration of the preserved
+ZIP, and whether an old retained deploy remains fully functional after
+historical-key retirement.
 
-**Single recommended next action:** review and accept Packet 141, then define and
-explicitly authorise Packet 142 to perform its credential rotation/removal,
-locked Git-connected build, deliberate publication, bounded verification, and
-conditional rollback sequence.
+The central deployment contradictions are resolved. Production is now
+attributable to reviewed Git source, reproducibly built, function-complete for
+the tracked Places boundary, credential-migrated, and deliberately locked.
+
+**Single recommended next action:** review and accept Packet 142, then define a
+separate bounded live Private Alpha journey check without altering the locked
+deployment or reopening credential work.

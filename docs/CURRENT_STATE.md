@@ -70,6 +70,16 @@ function, provider setting, secret value, archive, or deployment was accessed
 or changed. This preparation does not change the Packet 133
 application-capability verification point above.
 
+**Traceable production deployment:** Packets 142 and 143 added
+[`docs/TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md)
+and the tracked npm compatibility setting. Production now serves exact Git
+commit `5ef141bf903521dbb9b7c53ff5af682a920ef5be` from a locked Netlify deploy
+with both Places functions. The replacement Production secret is restricted to
+Places API, the legacy client-prefixed Netlify variable is deleted, the public
+bundle contains no Places credential, and the historical broad credential is
+retired. This operational evidence updates deployment readiness but does not
+change the Packet 133 application-capability verification point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -119,7 +129,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Plan persistence & resume | **Implemented** | `src/utils/planStorage.js` writes one versioned `localStorage` key (`dayguide_saved_plan_v1`); persists timeline + render settings only (no queues, selections, or geolocation). Resume restores a read-only plan view. A plan dated before the local calendar day is discarded on load and excluded from Resume (`isPlanDateExpired`/`loadPlan`, `planStorage.js`). |
 | Sharing | **Implemented (QR text)** | `TimelineShareQRModal.jsx` encodes a plain-text itinerary summary (`buildTimelineShareText`) as a QR code. No server-side share link or export. |
 | Localisation | **Implemented** | Five locales (`en`, `es`, `fr`, `zh`, `vi`) in `src/i18n.js`; language selector in header and login; choice persisted to `localStorage` and, for signed-up users, to Firestore. Key parity checked by `src/locales/localeConsistency.test.js`. |
-| Deployment / API handling | **Traceable release prepared — production remediation pending** | Packet 141 verifies the current repository configuration selects both tracked functions and passes under pinned Node 24. Production still runs the unattributed May CLI artifact with only `places-nearby`; the corrected server variable is unconsumed and a replacement credential plus legacy-variable removal are required before the first Git-connected build, followed by old-credential retirement after live verification. |
+| Deployment / API handling | **Implemented — traceable production, manually locked** | Packets 142 and 143 link the existing Netlify site to GitHub `master`, publish exact commit `5ef141b`, deploy both Places functions, verify nearby and photo requests through the replacement server credential, remove the legacy client variable, and retain manual publication locking. |
 | Multi-day planning | **Not implemented** | No multi-day state, tabs, or routes exist in tracked `DayGuide.jsx`; planning is single-day, single-date. |
 | Favourites / booking | **Not implemented** | No favourites store or booking action is present in tracked source. |
 
@@ -183,19 +193,13 @@ refactor.)*
 Only gaps supported by repository evidence are listed.
 
 ### Launch blockers
-- **Live restaurants are unavailable until the Places key is configured and the
-  Netlify functions are deployed.** Without `GOOGLE_PLACES_API_KEY` in the server
-  environment, `places-nearby.js` returns a `REQUEST_DENIED`/`NO_API_KEY` state
-  and the app shows the "live data unavailable" card — the restaurant stage has
-  no working recommendations. (`netlify/functions/places-nearby.js`,
-  `restaurantEngine.js`.) Packet 139 authenticated evidence confirmed the exact
-  server-side name was then absent and only `places-nearby` was listed as
-  deployed. Packet 140 later records that the Product Owner configured the exact
-  Production secret name, but no deployment or nearby request followed.
-  Packet 141 verifies both current handlers and records that `places-photo`
-  entered Git 48 days after the current production artifact was published.
-  Because the CLI artifact cannot be tied to tracked code, the production
-  outcome remains operationally untested.
+
+No Packet 142 deployment blocker remains. The exact Production server secret is
+consumed by the published functions; one bounded nearby request returned `OK`
+with 20 results and its dependent photo request reached Google's image host.
+Firebase and the complete authenticated journey still require their own
+operational verification and are not represented as proved by these function
+checks.
 
 ### Launch limitations that can be disclosed
 - **Activities are sample/demo data, not real local recommendations.** No live
@@ -211,20 +215,18 @@ Only gaps supported by repository evidence are listed.
   and `functions = "netlify/functions"`, matching `package.json`'s build
   script, Create React App's default output directory, and the tracked
   function files (`netlify/functions/places-nearby.js`,
-  `places-photo.js`). `GOOGLE_PLACES_API_KEY` still requires manual
-  configuration in the Netlify site's environment variables — it is not, and
-  must not be, set in tracked configuration. Deploying the functions and
-  maintaining the external services (Google Places, Firebase) remain
-  operational requirements outside version control.
-- **Current production does not follow a traceable repository deployment.**
-  Packet 139 authenticated evidence shows the Netlify project is not
-  Git-linked, was last deployed from CLI with build stages skipped, lists only
-  `places-nearby`, and at that capture point lacked the exact server-side
-  variable name. Packet 140 later records the exact Production secret name as
-  configured, but production was not redeployed. Packet 141 prepares exact
-  Git-link, locked-publication, verification, and rollback steps but performs
-  none of them. Auto publishing applies to completed manual or CLI deploys; it
-  is not continuous deployment from Git.
+  `places-photo.js`). `GOOGLE_PLACES_API_KEY` is configured manually as a
+  Production Netlify secret and is not tracked. Maintaining Google Places and
+  Firebase remains an operational requirement outside version control.
+- **Current production follows a traceable, manually locked repository
+  deployment.** The existing Netlify project is linked to GitHub
+  `neilfranklin66-blip/dayguide-app`, production branch `master`, and exact
+  commit `5ef141b`. Auto publishing remains locked; a future release requires a
+  deliberate publish action.
+- **The Netlify plan does not permit Functions-only secret scope without an
+  upgrade.** The Production secret remains scoped to Builds, Functions, and
+  Runtime. It is marked secret, limited by Google to Places API, not read by
+  browser code, and absent from the verified public bundle.
 - **Firebase project configuration is committed** in `src/firebase.js` (web app
   config, which Firebase treats as public). A live deployment depends on that
   Firebase project remaining provisioned.
@@ -254,6 +256,11 @@ git --no-pager diff -- README.md docs/CURRENT_STATE.md
 tests passing**; `npm run build` compiled successfully (production bundle
 ≈229 kB gzipped main chunk). These figures are a dated snapshot for this
 verification point, not permanent documentation.
+
+**Packet 143 snapshot (2026-07-26):** an isolated tracked-source copy with
+`.npmrc` compatibility mode completed clean `npm ci`, **37 test suites and 927
+tests**, and a Netlify-style CI production build under Node `v24.15.0` and npm
+`11.12.1`. The main JavaScript bundle was 229.26 kB gzipped.
 
 ## 8. Maintenance rule
 

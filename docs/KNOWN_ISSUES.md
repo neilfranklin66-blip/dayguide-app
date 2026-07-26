@@ -8,15 +8,16 @@ accessibility gaps, and explicitly accepted limitations for DayGuide.
 
 - **Current verification date:** 26 July 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packet 141 controlled traceable deployment
-  preparation
+- **Latest targeted update:** Packets 142 and 143 traceable production
+  deployment and deterministic dependency installation
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
-- **Evidence scope:** tracked repository evidence, operational evidence captured
-  by the Product Owner and transcribed in Packets 139 and 140, and Packet 141
-  provider-guidance review
-- **Runtime scope:** Packet 141 test and production-build results are recorded
-  in section 9
+- **Evidence scope:** tracked repository evidence, Product Owner-operated
+  authenticated provider evidence, bounded public checks, and Packets 141–143
+  build and deployment evidence
+- **Runtime scope:** Packet 143 clean-install, test, build, candidate, and
+  production evidence is recorded in this register and
+  [`TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md)
 
 The untracked `.claude/` and `Dayguide#2/` folders are protected and were not
 inspected, listed, searched, opened, modified, moved, renamed, staged, or
@@ -191,39 +192,24 @@ No other entry is classified as launch blocking.
 - **ID:** OP-001
 - **Category:** Deployment and external-service uncertainty
 - **Severity:** Critical
-- **Status:** Partially verified
-- **Launch blocking:** Yes, conditionally — only if the production key or
-  required Netlify functions are unavailable
-- **Verification status:** Tracked failure behaviour, the later Production
-  secret-name correction, and incomplete function deployment are verified
-  through their stated evidence sources; deployment consumption, live
-  nearby-search success, and deployed source remain unverified.
-- **Factual evidence:** `netlify/functions/places-nearby.js` returns
-  `REQUEST_DENIED` with `NO_API_KEY` when `GOOGLE_PLACES_API_KEY` is absent.
-  `src/api/placesApi.js` maps an undeployed function response (HTTP 404) to the
-  same unavailable state. `docs/CURRENT_STATE.md` identifies the condition as
-  the launch blocker because restaurant recommendations are live-only.
-  Product Owner-transcribed authenticated Netlify evidence dated 25 July 2026
-  shows only `places-nearby` deployed, exact `GOOGLE_PLACES_API_KEY` absent, and
-  only `REACT_APP_GOOGLE_PLACES_API_KEY` configured. Packet 138 public evidence
-  shows the `places-photo` route returns `404`. Later Packet 140 evidence in
-  [`NETLIFY_RECOVERY_AND_SECRET_CONFIGURATION.md`](NETLIFY_RECOVERY_AND_SECRET_CONFIGURATION.md)
-  records exact `GOOGLE_PLACES_API_KEY` configured as a Production secret for
-  Builds, Functions, and Runtime. No deployment or function request followed,
-  and the legacy client-prefixed variable remains. Packet 141 verifies that both
-  current handlers are tracked under the configured functions directory and
-  pass their focused tests. It also establishes that `places-photo.js` was
-  added on 7 July 2026, after the current 20 May deploy.
-- **Impact:** If the condition is present, the core restaurant recommendation
-  journey cannot provide live recommendations; the missing photo function also
-  prevents the tracked photo-proxy route from operating.
-- **Likely dependency:** Netlify deployment state, production environment
-  configuration, deployed function source, Google Places availability, billing,
-  restrictions, and quota.
-- **Recommended next action:** Execute only the approved Packet 142 locked-build
-  sequence: rotate/remove the legacy credential configuration, confirm both
-  hosted functions before publication, then run the bounded live checks. Do not
-  claim the corrected variable is operational until those checks pass.
+- **Status:** Resolved pending archive
+- **Launch blocking:** No
+- **Verification status:** Packet 142 verified the replacement Production
+  credential through a locked candidate, deployed both functions from exact Git
+  commit `5ef141b`, and published that candidate while retaining the lock.
+- **Factual evidence:** One bounded nearby request returned `OK` with 20
+  results. One dependent photo request returned `302` to
+  `lh3.googleusercontent.com`. The canonical production record identifies
+  deploy `6a6602bd6c7609eabb08d744`, commit `5ef141b`, and two deployed
+  functions. The full record is in
+  [`TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md).
+- **Impact:** The previously conditional core restaurant blocker is not present
+  in the verified deployment. Later provider, billing, quota, or credential
+  failures remain ordinary operational dependencies.
+- **Likely dependency:** Continued Google Places, Netlify, billing, quota, and
+  credential availability.
+- **Recommended next action:** Archive after Product Owner acceptance; reopen
+  only on new production evidence of unavailable nearby or photo functions.
 - **Verification date:** 26 July 2026
 
 ### OP-002 — Production Firebase authentication state is unverified
@@ -255,19 +241,21 @@ No other entry is classified as launch blocking.
 - **Status:** Resolved pending archive
 - **Launch blocking:** No
 - **Verification status:** Packet 141 tracks `.node-version` with major version
-  24 and verified a clean tracked-source production build under Node 24. Hosted
-  Netlify consumption remains operationally unverified until Packet 142.
+  24 and verified a clean tracked-source production build under Node 24.
+  Packets 142 and 143 then completed the Git-connected Netlify build and
+  publication. The exact hosted patch version was not captured in the retained
+  build evidence.
 - **Factual evidence:** `.node-version` contains `24`; Netlify currently supports
   this file in the repository base and lists Node 24 as its default build
   version. Packet 141 built successfully under Node `v24.15.0` and npm
   `11.12.1`.
 - **Impact:** The repository now selects a stable Node major instead of silently
   inheriting a future provider default-major change.
-- **Likely dependency:** Packet 142 hosted build log must record the exact 24.x
-  and npm versions selected by Netlify.
-- **Recommended next action:** Confirm hosted consumption during the first
-  locked traceable build; reopen only if Netlify does not honour the tracked
+- **Likely dependency:** Future Netlify build logs and the tracked Node-major
   pin.
+- **Recommended next action:** Archive after Product Owner acceptance; retain
+  `.node-version` and record the exact hosted patch version if a later runtime
+  diagnosis requires it.
 - **Verification date:** 26 July 2026
 
 ### OP-004 — Production deployment lacks Git provenance
@@ -275,36 +263,56 @@ No other entry is classified as launch blocking.
 - **ID:** OP-004
 - **Category:** Deployment provenance and recovery risk
 - **Severity:** High
-- **Status:** Verified open
+- **Status:** Resolved pending archive
 - **Launch blocking:** No
-- **Verification status:** Product Owner-transcribed evidence verifies the
-  current delivery and retention configuration and the preserved archive's
-  reported path, size, and SHA-256; artifact source, commit identity, archive
-  contents, and recovery effectiveness remain unavailable.
-- **Factual evidence:** On 25 July 2026, authenticated Netlify evidence showed
-  `Current repository — Not linked`, `Last deployed from CLI`, and skipped build
-  stages. No repository, branch, commit SHA, commit message, or deploy message
-  was displayed. An earlier retained deploy offered `Publish deploy`, while
-  automatic deploy deletion was set to 90 days. Packet 140 records the current
-  published artifact preserved outside the repository as a 4,726,438-byte ZIP
-  with Product Owner-supplied SHA-256 evidence. The archive was not opened or
-  extracted and is not a source backup or Git-provenance record.
-- **Impact:** Production cannot be mapped to reviewed source, and manual
-  provider recovery points can expire. The preserved archive reduces loss risk
-  but does not prove restore completeness or replace a tested rollback process.
-- **Likely dependency:** Archive integrity and restoration planning, controlled
-  function/deployment preparation, an approved Git connection, and a deployment
-  and rollback runbook.
-- **Recommended next action:** Packet 141 has prepared exact Git connection,
-  locked candidate-build, verification, publication, and rollback steps.
-  Execute them only through an explicitly authorised Packet 142.
+- **Verification status:** The existing Netlify project is linked to the
+  established GitHub repository and production branch. Public Netlify metadata
+  maps canonical production to exact commit `5ef141b` and deploy
+  `6a6602bd6c7609eabb08d744`.
+- **Factual evidence:** Packet 142 retained the existing site, configured
+  repository `neilfranklin66-blip/dayguide-app`, branch `master`, tracked build
+  settings, and manual publication locking. The Git-connected Netlify build
+  completed and the exact candidate was deliberately published. The May 18
+  deploy remains `ready`, and Packet 140's external archive remains historical
+  recovery evidence.
+- **Impact:** Current production can now be mapped to reviewed source and a
+  repeatable build. Historical rollback artifacts can still age out and may not
+  restore Places after old-key retirement.
+- **Likely dependency:** Netlify history retention, continued GitHub linkage,
+  and deliberate locked publication.
+- **Recommended next action:** Archive after Product Owner acceptance; retain
+  the publication lock and document any future release against an exact commit.
 - **Verification date:** 26 July 2026
 
-The Packet 139 variable-name absence was corrected in Packet 140, but incomplete
-function deployment and missing Git linkage remain confirmed. Live
-nearby-search behaviour, deployment consumption of the corrected secret,
-credential controls, Firebase provider state, external-service availability,
-billing, and quotas remain operationally unverified.
+### OP-005 — Legacy dependency resolution remains required
+
+- **ID:** OP-005
+- **Category:** Deployment reproducibility and dependency debt
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Packet 143 reproduced the current npm resolution
+  failure and verified the tracked compatibility setting in an isolated
+  tracked-source copy and in Netlify.
+- **Factual evidence:** Without legacy peer resolution, current npm reports a
+  lockfile/optional TypeScript peer conflict and Netlify produced
+  `Environment key "jest/globals" is unknown`. `.npmrc` now records
+  `legacy-peer-deps=true`. Clean `npm ci`, 37 suites, 927 tests, and a CI
+  production build pass; Netlify then built and deployed successfully. The
+  dated clean install also reported 43 audit findings: 11 low, 9 moderate, 21
+  high, and 2 critical across the installed legacy dependency tree.
+- **Impact:** Deployment is reproducible, but the Create React App 5 toolchain
+  remains old and should not be represented as modern dependency hygiene.
+- **Likely dependency:** A separately designed build-stack modernisation that
+  preserves application behaviour and test coverage.
+- **Recommended next action:** Do not run `npm audit fix --force` or unbounded
+  upgrades. Define a separate audited modernisation packet when prioritised.
+- **Verification date:** 26 July 2026
+
+The Packet 139 variable-name absence, incomplete function deployment, missing
+Git linkage, and production provenance gaps are resolved by Packets 140–143.
+Firebase provider state, billing alerts, quotas, and the complete authenticated
+journey remain outside the bounded deployment verification.
 
 ## 8. Security, privacy and configuration gaps
 
@@ -336,35 +344,29 @@ billing, and quotas remain operationally unverified.
 - **Severity:** Medium
 - **Status:** Partially verified
 - **Launch blocking:** No
-- **Verification status:** Server-side key handling in tracked code, the
-  historical Netlify variable-name mismatch, and the later exact Production
-  secret-name correction are verified through their stated evidence sources;
-  values, deployment consumption, deployed-bundle exposure, restriction,
-  ownership, rotation, billing alerts, and quota monitoring are unverified.
-- **Factual evidence:** `.env.local.example` instructs operators to keep
-  `GOOGLE_PLACES_API_KEY` server-side, and the Netlify functions consume it.
-  Product Owner-transcribed authenticated evidence dated 25 July 2026 showed
-  exact `GOOGLE_PLACES_API_KEY` absent at that capture point and
-  `REACT_APP_GOOGLE_PLACES_API_KEY` configured for Builds, Functions, and
-  Runtime in four deploy contexts. No value was accessed. A `REACT_APP_` name
-  can enter CRA browser output during a frontend build. Packet 141 Git history
-  review proves the May client source read that name; whether the May build
-  supplied a value and whether the current artifact contains it remain
-  unproved. Packet 140 later records exact
-  `GOOGLE_PLACES_API_KEY` created as a Production-only secret scoped to Builds,
-  Functions, and Runtime, with no subsequent deployment. The legacy
-  client-prefixed variable remains unchanged.
-- **Impact:** Weak or missing operational controls could create misuse, cost, or
-  service-continuity risk. The old credential must be treated as potentially
-  public because the historical browser source read the client-prefixed name.
-- **Likely dependency:** Google Cloud and Netlify administrative configuration
-  and operational ownership.
-- **Recommended next action:** Before the first Packet 142 build, provision a
-  replacement credential, update only exact Production
-  `GOOGLE_PLACES_API_KEY`, remove the client-prefixed variable from every
-  Netlify context, and confirm restrictions and cost controls without exposing
-  a value. Keep the old credential only through initial verification, then
-  disable it and record the resulting rollback limitation.
+- **Verification status:** The production migration and public-bundle outcome
+  are verified. Functions-only Netlify scope, billing alerts, quota controls,
+  and an unused key created in a different Google project remain unresolved.
+- **Factual evidence:** Packet 142 created `DayGuide Netlify Places Key` in the
+  confirmed Google project, limited it to `Places API`, stored it as a
+  Production Netlify secret, verified it through both functions, deleted
+  `REACT_APP_GOOGLE_PLACES_API_KEY` from every Netlify context, verified the
+  clean public bundle contains no Places key or secret-variable name, and
+  deleted the old 33-API credential. Netlify requires a paid upgrade to reduce
+  the secret's scope from Builds, Functions, and Runtime to Functions only; no
+  upgrade was authorised. An unused key dated 26 July 2026 was generated in
+  separate project `dayguide1` during project identification and remains
+  untouched.
+- **Impact:** The production key is no longer exposed through the CRA client
+  path and has narrow API access. Broad Netlify process scope and the unrelated
+  unused key are residual configuration-hygiene risks, not current production
+  blockers.
+- **Likely dependency:** Netlify plan capabilities, Google billing/quota
+  governance, and separately authorised cleanup of project `dayguide1`.
+- **Recommended next action:** Keep the current production secret and
+  publication lock unchanged. Separately verify ownership and safe deletion of
+  the unused `dayguide1` key; consider Functions-only scope only if the benefit
+  justifies a plan change.
 - **Verification date:** 26 July 2026
 
 The concrete Firebase web configuration in `src/firebase.js` and its
@@ -437,6 +439,12 @@ Packet 141 validation on 26 July 2026 ran the focused function suite (1 suite,
 8 tests), the full automated suite (37 suites, 927 tests), and a clean
 tracked-source production build under Node `v24.15.0`; all passed. The build
 compiled a 229.26 kB gzipped main JavaScript bundle.
+
+Packet 143 validation on 26 July 2026 ran clean `npm ci`, the full automated
+suite (37 suites, 927 tests), and a Netlify-style CI production build from an
+isolated tracked-source export; all passed. Netlify then built exact commit
+`5ef141b`, deployed both functions, and Packet 142 published the verified,
+locked candidate.
 
 ## 10. Deferred or accepted limitations
 
