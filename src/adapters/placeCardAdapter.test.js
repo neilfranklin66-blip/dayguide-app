@@ -27,6 +27,7 @@ const mockPlacesItem = {
   duration: 1,
   distance: 0.8,
   address: '456 Live Rd',
+  coordinates: { lat: 51.51, lng: -0.12 },
   image: 'https://placehold.co/400x300/live',
 };
 
@@ -43,6 +44,7 @@ test('mock restaurant adapter preserves compatibility aliases and canonical fiel
     source: 'mock_restaurant_data',
     photoUrl: mockRestaurant.image,
     address: mockRestaurant.address,
+    coordinates: null,
     durationMinutes: 90,
     distanceMeters: 1200,
     distanceKm: 1.2,
@@ -67,6 +69,7 @@ test('places adapter preserves compatibility aliases and canonical fields', () =
     source: 'google_places',
     photoUrl: mockPlacesItem.image,
     address: mockPlacesItem.address,
+    coordinates: mockPlacesItem.coordinates,
     durationMinutes: 60,
     distanceMeters: 800,
     distanceKm: 0.8,
@@ -120,6 +123,7 @@ test('places adapter normalises a sparse parsed result (id and name only) withou
     durationMinutes: null,
     duration: null,
     address: null,
+    coordinates: null,
     photoUrl: null,
     image: null,
   });
@@ -159,6 +163,15 @@ test('places adapter nulls out a non-numeric rating instead of passing it throug
   const card = fromPlacesParsed({ ...mockPlacesItem, rating: 'not-a-number' });
 
   expect(card.rating).toBeNull();
+});
+
+test('places adapter rejects malformed route coordinates without rejecting the card', () => {
+  const card = fromPlacesParsed({
+    ...mockPlacesItem,
+    coordinates: { lat: 100, lng: 'not-a-number' },
+  });
+
+  expect(card.coordinates).toBeNull();
 });
 
 test('places batch helper returns [] for non-array input', () => {

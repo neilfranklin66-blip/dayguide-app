@@ -100,6 +100,10 @@ function parsePlaces(results, lat, lng) {
         duration: PRICE_TO_DURATION[priceSymbol] ?? 1.5,
         distance: dist,
         address: p.vicinity,
+        coordinates: {
+          lat: p.geometry.location.lat,
+          lng: p.geometry.location.lng,
+        },
         image: imgSrc,
       };
     });

@@ -19,6 +19,7 @@ export const PLACE_CARD_DEFAULT = {
   walkingTimeMinutes: null,
   durationMinutes: null,
   address: null,
+  coordinates: null, // route-capable latitude/longitude when supplied by a trusted source
   photoUrl: null,
   mapsUrl: null,
   reason: null,

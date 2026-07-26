@@ -185,9 +185,26 @@ describe('searchRestaurants incomplete result normalisation', () => {
     expect(bare.duration).toBe(1.5);
     expect(bare.distance).toBe(0);
     expect(bare.address).toBeUndefined();
+    expect(bare.coordinates).toEqual({ lat: LAT, lng: LNG });
     expect(bare.cuisine).toEqual([]);
     expect(bare.image).toContain('placehold.co');
     expect(bare.image).toContain(encodeURIComponent('Bare Minimum'));
+  });
+
+  it('retains each live place coordinate for future leg-to-leg planning', async () => {
+    const venueCoordinates = { lat: LAT + 0.01, lng: LNG - 0.02 };
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('route-ready', 'Route Ready', {
+          geometry: { location: venueCoordinates },
+        }),
+      ])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, []);
+
+    expect(results[0].coordinates).toEqual(venueCoordinates);
+    expect(results[0].coordinates).not.toBe(venueCoordinates);
   });
 
   it('falls back to the placeholder image when photos are empty or lack a photo_reference', async () => {

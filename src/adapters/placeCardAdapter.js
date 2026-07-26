@@ -1,4 +1,5 @@
 import { PLACE_CARD_DEFAULT } from '../models/placeCard';
+import { isValidCoordinates } from '../models/geographicalPlan';
 
 /**
  * placeCardAdapter
@@ -45,6 +46,12 @@ export function getDefaultPlaceCardMetadata() {
 
 function createPlaceCard(fields) {
   return Object.assign({}, PLACE_CARD_DEFAULT, fields);
+}
+
+function normalizeCoordinates(coordinates) {
+  return isValidCoordinates(coordinates)
+    ? { lat: coordinates.lat, lng: coordinates.lng }
+    : null;
 }
 
 function metersToMiles(meters) {
@@ -126,6 +133,7 @@ export function fromMockRestaurant(r) {
     walkingTimeMinutes: estimateWalkingMinutesFromMeters(distanceMeters),
     durationMinutes,
     address: r.address ?? null,
+    coordinates: normalizeCoordinates(r.coordinates),
     photoUrl,
     mapsUrl,
     reason: null,
@@ -185,6 +193,7 @@ export function fromPlacesParsed(p) {
     walkingTimeMinutes: estimateWalkingMinutesFromMeters(distanceMeters),
     durationMinutes,
     address: p.address ?? null,
+    coordinates: normalizeCoordinates(p.coordinates),
     photoUrl,
     mapsUrl,
     reason: null,
