@@ -82,6 +82,32 @@ No deployment, republish, function invocation, or Git linkage followed, so
 runtime behaviour and production commit traceability remain unverified. Codex
 did not access the archive, `.env.local`, Netlify, GitHub, or a secret value.
 
+### Packet 141 controlled deployment-preparation supplement
+
+Packet 141 performed a tracked-history, configuration, test, and clean-build
+review on 26 July 2026. Its complete decision record and runbook are in
+[`CONTROLLED_TRACEABLE_DEPLOYMENT_PREPARATION.md`](CONTROLLED_TRACEABLE_DEPLOYMENT_PREPARATION.md).
+
+Bounded Git history shows `places-photo.js` first entered the repository in
+commit `ed3b055` on 7 July 2026, 48 days after the current production artifact
+was published. This chronology explains why a May repository-derived artifact
+could contain `places-nearby` but not the later photo function. It does not
+create missing provenance for the old CLI upload.
+
+Packet 141 pins Node major version 24, verifies both current handlers and the
+complete suite, and completes a production build from an isolated tracked-source
+export. It decides that the historical Google credential must be treated as
+potentially public: the tracked May client source read the client-prefixed
+variable. Before a new build, a replacement credential must be created, exact
+Production `GOOGLE_PLACES_API_KEY` updated, and
+`REACT_APP_GOOGLE_PLACES_API_KEY` removed from every Netlify context. Rotation
+is a two-phase action: create the replacement before the build, keep the old
+credential enabled only through initial live verification, then retire it.
+
+No live function was invoked. No repository connection, provider setting,
+deployment, publication, rollback, secret value, local environment file, or
+recovery archive was accessed or changed.
+
 ## 2. Evidence methodology
 
 The audit used:
@@ -114,6 +140,11 @@ are not described as independently reproduced by Codex.
 Packet 140 adds **Product Owner-supplied operational evidence** for recovery
 preservation and a later environment-name correction. The evidence is dated and
 does not rewrite the Packet 139 capture point or prove deployment consumption.
+
+Packet 141 adds **Verified — repository** chronology, current configuration,
+automated tests, and a clean tracked-source build, plus a deployment procedure
+grounded in current official Netlify guidance. It does not promote prepared
+settings or procedures to live evidence.
 
 Packet 136 excluded untracked files, secret values, provider consoles,
 authenticated sessions, deployment logs, build logs for the current commit,
@@ -313,14 +344,14 @@ establish the state of every function.
 | Publish directory | `build`. | None. | Verified — repository | Confirm Netlify uses tracked configuration. |
 | Function directory | `netlify/functions`. | Current CLI deploy listed one function; the Functions page listed only `places-nearby`. | Mixed repository and authenticated evidence | Ensure both tracked functions are included in a controlled deployment. |
 | Redirects | No tracked redirect/rewrite. | None. | Verified — repository | Reassess if routing/deep links are introduced. |
-| Runtime version | No root runtime pin. | None. | Risk | Select and pin a supported Node version. |
-| Environment names | Tracked functions require `GOOGLE_PLACES_API_KEY`; client-secret form is prohibited. | Packet 139 found the exact name absent. Packet 140 later records it as a Production secret scoped to Builds, Functions, and Runtime; the legacy client-prefixed variable remains. No deployment followed and no values were accessed. | Product Owner-supplied current configuration; runtime unverified | Decide the legacy variable's disposition and verify the corrected name only through a controlled deployment. |
-| Frontend function URLs | Two relative Netlify function URLs match filenames. | `places-nearby` is listed as running; `places-photo` is absent and its public route returned `404`. | Mixed authenticated and Verified — public live | Deploy both tracked functions and verify both routes safely. |
+| Runtime version | `.node-version` pins Node major 24; Packet 141 passed a clean build under Node `v24.15.0`. | Hosted version not yet observed. | Verified — repository; hosted consumption unverified | Record exact hosted Node and npm versions in the locked Packet 142 build. |
+| Environment names | Current functions require `GOOGLE_PLACES_API_KEY`; current client code prohibits the client-secret form. Git history proves the May client source read `REACT_APP_GOOGLE_PLACES_API_KEY`. | Packet 139 found only the legacy name; Packet 140 later records exact Production server name added while the legacy variable remains. No deployment followed and no values were accessed. | Mixed repository and Product Owner-supplied evidence | Before the next build, create a replacement credential, update the server variable, and remove the legacy variable from every context; retire the old credential after verification. |
+| Frontend function URLs | Two relative routes match two tracked handlers under the configured directory; focused tests pass. `places-photo` entered Git after the live artifact was published. | `places-nearby` is listed as running; `places-photo` is absent and its public route returned `404`. | Mixed repository, authenticated, and Verified — public live | Build both handlers while publication is locked, inspect inventory, then verify each route safely after deliberate publication. |
 | External providers | Google, Firebase, GitHub, Maps, and placeholder service are evidenced. | None. | Verified — repository | Verify operational readiness provider by provider. |
 | Deployment method | No tracked deployment trigger or upload script. | Project showed `Last deployed from CLI`; current deploy skipped all build stages. | Authenticated Product Owner-transcribed | Preserve recovery evidence before replacing the manual process. |
 | Live URL | No tracked URL. | Authenticated production domain matches Packet 138's reachable Netlify hostname; no custom domain is configured. | Authenticated and Verified — public live | Record future domain changes through controlled evidence. |
 | Deployed commit identity | No tracked mechanism. | Project is not Git-linked; no repository, branch, SHA, or commit message was displayed. | Confirmed traceability gap | Establish traceable Git deployment only after remediation. |
-| Rollback mechanism | No tracked runbook, workflow, or rollback reference. | An earlier retained deploy offered `Publish deploy`; automatic deletion is 90 days. Packet 140 records the current deploy archived outside the repository with size and SHA-256 evidence. | Product Owner-supplied recovery evidence; restoration unverified | Prepare and test an explicit rollback plan before Git connection or deployment. |
+| Rollback mechanism | Packet 141 tracks rollback triggers and operator steps. | An earlier retained deploy offered `Publish deploy`; automatic deletion is 90 days. Packet 140 records the current deploy archived outside the repository with size and SHA-256 evidence. | Prepared procedure plus Product Owner-supplied recovery evidence; execution unverified | Confirm retained target, lock publication, and preserve the right to republish it during Packet 142. |
 
 ## 12. Deployment risks and contradictions
 
@@ -331,18 +362,22 @@ currently present in production.
 
 ### Verified non-blocking risks
 
-- **Runtime drift — Risk:** no Node or npm version is pinned for Netlify or local
-  reproducibility.
+- **Runtime drift — Residual risk:** Node major 24 is now pinned and locally
+  verified; hosted consumption and exact patch versions remain unverified.
 - **Deployment knowledge gap — Risk:** no tracked deployment trigger, owner,
   release procedure, deployed-commit marker, or rollback runbook exists.
 - **Deployment traceability — Risk:** the Product Owner-supplied observation
   describes a manual or prebuilt upload, skipped Netlify build, and no displayed
   Git commit. The live artifact cannot be mapped to repository evidence.
-- **Configuration transition — Risk:** Packet 140 records exact
-  `GOOGLE_PLACES_API_KEY` now configured for Production, but no deployment has
-  consumed or verified it and the legacy client-prefixed name remains.
-- **Function completeness — Risk:** authenticated evidence lists only
-  `places-nearby`; Packet 138 verified the `places-photo` route returns `404`.
+- **Configuration transition — Blocking prerequisite for the new build:**
+  Packet 141 proves the May client source read the client-prefixed name.
+  Create a replacement credential, update exact Production
+  `GOOGLE_PLACES_API_KEY`, and remove the legacy name from every context before
+  Packet 142 builds; retire the old credential after live verification.
+- **Function completeness — Prepared but live-unverified:** authenticated
+  evidence lists only `places-nearby`; Packet 138 verified the photo route
+  `404`. Packet 141 establishes that the photo handler postdates the current
+  deploy and verifies both current handlers under the configured directory.
 - **Recovery validation — Risk:** the current artifact is preserved outside the
   repository with hash evidence, but archive contents and complete restoration
   are untested; provider deploys remain subject to 90-day deletion.
@@ -395,54 +430,57 @@ unavailable.
 - **Decision recorded:** do not connect Git yet.
 - **Completed operational prerequisite:** the Product Owner preserved the
   current deploy archive and configured the exact Production secret name.
-- **Decision required:** determine why `places-photo` was omitted, confirm both
-  functions will be built, and approve secret-safe route verification.
-- **Decision required:** determine whether the legacy client-prefixed variable
-  is removed, retained temporarily, or rotated.
-- **Decision required:** after remediation, approve Git-connected deployment
-  from `master`.
-- **Decision required:** approve a supported Node runtime for reproducible
-  builds.
-- **Decision required:** approve ownership and minimum rollback/runbook
-  requirements.
+- **Decision recorded:** tracked chronology explains the missing photo function;
+  both current handlers are selected and tested, with hosted packaging awaiting
+  Packet 142.
+- **Decision recorded:** create a replacement for the potentially exposed
+  credential and remove the legacy variable before the next build; retire the
+  old credential after live verification.
+- **Decision recorded:** pin Node major version 24.
+- **Decision recorded:** use a locked candidate build, deliberate publication,
+  bounded route checks, and named rollback triggers.
+- **Decision required:** explicitly authorise Packet 142's provider operations,
+  deployment, verification requests, and conditional rollback.
 
 ## 13. Current deployment-readiness assessment
 
 | Area | Rating | Reason |
 |---|---|---|
-| Repository configuration | Amber | Core build/publish/function settings exist, but runtime, redirects policy, branch policy, and site identity are incomplete. |
-| Reproducible build knowledge | Amber | npm lock and build script exist; runtime is unpinned and no Packet 136 build ran. |
+| Repository configuration | Green for deployment preparation | Build, publish, functions, production branch, and Node-major settings are exact; hosted consumption awaits Packet 142. |
+| Reproducible build knowledge | Green locally | Lockfile, Node 24 pin, full suite, and isolated tracked-source build pass; exact hosted versions remain to be recorded. |
 | Hosting configuration | Red | The project is authenticated and reachable, but it is not Git-linked and the current production artifact is an unattributed prebuilt CLI deploy. |
-| Serverless routing | Red | Client paths and function filenames align, but Packet 138 verified that the expected public `places-photo` route returned `404`; the nearby route and method behaviour remain unverified. |
-| Environment configuration | Amber | Packet 140 records the exact Production secret name configured, but the legacy client-prefixed name remains and no deployment or runtime verification followed. |
+| Serverless routing | Amber | Both current handlers are selected and tested; production still lacks `places-photo` and neither new hosted route is verified. |
+| Environment configuration | Red until pre-build correction | The server name is configured, but the historical client source read the still-configured legacy name; rotation/removal must precede the new build. |
 | External-service readiness | Red | Google and Firebase are essential to core paths but have no live evidence. |
 | Live frontend availability | Green for bounded reachability only | Packet 138 observed an HTTPS `200` response and DayGuide authentication interface; authenticated behaviour remains unverified. |
 | Live restaurant functionality | Not assessed | Paid/external API flows were explicitly excluded. |
-| Security of secret handling | Amber | The required Production name is now secret-enabled, but the legacy client-prefixed configuration remains; current artifact exposure is not proved. |
-| Rollback readiness | Amber | The current artifact is preserved outside the repository with size and SHA-256 evidence, but archive contents, restoration, and the rollback runbook remain untested. |
+| Security of secret handling | Amber with mandatory action | Current source is server-only; the historical credential is potentially public and has an explicit rotation/removal sequence. |
+| Rollback readiness | Amber | A retained-deploy rollback runbook and triggers are prepared; target availability and execution remain unverified. |
 | Deployment ownership and procedure | Red | The owner label and CLI source are known, but the artifact source, commit, repeatable release procedure, and tested rollback are absent. |
 
-Overall readiness is **Amber with Red operational-knowledge gaps**. The
-repository describes a plausible deployment architecture but does not establish
-that a current, attributable, reproducible, secure, and recoverable production
-deployment exists.
+Overall readiness is **GO for an explicitly controlled Packet 142, with Red
+pre-build credential correction and locked-publication safeguards**. Repository
+preparation is sufficient; production is not yet attributable, complete, or
+runtime-verified.
 
 ## 14. Recommended follow-up work
 
 Ranked, bounded later packets:
 
-1. **Packet 141 — diagnose function omission:** determine why the CLI artifact
-   omitted `places-photo` and confirm the repository build packages both
-   functions.
-2. **Packet 141 — safe verification design:** define a cost-minimised
-   `places-nearby` check and explicit go/no-go criteria.
-3. **Packet 141 — legacy variable decision:** decide whether the client-prefixed
-   variable is removed, retained temporarily, or rotated.
-4. **Packet 141 — deployment preparation:** prepare Git-connected settings,
-   rollback steps, runtime/build evidence, and first-deploy acceptance criteria.
-5. **Later authorised deployment:** only after preparation, connect Git to
-   `master`, deploy, verify both routes and commit identity, and validate
-   rollback.
+1. **Packet 142 — secret-safe pre-build correction:** provision a replacement
+   for the potentially exposed credential, update the exact Production server
+   variable, and remove the legacy client-prefixed variable from every context.
+2. **Packet 142 — locked traceable build:** lock publication, connect the
+   existing site to GitHub `master`, and inspect the candidate commit, build,
+   runtime, and both functions before publication.
+3. **Packet 142 — deliberate publication and bounded verification:** publish
+   only after all pre-publication criteria pass, then make one nearby request
+   and at most one dependent photo request; retire the old credential after
+   both pass.
+4. **Packet 142 — conditional rollback:** republish the retained May deploy if a
+   named trigger occurs.
+5. **Packet 143 — live Private Alpha journey:** verify the complete mobile
+   journey after Packet 142 is accepted.
 6. **Medium — public identity metadata:** replace generic Create React App title
    and manifest identity in a bounded product-code/static-assets packet.
 
@@ -471,19 +509,25 @@ deploy archive is preserved outside the repository with recorded size and
 SHA-256, and exact Production secret name `GOOGLE_PLACES_API_KEY` is configured.
 The legacy client-prefixed variable remains and production was not redeployed.
 
+Known from Packet 141 repository evidence: `places-photo` entered Git after the
+current production artifact was published; both current functions are selected
+by tracked configuration and pass focused tests; the full suite and clean
+production build pass under pinned Node major 24; the May client source read
+the client-prefixed variable; and exact connection, locked-publication,
+verification, and rollback procedures are prepared.
+
 Unknown: the deployed source and Git commit, function runtime, exact CLI upload
-procedure, corrected-variable consumption, live nearby-search behaviour, legacy
-variable disposition, secret controls, Google and Firebase operational health,
-archive restoration, and whether manual republishing restores the intended
-static and function state.
+procedure, corrected-variable consumption, live nearby-search behaviour,
+whether the old credential entered the May browser bundle, Google and Firebase
+operational health, archive restoration, and whether manual republishing
+restores the intended static and function state.
 
-The repository contains the core ingredients of a deployment process but not a
-fully reproducible deployment process: runtime selection, provider linkage,
-release traceability, ownership, and rollback are missing or unverified. Live
-reachability and bounded visible content are now evidence at the Packet 138
-capture time, but they do not establish provider canonical-domain settings,
-deployment provenance, complete function availability, or reproducibility.
+The repository now contains a locally verified, runtime-pinned deployment
+definition and a controlled operating procedure. Production remains unchanged:
+provider linkage, hosted commit/build evidence, complete live function
+availability, bounded route success, and rollback execution are unverified.
 
-**Single recommended next action:** begin Packet 141 — Controlled Traceable
-Deployment Preparation; do not connect Git or deploy until its build/function,
-secret-handling, rollback, and go/no-go evidence is accepted.
+**Single recommended next action:** review and accept Packet 141, then define and
+explicitly authorise Packet 142 to perform its credential rotation/removal,
+locked Git-connected build, deliberate publication, bounded verification, and
+conditional rollback sequence.

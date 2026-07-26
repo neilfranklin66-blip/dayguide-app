@@ -60,6 +60,16 @@ behaviour is unverified. Codex did not access the archive, `.env.local`,
 Netlify, or a secret value. This evidence does not change the Packet 133
 application-capability verification point above.
 
+**Controlled deployment preparation:** Packet 141 added
+[`docs/CONTROLLED_TRACEABLE_DEPLOYMENT_PREPARATION.md`](CONTROLLED_TRACEABLE_DEPLOYMENT_PREPARATION.md).
+It explains the missing production photo function from tracked chronology,
+pins Node.js major version 24, verifies the current build and both function
+handlers, decides to rotate the potentially exposed legacy credential, and
+defines locked publication and rollback controls for Packet 142. No live
+function, provider setting, secret value, archive, or deployment was accessed
+or changed. This preparation does not change the Packet 133
+application-capability verification point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -109,7 +119,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Plan persistence & resume | **Implemented** | `src/utils/planStorage.js` writes one versioned `localStorage` key (`dayguide_saved_plan_v1`); persists timeline + render settings only (no queues, selections, or geolocation). Resume restores a read-only plan view. A plan dated before the local calendar day is discarded on load and excluded from Resume (`isPlanDateExpired`/`loadPlan`, `planStorage.js`). |
 | Sharing | **Implemented (QR text)** | `TimelineShareQRModal.jsx` encodes a plain-text itinerary summary (`buildTimelineShareText`) as a QR code. No server-side share link or export. |
 | Localisation | **Implemented** | Five locales (`en`, `es`, `fr`, `zh`, `vi`) in `src/i18n.js`; language selector in header and login; choice persisted to `localStorage` and, for signed-up users, to Firestore. Key parity checked by `src/locales/localeConsistency.test.js`. |
-| Deployment / API handling | **Manual launch requirement — remediation incomplete** | Tracked functions require server-only `GOOGLE_PLACES_API_KEY`. Packet 140 evidence records that the exact Production secret name is now configured, but no deployment consumed or verified it. The legacy client-prefixed variable remains, only `places-nearby` is deployed, and the CLI artifact is not tied to tracked source. |
+| Deployment / API handling | **Traceable release prepared — production remediation pending** | Packet 141 verifies the current repository configuration selects both tracked functions and passes under pinned Node 24. Production still runs the unattributed May CLI artifact with only `places-nearby`; the corrected server variable is unconsumed and a replacement credential plus legacy-variable removal are required before the first Git-connected build, followed by old-credential retirement after live verification. |
 | Multi-day planning | **Not implemented** | No multi-day state, tabs, or routes exist in tracked `DayGuide.jsx`; planning is single-day, single-date. |
 | Favourites / booking | **Not implemented** | No favourites store or booking action is present in tracked source. |
 
@@ -182,6 +192,8 @@ Only gaps supported by repository evidence are listed.
   server-side name was then absent and only `places-nearby` was listed as
   deployed. Packet 140 later records that the Product Owner configured the exact
   Production secret name, but no deployment or nearby request followed.
+  Packet 141 verifies both current handlers and records that `places-photo`
+  entered Git 48 days after the current production artifact was published.
   Because the CLI artifact cannot be tied to tracked code, the production
   outcome remains operationally untested.
 
@@ -209,8 +221,10 @@ Only gaps supported by repository evidence are listed.
   Git-linked, was last deployed from CLI with build stages skipped, lists only
   `places-nearby`, and at that capture point lacked the exact server-side
   variable name. Packet 140 later records the exact Production secret name as
-  configured, but production was not redeployed. Auto publishing applies to
-  completed manual or CLI deploys; it is not continuous deployment from Git.
+  configured, but production was not redeployed. Packet 141 prepares exact
+  Git-link, locked-publication, verification, and rollback steps but performs
+  none of them. Auto publishing applies to completed manual or CLI deploys; it
+  is not continuous deployment from Git.
 - **Firebase project configuration is committed** in `src/firebase.js` (web app
   config, which Firebase treats as public). A live deployment depends on that
   Firebase project remaining provisioned.
