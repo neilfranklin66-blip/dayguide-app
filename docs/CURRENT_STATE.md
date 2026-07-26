@@ -106,6 +106,17 @@ identity was recorded. The result is **GO for a bounded invitation-only guest
 Private Alpha**, not general launch readiness. This operational evidence does
 not change the Packet 133 application-capability verification point above.
 
+**Geographical intelligence and anchor audit:** Packet 147 added
+[`docs/GEOGRAPHICAL_INTELLIGENCE_AND_ANCHOR_RECOVERY_AUDIT.md`](GEOGRAPHICAL_INTELLIGENCE_AND_ANCHOR_RECOVERY_AUDIT.md).
+Tracked source and history confirm that date, start time, current-device GPS,
+nearby restaurant discovery, and approximate transport survive, but manual
+start location, end destination, hard anchors, leg-to-leg travel, spatial
+ordering, opening-time feasibility, and route-aware fill-time suggestions are
+not implemented. The only anchor-related code is default
+`isAnchorCapable: false` metadata. The Product Owner's geographical-intelligence
+vision therefore requires a staged rebuild rather than recovery of a tracked
+feature. This audit does not change application or production behaviour.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -145,10 +156,15 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Authentication (Google, email/password, guest) | **Implemented — External-service dependent** | `src/AuthContext.jsx` wires Firebase `signInWithPopup`, `signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `signInAnonymously`, `signOut`; `src/Login.jsx` exposes all three paths with per-action pending/error handling. Requires a working Firebase project. |
 | Guest access | **Implemented** | Anonymous Firebase sign-in (`signInAsGuest` → `signInAnonymously`); guest users have no email and are handled explicitly (`AuthContext` removes the stored email string). |
 | Onboarding / preferences | **Implemented** | `InterestsStage` collects interests, cuisines, price, available time, date, start time, children, and start order; held in `DayGuide.jsx` component state. |
+| Manual start place / future planning location | **Not implemented** | Location is browser GPS only. `LocationStage` is a loading interstitial and no address, station, postcode, map pin, or other planning place can be entered. Restaurant search always uses the current browser position. |
+| End place / arrival deadline | **Not implemented** | No end-location or deadline state, control, timeline field, or persisted value exists. |
+| Hard anchors | **Not implemented** | The place model has default `isAnchorCapable: false` metadata, but no anchor entity, fixed time/place rule, lock, validation, UI, persistence, or planning behaviour exists. |
 | Activities | **Implemented — sample/demo-backed** | Sourced from `src/mockActivityData.json`, filtered in `src/engines/filterEngine.js`; every activity is flagged `isSample` in `DayGuide.jsx`. No live activity search exists. |
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
 | Itinerary generation | **Implemented** | `src/engines/timelineEngine.js` `buildTimelineEntries` orders items by `startWith` and assigns times with a 0.25h inter-stop gap. |
+| Geographic ordering / backtracking control | **Not implemented** | `startWith` groups activities and restaurants by category order only. Candidate coordinates are not retained in `PlaceCard`; no leg-to-leg calculation, spatial sort, route corridor, or backtracking rule exists. |
+| Route-aware fill time | **Not implemented** | Timeline popups use composition and current-origin restaurant distance. They do not account for a next anchor, onward leg, usable time window, or destination. |
 | Timeline | **Implemented** | `TimelineStage`/`TimelineCard`: editable per-item durations, day narrative (`src/utils/dayNarrative.js`), time-budget status, date display. |
 | Transport | **Implemented — approximate** | `src/engines/transportEngine.js` estimates minutes from venue distance via urban speed profiles; `distanceKm` is venue-to-user distance, not true leg-to-leg. Costs are fare *types*, not currency amounts (`TRANSPORT_OPTIONS`). |
 | Maps / deep links | **Implemented** | Google Maps search URLs built in `src/adapters/placeCardAdapter.js`; live restaurants include `query_place_id`. Carried into the timeline row's "Open in Maps" link (`TimelineItemRow.jsx`). Sample activities have no maps link. |
