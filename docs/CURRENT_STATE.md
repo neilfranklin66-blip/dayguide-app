@@ -160,6 +160,17 @@ returns ready, infeasible, evidence-required, directional, or
 no-route-required, preserves fixed anchors, and exposes an honest unmounted
 review stage. No live routing provider or current-journey activation exists.
 
+**Routing provider decision and guarded adapter:** Packet 152 added
+[`docs/ROUTING_PROVIDER_DECISION_CREDENTIAL_ISOLATION_AND_COST_GUARDRAILS.md`](ROUTING_PROVIDER_DECISION_CREDENTIAL_ISOLATION_AND_COST_GUARDRAILS.md).
+Google Compute Routes Essentials is the selected future adjacent-leg mechanism.
+A same-origin client boundary and server adapter enforce a distinct routing
+key, exact disabled-by-default provider mode, six-leg maximum, one request and
+one route per leg, no retries, no alternatives, no matrix, traffic-unaware
+driving, minimal response fields, timeout, and a three-checks-per-minute
+IP/domain rule. The adapter is not mounted, no routing key or provider mode is
+configured, and no provider, Netlify, production, push, or deployment change
+has occurred.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -206,7 +217,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
 | Itinerary generation | **Implemented** | `src/engines/timelineEngine.js` `buildTimelineEntries` orders items by `startWith` and assigns times with a 0.25h inter-stop gap. |
-| Fixed-plan route feasibility | **Provider-neutral integration implemented — not active** | `routeEvidenceBoundary` builds dated adjacent-leg requests and accepts only validated provider-route/operator-schedule evidence; `geographicalPlanningEngine` connects that evidence to Packet 148 and reports ready, infeasible, evidence-required, directional, or no-route-required. No live resolver is implemented and the review stage is not mounted. |
+| Fixed-plan route feasibility | **Provider selected and guarded adapter implemented — disabled and not active** | `routeEvidenceBoundary` and `geographicalPlanningEngine` retain Packet 151's trusted-evidence gate. Packet 152 selects Google Compute Routes Essentials and adds `routingProviderPolicy`, a same-origin client adapter, and a disabled-by-default server function with a separate routing credential and bounded calls. No routing key/mode is configured and the review stage is not mounted. |
 | Geographic ordering / backtracking control | **Foundation only — not active** | Live restaurant coordinates are now retained in `PlaceCard`, and the hard-anchor engine accepts injected leg evidence. The current journey still groups activities and restaurants by `startWith`; no spatial sort, route corridor, or backtracking scoring is active. |
 | Route-aware fill time | **Foundation only — not active** | `assessFlexibleStopFit` can deterministically require both travel legs and the visit duration inside a fixed planning window. Current timeline popups remain composition/current-origin based and do not call it. |
 | Timeline | **Implemented** | `TimelineStage`/`TimelineCard`: editable per-item durations, day narrative (`src/utils/dayNarrative.js`), time-budget status, date display. |
@@ -273,8 +284,10 @@ local recommendations. Verified distinctions:
 - **Route-evidence boundary** (`src/routing/routeEvidenceBoundary.js`,
   `geographicalPlanningEngine`, `GeographicalPlanningReview`): creates dated
   adjacent-leg requests, validates trusted evidence, integrates Packet 149 with
-  Packet 148, and gates continuation. Packet 151 leaves the boundary without a
-  live provider and disconnected from `DayGuide.jsx`.
+  Packet 148, and gates continuation. Packet 152 adds
+  `routingProviderPolicy`, `routeEvidenceApi`, and the disabled
+  `routes-evidence` server adapter. The whole workflow remains disconnected
+  from `DayGuide.jsx`.
 - **Utilities** (`src/utils/`): `planStorage`, `planLifecycle`,
   `restaurantSearchRequest`, `dayNarrative`, `recommendationReason`,
   `recommendationScore`.
@@ -282,7 +295,10 @@ local recommendations. Verified distinctions:
   `src/api/placesApi.js` → `netlify/functions/places-nearby.js` and
   `places-photo.js`, plus `src/api/placeResolutionApi.js` →
   `netlify/functions/places-resolve.js`. The functions attach the private key
-  server-side. No `REACT_APP_*` key is read on the client.
+  server-side. Packet 152 separately adds an unmounted routing client and
+  disabled server function. Its future `GOOGLE_ROUTES_API_KEY` cannot fall back
+  to the Places or browser variable, and a credential alone cannot activate it.
+  No `REACT_APP_*` key is read on the client.
 - **Persistence boundary.** `localStorage` for the saved plan (`planStorage.js`)
   and language preference; Firestore (`AuthContext.jsx`) stores only the user's
   language preference. Firebase Auth manages the session.
@@ -318,6 +334,13 @@ sign-in remain outside these checks.
 - **Sharing is a QR-encoded text summary**, not a hosted/shareable plan link.
 
 ### Operational / manual requirements
+- **The selected routing provider is intentionally not configured.** There is
+  no `GOOGLE_ROUTES_API_KEY` or approved routing-provider mode in the recorded
+  environment. Activation requires a separate restricted key, authenticated
+  proxy caller verification, Product-Owner-approved traffic assumptions, a hard
+  Google daily quota, billing monitoring, attribution/privacy/warning work,
+  coverage testing, and deploy-log proof of the Netlify rate rule. The Places
+  key must remain Places-only.
 - **`netlify.toml` tracks build, publish and functions configuration.** The
   root `netlify.toml` sets `command = "npm run build"`, `publish = "build"`,
   and `functions = "netlify/functions"`, matching `package.json`'s build
@@ -404,6 +427,16 @@ tests**), and the production build. The main bundle remained
 `main.a1cd6b13.js` at 229.38 kB gzipped because Packet 151 is not mounted in the
 current application. No route provider, API, credential, Netlify setting,
 push, or deployment followed.
+
+**Packet 152 snapshot (2026-07-26):** the Google Compute Routes Essentials
+decision, separate disabled-by-default credential boundary, six-leg cost
+envelope, no-retry/no-matrix/no-alternatives rules, minimal field mask,
+daylight-saving refusal, same-origin client, sanitized server evidence, and
+per-IP/domain rate rule passed focused validation (4 suites, 37 tests), the full
+suite (**51 test suites and 1,066 tests**), and the production build. The main
+bundle remained `main.a1cd6b13.js` at 229.38 kB gzipped because the adapter is
+not mounted. No routing API, credential, environment variable, Netlify setting,
+push, deployment, publication, or production behaviour changed.
 
 ## 8. Maintenance rule
 
