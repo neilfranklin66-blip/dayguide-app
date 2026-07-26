@@ -498,7 +498,7 @@ remain unavailable.
 | Environment configuration | Green with scope residual | Legacy variable is deleted; replacement is Production-only and Places-only, but Netlify process scope cannot be narrowed without upgrade. |
 | External-service readiness | Mixed | Google Places is verified within scope; Firebase remains unverified. |
 | Live frontend availability | Green for bounded reachability | Canonical HTTPS returns `200` and serves the verified clean bundle. |
-| Live restaurant functionality | Green for bounded provider check | Nearby returned 20 results and dependent photo redirection succeeded. |
+| Live restaurant functionality | Green for bounded provider and UI evidence | Packet 142's nearby call returned 20 results and dependent photo redirection succeeded. Packet 146 then verified live cards, photographs, selection, mixed timeline persistence, and the exact Maps handoff through the production UI. |
 | Security of secret handling | Green with residuals | No Places key is public; the old and wrong-project unused keys are retired. Netlify scope remains a separate hygiene item. |
 | Rollback readiness | Amber | Retained deploy and external archive exist; full restoration and old Places behaviour are unverified. |
 | Deployment ownership and procedure | Green | Exact repository, branch, commit, build, deploy, operator, and lock are recorded. |
@@ -511,8 +511,10 @@ rollback completeness.
 
 Ranked, bounded later packets:
 
-1. **Live Private Alpha journey:** verify the complete mobile and authenticated
-   journey without changing the locked deployment.
+1. **Live Private Alpha journey:** Packets 144–146 verified the guest denied-
+   and allowed-location production paths without changing the locked deployment.
+   Representative mobile-device layout and non-guest authentication remain
+   separate decisions.
 2. **Firebase security and provider audit:** verify authorised domains,
    authentication providers, and Firestore rules.
 3. **Dependency modernisation:** replace the legacy Create React App toolchain

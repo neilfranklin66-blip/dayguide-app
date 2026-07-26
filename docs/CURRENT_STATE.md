@@ -95,6 +95,17 @@ project `dayguide1` was deleted without changing the production credential.
 This operational evidence does not change the Packet 133
 application-capability verification point above.
 
+**Location-enabled Private Alpha gate:** Packet 146 added
+[`docs/LOCATION_ENABLED_PRIVATE_ALPHA_GATE.md`](LOCATION_ENABLED_PRIVATE_ALPHA_GATE.md).
+One bounded guest production journey verified location acquisition, honest
+filtered zero-results handling, explicitly authorised unfiltered broadening,
+live Google Places restaurant cards and photographs, restaurant selection into
+a mixed live/sample timeline, the exact Maps handoff, two-stop persistence and
+resume, QR sharing, reset, and logout. No coordinate or returned restaurant
+identity was recorded. The result is **GO for a bounded invitation-only guest
+Private Alpha**, not general launch readiness. This operational evidence does
+not change the Packet 133 application-capability verification point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -213,10 +224,11 @@ No Packet 142 deployment blocker remains. The exact Production server secret is
 consumed by the published functions; one bounded nearby request returned `OK`
 with 20 results and its dependent photo request reached Google's image host.
 Packet 144 verified anonymous Firebase guest authentication and the main
-denied-location production journey. Google and email/password sign-in,
-and location-enabled restaurant presentation remain outside that check. Packet
-145 separately verified the production QR Share dialog by direct physical
-pointer activation.
+denied-location production journey. Packet 145 separately verified the
+production QR Share dialog by direct physical pointer activation. Packet 146
+verified the location-enabled live restaurant, photograph, mixed timeline,
+Maps, persistence, QR, reset, and logout path. Google and email/password
+sign-in remain outside these checks.
 
 ### Launch limitations that can be disclosed
 - **Activities are sample/demo data, not real local recommendations.** No live
