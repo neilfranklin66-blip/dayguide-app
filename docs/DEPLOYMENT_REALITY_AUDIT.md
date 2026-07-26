@@ -437,9 +437,10 @@ currently present in production.
 - **Secret process scope — Residual risk:** the Netlify plan requires an upgrade
   to narrow the Production secret from Builds, Functions, and Runtime to
   Functions only. The published bundle nevertheless contains no Places key.
-- **Unused wrong-project key — Risk:** entering Google project `dayguide1`
-  during identification generated an unused broad key; it is not used by
-  DayGuide and was not deleted without separate authority.
+- **Unused wrong-project key — Closed in Packet 144:** the Product Owner
+  confirmed and deleted the unused broad key from Google project `dayguide1`.
+  The project then showed no API keys; the production credential in the
+  separate production project was unchanged.
 - **Recovery validation — Risk:** the current artifact is preserved outside the
   repository with hash evidence, but archive contents and complete restoration
   are untested; old-key retirement can limit historical Places functionality.
@@ -498,7 +499,7 @@ remain unavailable.
 | External-service readiness | Mixed | Google Places is verified within scope; Firebase remains unverified. |
 | Live frontend availability | Green for bounded reachability | Canonical HTTPS returns `200` and serves the verified clean bundle. |
 | Live restaurant functionality | Green for bounded provider check | Nearby returned 20 results and dependent photo redirection succeeded. |
-| Security of secret handling | Green with residuals | No Places key is public; old key is retired. Wrong-project unused key and Netlify scope remain separate hygiene items. |
+| Security of secret handling | Green with residuals | No Places key is public; the old and wrong-project unused keys are retired. Netlify scope remains a separate hygiene item. |
 | Rollback readiness | Amber | Retained deploy and external archive exist; full restoration and old Places behaviour are unverified. |
 | Deployment ownership and procedure | Green | Exact repository, branch, commit, build, deploy, operator, and lock are recorded. |
 
@@ -516,8 +517,8 @@ Ranked, bounded later packets:
    authentication providers, and Firestore rules.
 3. **Dependency modernisation:** replace the legacy Create React App toolchain
    through a separately reviewed migration; do not use forced audit fixes.
-4. **Credential hygiene:** verify ownership and safe deletion of the unused key
-   in Google project `dayguide1`, and review billing/quota alerts.
+4. **Credential governance:** review billing/quota alerts. Packet 144 completed
+   safe deletion of the unused key in Google project `dayguide1`.
 5. **Rollback exercise:** test a bounded restore plan that does not depend on
    the retired historical Places key.
 6. **Public identity metadata:** replace generic Create React App title and

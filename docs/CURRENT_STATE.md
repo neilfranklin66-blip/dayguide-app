@@ -80,6 +80,19 @@ bundle contains no Places credential, and the historical broad credential is
 retired. This operational evidence updates deployment readiness but does not
 change the Packet 133 application-capability verification point above.
 
+**Production Private Alpha verification:** Packet 144 added
+[`docs/PRODUCTION_PRIVATE_ALPHA_VERIFICATION.md`](PRODUCTION_PRIVATE_ALPHA_VERIFICATION.md).
+One bounded production guest journey passed authentication, denied-location
+handling, preferences, sample-activity selection, honest restaurant
+unavailability, timeline generation, saved-plan resume, reset, and logout. The
+Share action did not expose its expected QR dialog and is recorded as a
+non-blocking defect candidate. Google and email/password authentication, a
+location-enabled restaurant UI journey, representative mobile-device coverage,
+and accessibility remain outside the evidence. The separately authorised,
+unused 35-API key in Google project `dayguide1` was deleted without changing
+the production credential. This operational evidence does not change the
+Packet 133 application-capability verification point above.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -197,9 +210,10 @@ Only gaps supported by repository evidence are listed.
 No Packet 142 deployment blocker remains. The exact Production server secret is
 consumed by the published functions; one bounded nearby request returned `OK`
 with 20 results and its dependent photo request reached Google's image host.
-Firebase and the complete authenticated journey still require their own
-operational verification and are not represented as proved by these function
-checks.
+Packet 144 verified anonymous Firebase guest authentication and the main
+denied-location production journey. Google and email/password sign-in,
+location-enabled restaurant presentation, and the QR Share action are not
+proved working by that check.
 
 ### Launch limitations that can be disclosed
 - **Activities are sample/demo data, not real local recommendations.** No live

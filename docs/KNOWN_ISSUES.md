@@ -8,16 +8,17 @@ accessibility gaps, and explicitly accepted limitations for DayGuide.
 
 - **Current verification date:** 26 July 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packets 142 and 143 traceable production
-  deployment and deterministic dependency installation
+- **Latest targeted update:** Packet 144 production Private Alpha verification
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository evidence, Product Owner-operated
-  authenticated provider evidence, bounded public checks, and Packets 141–143
-  build and deployment evidence
+  authenticated provider evidence, bounded public checks, Packets 141–143 build
+  and deployment evidence, and one Packet 144 production guest journey
 - **Runtime scope:** Packet 143 clean-install, test, build, candidate, and
-  production evidence is recorded in this register and
-  [`TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md)
+  production evidence is recorded in
+  [`TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md);
+  Packet 144 browser evidence is recorded in
+  [`PRODUCTION_PRIVATE_ALPHA_VERIFICATION.md`](PRODUCTION_PRIVATE_ALPHA_VERIFICATION.md)
 
 The untracked `.claude/` and `Dayguide#2/` folders are protected and were not
 inspected, listed, searched, opened, modified, moved, renamed, staged, or
@@ -95,6 +96,29 @@ decision must be supported by the launch rules and evidence.
   representative live results before deciding whether the fallback should
   change.
 - **Verification date:** 13 July 2026
+
+### KI-002 — Production Share action did not expose the QR dialog
+
+- **ID:** KI-002
+- **Category:** User-facing functional defect candidate
+- **Severity:** Medium
+- **Status:** Open — reproduction and cause not yet isolated
+- **Launch blocking:** No for a bounded guest Private Alpha
+- **Verification status:** Observed once in the Packet 144 production journey;
+  tracked component wiring indicates that a QR dialog should open.
+- **Factual evidence:** On the completed production timeline, activating
+  `Share` left the visible screen unchanged and exposed no QR dialog. Tracked
+  `TimelineStage.jsx` passes `setShowQR(true)` to the Share action and
+  `TimelineShareQRModal.jsx` defines the expected dialog. The same journey's
+  timeline, persistence, reset, and logout checks passed.
+- **Impact:** A participant may be unable to use the optional QR text-sharing
+  feature; core itinerary creation and recovery remain available.
+- **Likely dependency:** A focused reproduction that distinguishes deployed
+  event/state behaviour from browser-specific presentation.
+- **Recommended next action:** Investigate and fix only in a separately
+  authorised implementation packet, then rerun the focused share/timeline check
+  and proportionate automated regression tests.
+- **Verification date:** 26 July 2026
 
 No additional active working defect was established from the permitted static
 evidence. Entries elsewhere in this register are classified as debt, risk,
@@ -217,21 +241,25 @@ No other entry is classified as launch blocking.
 - **ID:** OP-002
 - **Category:** Deployment and external-service uncertainty
 - **Severity:** High
-- **Status:** Unverified operational assumption
+- **Status:** Partially verified
 - **Launch blocking:** No
-- **Verification status:** The authentication dependency is verified in tracked
-  code; project availability, provider enablement, authorised domains, quota,
-  and production connectivity are unverified.
+- **Verification status:** Packet 144 verified anonymous guest sign-in and
+  logout on the production domain. Google and email/password provider paths,
+  provider governance, authorised-domain configuration, and quota remain
+  unverified.
 - **Factual evidence:** `src/App.js` renders `DayGuide` only for an
   authenticated user. `src/AuthContext.jsx` uses Google, email/password, and
   anonymous Firebase Auth against the project configured in `src/firebase.js`.
+  In Packet 144, `Continue as guest` reached the authenticated welcome screen,
+  the planning journey completed, and Logout returned to the sign-in screen.
 - **Impact:** A production Firebase or provider configuration failure can
   prevent users from reaching the planning journey.
 - **Likely dependency:** Firebase project provisioning, authentication-provider
   settings, authorised domains, service availability, and quota.
-- **Recommended next action:** Verify every exposed sign-in path on the intended
-  production domain through an authorised operational check.
-- **Verification date:** 13 July 2026
+- **Recommended next action:** Decide which sign-in methods Private Alpha
+  participants require, then verify only those paths through an authorised
+  operational check.
+- **Verification date:** 26 July 2026
 
 ### OP-003 — Deployment runtime is pinned in tracked configuration
 
@@ -345,8 +373,9 @@ journey remain outside the bounded deployment verification.
 - **Status:** Partially verified
 - **Launch blocking:** No
 - **Verification status:** The production migration and public-bundle outcome
-  are verified. Functions-only Netlify scope, billing alerts, quota controls,
-  and an unused key created in a different Google project remain unresolved.
+  are verified. Packet 144 also removed the unused key from the separate Google
+  project. Functions-only Netlify scope, billing alerts, and quota controls
+  remain unresolved.
 - **Factual evidence:** Packet 142 created `DayGuide Netlify Places Key` in the
   confirmed Google project, limited it to `Places API`, stored it as a
   Production Netlify secret, verified it through both functions, deleted
@@ -354,18 +383,19 @@ journey remain outside the bounded deployment verification.
   clean public bundle contains no Places key or secret-variable name, and
   deleted the old 33-API credential. Netlify requires a paid upgrade to reduce
   the secret's scope from Builds, Functions, and Runtime to Functions only; no
-  upgrade was authorised. An unused key dated 26 July 2026 was generated in
-  separate project `dayguide1` during project identification and remains
-  untouched.
+  upgrade was authorised. An unused key dated 26 July 2026 had been generated
+  in separate project `dayguide1` during project identification. Packet 144
+  confirmed the exact project and key, deleted it, and observed `No API keys to
+  display` in that project. The production key was in a different project and
+  was not changed.
 - **Impact:** The production key is no longer exposed through the CRA client
   path and has narrow API access. Broad Netlify process scope and the unrelated
-  unused key are residual configuration-hygiene risks, not current production
-  blockers.
-- **Likely dependency:** Netlify plan capabilities, Google billing/quota
-  governance, and separately authorised cleanup of project `dayguide1`.
+  billing and quota governance remain residual configuration risks, not current
+  production blockers. The wrong-project unused-key risk is closed.
+- **Likely dependency:** Netlify plan capabilities and Google billing/quota
+  governance.
 - **Recommended next action:** Keep the current production secret and
-  publication lock unchanged. Separately verify ownership and safe deletion of
-  the unused `dayguide1` key; consider Functions-only scope only if the benefit
+  publication lock unchanged; consider Functions-only scope only if the benefit
   justifies a plan change.
 - **Verification date:** 26 July 2026
 
@@ -386,18 +416,21 @@ or provider governance.
 - **Launch blocking:** No
 - **Verification status:** The tracked inventory contains extensive Jest and
   React Testing Library coverage but no tracked browser end-to-end framework or
-  suite; testing outside the repository is unknown.
+  suite. Packet 144 supplied one manual browser journey as dated operational
+  evidence, not a repeatable tracked test layer.
 - **Factual evidence:** `package.json` exposes Create React App test and build
   scripts. Tracked tests are colocated `*.test.js` and `*.test.jsx` files;
   no tracked Playwright, Cypress, or equivalent end-to-end configuration exists.
-- **Impact:** Repository tests do not by themselves demonstrate that the complete
-  deployed authentication, geolocation, function, swipe, persistence, sharing,
-  and external-link journey works in a real browser.
+- **Impact:** Repository tests do not by themselves demonstrate that the
+  complete deployed authentication, geolocation, function, swipe, persistence,
+  sharing, and external-link journey works in a real browser. Packet 144 reduced
+  uncertainty for one guest denied-location path and identified an unresolved
+  Share-action finding.
 - **Likely dependency:** An approved browser test strategy and authorised test
   environments for external services.
 - **Recommended next action:** Define the minimum critical-path browser checks
   needed for launch assurance before selecting tooling.
-- **Verification date:** 13 July 2026
+- **Verification date:** 26 July 2026
 
 ### TA-002 — Accessibility and representative-device usability are unaudited
 
