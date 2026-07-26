@@ -132,9 +132,10 @@ geographical-planning capability.
 Provider-neutral workflow state and components can now distinguish current GPS
 from another resolved place, collect an optional destination/deadline, and add,
 edit, or deliberately remove planner-locked hard anchors. The workflow accepts
-only validated route-capable places and rejects unresolved free text. It is not
-mounted in `DayGuide.jsx` because no approved place-resolution boundary yet
-supplies alternative locations; current production behaviour is unchanged.
+only validated route-capable places and rejects unresolved free text. Packet
+150 now supplies an internal place-resolution boundary, and Packet 151 consumes
+the finalized structure internally. The workflow remains unmounted in
+`DayGuide.jsx`; current production behaviour is unchanged.
 
 **Place resolution and planning-input integration:** Packet 150 added
 [`docs/PLACE_RESOLUTION_BOUNDARY_AND_PLANNING_INPUT_INTEGRATION.md`](PLACE_RESOLUTION_BOUNDARY_AND_PLANNING_INPUT_INTEGRATION.md).
@@ -144,8 +145,20 @@ references. `PlanningInputWithPlaceResolution` supplies deliberately added
 matches to the Packet 149 selectors with attributed results and honest
 loading, empty, unavailable, denied, quota, network, and malformed-response
 states. It is not mounted in `DayGuide.jsx`: route evidence, planning-engine
-integration, localization, compliant persistence, and activation remain
-separate work. Current production behaviour is unchanged.
+integration, localization, compliant persistence, and activation were left as
+separate work at that packet boundary. Packet 151 now provides the first two
+internally, without selecting a live route provider. Current production
+behaviour is unchanged.
+
+**Route evidence and geographical-planning integration:** Packet 151 added
+[`docs/ROUTE_EVIDENCE_BOUNDARY_AND_GEOGRAPHICAL_PLANNING_INTEGRATION.md`](ROUTE_EVIDENCE_BOUNDARY_AND_GEOGRAPHICAL_PLANNING_INTEGRATION.md).
+A dated, timezone-aware, provider-neutral batch boundary now constructs the
+adjacent travel legs around Packet 149 start/destination/anchor input. Only
+validated provider-route or operator-schedule evidence can prove feasibility;
+the existing approximate transport heuristic is rejected. The integration
+returns ready, infeasible, evidence-required, directional, or
+no-route-required, preserves fixed anchors, and exposes an honest unmounted
+review stage. No live routing provider or current-journey activation exists.
 
 ## 2. Current user journey
 
@@ -193,6 +206,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
 | Itinerary generation | **Implemented** | `src/engines/timelineEngine.js` `buildTimelineEntries` orders items by `startWith` and assigns times with a 0.25h inter-stop gap. |
+| Fixed-plan route feasibility | **Provider-neutral integration implemented — not active** | `routeEvidenceBoundary` builds dated adjacent-leg requests and accepts only validated provider-route/operator-schedule evidence; `geographicalPlanningEngine` connects that evidence to Packet 148 and reports ready, infeasible, evidence-required, directional, or no-route-required. No live resolver is implemented and the review stage is not mounted. |
 | Geographic ordering / backtracking control | **Foundation only — not active** | Live restaurant coordinates are now retained in `PlaceCard`, and the hard-anchor engine accepts injected leg evidence. The current journey still groups activities and restaurants by `startWith`; no spatial sort, route corridor, or backtracking scoring is active. |
 | Route-aware fill time | **Foundation only — not active** | `assessFlexibleStopFit` can deterministically require both travel legs and the visit duration inside a fixed planning window. Current timeline popups remain composition/current-origin based and do not call it. |
 | Timeline | **Implemented** | `TimelineStage`/`TimelineCard`: editable per-item durations, day narrative (`src/utils/dayNarrative.js`), time-budget status, date display. |
@@ -241,9 +255,10 @@ local recommendations. Verified distinctions:
   `RestaurantsStage`, `TimelineStage`, each rendered by `DayGuide.renderStage`.
 - **Engines** (`src/engines/`): `filterEngine`, `selectionEngine`,
   `itineraryRouteEngine`, `timelineEngine`, `restaurantEngine`,
-  `transportEngine`, `popupEngine`, `hardAnchorEngine`, and `recommendation*`
-  scoring. Pure logic, independently tested. `hardAnchorEngine` is an internal
-  Packet 148 foundation and is not called by the current journey.
+  `transportEngine`, `popupEngine`, `hardAnchorEngine`,
+  `geographicalPlanningEngine`, and `recommendation*` scoring. Pure logic,
+  independently tested. The hard-anchor and geographical-planning engines are
+  internal foundations and are not called by the current journey.
 - **Planning models** (`src/models/geographicalPlan.js`): provider-independent
   route-capable places, start/end points, planner-locked hard anchors, flexible
   stops, and route legs. Schema version 2 is defined but not persisted.
@@ -251,9 +266,15 @@ local recommendations. Verified distinctions:
   `ResolvedPlaceSelect`, `HardAnchorEditor`, `PlanningInputStage`,
   `PlanningInputWithPlaceResolution`): immutable draft/finalization logic,
   resolved-place-only controls, and an explicit-search resolution wrapper.
-  Packet 150 connects verified results to Packet 149 internally but leaves the
-  combined workflow disconnected from `DayGuide.jsx` pending route evidence,
-  planning-engine integration, localization, persistence, and activation.
+  Packet 150 connects verified results to Packet 149 internally. Packet 151
+  adds provider-neutral route assessment, while the combined workflow remains
+  disconnected from `DayGuide.jsx` pending a live route provider, localization,
+  persistence, and activation.
+- **Route-evidence boundary** (`src/routing/routeEvidenceBoundary.js`,
+  `geographicalPlanningEngine`, `GeographicalPlanningReview`): creates dated
+  adjacent-leg requests, validates trusted evidence, integrates Packet 149 with
+  Packet 148, and gates continuation. Packet 151 leaves the boundary without a
+  live provider and disconnected from `DayGuide.jsx`.
 - **Utilities** (`src/utils/`): `planStorage`, `planLifecycle`,
   `restaurantSearchRequest`, `dayNarrative`, `recommendationReason`,
   `recommendationScore`.
@@ -374,6 +395,15 @@ integration passed focused validation (3 suites, 35 tests), the full suite
 remained `main.a1cd6b13.js` at 229.38 kB gzipped because the combined workflow
 is not mounted in the current application. No provider setting, credential,
 Netlify setting, push, or deployment followed.
+
+**Packet 151 snapshot (2026-07-26):** the dated route-request contract,
+trustworthy-evidence validation, Packet 149-to-148 integration, exact
+shortfalls, anchor preservation, and honest review states passed focused
+validation (3 suites, 25 tests), the full suite (**48 test suites and 1,040
+tests**), and the production build. The main bundle remained
+`main.a1cd6b13.js` at 229.38 kB gzipped because Packet 151 is not mounted in the
+current application. No route provider, API, credential, Netlify setting,
+push, or deployment followed.
 
 ## 8. Maintenance rule
 
