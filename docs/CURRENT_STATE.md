@@ -127,6 +127,15 @@ foundation is not wired to the UI, current timeline, saved-plan version 1,
 providers, or production, so it does not yet provide a user-visible
 geographical-planning capability.
 
+**Start, destination, and anchor input workflow:** Packet 149 added
+[`docs/START_DESTINATION_AND_HARD_ANCHOR_INPUT_WORKFLOW.md`](START_DESTINATION_AND_HARD_ANCHOR_INPUT_WORKFLOW.md).
+Provider-neutral workflow state and components can now distinguish current GPS
+from another resolved place, collect an optional destination/deadline, and add,
+edit, or deliberately remove planner-locked hard anchors. The workflow accepts
+only validated route-capable places and rejects unresolved free text. It is not
+mounted in `DayGuide.jsx` because no approved place-resolution boundary yet
+supplies alternative locations; current production behaviour is unchanged.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -166,9 +175,9 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Authentication (Google, email/password, guest) | **Implemented — External-service dependent** | `src/AuthContext.jsx` wires Firebase `signInWithPopup`, `signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `signInAnonymously`, `signOut`; `src/Login.jsx` exposes all three paths with per-action pending/error handling. Requires a working Firebase project. |
 | Guest access | **Implemented** | Anonymous Firebase sign-in (`signInAsGuest` → `signInAnonymously`); guest users have no email and are handled explicitly (`AuthContext` removes the stored email string). |
 | Onboarding / preferences | **Implemented** | `InterestsStage` collects interests, cuisines, price, available time, date, start time, children, and start order; held in `DayGuide.jsx` component state. |
-| Manual start place / future planning location | **Not implemented** | Location is browser GPS only. `LocationStage` is a loading interstitial and no address, station, postcode, map pin, or other planning place can be entered. Restaurant search always uses the current browser position. |
-| End place / arrival deadline | **Not implemented** | No end-location or deadline state, control, timeline field, or persisted value exists. |
-| Hard anchors | **Foundation implemented — not user-facing** | `src/models/geographicalPlan.js` defines planner-locked hard anchors and `src/engines/hardAnchorEngine.js` preserves their fixed place/time while reporting infeasible or indeterminate windows. No anchor UI, current-plan integration, or persistence exists. |
+| Manual start place / future planning location | **Input workflow implemented — not active** | `ResolvedPlaceSelect` and `PlanningInputStage` distinguish current GPS from another injected, validated place. No place-resolution source supplies typed addresses or venues, and the stage is not mounted in the current journey. |
+| End place / arrival deadline | **Input workflow implemented — not active** | Packet 149 can collect a resolved destination with an optional deadline and buffer, or a soft directional destination. It is not connected to the current timeline or persistence. |
+| Hard anchors | **Input workflow implemented — not active** | `HardAnchorEditor` creates planner-locked fixed commitments and `PlanningInputStage` provides deliberate Edit/Remove actions. Packet 148 preserves their fixed place/time. No current-journey or persistence integration exists. |
 | Activities | **Implemented — sample/demo-backed** | Sourced from `src/mockActivityData.json`, filtered in `src/engines/filterEngine.js`; every activity is flagged `isSample` in `DayGuide.jsx`. No live activity search exists. |
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
@@ -227,6 +236,11 @@ local recommendations. Verified distinctions:
 - **Planning models** (`src/models/geographicalPlan.js`): provider-independent
   route-capable places, start/end points, planner-locked hard anchors, flexible
   stops, and route legs. Schema version 2 is defined but not persisted.
+- **Planning-input boundary** (`src/utils/planningInputWorkflow.js`,
+  `ResolvedPlaceSelect`, `HardAnchorEditor`, `PlanningInputStage`): immutable
+  draft/finalization logic and resolved-place-only input controls. Packet 149
+  leaves them disconnected from `DayGuide.jsx` pending an approved
+  place-resolution source and localization.
 - **Utilities** (`src/utils/`): `planStorage`, `planLifecycle`,
   `restaurantSearchRequest`, `dayNarrative`, `recommendationReason`,
   `recommendationScore`.
@@ -331,6 +345,13 @@ passed its focused model, engine, adapter, and Places-client validation
 (4 suites, 74 tests), the full suite (**39 test suites and 961 tests**), and the
 production build. The main JavaScript bundle was 229.38 kB gzipped. No
 deployment followed.
+
+**Packet 149 snapshot (2026-07-26):** the provider-neutral planning-input
+workflow passed its focused workflow/component validation (4 suites, 27 tests)
+without React or invalid-HTML warnings, the full suite (**43 test suites and
+988 tests**), and the production build. The main bundle remained
+`main.a1cd6b13.js` at 229.38 kB gzipped because the workflow is not mounted in
+the current application. No deployment followed.
 
 ## 8. Maintenance rule
 
