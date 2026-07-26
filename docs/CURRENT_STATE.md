@@ -136,6 +136,17 @@ only validated route-capable places and rejects unresolved free text. It is not
 mounted in `DayGuide.jsx` because no approved place-resolution boundary yet
 supplies alternative locations; current production behaviour is unchanged.
 
+**Place resolution and planning-input integration:** Packet 150 added
+[`docs/PLACE_RESOLUTION_BOUNDARY_AND_PLANNING_INPUT_INTEGRATION.md`](PLACE_RESOLUTION_BOUNDARY_AND_PLANNING_INPUT_INTEGRATION.md).
+An explicit-search-only, server-keyed Google Places boundary now resolves typed
+stations, venues, hotels, and addresses into validated Packet 148 place
+references. `PlanningInputWithPlaceResolution` supplies deliberately added
+matches to the Packet 149 selectors with attributed results and honest
+loading, empty, unavailable, denied, quota, network, and malformed-response
+states. It is not mounted in `DayGuide.jsx`: route evidence, planning-engine
+integration, localization, compliant persistence, and activation remain
+separate work. Current production behaviour is unchanged.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -175,7 +186,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Authentication (Google, email/password, guest) | **Implemented — External-service dependent** | `src/AuthContext.jsx` wires Firebase `signInWithPopup`, `signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `signInAnonymously`, `signOut`; `src/Login.jsx` exposes all three paths with per-action pending/error handling. Requires a working Firebase project. |
 | Guest access | **Implemented** | Anonymous Firebase sign-in (`signInAsGuest` → `signInAnonymously`); guest users have no email and are handled explicitly (`AuthContext` removes the stored email string). |
 | Onboarding / preferences | **Implemented** | `InterestsStage` collects interests, cuisines, price, available time, date, start time, children, and start order; held in `DayGuide.jsx` component state. |
-| Manual start place / future planning location | **Input workflow implemented — not active** | `ResolvedPlaceSelect` and `PlanningInputStage` distinguish current GPS from another injected, validated place. No place-resolution source supplies typed addresses or venues, and the stage is not mounted in the current journey. |
+| Manual start place / future planning location | **Place resolution and input integration implemented — not active** | `placeResolutionApi` and `places-resolve` resolve an explicitly submitted station, venue, hotel, or address into validated provider-labelled places; `PlanningInputWithPlaceResolution` supplies deliberately added matches to Packet 149. The component is not mounted in the current journey and no provider or Netlify setting has changed. |
 | End place / arrival deadline | **Input workflow implemented — not active** | Packet 149 can collect a resolved destination with an optional deadline and buffer, or a soft directional destination. It is not connected to the current timeline or persistence. |
 | Hard anchors | **Input workflow implemented — not active** | `HardAnchorEditor` creates planner-locked fixed commitments and `PlanningInputStage` provides deliberate Edit/Remove actions. Packet 148 preserves their fixed place/time. No current-journey or persistence integration exists. |
 | Activities | **Implemented — sample/demo-backed** | Sourced from `src/mockActivityData.json`, filtered in `src/engines/filterEngine.js`; every activity is flagged `isSample` in `DayGuide.jsx`. No live activity search exists. |
@@ -237,17 +248,20 @@ local recommendations. Verified distinctions:
   route-capable places, start/end points, planner-locked hard anchors, flexible
   stops, and route legs. Schema version 2 is defined but not persisted.
 - **Planning-input boundary** (`src/utils/planningInputWorkflow.js`,
-  `ResolvedPlaceSelect`, `HardAnchorEditor`, `PlanningInputStage`): immutable
-  draft/finalization logic and resolved-place-only input controls. Packet 149
-  leaves them disconnected from `DayGuide.jsx` pending an approved
-  place-resolution source and localization.
+  `ResolvedPlaceSelect`, `HardAnchorEditor`, `PlanningInputStage`,
+  `PlanningInputWithPlaceResolution`): immutable draft/finalization logic,
+  resolved-place-only controls, and an explicit-search resolution wrapper.
+  Packet 150 connects verified results to Packet 149 internally but leaves the
+  combined workflow disconnected from `DayGuide.jsx` pending route evidence,
+  planning-engine integration, localization, persistence, and activation.
 - **Utilities** (`src/utils/`): `planStorage`, `planLifecycle`,
   `restaurantSearchRequest`, `dayNarrative`, `recommendationReason`,
   `recommendationScore`.
 - **API / Netlify boundary.** All Google Places access goes through
   `src/api/placesApi.js` → `netlify/functions/places-nearby.js` and
-  `places-photo.js`, which hold the private key server-side. No `REACT_APP_*`
-  key is read on the client.
+  `places-photo.js`, plus `src/api/placeResolutionApi.js` →
+  `netlify/functions/places-resolve.js`. The functions attach the private key
+  server-side. No `REACT_APP_*` key is read on the client.
 - **Persistence boundary.** `localStorage` for the saved plan (`planStorage.js`)
   and language preference; Firestore (`AuthContext.jsx`) stores only the user's
   language preference. Firebase Auth manages the session.
@@ -352,6 +366,14 @@ without React or invalid-HTML warnings, the full suite (**43 test suites and
 988 tests**), and the production build. The main bundle remained
 `main.a1cd6b13.js` at 229.38 kB gzipped because the workflow is not mounted in
 the current application. No deployment followed.
+
+**Packet 150 snapshot (2026-07-26):** the explicit-search place-resolution
+function, client boundary, attribution, failure states, and Packet 149
+integration passed focused validation (3 suites, 35 tests), the full suite
+(**45 test suites and 1,015 tests**), and the production build. The main bundle
+remained `main.a1cd6b13.js` at 229.38 kB gzipped because the combined workflow
+is not mounted in the current application. No provider setting, credential,
+Netlify setting, push, or deployment followed.
 
 ## 8. Maintenance rule
 

@@ -8,6 +8,7 @@
 
 const nearby = require('../../netlify/functions/places-nearby');
 const photo = require('../../netlify/functions/places-photo');
+const resolve = require('../../netlify/functions/places-resolve');
 
 const ORIGINAL_SERVER_KEY = process.env.GOOGLE_PLACES_API_KEY;
 const ORIGINAL_CLIENT_KEY = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
@@ -137,5 +138,206 @@ describe('places-photo function', () => {
 
     expect(res.statusCode).toBe(302);
     expect(res.headers.Location).toContain('placehold.co');
+  });
+});
+
+describe('places-resolve function', () => {
+  const event = {
+    httpMethod: 'POST',
+    body: JSON.stringify({ query: 'London Euston' }),
+  };
+
+  it('rejects an invalid query before making a provider request', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+
+    const res = await resolve.handler({
+      httpMethod: 'POST',
+      body: JSON.stringify({ query: ' x ' }),
+    });
+
+    expect(res.statusCode).toBe(400);
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'INVALID_REQUEST',
+      error_message: 'INVALID_QUERY',
+      candidates: [],
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects invalid JSON without making a provider request', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+
+    const res = await resolve.handler({
+      httpMethod: 'POST',
+      body: '{not-json',
+    });
+
+    expect(res.statusCode).toBe(400);
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'INVALID_REQUEST',
+      error_message: 'INVALID_JSON',
+      candidates: [],
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects non-POST requests without making a provider request', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+
+    const res = await resolve.handler({
+      httpMethod: 'GET',
+      body: JSON.stringify({ query: 'London Euston' }),
+    });
+
+    expect(res.statusCode).toBe(405);
+    expect(JSON.parse(res.body).error_message).toBe('METHOD_NOT_ALLOWED');
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('returns the NO_API_KEY denial without calling Google when the key is unset', async () => {
+    const res = await resolve.handler(event);
+
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'REQUEST_DENIED',
+      error_message: 'NO_API_KEY',
+      candidates: [],
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('uses the existing server key and returns only route-capable planning fields', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: 'OK',
+        candidates: [
+          {
+            place_id: 'euston-id',
+            name: 'London Euston',
+            formatted_address: 'Euston Road, London',
+            geometry: {
+              location: { lat: 51.5282, lng: -0.1337 },
+              viewport: { ignored: true },
+            },
+            rating: 4.2,
+          },
+        ],
+        html_attributions: [],
+      }),
+    });
+
+    const res = await resolve.handler(event);
+    const googleUrl = new URL(global.fetch.mock.calls[0][0]);
+
+    expect(googleUrl.origin + googleUrl.pathname).toBe(
+      'https://maps.googleapis.com/maps/api/place/findplacefromtext/json',
+    );
+    expect(googleUrl.searchParams.get('input')).toBe('London Euston');
+    expect(googleUrl.searchParams.get('inputtype')).toBe('textquery');
+    expect(googleUrl.searchParams.get('fields')).toBe(
+      'place_id,name,formatted_address,geometry',
+    );
+    expect(googleUrl.searchParams.get('key')).toBe(TEST_KEY);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'OK',
+      candidates: [
+        {
+          id: 'euston-id',
+          name: 'London Euston',
+          address: 'Euston Road, London',
+          coordinates: { lat: 51.5282, lng: -0.1337 },
+          source: 'google_places',
+        },
+      ],
+    });
+    expect(res.body).not.toContain(TEST_KEY);
+    expect(res.body).not.toContain('rating');
+    expect(res.body).not.toContain('viewport');
+  });
+
+  it('drops malformed candidates rather than claiming they are routable', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: 'OK',
+        candidates: [
+          { place_id: 'missing-geometry', name: 'Unresolved' },
+          {
+            place_id: 'valid',
+            name: 'Valid station',
+            geometry: { location: { lat: 51.5, lng: -0.1 } },
+          },
+        ],
+      }),
+    });
+
+    const res = await resolve.handler(event);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'OK',
+      candidates: [
+        {
+          id: 'valid',
+          name: 'Valid station',
+          address: null,
+          coordinates: { lat: 51.5, lng: -0.1 },
+          source: 'google_places',
+        },
+      ],
+    });
+  });
+
+  it('returns an honest empty result without echoing the search text', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ status: 'ZERO_RESULTS', candidates: [] }),
+    });
+
+    const res = await resolve.handler(event);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'ZERO_RESULTS',
+      candidates: [],
+    });
+    expect(res.body).not.toContain('London Euston');
+  });
+
+  it('does not forward provider error details to the client', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: 'REQUEST_DENIED',
+        error_message: 'provider account detail',
+      }),
+    });
+
+    const res = await resolve.handler(event);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'REQUEST_DENIED',
+      candidates: [],
+    });
+    expect(res.body).not.toContain('provider account detail');
+  });
+
+  it('reports an upstream connection failure without exposing its raw message', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockRejectedValue(new Error('private network detail'));
+
+    const res = await resolve.handler(event);
+
+    expect(res.statusCode).toBe(502);
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'FETCH_ERROR',
+      error_message: 'NETWORK_ERROR',
+      candidates: [],
+    });
+    expect(res.body).not.toContain('private network detail');
   });
 });
