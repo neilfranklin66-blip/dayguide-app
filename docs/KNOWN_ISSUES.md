@@ -8,7 +8,8 @@ accessibility gaps, and explicitly accepted limitations for DayGuide.
 
 - **Current verification date:** 26 July 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packet 144 production Private Alpha verification
+- **Latest targeted update:** Packet 145 QR Share verification and regression
+  coverage
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository evidence, Product Owner-operated
@@ -18,7 +19,9 @@ accessibility gaps, and explicitly accepted limitations for DayGuide.
   production evidence is recorded in
   [`TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md);
   Packet 144 browser evidence is recorded in
-  [`PRODUCTION_PRIVATE_ALPHA_VERIFICATION.md`](PRODUCTION_PRIVATE_ALPHA_VERIFICATION.md)
+  [`PRODUCTION_PRIVATE_ALPHA_VERIFICATION.md`](PRODUCTION_PRIVATE_ALPHA_VERIFICATION.md);
+  Packet 145 resolution evidence is recorded in
+  [`QR_SHARE_VERIFICATION_AND_REPAIR.md`](QR_SHARE_VERIFICATION_AND_REPAIR.md)
 
 The untracked `.claude/` and `Dayguide#2/` folders are protected and were not
 inspected, listed, searched, opened, modified, moved, renamed, staged, or
@@ -97,27 +100,30 @@ decision must be supported by the launch rules and evidence.
   change.
 - **Verification date:** 13 July 2026
 
-### KI-002 — Production Share action did not expose the QR dialog
+### KI-002 — Automated Share check did not expose the QR dialog
 
 - **ID:** KI-002
-- **Category:** User-facing functional defect candidate
-- **Severity:** Medium
-- **Status:** Open — reproduction and cause not yet isolated
-- **Launch blocking:** No for a bounded guest Private Alpha
-- **Verification status:** Observed once in the Packet 144 production journey;
-  tracked component wiring indicates that a QR dialog should open.
+- **Category:** Test-interaction false negative
+- **Severity:** Informational
+- **Status:** Resolved pending archive
+- **Launch blocking:** No
+- **Verification status:** Packet 145 reproduced the locator-specific failure,
+  then verified the working production feature through a direct physical pointer
+  click and repository-level state-transition test.
 - **Factual evidence:** On the completed production timeline, activating
-  `Share` left the visible screen unchanged and exposed no QR dialog. Tracked
-  `TimelineStage.jsx` passes `setShowQR(true)` to the Share action and
-  `TimelineShareQRModal.jsx` defines the expected dialog. The same journey's
-  timeline, persistence, reset, and logout checks passed.
-- **Impact:** A participant may be unable to use the optional QR text-sharing
-  feature; core itinerary creation and recovery remain available.
-- **Likely dependency:** A focused reproduction that distinguishes deployed
-  event/state behaviour from browser-specific presentation.
-- **Recommended next action:** Investigate and fix only in a separately
-  authorised implementation packet, then rerun the focused share/timeline check
-  and proportionate automated regression tests.
+  `Share` through the high-level locator left the visible screen unchanged.
+  Packet 145's direct physical pointer click opened `Share Your Day`, a visible
+  QR code, the explanatory hint, and Close; Close dismissed the dialog. The
+  deployed public bundle contained the expected QR modal code. A new
+  `DayGuide.test.js` regression check passed the complete resumed-plan Share
+  open-and-close state transition.
+- **Impact:** No product impact is established. The original verification method
+  could incorrectly report a working control as failed.
+- **Likely dependency:** Browser-automation interaction semantics, not DayGuide
+  application behaviour.
+- **Recommended next action:** Archive after Product Owner acceptance. Retain the
+  regression test and use a physical pointer action when verifying this control
+  in the current browser-testing surface.
 - **Verification date:** 26 July 2026
 
 No additional active working defect was established from the permitted static

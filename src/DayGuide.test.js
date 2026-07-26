@@ -384,6 +384,25 @@ test('resuming a seeded saved plan lands on the timeline with its content', () =
   jest.useRealTimers();
 });
 
+test('sharing a resumed plan opens and closes the QR dialog', () => {
+  jest.useFakeTimers().setSystemTime(new Date('2026-07-05T09:00:00'));
+  localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(savedPlanPayload));
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.resumePlan'));
+  fireEvent.click(screen.getByText('timeline.share'));
+
+  expect(screen.getByText('timeline.shareTitle')).toBeInTheDocument();
+  expect(screen.getByText('timeline.shareHint')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+
+  expect(screen.queryByText('timeline.shareTitle')).not.toBeInTheDocument();
+
+  jest.useRealTimers();
+});
+
 test('an expired saved plan is not offered for resume', () => {
   const expiredPlanPayload = {
     ...savedPlanPayload,

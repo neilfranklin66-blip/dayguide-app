@@ -90,6 +90,14 @@ screen was assessed.
   identify the production-specific cause, implement the smallest verified fix,
   and rerun only the share/timeline checks plus proportionate regression tests.
 
+**Packet 145 resolution:** A focused reproduction established that the
+high-level automated locator action produced a false negative. A direct physical
+pointer click on the same live production Share button opened the complete QR
+dialog, and Close dismissed it. The deployed bundle contained the expected QR
+code, copy, modal, and state wiring. No application repair was justified;
+Packet 145 added a full DayGuide open-and-close regression test and corrected
+the issue classification. Physical-keyboard accessibility was not assessed.
+
 ### P144-002 — Authentication assurance is partial
 
 - **Type:** Verification boundary
@@ -139,7 +147,7 @@ invitation-only Private Alpha provided participants are told that:
 
 - activity suggestions are sample ideas;
 - live nearby restaurants require location permission;
-- the QR sharing action has an unresolved non-blocking defect; and
+- QR sharing was verified by a direct physical pointer click in Packet 145; and
 - only guest authentication has been operationally verified by this packet.
 
 This is not a claim of general launch readiness, mobile-device coverage,

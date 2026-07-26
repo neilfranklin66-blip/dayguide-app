@@ -85,13 +85,15 @@ change the Packet 133 application-capability verification point above.
 One bounded production guest journey passed authentication, denied-location
 handling, preferences, sample-activity selection, honest restaurant
 unavailability, timeline generation, saved-plan resume, reset, and logout. The
-Share action did not expose its expected QR dialog and is recorded as a
-non-blocking defect candidate. Google and email/password authentication, a
-location-enabled restaurant UI journey, representative mobile-device coverage,
-and accessibility remain outside the evidence. The separately authorised,
-unused 35-API key in Google project `dayguide1` was deleted without changing
-the production credential. This operational evidence does not change the
-Packet 133 application-capability verification point above.
+initial automated Share action did not expose its expected QR dialog, but Packet
+145 established that this was a browser-test interaction false negative: a
+direct physical pointer click opened the complete QR dialog and Close dismissed
+it. Google and email/password authentication, a location-enabled restaurant UI
+journey, representative mobile-device coverage, and accessibility remain
+outside the evidence. The separately authorised, unused 35-API key in Google
+project `dayguide1` was deleted without changing the production credential.
+This operational evidence does not change the Packet 133
+application-capability verification point above.
 
 ## 2. Current user journey
 
@@ -212,8 +214,9 @@ consumed by the published functions; one bounded nearby request returned `OK`
 with 20 results and its dependent photo request reached Google's image host.
 Packet 144 verified anonymous Firebase guest authentication and the main
 denied-location production journey. Google and email/password sign-in,
-location-enabled restaurant presentation, and the QR Share action are not
-proved working by that check.
+and location-enabled restaurant presentation remain outside that check. Packet
+145 separately verified the production QR Share dialog by direct physical
+pointer activation.
 
 ### Launch limitations that can be disclosed
 - **Activities are sample/demo data, not real local recommendations.** No live
@@ -275,6 +278,11 @@ verification point, not permanent documentation.
 `.npmrc` compatibility mode completed clean `npm ci`, **37 test suites and 927
 tests**, and a Netlify-style CI production build under Node `v24.15.0` and npm
 `11.12.1`. The main JavaScript bundle was 229.26 kB gzipped.
+
+**Packet 145 snapshot (2026-07-26):** the QR Share regression addition passed
+the focused DayGuide suite (47 tests), the full suite (**37 test suites and 928
+tests**), and the production build. The rebuilt `main.3e20a375.js` was 229.26
+kB gzipped and its SHA-256 matched the public production bundle exactly.
 
 ## 8. Maintenance rule
 
