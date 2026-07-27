@@ -162,31 +162,32 @@ No provider request may occur until every setup item is visibly confirmed.
 
 ### Google Cloud
 
-- [ ] Confirm project `project-7e314c31-0522-4f34-ab8`.
-- [ ] Record the linked billing-account name and currency without copying
+- [x] Confirm project `project-7e314c31-0522-4f34-ab8`.
+- [x] Record the linked billing-account name and currency without copying
       payment information.
-- [ ] Enable Routes API without changing Places API or the Places key.
-- [ ] Set the hard Routes daily quota to 150.
-- [ ] Create the project-scoped GBP 5 monthly budget with 50%, 90%, and 100%
+- [x] Enable Routes API without changing Places API or the Places key.
+- [x] Set the hard Routes daily quota to 150.
+- [x] Create the project-scoped GBP 5 monthly budget with 50%, 90%, and 100%
       actual-spend alerts, or stop if the account currency is not GBP.
-- [ ] Create `DayGuide Netlify Routes Calibration Key`.
-- [ ] Restrict the key to Routes API only.
-- [ ] Leave application restriction unset only under the temporary calibration
+- [x] Create `DayGuide Netlify Routes Calibration Key`.
+- [x] Restrict the key to Routes API only.
+- [x] Leave application restriction unset only under the temporary calibration
       exception in section 4.
 
 ### Netlify deploy-preview context
 
-- [ ] Add secret `GOOGLE_ROUTES_API_KEY` only for Deploy Previews.
-- [ ] Add
+- [x] Add secret `GOOGLE_ROUTES_API_KEY` only for Deploy Previews.
+- [x] Add
       `DAYGUIDE_ROUTES_PROVIDER_MODE=google_routes_compute_routes_essentials`
       only for Deploy Previews.
-- [ ] Keep Production values absent.
-- [ ] Create one CLI draft deploy using `--context deploy-preview` and alias
-      `packet155-calibration`.
-- [ ] Confirm the draft identifies the exact Packet 155 preparation commit,
+- [x] Keep Production values absent.
+- [x] Create a genuine GitHub PR Deploy Preview for the exact Packet 155
+      preparation branch.
+- [x] Confirm the preview identifies the exact Packet 155 preparation commit,
       contains all four functions, and remains unpublished.
-- [ ] Confirm the public bundle contains neither routing variable name nor key.
-- [ ] Confirm missing authentication fails before a provider call.
+- [x] Confirm the public bundle contains neither Google routing key nor secret
+      value.
+- [x] Confirm missing authentication fails before a provider call.
 
 ## 8. Evidence sequence
 
@@ -226,26 +227,121 @@ Deleting the Google key is mandatory because a Netlify deploy retains the
 environment values captured when it was built. Removing the current Netlify
 variable alone does not rewrite an old draft function.
 
-## 10. Status
+## 10. Live evidence and decision
 
-At the initial Packet 155 preparation commit:
+The controlled exercise ran on 27 July 2026. It produced exactly 24 provider
+events, one for each approved scenario, in the approved five batches. All 24
+returned a route. There were no automatic retries, alternatives, or matrix
+requests.
+
+The independent comparison used the official Transport for London Journey
+Planner API. It made one reference request for each scenario; all 24 returned
+usable evidence with no retry. Walking references used walking mode. Public
+transport references used TfL's bus, Tube, Overground, DLR, Elizabeth line,
+National Rail, and tram modes. Anchor scenarios used arrival-time evidence.
+
+`Reference minus Google` is the optimistic understatement. A positive value
+means Google allowed less time than the independent reference.
+
+| Scenario | Mode | Google | TfL | Difference | Anchor critical |
+|---|---|---:|---:|---:|---|
+| walk-euston-british-museum | Walking | 22 | 22 | 0 | No |
+| walk-british-museum-royal-opera | Walking | 12 | 15 | 3 | Yes |
+| walk-waterloo-southbank | Walking | 5 | 10 | 5 | Yes |
+| walk-southbank-tate-modern | Walking | 19 | 18 | -1 | No |
+| walk-tate-globe | Walking | 6 | 5 | -1 | No |
+| walk-globe-london-bridge | Walking | 16 | 16 | 0 | Yes |
+| walk-london-bridge-tower | Walking | 22 | 20 | -2 | No |
+| walk-southwark-station-hotel | Walking | 8 | 8 | 0 | No |
+| walk-national-gallery-victoria | Walking | 31 | 38 | 7 | Yes |
+| walk-st-pancras-british-library | Walking | 8 | 8 | 0 | No |
+| walk-barbican-st-pauls | Walking | 16 | 17 | 1 | No |
+| walk-natural-history-v-and-a | Walking | 5 | 16 | 11 | No |
+| transit-euston-southwark | Public transport | 20 | 31 | 11 | No |
+| transit-st-pancras-london-bridge | Public transport | 21 | 31 | 10 | No |
+| transit-victoria-national-theatre | Public transport | 22 | 26 | 4 | Yes |
+| transit-london-bridge-royal-opera | Public transport | 34 | 29 | -5 | Yes |
+| transit-natural-history-barbican | Public transport | 48 | 53 | 5 | Yes |
+| transit-tower-euston | Public transport | 32 | 39 | 7 | No |
+| transit-euston-southwark-hotel | Public transport | 28 | 37 | 9 | No |
+| transit-british-museum-natural-history | Public transport | 32 | 48 | 16 | No |
+| transit-waterloo-barbican | Public transport | 40 | 32 | -8 | No |
+| transit-national-gallery-tower | Public transport | 28 | 35 | 7 | No |
+| transit-st-pancras-national-theatre-weekend | Public transport | 26 | 28 | 2 | No |
+| transit-victoria-tate-weekend | Public transport | 23 | 32 | 9 | Yes |
+
+The Packet 153 gate gives these separate decisions:
+
+| Mode | Availability | Maximum permitted | Maximum observed | Critical breaches | Decision |
+|---|---:|---:|---:|---:|---|
+| Walking | 12/12 (100%) | 5 minutes | 11 minutes | 1 | **FAIL** |
+| Public transport | 12/12 (100%) | 10 minutes | 16 minutes | 0 | **FAIL** |
+
+Walking fails because the maximum understatement is 11 minutes and the
+National Gallery to Victoria anchor-critical scenario understates by seven
+minutes. Public transport fails because its maximum understatement is 16
+minutes. The fact that all routes were available does not override either
+safety failure.
+
+The result is retained in
+`src/routing/packet155LiveCalibrationEvidence.js` and is re-evaluated by an
+automated test through the approved quality-gate code. The evidence does not
+approve provider activation. Routing remains disabled and production remains
+unchanged.
+
+## 11. External controls, deployment, and incident record
+
+The authenticated setup established:
+
+- Routes API enabled in the intended project;
+- Compute Routes hard daily quota granted at 150;
+- Compute Route Matrix daily quota granted at zero;
+- `My Billing Account` open and billed in GBP;
+- project-scoped `DayGuide Routes Private Alpha Guardrail` budget at GBP 5 per
+  month, with actual-spend thresholds at 50%, 90%, and 100%; and
+- a separate temporary key restricted to Routes API only.
+
+The GitHub draft PR was number 7. Its genuine Netlify Deploy Preview deployed
+four functions and returned `AUTH_REQUIRED` to an unauthenticated routing
+request, proving that caller verification failed closed before provider use.
+
+The first preview build failed only because the non-sensitive literal
+`DAYGUIDE_ROUTES_PROVIDER_MODE` had accidentally been classified as a Netlify
+secret. Netlify's scanner found that literal in tracked policy and test files.
+It did not find either Google API key in the repository or bundle. The variable
+was recreated as non-secret, scanning remained enabled, and the retry passed.
+No `REACT_APP_` routing variable was introduced and no browser bundle received
+the server-side Routes key.
+
+One first-generation calibration key was displayed by the Cloud Shell create
+command and then pasted into the private project conversation. It was deleted
+immediately before any deploy or provider request. A separate replacement was
+created without copying its value into the repository, logs, documentation, or
+conversation. The deleted value must never be restored or reused.
+
+## 12. Shutdown status
+
+The mandatory shutdown is independent of the FAIL result:
 
 | Area | Status |
 |---|---|
 | Product Owner criteria/quota acceptance | Complete |
-| Local approved plan and runner | Implemented; validation pending |
-| Google project/billing-account confirmation | Pending authenticated evidence |
-| Routes API and hard daily quota | Not configured |
-| Monitoring budget | Not configured |
-| Temporary Routes-only key | Not created |
-| Netlify preview variables | Not configured |
-| Draft deploy | Not created |
-| Provider events | 0 by Packet 155 |
-| Independent references | Not collected |
-| Quality result | Not assessed |
+| Local approved plan, runner, and evidence test | Complete |
+| Google project/billing-account confirmation | Complete |
+| Routes API hard daily quota | 150, confirmed |
+| Route Matrix daily quota | 0, confirmed |
+| Monitoring budget | GBP 5 monthly, project scoped |
+| Provider events | 24; no retry |
+| Independent references | 24; no retry |
+| Quality result | **Walking FAIL; public transport FAIL** |
+| Netlify Deploy Preview variables | Removed |
+| Packet 155 Deploy Preview | Deleted; URL returns 404 |
+| Temporary Routes-only replacement key | Deletion pending signed-in Google action |
+| GitHub draft PR and temporary public branch | Closure pending evidence commit |
+| Existing Places key | Must remain unchanged |
 | Production | Unchanged and locked |
 
-## 11. Official sources
+## 13. Official sources
 
 Checked on 27 July 2026:
 
@@ -268,7 +364,7 @@ Checked on 27 July 2026:
 - TfL Unified API and journey-planning data:
   https://tfl.gov.uk/info-for/open-data-users/unified-api
 
-## 12. Repository handling
+## 14. Repository handling
 
 The preparation commit must include `[skip netlify]` and remain local until its
 tests and production build pass. External setup and the live exercise must be
