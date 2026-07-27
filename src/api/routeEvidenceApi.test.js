@@ -3,6 +3,8 @@ import {
   resolveGoogleRouteEvidence,
 } from './routeEvidenceApi';
 
+const ID_TOKEN = 'short-lived-firebase-id-token';
+
 const batch = {
   context: {
     date: '2026-07-26',
@@ -33,7 +35,12 @@ const response = (payload, overrides = {}) => ({
   ...overrides,
 });
 
-test('calls only the same-origin function with a bounded provider batch', async () => {
+const authenticatedOptions = fetchImpl => ({
+  fetchImpl,
+  getIdToken: jest.fn().mockResolvedValue(ID_TOKEN),
+});
+
+test('calls only the same-origin function with a Firebase token and bounded batch', async () => {
   const evidence = {
     requestId: 'start->anchor',
     evidenceClass: 'provider_route',
@@ -46,18 +53,24 @@ test('calls only the same-origin function with a bounded provider batch', async 
   const fetchImpl = jest
     .fn()
     .mockResolvedValue(response({ status: 'OK', evidence: [evidence] }));
+  const options = authenticatedOptions(fetchImpl);
 
   await expect(
-    resolveGoogleRouteEvidence(batch, fetchImpl),
+    resolveGoogleRouteEvidence(batch, options),
   ).resolves.toEqual([evidence]);
 
+  expect(options.getIdToken).toHaveBeenCalledTimes(1);
   expect(fetchImpl).toHaveBeenCalledTimes(1);
   expect(fetchImpl.mock.calls[0][0]).toBe(
     '/.netlify/functions/routes-evidence',
   );
-  const options = fetchImpl.mock.calls[0][1];
-  const sent = JSON.parse(options.body);
-  expect(options.method).toBe('POST');
+  const requestOptions = fetchImpl.mock.calls[0][1];
+  const sent = JSON.parse(requestOptions.body);
+  expect(requestOptions.method).toBe('POST');
+  expect(requestOptions.headers).toEqual({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${ID_TOKEN}`,
+  });
   expect(sent.requests).toHaveLength(1);
   expect(sent.costEnvelope).toEqual(
     expect.objectContaining({
@@ -68,18 +81,41 @@ test('calls only the same-origin function with a bounded provider batch', async 
       matrixElementCount: 0,
     }),
   );
-  expect(options.body).not.toContain('API_KEY');
+  expect(requestOptions.body).not.toContain(ID_TOKEN);
+  expect(requestOptions.body).not.toContain('API_KEY');
 });
 
-test('does not call the function when there are no route legs', async () => {
+test('fails closed before a network request when no signed-in token is available', async () => {
   const fetchImpl = jest.fn();
+
+  await expect(
+    resolveGoogleRouteEvidence(batch, {
+      fetchImpl,
+      getIdToken: jest.fn().mockResolvedValue(null),
+    }),
+  ).rejects.toThrow(ROUTE_PROVIDER_ERROR.ACCESS_DENIED);
+  expect(fetchImpl).not.toHaveBeenCalled();
+
+  await expect(
+    resolveGoogleRouteEvidence(batch, {
+      fetchImpl,
+      getIdToken: jest.fn().mockRejectedValue(new Error('signed out')),
+    }),
+  ).rejects.toThrow(ROUTE_PROVIDER_ERROR.ACCESS_DENIED);
+  expect(fetchImpl).not.toHaveBeenCalled();
+});
+
+test('does not request a token or call the function when there are no route legs', async () => {
+  const fetchImpl = jest.fn();
+  const getIdToken = jest.fn();
 
   await expect(
     resolveGoogleRouteEvidence(
       { ...batch, requests: [] },
-      fetchImpl,
+      { fetchImpl, getIdToken },
     ),
   ).resolves.toEqual([]);
+  expect(getIdToken).not.toHaveBeenCalled();
   expect(fetchImpl).not.toHaveBeenCalled();
 });
 
@@ -94,7 +130,22 @@ test.each([
     .mockResolvedValue(response({ status, evidence: [] }));
 
   await expect(
-    resolveGoogleRouteEvidence(batch, fetchImpl),
+    resolveGoogleRouteEvidence(batch, authenticatedOptions(fetchImpl)),
+  ).rejects.toThrow(expected);
+});
+
+test.each([
+  [401, ROUTE_PROVIDER_ERROR.ACCESS_DENIED],
+  [403, ROUTE_PROVIDER_ERROR.ACCESS_DENIED],
+  [429, ROUTE_PROVIDER_ERROR.QUOTA_EXCEEDED],
+])('maps HTTP %s before attempting to parse a response body', async (status, expected) => {
+  const fetchImpl = jest.fn().mockResolvedValue({
+    ok: false,
+    status,
+  });
+
+  await expect(
+    resolveGoogleRouteEvidence(batch, authenticatedOptions(fetchImpl)),
   ).rejects.toThrow(expected);
 });
 
@@ -104,7 +155,7 @@ test('keeps zero routes distinct from provider failure', async () => {
     .mockResolvedValue(response({ status: 'ZERO_RESULTS', evidence: [] }));
 
   await expect(
-    resolveGoogleRouteEvidence(batch, fetchImpl),
+    resolveGoogleRouteEvidence(batch, authenticatedOptions(fetchImpl)),
   ).resolves.toEqual([]);
 });
 
@@ -112,23 +163,29 @@ test('rejects network, missing-function, and malformed responses', async () => {
   await expect(
     resolveGoogleRouteEvidence(
       batch,
-      jest.fn().mockRejectedValue(new Error('offline')),
+      authenticatedOptions(
+        jest.fn().mockRejectedValue(new Error('offline')),
+      ),
     ),
   ).rejects.toThrow(ROUTE_PROVIDER_ERROR.NETWORK_ERROR);
 
   await expect(
     resolveGoogleRouteEvidence(
       batch,
-      jest
-        .fn()
-        .mockResolvedValue(response({}, { ok: false, status: 404 })),
+      authenticatedOptions(
+        jest
+          .fn()
+          .mockResolvedValue(response({}, { ok: false, status: 404 })),
+      ),
     ),
   ).rejects.toThrow(ROUTE_PROVIDER_ERROR.UNAVAILABLE);
 
   await expect(
     resolveGoogleRouteEvidence(
       batch,
-      jest.fn().mockResolvedValue(response({ status: 'OK' })),
+      authenticatedOptions(
+        jest.fn().mockResolvedValue(response({ status: 'OK' })),
+      ),
     ),
   ).rejects.toThrow(ROUTE_PROVIDER_ERROR.INVALID_RESPONSE);
 });

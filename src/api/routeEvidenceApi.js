@@ -17,16 +17,33 @@ const providerError = code => new Error(code);
 
 export async function resolveGoogleRouteEvidence(
   batch,
-  fetchImpl = globalThis.fetch,
+  {
+    fetchImpl = globalThis.fetch,
+    getIdToken,
+  } = {},
 ) {
   const providerBatch = createProviderRouteBatch(batch);
   if (providerBatch.requests.length === 0) return [];
+
+  let idToken;
+  try {
+    idToken =
+      typeof getIdToken === 'function' ? await getIdToken() : null;
+  } catch (_) {
+    throw providerError(ROUTE_PROVIDER_ERROR.ACCESS_DENIED);
+  }
+  if (typeof idToken !== 'string' || idToken.trim() === '') {
+    throw providerError(ROUTE_PROVIDER_ERROR.ACCESS_DENIED);
+  }
 
   let response;
   try {
     response = await fetchImpl(ROUTE_EVIDENCE_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
       body: JSON.stringify(providerBatch),
     });
   } catch (_) {
@@ -35,6 +52,12 @@ export async function resolveGoogleRouteEvidence(
 
   if (response.status === 404) {
     throw providerError(ROUTE_PROVIDER_ERROR.UNAVAILABLE);
+  }
+  if (response.status === 401 || response.status === 403) {
+    throw providerError(ROUTE_PROVIDER_ERROR.ACCESS_DENIED);
+  }
+  if (response.status === 429) {
+    throw providerError(ROUTE_PROVIDER_ERROR.QUOTA_EXCEEDED);
   }
   if (!response.ok) {
     throw providerError(ROUTE_PROVIDER_ERROR.UNAVAILABLE);

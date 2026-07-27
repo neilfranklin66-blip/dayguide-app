@@ -343,6 +343,35 @@ No other entry is classified as launch blocking.
   upgrades. Define a separate audited modernisation packet when prioritised.
 - **Verification date:** 26 July 2026
 
+### OP-006 — Place resolution depends on Find Place Legacy
+
+- **ID:** OP-006
+- **Category:** External-service lifecycle and migration risk
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** No for the current bounded Private Alpha; conditional
+  before a wider release
+- **Verification status:** The tracked endpoint and Google's current lifecycle
+  position are verified. No current outage or credential failure is evidenced.
+- **Factual evidence:** `netlify/functions/places-resolve.js` calls the Find
+  Place Legacy endpoint. Google's lifecycle material says existing projects
+  can continue to use Legacy Places services, gives no shutdown date, promises
+  at least twelve months' notice before discontinuation, and identifies Text
+  Search (New) as the replacement for Find Place Legacy. Packet 153 records
+  migration triggers without changing the endpoint, API, key, or production.
+- **Impact:** The unmounted place-resolution foundation is not on a modern
+  long-term endpoint. A rushed provider migration could alter matching,
+  attribution, billing, quotas, and key restrictions; ignoring a future notice
+  could eventually make typed-place resolution unavailable.
+- **Likely dependency:** Google Places lifecycle notices, DayGuide's rollout
+  boundary, response-field comparison, and a separately authorised migration.
+- **Recommended next action:** Monitor the official lifecycle. Open a bounded
+  migration packet at the first applicable official notice, verified recurring
+  endpoint failure, security/policy/capability need, inability to restore the
+  API, or before wider-than-Private-Alpha release. Do not combine the migration
+  casually with routing activation or widen/reuse the routing key.
+- **Verification date:** 27 July 2026
+
 The Packet 139 variable-name absence, incomplete function deployment, missing
 Git linkage, and production provenance gaps are resolved by Packets 140–143.
 Firebase provider state, billing alerts, quotas, and the complete authenticated
