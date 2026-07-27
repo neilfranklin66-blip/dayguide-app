@@ -774,6 +774,14 @@ p {
   text-align: center;
 }
 
+.transport-estimate-basis {
+  margin: 0 0 12px;
+  color: #5f6470;
+  font-size: 0.8em;
+  line-height: 1.4;
+  text-align: left;
+}
+
 .transport-options {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -826,6 +834,80 @@ p {
 .transport-cost {
   color: #999;
   font-size: 0.8em;
+}
+
+.live-route-link {
+  display: inline-block;
+  margin-top: 7px;
+  color: #4c5fd5;
+  font-size: 0.82em;
+  font-weight: 600;
+}
+
+.travel-estimate-notice {
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid #d7dcff;
+  border-radius: 12px;
+  background: #f8f9ff;
+  text-align: left;
+}
+
+.travel-estimate-notice h3 {
+  margin: 0 0 8px;
+  color: #3f4ea8;
+  font-size: 1em;
+}
+
+.travel-estimate-notice p {
+  margin: 6px 0;
+  color: #4f5360;
+  font-size: 0.88em;
+  line-height: 1.45;
+}
+
+.travel-preference-summary {
+  font-weight: 600;
+}
+
+.hard-anchor-travel-warning {
+  padding-left: 10px;
+  border-left: 3px solid #d97706;
+  color: #8a4b08 !important;
+  font-weight: 600;
+}
+
+.walking-preferences {
+  margin: 22px 0;
+  padding: 16px;
+  border: 1px solid #e1e4f6;
+  border-radius: 12px;
+  background: #fafaff;
+  text-align: left;
+}
+
+.walking-preferences h3 {
+  margin-top: 0;
+}
+
+.walking-preferences label {
+  display: block;
+  margin: 12px 0 6px;
+  font-weight: 600;
+}
+
+.walking-preferences select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #c9cee8;
+  border-radius: 8px;
+  background: white;
+}
+
+.preference-note {
+  margin-bottom: 0;
+  color: #686d78;
+  font-size: 0.84em;
 }
 
 .action-buttons {

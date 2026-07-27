@@ -1,7 +1,7 @@
 {
   "app": { "title": "🗺️ DayGuide" },
   "login": {
-    "tagline": "在英国规划您完美的一天",
+    "tagline": "无论身在何处，都能规划完美的一天",
     "googleSignIn": "使用 Google 登录",
     "guestSignIn": "以访客身份继续",
     "guestSigningIn": "正在登录…",
@@ -30,7 +30,7 @@
     "unavailable": "无法获取您的位置。请重试。"
   },
   "welcome": {
-    "tagline": "在英国规划您完美的一天",
+    "tagline": "无论身在何处，都能规划完美的一天",
     "subtitle": "滑动浏览活动和餐厅，我们将为您制定行程。",
     "detectingLocation": "📍 正在检测位置...",
     "refreshLocation": "刷新位置",

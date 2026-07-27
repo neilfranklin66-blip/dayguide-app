@@ -1,7 +1,7 @@
 {
   "app": { "title": "🗺️ DayGuide" },
   "login": {
-    "tagline": "Planifiez votre journée parfaite au Royaume-Uni",
+    "tagline": "Planifiez votre journée parfaite, où que vous soyez",
     "googleSignIn": "Se connecter avec Google",
     "guestSignIn": "Continuer en tant qu'invité",
     "guestSigningIn": "Connexion…",
@@ -30,7 +30,7 @@
     "unavailable": "Impossible de récupérer votre localisation. Veuillez réessayer."
   },
   "welcome": {
-    "tagline": "Planifiez votre journée parfaite au Royaume-Uni",
+    "tagline": "Planifiez votre journée parfaite, où que vous soyez",
     "subtitle": "Faites glisser les activités et restaurants. Nous construirons votre itinéraire.",
     "detectingLocation": "📍 Détection de l'emplacement...",
     "refreshLocation": "Actualiser la position",

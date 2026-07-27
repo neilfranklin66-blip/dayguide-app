@@ -15,6 +15,8 @@ export default function TimelineStage({
   updateActivityDuration,
   resetState,
   setShowQR,
+  travelPreferences,
+  hasHardAnchor = false,
   t,
 }) {
   const totalDuration = calculateTimelineDuration(timeline);
@@ -85,6 +87,8 @@ export default function TimelineStage({
       onDurationChange={updateActivityDuration}
       onStartOver={resetState}
       onShare={() => setShowQR(true)}
+      travelPreferences={travelPreferences}
+      hasHardAnchor={hasHardAnchor}
       t={t}
     />
   );

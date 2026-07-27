@@ -2,7 +2,12 @@ import React from 'react';
 import TimelineItemRow from './TimelineItemRow';
 import TimelineTransportSection from './TimelineTransportSection';
 
-export default function TimelineList({ timeline, onDurationChange, t }) {
+export default function TimelineList({
+  timeline,
+  onDurationChange,
+  travelPreferences,
+  t,
+}) {
   return (
     <div className="timeline">
       {timeline.length === 0 ? (
@@ -18,7 +23,10 @@ export default function TimelineList({ timeline, onDurationChange, t }) {
             />
             {index < timeline.length - 1 && (
               <TimelineTransportSection
-                distance={item.distance}
+                distance={timeline[index + 1].distance}
+                origin={item}
+                destination={timeline[index + 1]}
+                travelPreferences={travelPreferences}
                 t={t}
               />
             )}

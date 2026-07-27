@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import InterestsStage from './InterestsStage';
+import { DEFAULT_TRAVEL_PREFERENCES } from '../utils/travelPreferences';
 
 const t = (key) => key;
 
@@ -22,6 +23,8 @@ const baseProps = {
   setHasChildren: jest.fn(),
   startWith: 'activities',
   setStartWith: jest.fn(),
+  travelPreferences: DEFAULT_TRAVEL_PREFERENCES,
+  onTravelPreferencesChange: jest.fn(),
   goToNextSelectionStage: jest.fn(),
   t,
 };
@@ -62,4 +65,15 @@ test('next button is disabled until an interest is selected', () => {
 
   rerender(<InterestsStage {...baseProps} selectedInterests={['museums']} />);
   expect(screen.getByText('interests.next')).toBeEnabled();
+});
+
+test('includes user-controlled walking pace and maximum-walk preferences', () => {
+  render(<InterestsStage {...baseProps} />);
+
+  expect(screen.getByLabelText('interests.walkingPaceLabel')).toHaveValue(
+    'typical',
+  );
+  expect(
+    screen.getByLabelText('interests.maximumWalkingLabel'),
+  ).toHaveValue('45');
 });

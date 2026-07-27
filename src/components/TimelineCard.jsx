@@ -2,6 +2,7 @@ import React from 'react';
 import TimelineHeaderSummary from './TimelineHeaderSummary';
 import TimelineList from './TimelineList';
 import TimelineActionButtons from './TimelineActionButtons';
+import TravelEstimateNotice from './TravelEstimateNotice';
 
 export default function TimelineCard({
   timeBudget,
@@ -12,6 +13,8 @@ export default function TimelineCard({
   onDurationChange,
   onStartOver,
   onShare,
+  travelPreferences,
+  hasHardAnchor = false,
   t,
 }) {
   return (
@@ -24,9 +27,17 @@ export default function TimelineCard({
           selectedDate={selectedDate}
           t={t}
         />
+        {hasTimelineItems && (
+          <TravelEstimateNotice
+            hasHardAnchor={hasHardAnchor}
+            travelPreferences={travelPreferences}
+            t={t}
+          />
+        )}
         <TimelineList
           timeline={timeline}
           onDurationChange={onDurationChange}
+          travelPreferences={travelPreferences}
           t={t}
         />
         <TimelineActionButtons

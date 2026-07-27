@@ -244,7 +244,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 |---|---|---|
 | Authentication (Google, email/password, guest) | **Implemented — External-service dependent** | `src/AuthContext.jsx` wires Firebase `signInWithPopup`, `signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `signInAnonymously`, `signOut`; `src/Login.jsx` exposes all three paths with per-action pending/error handling. Requires a working Firebase project. |
 | Guest access | **Implemented** | Anonymous Firebase sign-in (`signInAsGuest` → `signInAnonymously`); guest users have no email and are handled explicitly (`AuthContext` removes the stored email string). |
-| Onboarding / preferences | **Implemented** | `InterestsStage` collects interests, cuisines, price, available time, date, start time, children, and start order; held in `DayGuide.jsx` component state. |
+| Onboarding / preferences | **Implemented** | `InterestsStage` collects interests, cuisines, price, available time, date, start time, children, start order, and user-owned walking pace/maximum. Travel preferences persist locally under a separate versioned key; DayGuide does not infer pace from age or weight. |
 | Manual start place / future planning location | **Place resolution and input integration implemented — not active** | `placeResolutionApi` and `places-resolve` resolve an explicitly submitted station, venue, hotel, or address into validated provider-labelled places; `PlanningInputWithPlaceResolution` supplies deliberately added matches to Packet 149. The component is not mounted in the current journey and no provider or Netlify setting has changed. |
 | End place / arrival deadline | **Input workflow implemented — not active** | Packet 149 can collect a resolved destination with an optional deadline and buffer, or a soft directional destination. It is not connected to the current timeline or persistence. |
 | Hard anchors | **Input workflow implemented — not active** | `HardAnchorEditor` creates planner-locked fixed commitments and `PlanningInputStage` provides deliberate Edit/Remove actions. Packet 148 preserves their fixed place/time. No current-journey or persistence integration exists. |
@@ -252,12 +252,12 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
 | Itinerary generation | **Implemented** | `src/engines/timelineEngine.js` `buildTimelineEntries` orders items by `startWith` and assigns times with a 0.25h inter-stop gap. |
-| Fixed-plan route feasibility | **Controlled live-calibration preparation — disabled and not active** | Packets 151–154 provide trusted evidence, an authenticated bounded adapter, the quality gate, and 24 London walking/transit scenarios. Packet 155 records Product Owner acceptance and adds a production-rejecting, no-retry, two-phase operator runner. No routing key/mode, live evidence, or quality result exists, and the review stage is not mounted. |
+| Fixed-plan route feasibility | **Controlled live calibration complete — provider disabled and not active** | Packets 151–155 provide the adapter, security boundary, quality gate, and 24-scenario London evidence. All 24 Google and TfL checks returned routes; raw-duration criteria failed for both walking and transit. Packet 156 interprets provider duration as an estimate rather than a guaranteed commitment. The review stage remains unmounted and no routing credential/mode is active. |
 | Geographic ordering / backtracking control | **Foundation only — not active** | Live restaurant coordinates are now retained in `PlaceCard`, and the hard-anchor engine accepts injected leg evidence. The current journey still groups activities and restaurants by `startWith`; no spatial sort, route corridor, or backtracking scoring is active. |
 | Route-aware fill time | **Foundation only — not active** | `assessFlexibleStopFit` can deterministically require both travel legs and the visit duration inside a fixed planning window. Current timeline popups remain composition/current-origin based and do not call it. |
 | Timeline | **Implemented** | `TimelineStage`/`TimelineCard`: editable per-item durations, day narrative (`src/utils/dayNarrative.js`), time-budget status, date display. |
-| Transport | **Implemented — approximate** | `src/engines/transportEngine.js` estimates minutes from venue distance via urban speed profiles; `distanceKm` is venue-to-user distance, not true leg-to-leg. Costs are fare *types*, not currency amounts (`TRANSPORT_OPTIONS`). |
-| Maps / deep links | **Implemented** | Google Maps search URLs built in `src/adapters/placeCardAdapter.js`; live restaurants include `query_place_id`. Carried into the timeline row's "Open in Maps" link (`TimelineItemRow.jsx`). Sample activities have no maps link. |
+| Transport | **Implemented — universal estimate policy, approximate evidence** | Packet 156 adds user-controlled walking pace and maximum-walk preferences, a 45-minute default, aggregate experience-learning foundation, explicit estimate/accountability copy, and a live-check-required taxi boundary. Current `distanceKm` remains venue-to-user proximity, not true leg-to-leg evidence, and is labelled accordingly. |
+| Maps / deep links | **Implemented** | Place links remain available for live restaurants. Packet 156 also builds key-free Google Maps directions handoffs between adjacent itinerary stops for walking, driving, and transit; these are live-checking exits, not data returned to DayGuide. |
 | Plan persistence & resume | **Implemented** | `src/utils/planStorage.js` writes one versioned `localStorage` key (`dayguide_saved_plan_v1`); persists timeline + render settings only (no queues, selections, or geolocation). Resume restores a read-only plan view. A plan dated before the local calendar day is discarded on load and excluded from Resume (`isPlanDateExpired`/`loadPlan`, `planStorage.js`). |
 | Sharing | **Implemented (QR text)** | `TimelineShareQRModal.jsx` encodes a plain-text itinerary summary (`buildTimelineShareText`) as a QR code. No server-side share link or export. |
 | Localisation | **Implemented** | Five locales (`en`, `es`, `fr`, `zh`, `vi`) in `src/i18n.js`; language selector in header and login; choice persisted to `localStorage` and, for signed-up users, to Firestore. Key parity checked by `src/locales/localeConsistency.test.js`. |
@@ -520,6 +520,17 @@ origin even when authority was present. The main bundle remained
 application. No provider call, API, credential, quota, billing alert,
 environment variable, Netlify setting, draft deploy, push, publication, or
 production behaviour changed at this preparation point.
+
+**Packet 156 snapshot (2026-07-27):** the universal estimate policy,
+user-controlled walking pace and maximum, 45-minute default, privacy-conscious
+aggregate pace-learning foundation, visible user-accountability guidance,
+fixed-time warning boundary, removal of the fabricated fixed-speed taxi time,
+and key-free Google Maps directions handoffs passed the full suite (**59 test
+suites and 1,134 tests**) and production build. The main bundle was
+`main.badc4dab.js` at 231.83 kB gzipped. The current timeline still labels its
+proximity-based figures honestly rather than claiming true adjacent-leg
+routing. No API key, provider mode, Netlify variable, push, preview,
+publication, or production deployment followed.
 
 ## 8. Maintenance rule
 

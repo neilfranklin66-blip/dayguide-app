@@ -1,7 +1,7 @@
 {
   "app": { "title": "🗺️ DayGuide" },
   "login": {
-    "tagline": "Lên kế hoạch ngày hoàn hảo tại Anh",
+    "tagline": "Lên kế hoạch cho ngày hoàn hảo, dù bạn ở đâu",
     "googleSignIn": "Đăng nhập bằng Google",
     "guestSignIn": "Tiếp tục với tư cách khách",
     "guestSigningIn": "Đang đăng nhập…",
@@ -30,7 +30,7 @@
     "unavailable": "Không thể lấy vị trí của bạn. Vui lòng thử lại."
   },
   "welcome": {
-    "tagline": "Lên kế hoạch ngày hoàn hảo tại Anh",
+    "tagline": "Lên kế hoạch cho ngày hoàn hảo, dù bạn ở đâu",
     "subtitle": "Vuốt qua các hoạt động và nhà hàng. Chúng tôi sẽ xây dựng lịch trình cho bạn.",
     "detectingLocation": "📍 Đang phát hiện vị trí...",
     "refreshLocation": "Làm mới vị trí",

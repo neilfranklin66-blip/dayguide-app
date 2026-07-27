@@ -79,6 +79,9 @@ test('renders the empty state when the timeline has no items', () => {
   render(<TimelineStage {...baseProps} timeline={[]} />);
 
   expect(screen.getByText('timeline.empty')).toBeInTheDocument();
+  expect(
+    screen.queryByText('timeline.travelGuidance.title'),
+  ).not.toBeInTheDocument();
 });
 
 const budgetStrings = {

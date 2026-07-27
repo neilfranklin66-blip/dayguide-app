@@ -43,6 +43,11 @@ import {
   ACTIVITY_CATEGORIES,
   INTEREST_CATEGORY_OPTIONS,
 } from './config/dayGuideOptions';
+import {
+  applyTravelPreferenceChanges,
+  loadTravelPreferences,
+  saveTravelPreferences,
+} from './utils/travelPreferences';
 import './DayGuide.css';
 const DayGuide = () => {
   const { currentUser, logout } = useAuth();
@@ -95,6 +100,9 @@ const DayGuide = () => {
   // Restaurant API state
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(false);
   const [restaurantSource, setRestaurantSource] = useState(null);
+  const [travelPreferences, setTravelPreferences] = useState(
+    loadTravelPreferences,
+  );
 
   const interestCategories = INTEREST_CATEGORY_OPTIONS.map(({ id, icon }) => ({
     id,
@@ -227,6 +235,14 @@ const DayGuide = () => {
 
   const toggleCuisine = (id) =>
     setSelectedCuisines(prev => toggleIdSelection(prev, id));
+
+  const updateTravelPreferences = changes => {
+    setTravelPreferences(current =>
+      saveTravelPreferences(
+        applyTravelPreferenceChanges(current, changes),
+      ),
+    );
+  };
 
   const getActivitiesForInterests = (interests = selectedInterests) =>
     // Activities are still sample London demo data (no live activity search
@@ -487,6 +503,8 @@ const DayGuide = () => {
           setHasChildren={setHasChildren}
           startWith={startWith}
           setStartWith={setStartWith}
+          travelPreferences={travelPreferences}
+          onTravelPreferencesChange={updateTravelPreferences}
           goToNextSelectionStage={goToNextSelectionStage}
           t={t}
         />
@@ -555,6 +573,7 @@ const DayGuide = () => {
           updateActivityDuration={updateActivityDuration}
           resetState={resetState}
           setShowQR={setShowQR}
+          travelPreferences={travelPreferences}
           t={t}
         />
       );

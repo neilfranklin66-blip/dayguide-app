@@ -546,15 +546,18 @@ decision was evidenced during this review.
 - **Status:** Accepted limitation
 - **Launch blocking:** No
 - **Verification status:** Verified in tracked source.
-- **Factual evidence:** `src/engines/transportEngine.js` applies fixed urban
-  speed and overhead profiles to venue-to-user distance, not true leg-to-leg
-  routing; fare labels are types rather than live prices.
+- **Factual evidence:** Packet 156 adds a universal estimate policy and
+  user-controlled walking pace/maximum, but the current timeline still passes
+  venue-to-user proximity rather than true adjacent-leg route evidence. Taxi
+  no longer uses its old fixed-speed time and instead requires a live check.
 - **Impact:** Displayed travel time and fare information must not be interpreted
-  as live routing, traffic, or pricing.
-- **Likely dependency:** A future approved live-routing requirement and provider.
-- **Recommended next action:** Retain clear approximation disclosure unless live
-  routing is separately approved.
-- **Verification date:** 13 July 2026
+  as guaranteed routing, traffic, or pricing. The itinerary visibly states the
+  limitation and offers key-free Google Maps directions handoffs.
+- **Likely dependency:** Mounting true Packet 151 adjacent-leg evidence and,
+  if approved, a live provider duration.
+- **Recommended next action:** Preserve the Packet 156 disclosure and live
+  handoff until true route-leg evidence replaces proximity calculations.
+- **Verification date:** 27 July 2026
 
 ### AL-003 — Planning is single-day
 

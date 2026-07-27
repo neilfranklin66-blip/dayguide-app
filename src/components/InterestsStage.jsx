@@ -8,6 +8,7 @@ import StartTimeSelector from './StartTimeSelector';
 import ChildrenInPartySelector from './ChildrenInPartySelector';
 import StartOrderSelector from './StartOrderSelector';
 import InterestsNextButton from './InterestsNextButton';
+import WalkingPreferenceSelector from './WalkingPreferenceSelector';
 
 function InterestsStage({
   interestCategories,
@@ -28,6 +29,8 @@ function InterestsStage({
   setHasChildren,
   startWith,
   setStartWith,
+  travelPreferences,
+  onTravelPreferencesChange,
   goToNextSelectionStage,
   t,
 }) {
@@ -82,6 +85,12 @@ function InterestsStage({
         <StartOrderSelector
           startWith={startWith}
           onChange={setStartWith}
+          t={t}
+        />
+
+        <WalkingPreferenceSelector
+          preferences={travelPreferences}
+          onChange={onTravelPreferencesChange}
           t={t}
         />
 
