@@ -183,6 +183,17 @@ quota/stop procedure, Legacy Places migration trigger, and routing-specific
 deployment checks are recorded. Routing remains disabled and unmounted; no
 external configuration or production behaviour changed.
 
+**London route calibration and Private Alpha criteria:** Packet 154 added
+[`docs/LONDON_ROUTE_CALIBRATION_AND_PRIVATE_ALPHA_ACCEPTANCE_CRITERIA.md`](LONDON_ROUTE_CALIBRATION_AND_PRIVATE_ALPHA_ACCEPTANCE_CRITERIA.md).
+A non-network London framework now defines 24 named public-place scenarios:
+12 walking and 12 public-transport cases across peak, off-peak, weekend,
+station, activity, hotel, fixed-venue, and hard-anchor conditions. It produces
+five bounded batches with a 24-event one-off ceiling, proposes explicit
+mode-specific quality thresholds, and calculates an unapproved 150-request
+daily Private Alpha quota from 10 testers, two checks, six legs, and 25%
+headroom. The criteria and quota remain visibly unapproved, no live evidence
+exists, and routing remains disabled and unmounted.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -229,7 +240,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
 | Itinerary generation | **Implemented** | `src/engines/timelineEngine.js` `buildTimelineEntries` orders items by `startWith` and assigns times with a 0.25h inter-stop gap. |
-| Fixed-plan route feasibility | **Authenticated guarded adapter and quality gate implemented — disabled and not active** | `routeEvidenceBoundary` and `geographicalPlanningEngine` retain Packet 151's trusted-evidence gate. Packets 152–153 select Google Compute Routes Essentials, add a bounded separate-key adapter, require verified Firebase callers before paid access, and add a Product-Owner-controlled evidence-quality gate. No routing key/mode or approved quality result exists, and the review stage is not mounted. |
+| Fixed-plan route feasibility | **London calibration-ready — disabled and not active** | Packets 151–153 provide trusted route evidence, a bounded authenticated Google adapter, and a Product-Owner-controlled quality gate. Packet 154 adds 24 public London walking/transit scenarios, a 24-event calibration ceiling, and explicit but unapproved quality/quota proposals. No routing key/mode, live evidence, or approved quality result exists, and the review stage is not mounted. |
 | Geographic ordering / backtracking control | **Foundation only — not active** | Live restaurant coordinates are now retained in `PlaceCard`, and the hard-anchor engine accepts injected leg evidence. The current journey still groups activities and restaurants by `startWith`; no spatial sort, route corridor, or backtracking scoring is active. |
 | Route-aware fill time | **Foundation only — not active** | `assessFlexibleStopFit` can deterministically require both travel legs and the visit duration inside a fixed planning window. Current timeline popups remain composition/current-origin based and do not call it. |
 | Timeline | **Implemented** | `TimelineStage`/`TimelineCard`: editable per-item durations, day narrative (`src/utils/dayNarrative.js`), time-budget status, date display. |
@@ -299,8 +310,9 @@ local recommendations. Verified distinctions:
   Packet 148, and gates continuation. Packet 152 adds
   `routingProviderPolicy`, `routeEvidenceApi`, and the disabled
   `routes-evidence` server adapter. Packet 153 adds verified Firebase caller
-  enforcement and `routeEvidenceQualityGate`. The whole workflow remains
-  disconnected from `DayGuide.jsx`.
+  enforcement and `routeEvidenceQualityGate`. Packet 154 adds the non-network
+  `londonRouteCalibration` scenario, evidence-record, acceptance, and quota
+  boundary. The whole workflow remains disconnected from `DayGuide.jsx`.
 - **Utilities** (`src/utils/`): `planStorage`, `planLifecycle`,
   `restaurantSearchRequest`, `dayNarrative`, `recommendationReason`,
   `recommendationScore`.
@@ -353,10 +365,12 @@ sign-in remain outside these checks.
   no `GOOGLE_ROUTES_API_KEY` or approved routing-provider mode in the recorded
   environment. Authenticated proxy caller verification is implemented in
   tracked source, but activation still requires a separate restricted key,
-  Product-Owner-approved traffic and evidence-quality criteria, passing fresh
-  evidence for each enabled mode, a hard Google daily quota, billing monitoring,
-  an exercised stop procedure, attribution/privacy/warning work, and deploy-log
-  proof of the Netlify rate rule. The Places key must remain Places-only.
+  Product-Owner acceptance or amendment of Packet 154's walking/transit
+  thresholds and 150-request quota proposal, passing fresh evidence for each
+  enabled mode, an actually configured hard Google daily quota, billing
+  monitoring, an exercised stop procedure, attribution/privacy/warning work,
+  and deploy-log proof of the Netlify rate rule. The Places key must remain
+  Places-only.
 - **Place resolution has a monitored Legacy Places dependency.**
   `places-resolve` currently uses Find Place Legacy. Google's current lifecycle
   material supports existing projects and gives no shutdown date; Packet 153
@@ -469,6 +483,16 @@ the production build. The main bundle remained `main.a1cd6b13.js` at 229.38 kB
 gzipped because the routing and quality boundaries are not mounted. No routing
 API, credential, quota, billing alert, environment variable, Netlify setting,
 push, deployment, publication, or production behaviour changed.
+
+**Packet 154 snapshot (2026-07-27):** the 24-scenario London walking/transit
+catalogue, five bounded batches, 24-event one-off ceiling, safe evidence
+records, visibly unapproved quality thresholds, and exact Private Alpha quota
+calculator passed focused validation (3 suites, 26 tests), the full suite
+(**53 test suites and 1,099 tests**), and the production build. The main bundle
+remained `main.a1cd6b13.js` at 229.38 kB gzipped because the calibration
+framework is not mounted. No provider call, API, credential, quota, billing
+alert, environment variable, Netlify setting, push, deployment, publication,
+or production behaviour changed.
 
 ## 8. Maintenance rule
 
