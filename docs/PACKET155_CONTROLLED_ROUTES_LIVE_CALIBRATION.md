@@ -336,10 +336,18 @@ The mandatory shutdown is independent of the FAIL result:
 | Quality result | **Walking FAIL; public transport FAIL** |
 | Netlify Deploy Preview variables | Removed |
 | Packet 155 Deploy Preview | Deleted; URL returns 404 |
-| Temporary Routes-only replacement key | Deletion pending signed-in Google action |
+| Temporary Routes-only replacement key | Deleted from Google Cloud Credentials; Product Owner confirmed 28 July 2026 |
 | GitHub draft PR and temporary public branch | PR 7 closed; remote branch deleted |
-| Existing Places key | Must remain unchanged |
+| Existing Places key | Retained; unchanged and Places-only |
 | Production | Unchanged and locked |
+
+The Product Owner confirmed on 28 July 2026 that
+`DayGuide Netlify Routes Calibration Key` had been deleted from Google Cloud
+Credentials. Netlify already held zero routing-key values in zero deploy
+contexts, and the Packet 155 Deploy Preview returned 404. The temporary
+credential, captured preview, preview configuration, draft pull request, and
+remote branch are therefore all closed. The separate Places credential remains
+in service and was not deleted.
 
 ## 13. Official sources
 
