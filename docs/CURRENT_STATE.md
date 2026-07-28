@@ -532,6 +532,17 @@ proximity-based figures honestly rather than claiming true adjacent-leg
 routing. No API key, provider mode, Netlify variable, push, preview,
 publication, or production deployment followed.
 
+**Packet 157 integration-readiness snapshot (2026-07-28):** all 85 tracked
+paths and 14 commits in the cumulative Packet 146–156 chain were reconciled
+against Packet 145 `master`. No Google API-key literal, environment file,
+provider activation, Netlify configuration change, or unrelated tracked path
+was found. Two trailing blank lines were removed without behaviour change. The
+complete suite again passed (**59 test suites and 1,134 tests**) and the
+production build again produced `main.badc4dab.js` at 231.83 kB gzipped. The
+chain is ready for separately authorised local fast-forward integration only;
+no merge, push, provider change, Netlify action, publication, or deployment was
+performed or authorised.
+
 ## 8. Maintenance rule
 
 Update this document **only** when a completed packet materially changes a

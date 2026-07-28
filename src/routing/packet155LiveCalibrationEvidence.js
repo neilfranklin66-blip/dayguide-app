@@ -81,4 +81,3 @@ export function createPacket155LiveAssessment() {
     evaluatedAt: PACKET155_LIVE_EVIDENCE_EVALUATED_AT,
   });
 }
-
