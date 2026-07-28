@@ -417,6 +417,64 @@ p {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.planning-input-stage,
+.planning-place-resolution {
+  text-align: left;
+}
+
+.planning-place-resolution form {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-place-results {
+  margin-top: 20px;
+}
+
+.planning-private-alpha-notice,
+.planning-storage-notice {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fff8e6;
+  border: 1px solid #f0d88a;
+  color: #594500;
+}
+
+.planning-storage-notice {
+  margin-top: 16px;
+  background: #f0f4ff;
+  border-color: #d0d8f8;
+  color: #394168;
+  font-size: 0.9em;
+}
+
+.hard-anchor-editor {
+  margin: 20px 0;
+  padding: 20px;
+  box-shadow: none;
+  border: 1px solid #d0d8f8;
+}
+
+.geographical-plan-summary {
+  margin: 18px 0;
+  padding: 18px;
+  border-radius: 14px;
+  background: #f8f9ff;
+  border: 1px solid #d0d8f8;
+}
+
+.geographical-plan-point {
+  margin: 12px 0;
+  padding: 12px;
+  border-left: 4px solid #667eea;
+  background: white;
+}
+
+.planning-route-link {
+  display: block;
+  margin: 10px 0;
+}
+
 .section-title {
   font-size: 0.95em;
   font-weight: 700;

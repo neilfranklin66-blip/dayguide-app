@@ -3,6 +3,7 @@ import TimelineHeaderSummary from './TimelineHeaderSummary';
 import TimelineList from './TimelineList';
 import TimelineActionButtons from './TimelineActionButtons';
 import TravelEstimateNotice from './TravelEstimateNotice';
+import GeographicalPlanSummary from './GeographicalPlanSummary';
 
 export default function TimelineCard({
   timeBudget,
@@ -15,6 +16,8 @@ export default function TimelineCard({
   onShare,
   travelPreferences,
   hasHardAnchor = false,
+  geographicalPlanning = null,
+  geographicalAssessment = null,
   t,
 }) {
   return (
@@ -34,6 +37,11 @@ export default function TimelineCard({
             t={t}
           />
         )}
+        <GeographicalPlanSummary
+          planningInput={geographicalPlanning}
+          planningAssessment={geographicalAssessment}
+          t={t}
+        />
         <TimelineList
           timeline={timeline}
           onDurationChange={onDurationChange}

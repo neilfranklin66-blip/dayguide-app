@@ -114,6 +114,64 @@ export function createPlanningInputDraft({
   };
 }
 
+export function createPlanningInputDraftFromValue(planningInput) {
+  if (!planningInput) return createPlanningInputDraft();
+
+  const startMode =
+    planningInput.locationProvenance?.start ===
+    PLACE_SELECTION_MODE.CURRENT_LOCATION
+      ? PLACE_SELECTION_MODE.CURRENT_LOCATION
+      : PLACE_SELECTION_MODE.RESOLVED_PLACE;
+  const endMode =
+    planningInput.locationProvenance?.end ===
+    PLACE_SELECTION_MODE.CURRENT_LOCATION
+      ? PLACE_SELECTION_MODE.CURRENT_LOCATION
+      : PLACE_SELECTION_MODE.RESOLVED_PLACE;
+
+  return {
+    schemaVersion: GEOGRAPHICAL_PLAN_SCHEMA_VERSION,
+    startSelection: createPlaceSelection({
+      mode: startMode,
+      place: planningInput.start.place,
+    }),
+    departureTimeMinutes: planningInput.start.departureTimeMinutes,
+    destination: {
+      enabled: planningInput.end != null,
+      selection:
+        planningInput.end == null
+          ? null
+          : createPlaceSelection({
+              mode: endMode,
+              place: planningInput.end.place,
+            }),
+      arrivalDeadlineMinutes:
+        planningInput.end?.arrivalDeadlineMinutes ?? null,
+      arrivalBufferMinutes: planningInput.end?.arrivalBufferMinutes ?? 0,
+    },
+    anchors: (planningInput.anchors ?? []).map(copyAnchor),
+  };
+}
+
+export function collectPlanningPlaces(planningInput) {
+  if (!planningInput) return [];
+  const places = [
+    planningInput.start?.place,
+    ...(planningInput.anchors ?? []).map(anchor => anchor.place),
+    planningInput.end?.place,
+  ];
+  const seen = new Set();
+
+  return places
+    .filter(isPlaceRef)
+    .filter(place => {
+      const key = `${place.source}:${place.id ?? place.name}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .map(copyPlace);
+}
+
 export function setStartSelection(draft, selection) {
   if (selection != null && !isResolvedPlaceSelection(selection)) {
     throw new TypeError('selection must be null or a resolved place selection');
@@ -368,6 +426,8 @@ const planningInputWorkflow = {
   createPlaceSelection,
   createCurrentLocationSelection,
   createPlanningInputDraft,
+  createPlanningInputDraftFromValue,
+  collectPlanningPlaces,
   finalizePlanningInput,
   isResolvedPlaceSelection,
   minutesToTimeInput,

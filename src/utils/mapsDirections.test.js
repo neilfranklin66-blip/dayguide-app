@@ -1,5 +1,6 @@
 import {
   buildGoogleMapsDirectionsUrl,
+  buildGoogleMapsPlanningRouteUrl,
   routePointLabel,
 } from './mapsDirections';
 
@@ -53,4 +54,20 @@ test('builds a route label from a place name and address', () => {
   expect(routePointLabel(from)).toBe(
     'British Museum, Great Russell Street, London',
   );
+});
+
+test('builds a key-free planning handoff without prescribing a travel mode', () => {
+  const url = new URL(
+    buildGoogleMapsPlanningRouteUrl({
+      origin: from,
+      destination: to,
+    }),
+  );
+
+  expect(url.searchParams.get('origin')).toContain('British Museum');
+  expect(url.searchParams.get('destination')).toContain(
+    'Royal Opera House',
+  );
+  expect(url.searchParams.has('travelmode')).toBe(false);
+  expect(url.searchParams.has('key')).toBe(false);
 });

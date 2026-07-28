@@ -30,6 +30,7 @@ import ActivitiesStage from './components/ActivitiesStage';
 import MealPromptStage from './components/MealPromptStage';
 import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
+import PlanningInputWithPlaceResolution from './components/PlanningInputWithPlaceResolution';
 import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
 import { getRestaurantSearchRequestOutcome } from './utils/restaurantSearchRequest';
 import {
@@ -37,6 +38,14 @@ import {
   getRestoredPlanState,
   summarizeSavedPlan,
 } from './utils/planLifecycle';
+import {
+  collectPlanningPlaces,
+  createCurrentLocationSelection,
+  createPlanningInputDraft,
+  createPlanningInputDraftFromValue,
+  setStartSelection,
+} from './utils/planningInputWorkflow';
+import { assessGeographicalPlanningInput } from './engines/geographicalPlanningEngine';
 import {
   CUISINE_EMOJI,
   getCuisineEmoji,
@@ -73,6 +82,8 @@ const DayGuide = () => {
   const [activityQueue, setActivityQueue] = useState([]);
   const [restaurantQueue, setRestaurantQueue] = useState(null);
   const [timeline, setTimeline] = useState([]);
+  const [geographicalPlanning, setGeographicalPlanning] = useState(null);
+  const [geographicalAssessment, setGeographicalAssessment] = useState(null);
   const [savedPlanSummary, setSavedPlanSummary] = useState(() => summarizeSavedPlan(loadPlan()));
   const [logoutError, setLogoutError] = useState(null);
   const [logoutPending, setLogoutPending] = useState(false);
@@ -216,6 +227,8 @@ const DayGuide = () => {
     setActivityQueue([]);
     setRestaurantQueue(null);
     setTimeline([]);
+    setGeographicalPlanning(null);
+    setGeographicalAssessment(null);
     setActivePopup(null);
     activePopupRef.current = null;
     popupActivityReturnRef.current = false;
@@ -256,14 +269,39 @@ const DayGuide = () => {
       hasChildren,
     }).map(activity => ({ ...activity, isSample: true }));
 
-  const goToNextSelectionStage = () => {
+  const continueToSelectionRoute = (planningOverride = geographicalPlanning) => {
     const route = getInitialSelectionRoute({ startWith });
 
     if (route === 'restaurants') {
-      goToRestaurants();
+      goToRestaurants(
+        selectedCuisines,
+        selectedPriceRange,
+        planningOverride,
+      );
     } else {
       goToActivities();
     }
+  };
+
+  const goToNextSelectionStage = () => {
+    setStage('planning');
+  };
+
+  const completeGeographicalPlanning = planningInput => {
+    const assessment = assessGeographicalPlanningInput({
+      planningInput,
+      routeEvidence: null,
+    });
+    setGeographicalPlanning(planningInput);
+    setGeographicalAssessment(assessment);
+    setStartTime(planningInput.start.departureTimeMinutes / 60);
+    continueToSelectionRoute(planningInput);
+  };
+
+  const skipGeographicalPlanning = () => {
+    setGeographicalPlanning(null);
+    setGeographicalAssessment(null);
+    continueToSelectionRoute(null);
   };
 
   const continueAfterRestaurants = (restaurants = selectedRestaurantsRef.current) => {
@@ -293,7 +331,11 @@ const DayGuide = () => {
     setStage('activities');
   };
 
-  const goToRestaurants = async (cuisineOverride = selectedCuisines, priceOverride = selectedPriceRange) => {
+  const goToRestaurants = async (
+    cuisineOverride = selectedCuisines,
+    priceOverride = selectedPriceRange,
+    planningOverride = geographicalPlanning,
+  ) => {
     setIsRestaurantsLoading(true);
     setRestaurantSource(null);
     setRestaurantQueue(null);
@@ -318,9 +360,11 @@ const DayGuide = () => {
 
     // locationError lets the request layer tell a denied browser permission
     // (which the user can fix) apart from a location we simply never got.
+    const planningPosition =
+      planningOverride?.start?.place?.coordinates ?? position;
     const searchOutcome = await getRestaurantSearchRequestOutcome({
-      position,
-      locationError,
+      position: planningPosition,
+      locationError: planningOverride?.start ? null : locationError,
       cuisines: cuisineOverride,
       price: priceOverride,
       searchRestaurantsFn: searchRestaurants,
@@ -396,6 +440,7 @@ const DayGuide = () => {
       selectedPriceRange,
       selectedDate,
       startWith,
+      geographicalPlanning,
     });
 
     savePlan(plan);
@@ -420,6 +465,15 @@ const DayGuide = () => {
     setSelectedPriceRange(restored.selectedPriceRange);
     if (restored.selectedDate) setSelectedDate(restored.selectedDate);
     if (restored.startWith) setStartWith(restored.startWith);
+    setGeographicalPlanning(restored.geographicalPlanning);
+    setGeographicalAssessment(
+      restored.geographicalPlanning
+        ? assessGeographicalPlanningInput({
+            planningInput: restored.geographicalPlanning,
+            routeEvidence: null,
+          })
+        : null,
+    );
     isResumedPlanRef.current = true;
     setStage('timeline');
   };
@@ -511,6 +565,48 @@ const DayGuide = () => {
       );
     }
 
+    if (stage === 'planning') {
+      let currentPlace = null;
+      try {
+        currentPlace = position
+          ? createCurrentLocationSelection({ position }).place
+          : null;
+      } catch (_) {
+        currentPlace = null;
+      }
+
+      let initialDraft;
+      if (geographicalPlanning) {
+        initialDraft =
+          createPlanningInputDraftFromValue(geographicalPlanning);
+      } else {
+        initialDraft = createPlanningInputDraft({
+          departureTimeMinutes: Math.max(
+            0,
+            Math.min(24 * 60 - 1, Math.round(startTime * 60)),
+          ),
+        });
+        if (currentPlace) {
+          initialDraft = setStartSelection(
+            initialDraft,
+            createCurrentLocationSelection({ position }),
+          );
+        }
+      }
+
+      return (
+        <PlanningInputWithPlaceResolution
+          currentPlace={currentPlace}
+          initialPlaces={collectPlanningPlaces(geographicalPlanning)}
+          initialDraft={initialDraft}
+          onComplete={completeGeographicalPlanning}
+          onCancel={() => setStage('interests')}
+          onSkip={skipGeographicalPlanning}
+          t={t}
+        />
+      );
+    }
+
     if (stage === 'activities') {
       return (
         <ActivitiesStage
@@ -574,6 +670,11 @@ const DayGuide = () => {
           resetState={resetState}
           setShowQR={setShowQR}
           travelPreferences={travelPreferences}
+          hasHardAnchor={
+            (geographicalPlanning?.anchors?.length ?? 0) > 0
+          }
+          geographicalPlanning={geographicalPlanning}
+          geographicalAssessment={geographicalAssessment}
           t={t}
         />
       );

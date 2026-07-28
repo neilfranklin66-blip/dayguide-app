@@ -16,22 +16,48 @@ import {
   upsertHardAnchor,
 } from '../utils/planningInputWorkflow';
 
-const errorMessage = error => ({
-  [PLANNING_INPUT_ERROR.START_PLACE_REQUIRED]:
-    'Choose a verified starting place.',
-  [PLANNING_INPUT_ERROR.START_TIME_INVALID]:
-    'Choose a valid start time.',
-  [PLANNING_INPUT_ERROR.DESTINATION_PLACE_REQUIRED]:
-    'Choose a verified destination or remove the destination.',
-  [PLANNING_INPUT_ERROR.DESTINATION_DEADLINE_INVALID]:
-    'Check the destination deadline and arrival buffer.',
-  [PLANNING_INPUT_ERROR.ANCHOR_INVALID]:
-    'One or more fixed anchors is invalid.',
-  [PLANNING_INPUT_ERROR.ANCHOR_ID_RESERVED]:
-    'A fixed anchor has an invalid identifier.',
-  [PLANNING_INPUT_ERROR.ANCHOR_ID_DUPLICATE]:
-    'Two fixed anchors have the same identifier.',
-}[error] ?? 'Check the geographical planning details.');
+const fallbackT = (_key, options) => options?.defaultValue ?? _key;
+
+const errorMessage = (error, t) =>
+  ({
+    [PLANNING_INPUT_ERROR.START_PLACE_REQUIRED]: t(
+      'planning.errors.startPlaceRequired',
+      { defaultValue: 'Choose a verified starting place.' },
+    ),
+    [PLANNING_INPUT_ERROR.START_TIME_INVALID]: t(
+      'planning.errors.startTimeInvalid',
+      { defaultValue: 'Choose a valid start time.' },
+    ),
+    [PLANNING_INPUT_ERROR.DESTINATION_PLACE_REQUIRED]: t(
+      'planning.errors.destinationPlaceRequired',
+      {
+        defaultValue:
+          'Choose a verified destination or remove the destination.',
+      },
+    ),
+    [PLANNING_INPUT_ERROR.DESTINATION_DEADLINE_INVALID]: t(
+      'planning.errors.destinationDeadlineInvalid',
+      {
+        defaultValue:
+          'Check the destination deadline and arrival buffer.',
+      },
+    ),
+    [PLANNING_INPUT_ERROR.ANCHOR_INVALID]: t(
+      'planning.errors.anchorInvalid',
+      { defaultValue: 'One or more fixed anchors is invalid.' },
+    ),
+    [PLANNING_INPUT_ERROR.ANCHOR_ID_RESERVED]: t(
+      'planning.errors.anchorIdReserved',
+      { defaultValue: 'A fixed anchor has an invalid identifier.' },
+    ),
+    [PLANNING_INPUT_ERROR.ANCHOR_ID_DUPLICATE]: t(
+      'planning.errors.anchorIdDuplicate',
+      { defaultValue: 'Two fixed anchors have the same identifier.' },
+    ),
+  }[error] ??
+  t('planning.errors.general', {
+    defaultValue: 'Check the geographical planning details.',
+  }));
 
 const nextAnchorId = anchors => {
   let ordinal = 1;
@@ -46,6 +72,8 @@ export default function PlanningInputStage({
   initialDraft = null,
   onComplete,
   onCancel,
+  onSkip,
+  t = fallbackT,
 }) {
   const [draft, setDraft] = useState(
     initialDraft ?? createPlanningInputDraft(),
@@ -92,25 +120,44 @@ export default function PlanningInputStage({
   return (
     <div className="dayguide-container">
       <div className="card planning-input-stage">
-        <h2>Where should your day flow?</h2>
+        <h2>
+          {t('planning.title', {
+            defaultValue: 'Where should your day flow?',
+          })}
+        </h2>
         <p>
-          Set a starting place, an optional destination, and any commitments
-          that DayGuide must never move.
+          {t('planning.subtitle', {
+            defaultValue:
+              'Set a starting place, an optional destination, and any commitments that DayGuide must never move.',
+          })}
+        </p>
+        <p className="planning-private-alpha-notice">
+          {t('planning.privateAlphaNotice', {
+            defaultValue:
+              'Private alpha: fixed places and times guide your plan, but travel legs are not route-verified. Check live journeys before leaving.',
+          })}
         </p>
 
         <ResolvedPlaceSelect
           id="planning-start-place"
-          label="Where does your day start?"
+          label={t('planning.startPlace', {
+            defaultValue: 'Where does your day start?',
+          })}
           selection={draft.startSelection}
           onChange={selection =>
             setDraft(current => setStartSelection(current, selection))
           }
           currentPlace={currentPlace}
           availablePlaces={availablePlaces}
+          t={t}
         />
 
         <div className="time-selector">
-          <label htmlFor="planning-start-time">What time does your day start?</label>
+          <label htmlFor="planning-start-time">
+            {t('planning.startTime', {
+              defaultValue: 'What time does your day start?',
+            })}
+          </label>
           <input
             id="planning-start-time"
             type="time"
@@ -132,7 +179,9 @@ export default function PlanningInputStage({
                 )
               }
             />
-            Add an end destination
+            {t('planning.addDestination', {
+              defaultValue: 'Add an end destination',
+            })}
           </label>
         </div>
 
@@ -140,7 +189,9 @@ export default function PlanningInputStage({
           <>
             <ResolvedPlaceSelect
               id="planning-end-place"
-              label="Where should your day finish?"
+              label={t('planning.destinationPlace', {
+                defaultValue: 'Where should your day finish?',
+              })}
               selection={draft.destination.selection}
               onChange={selection =>
                 setDraft(current =>
@@ -149,11 +200,14 @@ export default function PlanningInputStage({
               }
               currentPlace={currentPlace}
               availablePlaces={availablePlaces}
+              t={t}
             />
 
             <div className="time-selector">
               <label htmlFor="planning-end-deadline">
-                Optional arrival deadline
+                {t('planning.destinationDeadline', {
+                  defaultValue: 'Optional arrival deadline',
+                })}
               </label>
               <input
                 id="planning-end-deadline"
@@ -169,7 +223,10 @@ export default function PlanningInputStage({
             {destinationDeadline && (
               <div className="time-selector">
                 <label htmlFor="planning-end-buffer">
-                  Arrive this many minutes before the deadline
+                  {t('planning.destinationBuffer', {
+                    defaultValue:
+                      'Arrive this many minutes before the deadline',
+                  })}
                 </label>
                 <input
                   id="planning-end-buffer"
@@ -194,21 +251,43 @@ export default function PlanningInputStage({
         )}
 
         <section aria-labelledby="hard-anchors-title">
-          <h3 id="hard-anchors-title">Fixed anchors</h3>
+          <h3 id="hard-anchors-title">
+            {t('planning.anchorsTitle', {
+              defaultValue: 'Fixed anchors',
+            })}
+          </h3>
           <p className="start-order-hint">
-            These commitments are locked against automatic replanning.
+            {t('planning.anchorsHint', {
+              defaultValue:
+                'These commitments are locked against automatic replanning.',
+            })}
           </p>
 
-          {draft.anchors.length === 0 && <p>No fixed anchors added.</p>}
+          {draft.anchors.length === 0 && (
+            <p>
+              {t('planning.noAnchors', {
+                defaultValue: 'No fixed anchors added.',
+              })}
+            </p>
+          )}
           {draft.anchors.map(anchor => (
             <article key={anchor.id} className="swipe-item">
-              <p className="card-type-label">Locked anchor</p>
+              <p className="card-type-label">
+                {t('planning.lockedAnchor', {
+                  defaultValue: 'Locked anchor',
+                })}
+              </p>
               <h4>{anchor.title}</h4>
               <p>{anchor.place.name}</p>
               <p>
-                {minutesToTimeInput(anchor.startTimeMinutes)} ·{' '}
-                {anchor.durationMinutes} minutes · arrive{' '}
-                {anchor.arrivalBufferMinutes} minutes early
+                {t('planning.summaryAnchorTiming', {
+                  time: minutesToTimeInput(anchor.startTimeMinutes),
+                  duration: anchor.durationMinutes,
+                  buffer: anchor.arrivalBufferMinutes,
+                  defaultValue: `${minutesToTimeInput(
+                    anchor.startTimeMinutes,
+                  )} · ${anchor.durationMinutes} minutes · arrive ${anchor.arrivalBufferMinutes} minutes early`,
+                })}
               </p>
               <div className="swipe-buttons">
                 <button
@@ -216,7 +295,10 @@ export default function PlanningInputStage({
                   className="btn-secondary"
                   onClick={() => setEditor({ anchor })}
                 >
-                  Edit {anchor.title}
+                  {t('planning.editNamedAnchor', {
+                    title: anchor.title,
+                    defaultValue: `Edit ${anchor.title}`,
+                  })}
                 </button>
                 <button
                   type="button"
@@ -227,7 +309,10 @@ export default function PlanningInputStage({
                     )
                   }
                 >
-                  Remove {anchor.title}
+                  {t('planning.removeNamedAnchor', {
+                    title: anchor.title,
+                    defaultValue: `Remove ${anchor.title}`,
+                  })}
                 </button>
               </div>
             </article>
@@ -244,7 +329,9 @@ export default function PlanningInputStage({
                 })
               }
             >
-              Add fixed anchor
+              {t('planning.addAnchor', {
+                defaultValue: 'Add fixed anchor',
+              })}
             </button>
           )}
         </section>
@@ -258,25 +345,45 @@ export default function PlanningInputStage({
             availablePlaces={availablePlaces}
             onSave={saveAnchor}
             onCancel={() => setEditor(null)}
+            t={t}
           />
         )}
 
         {errors.length > 0 && (
           <div role="alert">
             {errors.map(error => (
-              <p key={error}>{errorMessage(error)}</p>
+              <p key={error}>{errorMessage(error, t)}</p>
             ))}
           </div>
         )}
 
         <div className="swipe-buttons">
           <button type="button" onClick={onCancel} className="btn-secondary">
-            Back
+            {t('planning.back', { defaultValue: 'Back' })}
           </button>
+          {onSkip && (
+            <button
+              type="button"
+              onClick={onSkip}
+              className="btn-secondary"
+            >
+              {t('planning.skip', {
+                defaultValue: 'Continue without fixed route details',
+              })}
+            </button>
+          )}
           <button type="button" onClick={complete} className="btn-primary">
-            Continue with these fixed details
+            {t('planning.continue', {
+              defaultValue: 'Continue with these fixed details',
+            })}
           </button>
         </div>
+        <p className="planning-storage-notice">
+          {t('planning.storageNotice', {
+            defaultValue:
+              'If you save this plan, its selected place names and coordinates stay only in this browser until the plan expires or you press Start Over. They are not included in the share QR code.',
+          })}
+        </p>
       </div>
     </div>
   );

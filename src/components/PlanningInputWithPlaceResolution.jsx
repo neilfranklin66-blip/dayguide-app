@@ -10,6 +10,7 @@ import {
 } from '../api/placeResolutionApi';
 
 const placeKey = place => `${place.source}:${place.id}`;
+const fallbackT = (_key, options) => options?.defaultValue ?? _key;
 
 const mergePlaces = (...collections) => {
   const byKey = new Map();
@@ -21,21 +22,39 @@ const mergePlaces = (...collections) => {
   return [...byKey.values()];
 };
 
-const messageForError = error => {
+const messageForError = (error, t) => {
   switch (error?.message) {
     case PLACE_RESOLUTION_ERROR.INVALID_QUERY:
-      return `Enter between ${PLACE_QUERY_MIN_LENGTH} and ${PLACE_QUERY_MAX_LENGTH} characters.`;
+      return t('planning.searchLength', {
+        min: PLACE_QUERY_MIN_LENGTH,
+        max: PLACE_QUERY_MAX_LENGTH,
+        defaultValue: `Enter between ${PLACE_QUERY_MIN_LENGTH} and ${PLACE_QUERY_MAX_LENGTH} characters.`,
+      });
     case PLACE_RESOLUTION_ERROR.NO_API_KEY:
     case PLACE_RESOLUTION_ERROR.RESOLVER_UNAVAILABLE:
-      return 'Verified place search is not available right now.';
+      return t('planning.searchUnavailable', {
+        defaultValue: 'Verified place search is not available right now.',
+      });
     case PLACE_RESOLUTION_ERROR.API_DENIED:
-      return 'Verified place search was refused by the map provider.';
+      return t('planning.searchDenied', {
+        defaultValue:
+          'Verified place search was refused by the map provider.',
+      });
     case PLACE_RESOLUTION_ERROR.QUOTA_EXCEEDED:
-      return 'The place-search limit has been reached. Try again later.';
+      return t('planning.searchQuota', {
+        defaultValue:
+          'The place-search limit has been reached. Try again later.',
+      });
     case PLACE_RESOLUTION_ERROR.NETWORK_ERROR:
-      return 'Check your connection, then try the place search again.';
+      return t('planning.searchNetwork', {
+        defaultValue:
+          'Check your connection, then try the place search again.',
+      });
     default:
-      return 'That place could not be verified. Try a more specific place name or address.';
+      return t('planning.searchError', {
+        defaultValue:
+          'That place could not be verified. Try a more specific place name or address.',
+      });
   }
 };
 
@@ -45,7 +64,9 @@ export default function PlanningInputWithPlaceResolution({
   initialDraft = null,
   onComplete,
   onCancel,
+  onSkip,
   searchPlaces = resolvePlaceQuery,
+  t = fallbackT,
 }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
@@ -63,7 +84,11 @@ export default function PlanningInputWithPlaceResolution({
       setResults([]);
       setSearchState('error');
       setFeedback(
-        `Enter between ${PLACE_QUERY_MIN_LENGTH} and ${PLACE_QUERY_MAX_LENGTH} characters.`,
+        t('planning.searchLength', {
+          min: PLACE_QUERY_MIN_LENGTH,
+          max: PLACE_QUERY_MAX_LENGTH,
+          defaultValue: `Enter between ${PLACE_QUERY_MIN_LENGTH} and ${PLACE_QUERY_MAX_LENGTH} characters.`,
+        }),
       );
       return;
     }
@@ -79,14 +104,17 @@ export default function PlanningInputWithPlaceResolution({
       if (places.length === 0) {
         setSearchState('empty');
         setFeedback(
-          'No verified matches were found. Try a station name, venue, hotel or fuller address.',
+          t('planning.searchNoResults', {
+            defaultValue:
+              'No verified matches were found. Try a station name, venue, hotel or fuller address.',
+          }),
         );
       } else {
         setSearchState('success');
       }
     } catch (error) {
       setSearchState('error');
-      setFeedback(messageForError(error));
+      setFeedback(messageForError(error, t));
     } finally {
       searchInFlight.current = false;
     }
@@ -94,7 +122,12 @@ export default function PlanningInputWithPlaceResolution({
 
   const addPlace = place => {
     setAvailablePlaces(current => mergePlaces(current, [place]));
-    setFeedback(`${place.name} is now available in the planning choices.`);
+    setFeedback(
+      t('planning.placeAdded', {
+        name: place.name,
+        defaultValue: `${place.name} is now available in the planning choices.`,
+      }),
+    );
   };
 
   const hasPlace = place =>
@@ -107,18 +140,30 @@ export default function PlanningInputWithPlaceResolution({
           className="card planning-place-resolution"
           aria-labelledby="place-resolution-title"
         >
-          <h2 id="place-resolution-title">Find a verified planning place</h2>
+          <h2 id="place-resolution-title">
+            {t('planning.searchTitle', {
+              defaultValue: 'Find a verified planning place',
+            })}
+          </h2>
           <p>
-            Search for a station, venue, hotel or address, then add the correct
-            match to your planning choices.
+            {t('planning.searchSubtitle', {
+              defaultValue:
+                'Search for a station, venue, hotel or address, then add the correct match to your planning choices.',
+            })}
           </p>
           <p className="start-order-hint">
-            A search is sent to Google Maps only when you press Search. DayGuide
-            does not send searches while you type.
+            {t('planning.searchPrivacy', {
+              defaultValue:
+                'A search is sent to Google Maps only when you press Search. DayGuide does not send searches while you type.',
+            })}
           </p>
 
           <form onSubmit={search}>
-            <label htmlFor="planning-place-query">Place name or address</label>
+            <label htmlFor="planning-place-query">
+              {t('planning.searchLabel', {
+                defaultValue: 'Place name or address',
+              })}
+            </label>
             <input
               id="planning-place-query"
               type="search"
@@ -134,7 +179,9 @@ export default function PlanningInputWithPlaceResolution({
               className="btn-secondary"
               disabled={searchState === 'loading'}
             >
-              {searchState === 'loading' ? 'Searching...' : 'Search'}
+              {searchState === 'loading'
+                ? t('planning.searching', { defaultValue: 'Searching...' })
+                : t('planning.searchAction', { defaultValue: 'Search' })}
             </button>
           </form>
 
@@ -149,7 +196,9 @@ export default function PlanningInputWithPlaceResolution({
 
           {searchState === 'success' && (
             <section
-              aria-label="Verified place matches"
+              aria-label={t('planning.searchResultsLabel', {
+                defaultValue: 'Verified place matches',
+              })}
               className="planning-place-results"
             >
               <p
@@ -168,8 +217,10 @@ export default function PlanningInputWithPlaceResolution({
                 Google Maps
               </p>
               <p className="start-order-hint">
-                Matches are ordered using factors including relevance,
-                distance and prominence.
+                {t('planning.searchOrdering', {
+                  defaultValue:
+                    'Matches are ordered using factors including relevance, distance and prominence.',
+                })}
               </p>
               {results.map(place => (
                 <article key={placeKey(place)} className="swipe-item">
@@ -182,8 +233,14 @@ export default function PlanningInputWithPlaceResolution({
                     onClick={() => addPlace(place)}
                   >
                     {hasPlace(place)
-                      ? `${place.name} added`
-                      : `Add ${place.name}`}
+                      ? t('planning.placeAlreadyAdded', {
+                          name: place.name,
+                          defaultValue: `${place.name} added`,
+                        })
+                      : t('planning.addNamedPlace', {
+                          name: place.name,
+                          defaultValue: `Add ${place.name}`,
+                        })}
                   </button>
                 </article>
               ))}
@@ -198,6 +255,8 @@ export default function PlanningInputWithPlaceResolution({
         initialDraft={initialDraft}
         onComplete={onComplete}
         onCancel={onCancel}
+        onSkip={onSkip}
+        t={t}
       />
     </>
   );

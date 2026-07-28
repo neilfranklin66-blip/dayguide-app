@@ -10,6 +10,7 @@ export const createPlanPayload = ({
   selectedPriceRange,
   selectedDate,
   startWith,
+  geographicalPlanning = null,
 }) => ({
   timeline,
   startTime,
@@ -19,6 +20,7 @@ export const createPlanPayload = ({
   selectedPriceRange,
   selectedDate,
   startWith,
+  geographicalPlanning,
 });
 
 export const getRestoredPlanState = (plan) =>
@@ -33,5 +35,6 @@ export const getRestoredPlanState = (plan) =>
         selectedPriceRange: plan.selectedPriceRange ?? null,
         selectedDate: plan.selectedDate,
         startWith: plan.startWith,
+        geographicalPlanning: plan.geographicalPlanning ?? null,
       }
     : null;

@@ -4,6 +4,8 @@ import {
   createCurrentLocationSelection,
   createPlaceSelection,
   createPlanningInputDraft,
+  createPlanningInputDraftFromValue,
+  collectPlanningPlaces,
   finalizePlanningInput,
   minutesToTimeInput,
   removeHardAnchor,
@@ -244,6 +246,27 @@ test('finalizePlanningInput builds validated start, anchor, and destination mode
       end: PLACE_SELECTION_MODE.RESOLVED_PLACE,
     },
   });
+});
+
+test('a finalized input can be reopened as an editable draft with its places', () => {
+  let draft = createPlanningInputDraft({ departureTimeMinutes: 9 * 60 });
+  draft = setStartSelection(draft, currentSelection);
+  draft = upsertHardAnchor(draft, theatre);
+  draft = setDestinationEnabled(draft, true);
+  draft = setDestinationSelection(draft, resolvedSelection(hotel));
+
+  const finalized = finalizePlanningInput(draft).value;
+  const reopened = createPlanningInputDraftFromValue(finalized);
+
+  expect(reopened.startSelection).toEqual(currentSelection);
+  expect(reopened.anchors).toEqual([theatre]);
+  expect(reopened.destination.enabled).toBe(true);
+  expect(reopened.destination.selection.place).toEqual(hotel);
+  expect(collectPlanningPlaces(finalized).map(place => place.id)).toEqual([
+    'euston',
+    'theatre-place',
+    'hotel',
+  ]);
 });
 
 test('finalizePlanningInput supports a soft destination without a deadline', () => {

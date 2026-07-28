@@ -156,19 +156,21 @@ No other entry is classified as launch blocking.
 - **ID:** TD-001
 - **Category:** Persistence technical debt
 - **Severity:** Medium
-- **Status:** Verified open
+- **Status:** Resolved pending archive
 - **Launch blocking:** No
-- **Verification status:** Verified in tracked implementation and comments.
-- **Factual evidence:** `src/utils/planStorage.js` stores version 1 under
-  `dayguide_saved_plan_v1` and explicitly states that there are no migrations;
-  a future schema change is expected to use a new key.
-- **Impact:** A future persisted-plan schema change requires an explicit
-  compatibility, retirement, or reset decision and can otherwise strand or
-  discard saved plans.
-- **Likely dependency:** The next approved persisted-plan schema change.
-- **Recommended next action:** Define and test a version-transition policy before
-  changing the persisted payload.
-- **Verification date:** 13 July 2026
+- **Verification status:** Resolution verified in tracked Packet 159 source and
+  automated tests; Product Owner archive acceptance remains outstanding.
+- **Factual evidence:** `src/utils/planStorage.js` now writes version 2 under
+  `dayguide_saved_plan_v2`, reads valid `dayguide_saved_plan_v1` payloads,
+  migrates them locally with no invented geographical data, and removes the
+  legacy key. Invalid v2 geographical data is rejected.
+- **Impact:** Existing valid v1 plans remain resumable while new plans can
+  persist the bounded geographical schema.
+- **Likely dependency:** Product Owner acceptance to archive this resolved
+  entry.
+- **Recommended next action:** Confirm Packet 159 acceptance, then archive
+  TD-001 without deleting its history.
+- **Verification date:** 28 July 2026
 
 ## 6. Architecture and maintainability risks
 
@@ -615,8 +617,8 @@ decision was evidenced during this review.
 
 ## 11. Resolved and archive policy
 
-There are no entries with status **Resolved pending archive** or **Archived** at
-this verification point.
+TD-001 is **Resolved pending archive** at this verification point. There are no
+archived entries.
 
 1. An entry may move to **Resolved pending archive** only when factual resolution
    evidence and the relevant validation result are recorded in the entry.

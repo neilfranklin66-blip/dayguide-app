@@ -122,10 +122,11 @@ feature. This audit does not change application or production behaviour.
 Tracked code now has route-capable place, start, hard-anchor, end,
 flexible-stop, and route-leg models plus a provider-independent engine that
 builds fixed planning windows and rejects impossible or unproved fits without
-moving anchors. Live restaurant coordinates are retained internally. This
-foundation is not wired to the UI, current timeline, saved-plan version 1,
-providers, or production, so it does not yet provide a user-visible
-geographical-planning capability.
+moving anchors. Live restaurant coordinates are retained internally. At the
+Packet 148 boundary this foundation was not wired to the UI, timeline,
+persistence, providers, or production. Packet 159 now mounts the
+provider-neutral input/window path and saved-plan v2 while leaving the live
+routing provider disabled.
 
 **Start, destination, and anchor input workflow:** Packet 149 added
 [`docs/START_DESTINATION_AND_HARD_ANCHOR_INPUT_WORKFLOW.md`](START_DESTINATION_AND_HARD_ANCHOR_INPUT_WORKFLOW.md).
@@ -134,8 +135,8 @@ from another resolved place, collect an optional destination/deadline, and add,
 edit, or deliberately remove planner-locked hard anchors. The workflow accepts
 only validated route-capable places and rejects unresolved free text. Packet
 150 now supplies an internal place-resolution boundary, and Packet 151 consumes
-the finalized structure internally. The workflow remains unmounted in
-`DayGuide.jsx`; current production behaviour is unchanged.
+the finalized structure internally. Packet 159 now mounts this workflow in
+tracked source; current production behaviour remains unchanged.
 
 **Place resolution and planning-input integration:** Packet 150 added
 [`docs/PLACE_RESOLUTION_BOUNDARY_AND_PLANNING_INPUT_INTEGRATION.md`](PLACE_RESOLUTION_BOUNDARY_AND_PLANNING_INPUT_INTEGRATION.md).
@@ -144,11 +145,11 @@ stations, venues, hotels, and addresses into validated Packet 148 place
 references. `PlanningInputWithPlaceResolution` supplies deliberately added
 matches to the Packet 149 selectors with attributed results and honest
 loading, empty, unavailable, denied, quota, network, and malformed-response
-states. It is not mounted in `DayGuide.jsx`: route evidence, planning-engine
-integration, localization, compliant persistence, and activation were left as
-separate work at that packet boundary. Packet 151 now provides the first two
-internally, without selecting a live route provider. Current production
-behaviour is unchanged.
+states. At the Packet 150 boundary it was not mounted in `DayGuide.jsx`;
+route evidence, planning-engine integration, localization, compliant
+persistence, and activation were separate work. Packets 151 and 159 now supply
+the provider-neutral assessment and mounted/localized v2 workflow without
+selecting a live route provider. Current production behaviour is unchanged.
 
 **Route evidence and geographical-planning integration:** Packet 151 added
 [`docs/ROUTE_EVIDENCE_BOUNDARY_AND_GEOGRAPHICAL_PLANNING_INTEGRATION.md`](ROUTE_EVIDENCE_BOUNDARY_AND_GEOGRAPHICAL_PLANNING_INTEGRATION.md).
@@ -157,8 +158,10 @@ adjacent travel legs around Packet 149 start/destination/anchor input. Only
 validated provider-route or operator-schedule evidence can prove feasibility;
 the existing approximate transport heuristic is rejected. The integration
 returns ready, infeasible, evidence-required, directional, or
-no-route-required, preserves fixed anchors, and exposes an honest unmounted
-review stage. No live routing provider or current-journey activation exists.
+no-route-required, preserves fixed anchors, and exposes an honest review
+stage. Packet 159 now invokes the assessment with absent route evidence from
+the current journey, while the live review/check action and routing provider
+remain disabled.
 
 **Routing provider decision and guarded adapter:** Packet 152 added
 [`docs/ROUTING_PROVIDER_DECISION_CREDENTIAL_ISOLATION_AND_COST_GUARDRAILS.md`](ROUTING_PROVIDER_DECISION_CREDENTIAL_ISOLATION_AND_COST_GUARDRAILS.md).
@@ -206,6 +209,19 @@ temporary Firebase guest, makes no retries, and returns only sanitised evidence.
 At this preparation point no external setting, provider call, draft deploy, or
 production behaviour has changed.
 
+**Private Alpha geographical workflow and saved-plan v2 activation:** Packet
+159 added
+[`docs/PACKET159_PRIVATE_ALPHA_GEOGRAPHICAL_PLANNING_WORKFLOW_AND_SAVED_PLAN_V2_ACTIVATION.md`](PACKET159_PRIVATE_ALPHA_GEOGRAPHICAL_PLANNING_WORKFLOW_AND_SAVED_PLAN_V2_ACTIVATION.md).
+Tracked source now mounts explicit place search, start, optional destination,
+deadline, and planner-locked hard anchors between interests and selection.
+Finalized input reaches the fixed-window engine, a searched start becomes the
+restaurant-search origin, and the timeline shows fixed details with key-free
+Google Maps leg checks and an explicit unverified-route warning. Saved-plan v2
+retains minimum selected geographical data locally, migrates valid v1 plans,
+clears both keys on expiry/reset, and excludes geographical data from QR text.
+Google Routes remains disabled. This is local source only; production remains
+unchanged.
+
 ## 2. Current user journey
 
 DayGuide is a single-page React (Create React App) application. There is no
@@ -225,15 +241,19 @@ Verified stage flow (`src/DayGuide.jsx`, `src/engines/itineraryRouteEngine.js`):
 3. **interests** — preference capture on one screen: activity interests, cuisines,
    price range, available time, date, start time, children-in-party, and whether
    to start with activities or food & drink.
-4. **activities** — swipe through sample activity ideas filtered by the chosen
+4. **planning** — use current location or explicitly search for a verified
+   start; optionally add a destination/deadline and fixed anchors; or continue
+   without fixed route details. Travel legs are visibly not route-verified.
+5. **activities** — swipe through sample activity ideas filtered by the chosen
    interests (and children filter).
-5. **meal-prompt** — offered only on the activities-first route, asking whether to
+6. **meal-prompt** — offered only on the activities-first route, asking whether to
    add food.
-6. **restaurants** — live nearby-restaurant search with swipe selection, or an
+7. **restaurants** — live nearby-restaurant search around the chosen planning
+   start (or current location when geographical planning was skipped), with an
    honest loading / unavailable / no-results state.
-7. **timeline** — the assembled plan: ordered stops with times, editable
+8. **timeline** — the assembled plan: ordered stops with times, editable
    durations, a day narrative, a time-budget check, "Open in Maps" links on live
-   items, QR share, and "Start over".
+   items, fixed planning details, QR share, and "Start over".
 
 Order between activities and restaurants is determined by the `startWith`
 setting; the timeline stage is the terminal screen of the main journey.
@@ -245,21 +265,21 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Authentication (Google, email/password, guest) | **Implemented — External-service dependent** | `src/AuthContext.jsx` wires Firebase `signInWithPopup`, `signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `signInAnonymously`, `signOut`; `src/Login.jsx` exposes all three paths with per-action pending/error handling. Requires a working Firebase project. |
 | Guest access | **Implemented** | Anonymous Firebase sign-in (`signInAsGuest` → `signInAnonymously`); guest users have no email and are handled explicitly (`AuthContext` removes the stored email string). |
 | Onboarding / preferences | **Implemented** | `InterestsStage` collects interests, cuisines, price, available time, date, start time, children, start order, and user-owned walking pace/maximum. Travel preferences persist locally under a separate versioned key; DayGuide does not infer pace from age or weight. |
-| Manual start place / future planning location | **Place resolution and input integration implemented — not active** | `placeResolutionApi` and `places-resolve` resolve an explicitly submitted station, venue, hotel, or address into validated provider-labelled places; `PlanningInputWithPlaceResolution` supplies deliberately added matches to Packet 149. The component is not mounted in the current journey and no provider or Netlify setting has changed. |
-| End place / arrival deadline | **Input workflow implemented — not active** | Packet 149 can collect a resolved destination with an optional deadline and buffer, or a soft directional destination. It is not connected to the current timeline or persistence. |
-| Hard anchors | **Input workflow implemented — not active** | `HardAnchorEditor` creates planner-locked fixed commitments and `PlanningInputStage` provides deliberate Edit/Remove actions. Packet 148 preserves their fixed place/time. No current-journey or persistence integration exists. |
+| Manual start place / future planning location | **Implemented in tracked Private Alpha source — External-service dependent** | `PlanningInputWithPlaceResolution` is mounted after interests. Current GPS or an explicitly searched verified place can be selected; a searched start becomes the restaurant-search origin. Search depends on the server Places resolver and existing Places-only credential. |
+| End place / arrival deadline | **Implemented in tracked Private Alpha source** | The mounted workflow collects an optional verified destination with an optional deadline and arrival buffer. It is preserved in saved-plan v2 and shown on the timeline with live-check guidance. |
+| Hard anchors | **Implemented in tracked Private Alpha source — route time unverified** | `HardAnchorEditor` adds/edits/removes planner-locked fixed commitments. Finalized anchors reach the Packet 148 planning-window engine, persist in v2, and appear in the timeline without being moved. Route feasibility is not claimed while live route evidence is absent. |
 | Activities | **Implemented — sample/demo-backed** | Sourced from `src/mockActivityData.json`, filtered in `src/engines/filterEngine.js`; every activity is flagged `isSample` in `DayGuide.jsx`. No live activity search exists. |
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
 | Itinerary generation | **Implemented** | `src/engines/timelineEngine.js` `buildTimelineEntries` orders items by `startWith` and assigns times with a 0.25h inter-stop gap. |
-| Fixed-plan route feasibility | **Controlled live calibration complete — provider disabled and not active** | Packets 151–155 provide the adapter, security boundary, quality gate, and 24-scenario London evidence. All 24 Google and TfL checks returned routes; raw-duration criteria failed for both walking and transit. Packet 156 interprets provider duration as an estimate rather than a guaranteed commitment. The review stage remains unmounted and no routing credential/mode is active. |
+| Fixed-plan route feasibility | **Fixed-window assessment active; live provider disabled** | Finalized Packet 159 input reaches the Packet 148/151 assessment boundary. Missing route evidence remains `evidence_required` and the timeline warns that fixed legs are not route-verified. No routing credential/mode is active and no feasibility promise is made. |
 | Geographic ordering / backtracking control | **Foundation only — not active** | Live restaurant coordinates are now retained in `PlaceCard`, and the hard-anchor engine accepts injected leg evidence. The current journey still groups activities and restaurants by `startWith`; no spatial sort, route corridor, or backtracking scoring is active. |
 | Route-aware fill time | **Foundation only — not active** | `assessFlexibleStopFit` can deterministically require both travel legs and the visit duration inside a fixed planning window. Current timeline popups remain composition/current-origin based and do not call it. |
 | Timeline | **Implemented** | `TimelineStage`/`TimelineCard`: editable per-item durations, day narrative (`src/utils/dayNarrative.js`), time-budget status, date display. |
 | Transport | **Implemented — universal estimate policy, approximate evidence** | Packet 156 adds user-controlled walking pace and maximum-walk preferences, a 45-minute default, aggregate experience-learning foundation, explicit estimate/accountability copy, and a live-check-required taxi boundary. Current `distanceKm` remains venue-to-user proximity, not true leg-to-leg evidence, and is labelled accordingly. |
 | Maps / deep links | **Implemented** | Place links remain available for live restaurants. Packet 156 also builds key-free Google Maps directions handoffs between adjacent itinerary stops for walking, driving, and transit; these are live-checking exits, not data returned to DayGuide. |
-| Plan persistence & resume | **Implemented** | `src/utils/planStorage.js` writes one versioned `localStorage` key (`dayguide_saved_plan_v1`); persists timeline + render settings only (no queues, selections, or geolocation). Resume restores a read-only plan view. A plan dated before the local calendar day is discarded on load and excluded from Resume (`isPlanDateExpired`/`loadPlan`, `planStorage.js`). |
-| Sharing | **Implemented (QR text)** | `TimelineShareQRModal.jsx` encodes a plain-text itinerary summary (`buildTimelineShareText`) as a QR code. No server-side share link or export. |
+| Plan persistence & resume | **Implemented — saved-plan v2 with v1 compatibility** | `planStorage.js` writes `dayguide_saved_plan_v2`, including the timeline, render settings, and minimum selected geographical data. It migrates valid v1 plans locally, rejects invalid geographical data, and clears both keys on expiry or Start Over. Search queries/results, route evidence, address, GPS accuracy, and transient UI state are not saved. |
+| Sharing | **Implemented (QR text; geographical data excluded)** | `TimelineShareQRModal.jsx` encodes only the date/timeline text from `buildTimelineShareText`. Start/destination/anchor names and coordinates are not passed or serialized. No server-side share link or export. |
 | Localisation | **Implemented** | Five locales (`en`, `es`, `fr`, `zh`, `vi`) in `src/i18n.js`; language selector in header and login; choice persisted to `localStorage` and, for signed-up users, to Firestore. Key parity checked by `src/locales/localeConsistency.test.js`. |
 | Deployment / API handling | **Implemented — traceable production, manually locked** | Packets 142 and 143 link the existing Netlify site to GitHub `master`, publish exact commit `5ef141b`, deploy both Places functions, verify nearby and photo requests through the replacement server credential, remove the legacy client variable, and retain manual publication locking. |
 | Multi-day planning | **Not implemented** | No multi-day state, tabs, or routes exist in tracked `DayGuide.jsx`; planning is single-day, single-date. |
@@ -286,10 +306,11 @@ local recommendations. Verified distinctions:
   estimates from venue-to-user distance and fixed urban speed profiles, not live
   routing; costs are currency-free fare *types* (`transportEngine.js`,
   `TRANSPORT_OPTIONS`). No live directions or fares are fetched.
-- **Persisted vs transient information.** Only the finished timeline plus its
-  render settings are persisted (`planStorage.js`). Queues, individual
-  selections, geolocation, and transient UI state are intentionally not saved. A
-  resumed plan is a view of saved data and does not rebuild selections.
+- **Persisted vs transient information.** Saved-plan v2 keeps the finished
+  timeline, render settings, and minimum selected route-capable place data
+  (identifier, name, coordinates, source) locally until expiry/reset. Search
+  queries/results, address, GPS accuracy, queues, route evidence, and transient
+  UI state are not saved. QR text excludes the entire geographical object.
 
 ## 5. Architecture boundaries
 
@@ -303,19 +324,19 @@ local recommendations. Verified distinctions:
   `itineraryRouteEngine`, `timelineEngine`, `restaurantEngine`,
   `transportEngine`, `popupEngine`, `hardAnchorEngine`,
   `geographicalPlanningEngine`, and `recommendation*` scoring. Pure logic,
-  independently tested. The hard-anchor and geographical-planning engines are
-  internal foundations and are not called by the current journey.
+  independently tested. Packet 159 now calls the hard-anchor and
+  geographical-planning engines from the mounted planning journey.
 - **Planning models** (`src/models/geographicalPlan.js`): provider-independent
   route-capable places, start/end points, planner-locked hard anchors, flexible
-  stops, and route legs. Schema version 2 is defined but not persisted.
+  stops, and route legs. Schema version 2 is persisted through the bounded
+  saved-plan v2 serializer.
 - **Planning-input boundary** (`src/utils/planningInputWorkflow.js`,
   `ResolvedPlaceSelect`, `HardAnchorEditor`, `PlanningInputStage`,
   `PlanningInputWithPlaceResolution`): immutable draft/finalization logic,
   resolved-place-only controls, and an explicit-search resolution wrapper.
-  Packet 150 connects verified results to Packet 149 internally. Packet 151
-  adds provider-neutral route assessment, while the combined workflow remains
-  disconnected from `DayGuide.jsx` pending a live route provider, localization,
-  persistence, and activation.
+  Packet 150 connects verified results to Packet 149. Packet 159 mounts the
+  combined workflow, supplies all five locales, and persists finalized input
+  without requiring a live route provider.
 - **Route-evidence boundary** (`src/routing/routeEvidenceBoundary.js`,
   `geographicalPlanningEngine`, `GeographicalPlanningReview`): creates dated
   adjacent-leg requests, validates trusted evidence, integrates Packet 149 with
@@ -325,9 +346,11 @@ local recommendations. Verified distinctions:
   enforcement and `routeEvidenceQualityGate`. Packet 154 adds the non-network
   `londonRouteCalibration` scenario, evidence-record, acceptance, and quota
   boundary. Packet 155 adds an approved-plan record and a separate operator
-  runner that is not imported by the application. The whole workflow remains
-  disconnected from `DayGuide.jsx`.
+  runner that is not imported by the application. Packet 159 uses the
+  provider-neutral assessment with absent evidence; the live routing adapter,
+  review/check action, quality gate, and runner remain disconnected.
 - **Utilities** (`src/utils/`): `planStorage`, `planLifecycle`,
+  `geographicalPlanPersistence`,
   `restaurantSearchRequest`, `dayNarrative`, `recommendationReason`,
   `recommendationScore`.
 - **API / Netlify boundary.** All Google Places access goes through
@@ -551,6 +574,17 @@ commit's `[skip netlify]` marker. Public deploy history remained unchanged:
 production is still published at `master@5ef141b`, deploy
 `6a6602bd6c7609eabb08d744`. No provider request, credential, environment
 variable, Netlify setting, publication, or production deployment changed.
+
+**Packet 159 snapshot (2026-07-28):** tracked source mounts the localized
+Private Alpha start/destination/hard-anchor workflow, uses a searched start as
+the nearby-restaurant origin, connects finalized input to the fixed-window
+assessment with no fabricated route evidence, displays fixed details and
+key-free Maps handoffs, and activates saved-plan v2 with v1 migration and QR
+coordinate exclusion. The complete suite passed (**61 test suites and 1,862
+tests**) and the production build produced `main.8be1c3d1.js` at 249.85 kB
+gzipped and `main.48c0e225.css` at 4.7 kB gzipped. Google Routes remains
+disabled. No push, provider request, key, environment-variable, Netlify
+setting, preview, publication, or production deployment followed.
 
 ## 8. Maintenance rule
 
