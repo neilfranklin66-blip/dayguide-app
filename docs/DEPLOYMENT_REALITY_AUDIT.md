@@ -420,7 +420,7 @@ establish the state of every function.
 | External providers | Google, Firebase, GitHub, Maps, and placeholder service are evidenced. | Google Places and GitHub/Netlify delivery are verified within Packet 142; Firebase journey remains unverified. | Mixed verified and unverified by provider | Audit Firebase separately. |
 | Deployment method | Git linkage and `.npmrc` compatibility requirement are tracked. | Netlify built exact Git commit and publication was deliberate. | Verified — repository and hosted build | Retain reproducible settings and lock. |
 | Live URL | No tracked URL. | Authenticated production domain matches Packet 138's reachable Netlify hostname; no custom domain is configured. | Authenticated and Verified — public live | Record future domain changes through controlled evidence. |
-| Deployed commit identity | Git `master` and `origin/master` identify `5ef141b`. | Canonical Netlify metadata identifies the same full SHA and deploy `6a6602bd6c7609eabb08d744`. | Verified — repository and public live | Record each future release similarly. |
+| Source and deployed commit identity | Packet 158 fast-forwarded local and GitHub `master` to `f3de536`; this source update produced no observable Netlify candidate. | Canonical production remains older exact commit `5ef141b` and deploy `6a6602bd6c7609eabb08d744`. | Verified — repository, GitHub API/remote ref, and public deploy history | Keep source-head and published-deploy identities distinct; record any future candidate and release separately. |
 | Rollback mechanism | Packet 141 tracks rollback triggers and operator steps. | May 18 retained deploy remains `ready`; Packet 140 archive remains external. | Prepared and target-available; complete restoration unverified | Old-key retirement can limit Places functionality in historical artifacts. |
 
 ## 12. Deployment risks and contradictions
@@ -564,6 +564,16 @@ client variable is deleted; the clean public bundle contains no Places secret;
 the old 33-API credential is retired; deploy
 `6a6602bd6c7609eabb08d744` is canonical; and publication remains locked.
 
+Known from Packet 158: local and GitHub `master` now identify exact reviewed
+commit `f3de53628c20995d37ea87f9693565eefd93ed3d`. The fast-forward was verified
+through GitHub's authenticated API and the remote ref. GitHub reported no check
+runs or commit-status entries, and repeated public Netlify deploy-history
+checks showed no `f3de536` build or candidate. Production remained published at
+older commit `5ef141b` and deploy `6a6602bd6c7609eabb08d744`. The Packet 158
+browser session was not authenticated, so it did not independently re-read the
+lock control; it observed no evidence contradicting Packet 143's retained-lock
+record.
+
 Still unknown or outside this audit: the complete authenticated user journey,
 Firebase provider and Firestore-rule readiness, Google billing-alert and quota
 governance, the exact hosted Node patch version, restoration of the preserved
@@ -574,6 +584,8 @@ The central deployment contradictions are resolved. Production is now
 attributable to reviewed Git source, reproducibly built, function-complete for
 the tracked Places boundary, credential-migrated, and deliberately locked.
 
-**Single recommended next action:** review and accept Packet 142, then define a
-separate bounded live Private Alpha journey check without altering the locked
-deployment or reopening credential work.
+**Single recommended deployment action:** make no production change. Any future
+Netlify candidate must name an exact reviewed commit, remain unpublished until
+reviewed, account for the additional `places-resolve` and disabled
+`routes-evidence` function source now on GitHub `master`, and preserve the
+Packet 143 rollback deploy and publication lock.

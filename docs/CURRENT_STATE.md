@@ -543,6 +543,15 @@ chain is ready for separately authorised local fast-forward integration only;
 no merge, push, provider change, Netlify action, publication, or deployment was
 performed or authorised.
 
+**Packet 158 GitHub-integration snapshot (2026-07-28):** exact reviewed commit
+`f3de53628c20995d37ea87f9693565eefd93ed3d` was fast-forwarded to GitHub
+`master` and independently verified through GitHub's API and remote ref.
+Netlify created no observable build or candidate, consistent with the tip
+commit's `[skip netlify]` marker. Public deploy history remained unchanged:
+production is still published at `master@5ef141b`, deploy
+`6a6602bd6c7609eabb08d744`. No provider request, credential, environment
+variable, Netlify setting, publication, or production deployment changed.
+
 ## 8. Maintenance rule
 
 Update this document **only** when a completed packet materially changes a
