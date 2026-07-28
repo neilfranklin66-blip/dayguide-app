@@ -6,10 +6,10 @@ This register records evidence-backed known issues, technical debt, architecture
 risks, operational uncertainties, security and configuration gaps, test and
 accessibility gaps, and explicitly accepted limitations for DayGuide.
 
-- **Current verification date:** 26 July 2026
+- **Current verification date:** 28 July 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packet 145 QR Share verification and regression
-  coverage
+- **Latest targeted update:** Packet 160 unpublished geographical candidate
+  and Deploy Preview evidence
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository evidence, Product Owner-operated
@@ -373,6 +373,35 @@ No other entry is classified as launch blocking.
   API, or before wider-than-Private-Alpha release. Do not combine the migration
   casually with routing activation or widen/reuse the routing key.
 - **Verification date:** 27 July 2026
+
+### OP-007 — Deploy Previews do not receive the Production Places secret
+
+- **ID:** OP-007
+- **Category:** Review-environment configuration boundary
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** No for the locked current production; yes for complete
+  live-data acceptance in an unpublished Deploy Preview
+- **Verification status:** Directly verified against Packet 160 Netlify Deploy
+  Preview `6a68979af6debb00083c6aed`.
+- **Factual evidence:** The candidate built and deployed successfully, but its
+  server-side `places-resolve` endpoint returned
+  `REQUEST_DENIED / NO_API_KEY`. The rendered application showed the expected
+  honest unavailable state. Public Netlify history continued to identify
+  production as `master@5ef141b`, deploy `6a6602bd6c7609eabb08d744`.
+- **Impact:** The preview safely avoids exposing or inheriting the Production
+  credential, but cannot verify live typed-place results, searched-start
+  restaurant discovery, complete hard anchors, geographical saved-plan data,
+  live restaurant photographs, or place-specific Maps handoffs.
+- **Likely dependency:** A separately authorised Netlify deploy-context and
+  Google Places credential decision. No routing credential is required.
+- **Recommended next action:** Define a bounded follow-on packet that either
+  supplies the existing Places-only server credential to Deploy Previews or
+  creates a separate preview-only Places credential. Require server-only
+  Netlify use, secret masking, Places-only Google API restriction, explicit
+  preview context, no browser-prefixed variable, no production change, and
+  deletion or scope rollback after acceptance when appropriate.
+- **Verification date:** 28 July 2026
 
 The Packet 139 variable-name absence, incomplete function deployment, missing
 Git linkage, and production provenance gaps are resolved by Packets 140–143.

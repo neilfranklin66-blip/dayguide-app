@@ -586,6 +586,20 @@ gzipped and `main.48c0e225.css` at 4.7 kB gzipped. Google Routes remains
 disabled. No push, provider request, key, environment-variable, Netlify
 setting, preview, publication, or production deployment followed.
 
+**Packet 160 candidate snapshot (2026-07-28):** draft PR 8 and Netlify Deploy
+Preview `6a68979af6debb00083c6aed` were created from exact candidate commit
+`afd053a`. The preview built successfully and the mounted workflow, incomplete
+anchor rejection, accountability copy, sample-activity labelling, QR window,
+resume, and Start Over paths were observed. The preview's server-side
+`places-resolve` endpoint returned `REQUEST_DENIED / NO_API_KEY`, proving that
+the Production Places secret is absent from the Deploy Preview context. This is
+a safe configuration boundary, not credential exposure, but it blocks live
+place, live restaurant, complete hard-anchor, geographical persistence, and
+place-specific Maps-handoff acceptance in that preview. Packet 160 is therefore
+conditional. Production remained published at `master@5ef141b`, deploy
+`6a6602bd6c7609eabb08d744`; no publish, merge, provider, credential, or external
+setting change occurred.
+
 ## 8. Maintenance rule
 
 Update this document **only** when a completed packet materially changes a

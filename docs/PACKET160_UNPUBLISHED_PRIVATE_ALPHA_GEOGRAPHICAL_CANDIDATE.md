@@ -2,7 +2,8 @@
 
 **Date:** 28 July 2026
 
-**Status:** Automated entry gate passed; external candidate evidence pending
+**Status:** Conditional — safe unpublished candidate created; Places-dependent
+manual checks blocked by absent Deploy Preview secret
 
 **Branch:** `packet-160-private-alpha-geographical-candidate`
 
@@ -166,3 +167,99 @@ because the restricted execution sandbox denied filesystem access. The same
 build command then ran with normal repository permissions and compiled
 successfully. This was an execution-environment restriction, not an application
 or dependency failure.
+
+## 9. GitHub and Netlify candidate evidence
+
+The controlled candidate was created successfully:
+
+- GitHub branch:
+  `packet-160-private-alpha-geographical-candidate`;
+- candidate-trigger commit:
+  `afd053a49bf86dac03797a169a3a1c0d1d13f541`;
+- draft pull request:
+  `https://github.com/neilfranklin66-blip/dayguide-app/pull/8`;
+- Netlify deploy:
+  `6a68979af6debb00083c6aed`;
+- unpublished preview:
+  `https://deploy-preview-8--ubiquitous-melomakarona-874d9c.netlify.app`;
+- Netlify build status: successful; and
+- initializing, building, deploying, cleanup, and post-processing: complete.
+
+The public Netlify deploy history associated the preview with PR 8, the Packet
+160 branch, and exact commit `afd053a`. The same history continued to identify
+the published production state as `master@5ef141b`, deploy
+`6a6602bd6c7609eabb08d744`. Packet 160 did not publish, promote, unlock, merge,
+or move `master`.
+
+Successful deployment and the green GitHub Netlify check establish that secrets
+scanning did not reject the candidate. No credential value appeared in the
+repository, build output, browser bundle, or recorded evidence.
+
+## 10. Manual Private Alpha evidence
+
+The unpublished preview rendered successfully at a mobile-sized viewport and
+accepted Firebase guest entry. The observed journey confirmed:
+
+- the global opening copy is `Plan your perfect day, wherever you are`;
+- interests and walking preferences render and permit progression;
+- geographical planning appears after interests and before venue selection;
+- explicit search is user-triggered rather than sent while typing;
+- the start, optional destination, and fixed-anchor controls render;
+- an incomplete hard anchor is rejected with
+  `Choose a verified place and valid time for this anchor.`;
+- the safe `Continue without fixed route details` path remains available;
+- the travel-time estimate and user-accountability notice renders on the
+  timeline;
+- the selected activity is explicitly labelled
+  `Sample idea — example location, not a live nearby result`;
+- the Share action opens `Share Your Day` and renders one QR SVG when exercised
+  through the direct visible-control interaction established by KI-002;
+- reload presents `Resume your plan` with the correct one-stop count;
+- resume restores the selected activity; and
+- Start Over removes the resume option for the test plan.
+
+The browser environment denied location permission, so a GPS-origin restaurant
+journey was not available. More importantly, a direct call to the preview's own
+`places-resolve` function returned:
+
+```text
+status: REQUEST_DENIED
+error_message: NO_API_KEY
+```
+
+This proves that `GOOGLE_PLACES_API_KEY` is not available to the Deploy Preview
+context. The failure is server-side and safe: the credential was not exposed,
+and the application displayed the expected honest unavailable state. It also
+means the following checks could not be completed in Packet 160:
+
+- live typed-place results;
+- choosing a searched start;
+- a searched start driving live restaurant discovery;
+- a complete verified destination and hard anchor;
+- saved-plan v2 restoration of real selected geographical data;
+- live restaurant photograph and `Live from Google Places` label; and
+- the place-specific Google Maps handoff.
+
+QR geographical-data exclusion remains covered by the passing automated tests,
+but could not be re-proved manually with a real geographical plan because no
+verified place could be created in the preview.
+
+## 11. Decision
+
+Packet 160 concludes **CONDITIONAL**.
+
+The exact Packet 159 source builds and deploys safely, the review candidate is
+isolated from production, the mounted workflow and fallback states work, and
+no credential is exposed. The candidate cannot yet supply complete
+Places-dependent Private Alpha acceptance evidence because the existing
+Production secret is intentionally absent from Deploy Previews.
+
+The next controlled decision is whether to authorise a Deploy-Preview-only
+value for the existing Places-only server credential, or to create a separately
+bounded preview credential. That decision must preserve server-only use,
+Places-only Google API restriction, preview-only Netlify scope, secret
+masking, and production isolation. Packet 160 itself does not grant that
+authority.
+
+No merge, `master` movement, production publication, provider activation, or
+credential/configuration change follows from this conditional result.
