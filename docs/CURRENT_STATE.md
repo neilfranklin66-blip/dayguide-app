@@ -6,15 +6,26 @@ This is a **factual current-state register** for DayGuide. It records what the
 application actually does as implemented in tracked source code, configuration
 and tests — not what is planned, hoped for, or described elsewhere.
 
-- **Verification date:** 2026-07-11
-- **Verification point:** Packet 133
+- **Original capability-audit date:** 2026-07-11
+- **Reconciliation date:** 2026-07-31
+- **Reconciliation point:** Packet 162, covering tracked evidence through
+  Packet 161
 - **Scope:** tracked files only. Untracked notes were not consulted.
 - **Future ideas are excluded.** Anything not implemented is either omitted or
   explicitly marked *Not implemented*. No capability is described as present
   unless repository evidence supports it.
 
-This document should be read as a snapshot at the Packet 133 verification point.
-Test and suite counts in §7 are dated snapshots, not permanent facts.
+Sections retained from the original Packet 133 audit are historical foundations.
+Later packet supplements identify subsequent implementation and operational
+evidence without making the unpublished Packet 159–161 candidate production
+live. Test and suite counts in §7 are dated snapshots, not permanent facts.
+
+**Authority reconciliation:** Packet 162 added
+[`docs/PACKET162_ORGANISATIONAL_AUTHORITY_AND_GOVERNANCE_RECONCILIATION.md`](PACKET162_ORGANISATIONAL_AUTHORITY_AND_GOVERNANCE_RECONCILIATION.md).
+It reconciles the repository evidence through Packet 161 and records the
+organisational authority documents whose editable originals are not present in
+this repository. It changes no product, provider, credential, Netlify, GitHub,
+or production state.
 
 **Repository implementation workflow:** Packet 135 added
 [`docs/DEVELOPMENT_WORKFLOW.md`](DEVELOPMENT_WORKFLOW.md) as the repository-level
@@ -206,8 +217,14 @@ budget, deploy-preview-only draft, two-phase 24-event run, independent
 references, assessment, and mandatory shutdown. A local operator runner rejects
 production, requires an exact acknowledgement, authenticates through a
 temporary Firebase guest, makes no retries, and returns only sanitised evidence.
-At this preparation point no external setting, provider call, draft deploy, or
-production behaviour has changed.
+The later controlled exercise produced 24/24 Google and 24/24 independent TfL
+results, but both assessed modes failed the approved safety gate: walking had
+an 11-minute maximum optimistic understatement and one anchor-critical breach;
+public transport had a 16-minute maximum optimistic understatement. The result
+does not approve routing activation. The temporary preview variables, preview,
+remote branch/PR, and Routes-only key were removed or closed; the Product Owner
+confirmed key deletion on 28 July 2026. Google Routes remains disabled and
+production was unchanged.
 
 **Private Alpha geographical workflow and saved-plan v2 activation:** Packet
 159 added
@@ -219,8 +236,9 @@ restaurant-search origin, and the timeline shows fixed details with key-free
 Google Maps leg checks and an explicit unverified-route warning. Saved-plan v2
 retains minimum selected geographical data locally, migrates valid v1 plans,
 clears both keys on expiry/reset, and excludes geographical data from QR text.
-Google Routes remains disabled. This is local source only; production remains
-unchanged.
+Google Routes remains disabled. The exact candidate source is present on draft,
+unmerged PR 8 and was verified in an unpublished Deploy Preview by Packets 160
+and 161; production remains unchanged and does not contain this workflow.
 
 ## 2. Current user journey
 
