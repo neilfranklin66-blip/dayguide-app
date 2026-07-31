@@ -7,9 +7,9 @@ application actually does as implemented in tracked source code, configuration
 and tests — not what is planned, hoped for, or described elsewhere.
 
 - **Original capability-audit date:** 2026-07-11
-- **Reconciliation date:** 2026-07-31
-- **Reconciliation point:** Packet 162, covering tracked evidence through
-  Packet 161
+- **Reconciliation and release-closure date:** 2026-07-31
+- **Reconciliation point:** Packet 164, covering the Packet 162 authority
+  reconciliation, Packet 163 candidate, and its controlled production release
 - **Scope:** tracked files only. Untracked notes were not consulted.
 - **Future ideas are excluded.** Anything not implemented is either omitted or
   explicitly marked *Not implemented*. No capability is described as present
@@ -33,10 +33,19 @@ Tracked candidate source improves the welcome hierarchy and action layout while
 preserving approved wording and behaviour, and replaces KI-003's forced
 character-level location-message wrapping with natural word wrapping. Local
 automated and build evidence passed. Exact commit `739c7c4` then passed the
-fresh PR 9 Netlify candidate gate at deploy `6a6cc92f8a05260008a6b48b`, and the
-Product Owner verified the denied-location state at desktop and phone widths
-without the former orphaned `again.` line. PR 9 remains open and unmerged; this
-evidence must not be treated as production-live.
+fresh PR 9 Netlify candidate gate, and the Product Owner verified the
+denied-location state at desktop and phone widths without the former orphaned
+`again.` line. Packet 164 records the later controlled integration and
+production promotion separately; the preview evidence remains distinct from
+production evidence.
+
+**Controlled production release closure:** Packet 164 added
+[`docs/PACKET164_CONTROLLED_PRODUCTION_PROMOTION_AND_RELEASE_CLOSURE.md`](PACKET164_CONTROLLED_PRODUCTION_PROMOTION_AND_RELEASE_CLOSURE.md).
+PR 9 was merged as `3cdcfd3`, then its completed Production deploy
+`6a6ccd66eaaa320008175488` was deliberately published and re-locked. Production
+now serves `master@3cdcfd3`. The public welcome screen was observed with the
+approved universal wording and only Start Planning visible. No provider,
+credential, secret, or product-code change occurred during promotion.
 
 **Repository implementation workflow:** Packet 135 added
 [`docs/DEVELOPMENT_WORKFLOW.md`](DEVELOPMENT_WORKFLOW.md) as the repository-level
@@ -454,8 +463,9 @@ sign-in remain outside these checks.
 - **Current production follows a traceable, manually locked repository
   deployment.** The existing Netlify project is linked to GitHub
   `neilfranklin66-blip/dayguide-app`, production branch `master`, and exact
-  commit `5ef141b`. Auto publishing remains locked; a future release requires a
-  deliberate publish action.
+  commit `3cdcfd3`. Packet 164 deliberately published deploy
+  `6a6ccd66eaaa320008175488` and then re-locked auto publishing; a future
+  release again requires a deliberate publish action.
 - **The Netlify plan does not permit Functions-only secret scope without an
   upgrade.** The Production secret remains scoped to Builds, Functions, and
   Runtime. It is marked secret, limited by Google to Places API, not read by
@@ -651,6 +661,21 @@ contexts empty. The already-built preview was not rebuilt solely for a second
 built without the value. PR 8 remains draft and unmerged, Google Routes remains
 off, and Production remains locked at `master@5ef141b`, deploy
 `6a6602bd6c7609eabb08d744`.
+
+**Packet 163 and 164 release snapshot (2026-07-31):** Packet 163 candidate
+commit `739c7c4` passed 61 suites / 1,863 tests and a successful production
+build. Its exact PR 9 Deploy Preview evidence includes Product Owner desktop
+and phone verification of the denied-location layout with no orphaned `again.`
+line. PR 9 later merged as `3cdcfd3401cef82e792ddb3ffc90cc74d9a01832`.
+Netlify built the exact production merge at deploy
+`6a6ccd66eaaa320008175488`; it was deliberately published and then locked.
+Production now serves `master@3cdcfd3`. The production welcome screen was
+observed with the approved universal wording and Start Planning as its only
+entry action. The older `master@5ef141b` / deploy
+`6a6602bd6c7609eabb08d744` remains the immediate rollback predecessor.
+The production run did not alter or newly verify location-denied browser
+permissions, Places credentials, provider calls, or Google Routes; the
+denied-location KI-003 evidence remains the accepted preview observation.
 
 ## 8. Maintenance rule
 

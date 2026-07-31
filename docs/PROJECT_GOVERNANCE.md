@@ -19,7 +19,10 @@ It is read together with:
 - [`PACKET162_ORGANISATIONAL_AUTHORITY_AND_GOVERNANCE_RECONCILIATION.md`](PACKET162_ORGANISATIONAL_AUTHORITY_AND_GOVERNANCE_RECONCILIATION.md)
   for the reconciled Packet 146–161 authority state and the controlled handoff
   to organisational records whose editable originals are outside this
-  repository.
+  repository; and
+- [`PACKET164_CONTROLLED_PRODUCTION_PROMOTION_AND_RELEASE_CLOSURE.md`](PACKET164_CONTROLLED_PRODUCTION_PROMOTION_AND_RELEASE_CLOSURE.md)
+  for the separately authorised Packet 163 integration, controlled production
+  promotion, live evidence, and restored publication lock.
 
 Packet-specific instructions may narrow this governance model, but an
 implementation agent must not silently broaden authority or override a Product
