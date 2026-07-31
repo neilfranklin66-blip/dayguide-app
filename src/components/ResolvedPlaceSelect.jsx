@@ -7,19 +7,31 @@ import {
 
 const resolvedOptionKey = place => `resolved:${place.id}`;
 
-const formatPlaceLabel = place =>
-  place.address ? `${place.name} — ${place.address}` : place.name;
+const fallbackT = (_key, options) => options?.defaultValue ?? _key;
 
-function buildPlaceOptions(currentPlace, availablePlaces, selection) {
+function buildPlaceOptions(currentPlace, availablePlaces, selection, t) {
   const options = [];
   const seenKeys = new Set();
+  const selectedCurrentPlace =
+    selection?.mode === PLACE_SELECTION_MODE.CURRENT_LOCATION
+      ? selection.place
+      : null;
+  const usableCurrentPlace = isPlaceRef(currentPlace)
+    ? currentPlace
+    : selectedCurrentPlace;
 
-  if (isPlaceRef(currentPlace) && currentPlace.source === 'current_gps') {
+  if (
+    isPlaceRef(usableCurrentPlace) &&
+    usableCurrentPlace.source === 'current_gps'
+  ) {
     options.push({
       key: PLACE_SELECTION_MODE.CURRENT_LOCATION,
-      label: `Use my current location — ${currentPlace.name}`,
+      label: t('planning.useCurrentLocation', {
+        name: usableCurrentPlace.name,
+        defaultValue: `Use my current location — ${usableCurrentPlace.name}`,
+      }),
       mode: PLACE_SELECTION_MODE.CURRENT_LOCATION,
-      place: currentPlace,
+      place: usableCurrentPlace,
     });
     seenKeys.add(PLACE_SELECTION_MODE.CURRENT_LOCATION);
   }
@@ -34,6 +46,7 @@ function buildPlaceOptions(currentPlace, availablePlaces, selection) {
   resolvedPlaces.forEach(place => {
     if (
       !isPlaceRef(place) ||
+      place.source === 'current_gps' ||
       place.id == null ||
       String(place.id).trim().length === 0
     ) {
@@ -44,7 +57,13 @@ function buildPlaceOptions(currentPlace, availablePlaces, selection) {
     seenKeys.add(key);
     options.push({
       key,
-      label: formatPlaceLabel(place),
+      label: place.address
+        ? t('planning.placeWithAddress', {
+            name: place.name,
+            address: place.address,
+            defaultValue: `${place.name} — ${place.address}`,
+          })
+        : place.name,
       mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
       place,
     });
@@ -61,14 +80,25 @@ export default function ResolvedPlaceSelect({
   currentPlace = null,
   availablePlaces = [],
   allowNone = false,
-  noneLabel = 'No destination',
-  helpText = 'Only verified map locations can be used for geographical planning.',
+  noneLabel,
+  helpText,
+  t = fallbackT,
 }) {
   const options = buildPlaceOptions(
     currentPlace,
     availablePlaces,
     selection,
+    t,
   );
+  const resolvedNoneLabel =
+    noneLabel ??
+    t('planning.noDestination', { defaultValue: 'No destination' });
+  const resolvedHelpText =
+    helpText ??
+    t('planning.verifiedPlacesOnly', {
+      defaultValue:
+        'Only verified map locations can be used for geographical planning.',
+    });
   const selectedValue =
     selection?.mode === PLACE_SELECTION_MODE.CURRENT_LOCATION
       ? PLACE_SELECTION_MODE.CURRENT_LOCATION
@@ -102,7 +132,11 @@ export default function ResolvedPlaceSelect({
         disabled={options.length === 0 && !allowNone}
       >
         <option value="">
-          {allowNone ? noneLabel : 'Select a verified place'}
+          {allowNone
+            ? resolvedNoneLabel
+            : t('planning.selectVerifiedPlace', {
+                defaultValue: 'Select a verified place',
+              })}
         </option>
         {options.map(option => (
           <option key={option.key} value={option.key}>
@@ -110,10 +144,12 @@ export default function ResolvedPlaceSelect({
           </option>
         ))}
       </select>
-      <p className="start-order-hint">{helpText}</p>
+      <p className="start-order-hint">{resolvedHelpText}</p>
       {options.length === 0 && (
         <p role="status" className="start-order-hint">
-          No verified places are available yet.
+          {t('planning.noVerifiedPlaces', {
+            defaultValue: 'No verified places are available yet.',
+          })}
         </p>
       )}
     </div>

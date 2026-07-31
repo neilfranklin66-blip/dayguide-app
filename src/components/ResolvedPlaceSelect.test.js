@@ -88,3 +88,24 @@ test('place selector can clear an optional destination', () => {
 
   expect(onChange).toHaveBeenCalledWith(null);
 });
+
+test('a restored current-location selection remains available without fresh GPS', () => {
+  render(
+    <ResolvedPlaceSelect
+      id="restored-start"
+      label="Start"
+      selection={{
+        mode: PLACE_SELECTION_MODE.CURRENT_LOCATION,
+        place: currentPlace,
+      }}
+      onChange={jest.fn()}
+      currentPlace={null}
+      availablePlaces={[currentPlace]}
+    />,
+  );
+
+  expect(screen.getByRole('combobox')).toHaveValue('current_location');
+  expect(
+    screen.getAllByRole('option', { name: /Use my current location/ }),
+  ).toHaveLength(1);
+});

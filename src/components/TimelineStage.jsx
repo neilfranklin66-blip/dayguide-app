@@ -17,6 +17,8 @@ export default function TimelineStage({
   setShowQR,
   travelPreferences,
   hasHardAnchor = false,
+  geographicalPlanning = null,
+  geographicalAssessment = null,
   t,
 }) {
   const totalDuration = calculateTimelineDuration(timeline);
@@ -89,6 +91,8 @@ export default function TimelineStage({
       onShare={() => setShowQR(true)}
       travelPreferences={travelPreferences}
       hasHardAnchor={hasHardAnchor}
+      geographicalPlanning={geographicalPlanning}
+      geographicalAssessment={geographicalAssessment}
       t={t}
     />
   );

@@ -44,7 +44,10 @@ const parseCandidate = candidate => {
   }
 };
 
-export async function resolvePlaceQuery(query, fetchImpl = globalThis.fetch) {
+export async function resolvePlaceQuery(
+  query,
+  fetchImpl = (...args) => fetch(...args),
+) {
   const normalizedQuery = normalizePlaceQuery(query);
   if (!isValidPlaceQuery(normalizedQuery)) {
     throw resolutionError(PLACE_RESOLUTION_ERROR.INVALID_QUERY);

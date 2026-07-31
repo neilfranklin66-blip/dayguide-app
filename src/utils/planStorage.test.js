@@ -1,4 +1,5 @@
 import {
+  LEGACY_SAVED_PLAN_STORAGE_KEY,
   SAVED_PLAN_STORAGE_KEY,
   savePlan,
   loadPlan,
@@ -27,6 +28,7 @@ const validPlan = {
   selectedPriceRange: '$$',
   selectedDate: '2026-07-05',
   startWith: 'activities',
+  geographicalPlanning: null,
 };
 
 afterEach(() => {
@@ -45,7 +47,7 @@ test('saved payload is versioned with a savedAt timestamp', () => {
   savePlan(validPlan);
 
   const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
-  expect(stored.version).toBe(1);
+  expect(stored.version).toBe(2);
   expect(typeof stored.savedAt).toBe('string');
   expect(stored.plan).toEqual(validPlan);
 });
@@ -60,10 +62,29 @@ test('loadPlan returns null for corrupt JSON', () => {
   expect(loadPlan()).toBeNull();
 });
 
+test('a corrupt v2 record does not prevent a valid legacy plan migration', () => {
+  const legacyPlan = { ...validPlan };
+  delete legacyPlan.geographicalPlanning;
+  localStorage.setItem(SAVED_PLAN_STORAGE_KEY, '{not json');
+  localStorage.setItem(
+    LEGACY_SAVED_PLAN_STORAGE_KEY,
+    JSON.stringify({
+      version: 1,
+      savedAt: new Date().toISOString(),
+      plan: legacyPlan,
+    }),
+  );
+
+  expect(loadPlan(new Date('2026-07-05T12:00:00'))).toEqual({
+    ...legacyPlan,
+    geographicalPlanning: null,
+  });
+});
+
 test('loadPlan returns null for a wrong version', () => {
   localStorage.setItem(
     SAVED_PLAN_STORAGE_KEY,
-    JSON.stringify({ version: 2, savedAt: new Date().toISOString(), plan: validPlan }),
+    JSON.stringify({ version: 99, savedAt: new Date().toISOString(), plan: validPlan }),
   );
 
   expect(loadPlan()).toBeNull();
@@ -72,7 +93,7 @@ test('loadPlan returns null for a wrong version', () => {
 test('loadPlan returns null when the plan object is missing', () => {
   localStorage.setItem(
     SAVED_PLAN_STORAGE_KEY,
-    JSON.stringify({ version: 1, savedAt: new Date().toISOString() }),
+    JSON.stringify({ version: 2, savedAt: new Date().toISOString() }),
   );
 
   expect(loadPlan()).toBeNull();
@@ -95,6 +116,28 @@ test('clearPlan removes the key', () => {
   clearPlan();
 
   expect(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).toBeNull();
+});
+
+test('loads and migrates a legacy v1 plan without geographical data', () => {
+  const legacyPlan = { ...validPlan };
+  delete legacyPlan.geographicalPlanning;
+  localStorage.setItem(
+    LEGACY_SAVED_PLAN_STORAGE_KEY,
+    JSON.stringify({
+      version: 1,
+      savedAt: new Date().toISOString(),
+      plan: legacyPlan,
+    }),
+  );
+
+  expect(loadPlan(new Date('2026-07-05T12:00:00'))).toEqual({
+    ...legacyPlan,
+    geographicalPlanning: null,
+  });
+  expect(localStorage.getItem(LEGACY_SAVED_PLAN_STORAGE_KEY)).toBeNull();
+  expect(
+    JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).version,
+  ).toBe(2);
 });
 
 describe('isPlanDateExpired', () => {

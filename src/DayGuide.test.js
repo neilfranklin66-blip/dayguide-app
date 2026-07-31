@@ -2,13 +2,25 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import DayGuide from './DayGuide';
 import useGeolocation from './useGeolocation';
 import { searchRestaurants } from './api/placesApi';
-import { SAVED_PLAN_STORAGE_KEY } from './utils/planStorage';
+import {
+  LEGACY_SAVED_PLAN_STORAGE_KEY,
+  SAVED_PLAN_STORAGE_KEY,
+} from './utils/planStorage';
 import { INTEREST_CATEGORY_OPTIONS } from './config/dayGuideOptions';
 import mockActivityData from './mockActivityData.json';
 import * as popupEngine from './engines/popupEngine';
 
 jest.mock('./useGeolocation');
 jest.mock('./api/placesApi');
+
+var mockResolvePlaceQueryImpl = () => Promise.resolve([]);
+jest.mock('./api/placeResolutionApi', () => {
+  const actual = jest.requireActual('./api/placeResolutionApi');
+  return {
+    ...actual,
+    resolvePlaceQuery: (...args) => mockResolvePlaceQueryImpl(...args),
+  };
+});
 
 // Records logout invocations. A plain array + function rather than a jest.fn():
 // the factory returns a fresh object per render, and CRA's resetMocks would
@@ -30,6 +42,7 @@ jest.mock('./AuthContext', () => ({
 beforeEach(() => {
   mockLogoutCalls = [];
   mockLogoutImpl = () => Promise.resolve();
+  mockResolvePlaceQueryImpl = () => Promise.resolve([]);
 });
 
 jest.mock('react-i18next', () => ({
@@ -73,6 +86,10 @@ const erroredGeo = {
   error: 'location.denied',
   isLoading: false,
   refresh: jest.fn(),
+};
+
+const continueWithoutGeographicalPlanning = () => {
+  fireEvent.click(screen.getByText('planning.skip'));
 };
 
 test('shows location loading copy when planning starts while geolocation is loading', () => {
@@ -121,6 +138,93 @@ test('skips the location stage when geolocation is already resolved', () => {
   expect(screen.queryByText('welcome.findingLocation')).not.toBeInTheDocument();
 });
 
+test('mounts the private-alpha geographical planning stage before selections', () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+  fireEvent.click(
+    screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`),
+  );
+  fireEvent.click(
+    screen.getByRole('button', { name: 'interests.childrenNo' }),
+  );
+  fireEvent.click(screen.getByText('interests.next'));
+
+  expect(screen.getByText('planning.title')).toBeInTheDocument();
+  expect(screen.getByText('planning.privateAlphaNotice')).toBeInTheDocument();
+  expect(screen.getByText('planning.storageNotice')).toBeInTheDocument();
+  expect(screen.getByLabelText('planning.startPlace')).toHaveValue(
+    'current_location',
+  );
+});
+
+test('accepting the current start passes the geographical plan into the selection journey', () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+  fireEvent.click(
+    screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`),
+  );
+  fireEvent.click(
+    screen.getByRole('button', { name: 'interests.childrenNo' }),
+  );
+  fireEvent.click(screen.getByText('interests.next'));
+  fireEvent.click(screen.getByText('planning.continue'));
+
+  expect(screen.getByText('activities.title')).toBeInTheDocument();
+});
+
+test('a searched start location becomes the origin for a restaurant-first search', async () => {
+  const euston = {
+    id: 'euston',
+    name: 'London Euston',
+    address: 'Euston Road, London',
+    coordinates: { lat: 51.5282, lng: -0.1337 },
+    source: 'google_places',
+    accuracyMeters: null,
+    locality: 'London',
+    countryCode: 'GB',
+    timezone: null,
+  };
+  mockResolvePlaceQueryImpl = () => Promise.resolve([euston]);
+  searchRestaurants.mockResolvedValue([]);
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+  fireEvent.click(
+    screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`),
+  );
+  fireEvent.click(
+    screen.getByRole('button', { name: 'interests.childrenNo' }),
+  );
+  fireEvent.click(screen.getByText('interests.startWithFoodDrinks'));
+  fireEvent.click(screen.getByText('interests.next'));
+
+  fireEvent.change(screen.getByLabelText('planning.searchLabel'), {
+    target: { value: 'London Euston' },
+  });
+  fireEvent.click(screen.getByText('planning.searchAction'));
+  expect(await screen.findByText('London Euston')).toBeInTheDocument();
+  fireEvent.click(screen.getByText('planning.addNamedPlace'));
+  fireEvent.change(screen.getByLabelText('planning.startPlace'), {
+    target: { value: 'resolved:euston' },
+  });
+  fireEvent.click(screen.getByText('planning.continue'));
+
+  expect(
+    await screen.findByText('restaurants.noResultsTitle'),
+  ).toBeInTheDocument();
+  expect(searchRestaurants).toHaveBeenCalledWith(
+    euston.coordinates.lat,
+    euston.coordinates.lng,
+    [],
+    null,
+  );
+});
+
 // --- Header logout (Packet 124) ---
 
 describe('header logout', () => {
@@ -144,6 +248,7 @@ describe('header logout', () => {
     fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
     fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
     fireEvent.click(screen.getByText('interests.next'));
+    continueWithoutGeographicalPlanning();
 
     fireEvent.click(screen.getByRole('button', { name: 'header.logout' }));
 
@@ -327,7 +432,7 @@ describe('header logout pending state', () => {
 // --- Saved-plan persistence ---
 
 const savedPlanPayload = {
-  version: 1,
+  version: 2,
   savedAt: '2026-07-05T09:00:00.000Z',
   plan: {
     timeline: [
@@ -350,6 +455,7 @@ const savedPlanPayload = {
     selectedPriceRange: null,
     selectedDate: '2026-07-05',
     startWith: 'activities',
+    geographicalPlanning: null,
   },
 };
 
@@ -363,6 +469,31 @@ test('resume button is hidden when no plan is saved', () => {
   render(<DayGuide />);
 
   expect(screen.queryByText('welcome.resumePlan')).not.toBeInTheDocument();
+});
+
+test('a legacy v1 saved plan is offered and migrated to saved-plan v2', () => {
+  const legacyPayload = {
+    version: 1,
+    savedAt: savedPlanPayload.savedAt,
+    plan: { ...savedPlanPayload.plan },
+  };
+  delete legacyPayload.plan.geographicalPlanning;
+
+  jest.useFakeTimers().setSystemTime(new Date('2026-07-05T09:00:00'));
+  localStorage.setItem(
+    LEGACY_SAVED_PLAN_STORAGE_KEY,
+    JSON.stringify(legacyPayload),
+  );
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  expect(screen.getByText('welcome.resumePlan')).toBeInTheDocument();
+  expect(localStorage.getItem(LEGACY_SAVED_PLAN_STORAGE_KEY)).toBeNull();
+  expect(
+    JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY)).version,
+  ).toBe(2);
+
+  jest.useRealTimers();
 });
 
 test('resuming a seeded saved plan lands on the timeline with its content', () => {
@@ -456,6 +587,7 @@ test('building a timeline saves the plan and start over clears it', () => {
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
   fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
+  continueWithoutGeographicalPlanning();
 
   // Like every activity in the queue until the flow moves on.
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
@@ -467,7 +599,7 @@ test('building a timeline saves the plan and start over clears it', () => {
   expect(screen.getByText('timeline.title')).toBeInTheDocument();
 
   const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
-  expect(stored.version).toBe(1);
+  expect(stored.version).toBe(2);
   expect(stored.plan.timeline.length).toBeGreaterThan(0);
 
   fireEvent.click(screen.getByText('timeline.startOver'));
@@ -476,6 +608,41 @@ test('building a timeline saves the plan and start over clears it', () => {
   expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
   expect(screen.queryByText('welcome.resumePlan')).not.toBeInTheDocument();
   expect(screen.queryByText(/welcome\.resumePlanDetails/)).not.toBeInTheDocument();
+});
+
+test('saved-plan v2 keeps the selected start locally without transient GPS metadata', () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+  fireEvent.click(
+    screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`),
+  );
+  fireEvent.click(
+    screen.getByRole('button', { name: 'interests.childrenNo' }),
+  );
+  fireEvent.click(screen.getByText('interests.next'));
+  fireEvent.click(screen.getByText('planning.continue'));
+
+  for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
+    fireEvent.click(screen.getByText('activities.yes'));
+  }
+  fireEvent.click(screen.getByText('mealPrompt.no'));
+
+  const stored = JSON.parse(localStorage.getItem(SAVED_PLAN_STORAGE_KEY));
+  expect(stored.version).toBe(2);
+  expect(stored.plan.geographicalPlanning.start.place).toEqual({
+    id: 'current-location',
+    name: 'Current location',
+    coordinates: {
+      lat: resolvedGeo.position.lat,
+      lng: resolvedGeo.position.lng,
+    },
+    source: 'current_gps',
+  });
+  expect(
+    stored.plan.geographicalPlanning.start.place,
+  ).not.toHaveProperty('accuracyMeters');
 });
 
 test('selecting sample activities still reaches the timeline with honest sample labels, not real distances', () => {
@@ -487,6 +654,7 @@ test('selecting sample activities still reaches the timeline with honest sample 
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
   fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
+  continueWithoutGeographicalPlanning();
 
   // The activity swipe card flags its venues as sample ideas, not live nearby results.
   expect(screen.getByText('activities.sampleBadge')).toBeInTheDocument();
@@ -517,6 +685,7 @@ const buildPlanFromWelcome = () => {
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
   fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
+  continueWithoutGeographicalPlanning();
 
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
     fireEvent.click(screen.getByText('activities.yes'));
@@ -551,6 +720,7 @@ const buildPlanThroughRestaurantsFromWelcome = async () => {
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
   fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
+  continueWithoutGeographicalPlanning();
 
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
     fireEvent.click(screen.getByText('activities.yes'));
@@ -742,6 +912,7 @@ test('show all broadens an empty filtered activity queue to all activity types',
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
   fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
+  continueWithoutGeographicalPlanning();
 
   expect(screen.getByText('activities.noResultsTitle')).toBeInTheDocument();
 
@@ -762,6 +933,7 @@ describe('restaurant selection flow', () => {
     fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
     fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
     fireEvent.click(screen.getByText('interests.next'));
+    continueWithoutGeographicalPlanning();
 
     for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
       fireEvent.click(screen.getByText('activities.yes'));
@@ -926,6 +1098,7 @@ describe('restaurant selection flow', () => {
       fireEvent.click(screen.getByText('cuisine.italian'));
       fireEvent.click(screen.getByText('priceRange.moderate'));
       fireEvent.click(screen.getByText('interests.next'));
+      continueWithoutGeographicalPlanning();
 
       expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
 
@@ -945,6 +1118,7 @@ describe('restaurant selection flow', () => {
 
       walkToInterestsRestaurantsFirst();
       fireEvent.click(screen.getByText('interests.next'));
+      continueWithoutGeographicalPlanning();
 
       expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
 
@@ -986,6 +1160,7 @@ describe('restaurant selection flow', () => {
 
       walkToInterestsRestaurantsFirst();
       fireEvent.click(screen.getByText('interests.next'));
+      continueWithoutGeographicalPlanning();
 
       expect(await screen.findByText('restaurants.locationDeniedWarning')).toBeInTheDocument();
       expect(screen.getByText('restaurants.locationDeniedHint')).toBeInTheDocument();
@@ -1006,6 +1181,7 @@ describe('restaurant selection flow', () => {
 
       walkToInterestsRestaurantsFirst();
       fireEvent.click(screen.getByText('interests.next'));
+      continueWithoutGeographicalPlanning();
 
       expect(await screen.findByText('restaurants.noLocationWarning')).toBeInTheDocument();
       expect(screen.queryByText('restaurants.locationDeniedWarning')).not.toBeInTheDocument();
@@ -1022,6 +1198,7 @@ describe('restaurant selection flow', () => {
 
       walkToInterestsRestaurantsFirst();
       fireEvent.click(screen.getByText('interests.next'));
+      continueWithoutGeographicalPlanning();
 
       expect(await screen.findByText('restaurants.networkWarning')).toBeInTheDocument();
       expect(screen.queryByText('Trattoria Roma')).not.toBeInTheDocument();
@@ -1041,6 +1218,7 @@ describe('restaurant selection flow', () => {
 
       walkToInterestsRestaurantsFirst();
       fireEvent.click(screen.getByText('interests.next'));
+      continueWithoutGeographicalPlanning();
 
       expect(await screen.findByText('restaurants.noKeyWarning')).toBeInTheDocument();
       expect(screen.getByText('restaurants.noKeyHint')).toBeInTheDocument();

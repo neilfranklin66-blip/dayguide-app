@@ -16,6 +16,10 @@ It is read together with:
   uncertainties, and accepted limitations; and
 - [`DEPLOYMENT_REALITY_AUDIT.md`](DEPLOYMENT_REALITY_AUDIT.md) for the
   repository-versus-live deployment evidence boundary.
+- [`PACKET162_ORGANISATIONAL_AUTHORITY_AND_GOVERNANCE_RECONCILIATION.md`](PACKET162_ORGANISATIONAL_AUTHORITY_AND_GOVERNANCE_RECONCILIATION.md)
+  for the reconciled Packet 146–161 authority state and the controlled handoff
+  to organisational records whose editable originals are outside this
+  repository.
 
 Packet-specific instructions may narrow this governance model, but an
 implementation agent must not silently broaden authority or override a Product
@@ -361,6 +365,12 @@ belongs in:
 Do not update every document by default. Cross-reference rather than duplicate
 large sections. Preserve historical findings and label later evidence as a
 supplement instead of rewriting history to look cleaner.
+
+When an organisational authority document is available only as a read-only
+ChatGPT-project source or its editable original is unavailable, repository
+agents must not overwrite a mirror or invent an authoritative update. They must
+record the exact missing editable source, prepare a controlled amendment, and
+leave Product Owner decisions visibly unresolved until applied at the source.
 
 ## 17. Handover between chats or implementation agents
 

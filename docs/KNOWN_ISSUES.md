@@ -6,15 +6,16 @@ This register records evidence-backed known issues, technical debt, architecture
 risks, operational uncertainties, security and configuration gaps, test and
 accessibility gaps, and explicitly accepted limitations for DayGuide.
 
-- **Current verification date:** 26 July 2026
+- **Current verification date:** 31 July 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packet 145 QR Share verification and regression
-  coverage
+- **Latest targeted update:** Packet 161 exact Deploy Preview acceptance,
+  credential rollback, and cleared-plan verification
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository evidence, Product Owner-operated
   authenticated provider evidence, bounded public checks, Packets 141–143 build
-  and deployment evidence, and one Packet 144 production guest journey
+  and deployment evidence, one Packet 144 production guest journey, and the
+  bounded Packet 161 unpublished Deploy Preview journey
 - **Runtime scope:** Packet 143 clean-install, test, build, candidate, and
   production evidence is recorded in
   [`TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md);
@@ -126,9 +127,36 @@ decision must be supported by the launch rules and evidence.
   in the current browser-testing surface.
 - **Verification date:** 26 July 2026
 
-No additional active working defect was established from the permitted static
-evidence. Entries elsewhere in this register are classified as debt, risk,
-uncertainty, gap, or accepted limitation rather than duplicated as known issues.
+### KI-003 — Location error can leave a one-word final line
+
+- **ID:** KI-003
+- **Category:** Responsive presentation
+- **Severity:** Low
+- **Status:** Closed in Packet 163 release candidate
+- **Launch blocking:** No
+- **Verification status:** Directly reproduced on the exact Packet 161 Deploy
+  Preview at the observed desktop browser width and traced to tracked styling.
+- **Factual evidence:** The complete English message is `Unable to retrieve
+  your location. Please try again.` At the observed width, `again.` appears
+  alone on a second line. `.location-status` in `src/DayGuide.css` applies
+  `word-break: break-all`, which permits visually awkward breaks rather than
+  preserving natural word wrapping.
+- **Impact:** The wording and location fallback remain understandable and
+  usable, but the isolated final word makes the welcome card look unfinished.
+- **Likely dependency:** A small responsive-CSS adjustment and a representative
+  narrow-width visual check.
+- **Recommended next action:** None for KI-003. Retain the responsive regression
+  coverage through later integration and production-promotion validation.
+- **Verification date:** 31 July 2026
+- **Resolution:** Packet 163 replaces `word-break: break-all` with natural word
+  wrapping, separates the warning icon from the message text, and adds focused
+  component coverage. The Product Owner verified the exact PR 9 preview at
+  desktop and phone widths; the former isolated `again.` line was no longer
+  visible.
+
+No other active working defect was established from the permitted evidence.
+Entries elsewhere in this register are classified as debt, risk, uncertainty,
+gap, or accepted limitation rather than duplicated as known issues.
 
 ## 4. Launch blockers
 
@@ -156,19 +184,21 @@ No other entry is classified as launch blocking.
 - **ID:** TD-001
 - **Category:** Persistence technical debt
 - **Severity:** Medium
-- **Status:** Verified open
+- **Status:** Resolved pending archive
 - **Launch blocking:** No
-- **Verification status:** Verified in tracked implementation and comments.
-- **Factual evidence:** `src/utils/planStorage.js` stores version 1 under
-  `dayguide_saved_plan_v1` and explicitly states that there are no migrations;
-  a future schema change is expected to use a new key.
-- **Impact:** A future persisted-plan schema change requires an explicit
-  compatibility, retirement, or reset decision and can otherwise strand or
-  discard saved plans.
-- **Likely dependency:** The next approved persisted-plan schema change.
-- **Recommended next action:** Define and test a version-transition policy before
-  changing the persisted payload.
-- **Verification date:** 13 July 2026
+- **Verification status:** Resolution verified in tracked Packet 159 source and
+  automated tests; Product Owner archive acceptance remains outstanding.
+- **Factual evidence:** `src/utils/planStorage.js` now writes version 2 under
+  `dayguide_saved_plan_v2`, reads valid `dayguide_saved_plan_v1` payloads,
+  migrates them locally with no invented geographical data, and removes the
+  legacy key. Invalid v2 geographical data is rejected.
+- **Impact:** Existing valid v1 plans remain resumable while new plans can
+  persist the bounded geographical schema.
+- **Likely dependency:** Product Owner acceptance to archive this resolved
+  entry.
+- **Recommended next action:** Confirm Packet 159 acceptance, then archive
+  TD-001 without deleting its history.
+- **Verification date:** 28 July 2026
 
 ## 6. Architecture and maintainability risks
 
@@ -371,6 +401,36 @@ No other entry is classified as launch blocking.
   API, or before wider-than-Private-Alpha release. Do not combine the migration
   casually with routing activation or widen/reuse the routing key.
 - **Verification date:** 27 July 2026
+
+### OP-007 — Deploy Previews do not receive the Production Places secret
+
+- **ID:** OP-007
+- **Category:** Review-environment configuration boundary
+- **Severity:** Medium
+- **Status:** Mitigated and procedurally closed by Packet 161
+- **Launch blocking:** No
+- **Verification status:** Packet 160 directly verified the safe absent-secret
+  state. Packet 161 directly verified the bounded temporary-preview procedure
+  and subsequent configuration rollback.
+- **Factual evidence:** The candidate built and deployed successfully, but its
+  server-side `places-resolve` endpoint returned
+  `REQUEST_DENIED / NO_API_KEY`. The rendered application showed the expected
+  honest unavailable state. Public Netlify history continued to identify
+  production as `master@5ef141b`, deploy `6a6602bd6c7609eabb08d744`.
+- **Impact:** Deploy Previews deliberately remain key-free by default. Live
+  Places acceptance is possible through the Packet 161 procedure: temporarily
+  add the existing Places-only server credential to the Deploy Previews
+  context, rebuild the exact candidate, perform bounded acceptance, and remove
+  the preview value. Packet 161 successfully exercised that procedure with
+  deploy `6a68a3a3f9034449c8f4bf7e` and then restored the narrow baseline.
+- **Operational rule:** Do not broaden the secret to Branch deploys, Preview
+  Server and Agent Runners, Local development, browser-prefixed variables, or
+  Routes. A rebuilt preview after rollback should return the safe `NO_API_KEY`
+  state; Packet 160 already proves that behaviour.
+- **Recommended next action:** None while the default key-free preview boundary
+  is retained. Reuse the separately authorised Packet 161 procedure only when
+  another live Places acceptance exercise is necessary.
+- **Verification date:** 28 July 2026
 
 The Packet 139 variable-name absence, incomplete function deployment, missing
 Git linkage, and production provenance gaps are resolved by Packets 140–143.
@@ -615,8 +675,8 @@ decision was evidenced during this review.
 
 ## 11. Resolved and archive policy
 
-There are no entries with status **Resolved pending archive** or **Archived** at
-this verification point.
+TD-001 is **Resolved pending archive** at this verification point. There are no
+archived entries.
 
 1. An entry may move to **Resolved pending archive** only when factual resolution
    evidence and the relevant validation result are recorded in the entry.

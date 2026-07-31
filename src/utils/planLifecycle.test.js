@@ -29,6 +29,7 @@ describe('planLifecycle', () => {
       selectedPriceRange: 'moderate',
       selectedDate: '2026-07-06',
       startWith: 'activities',
+      geographicalPlanning: null,
     })).toEqual({
       timeline: [{ activity: 'Museum' }],
       startTime: 10,
@@ -38,6 +39,7 @@ describe('planLifecycle', () => {
       selectedPriceRange: 'moderate',
       selectedDate: '2026-07-06',
       startWith: 'activities',
+      geographicalPlanning: null,
     });
   });
 
@@ -59,6 +61,7 @@ describe('planLifecycle', () => {
       selectedPriceRange: null,
       selectedDate: '2026-07-07',
       startWith: undefined,
+      geographicalPlanning: null,
     });
   });
 

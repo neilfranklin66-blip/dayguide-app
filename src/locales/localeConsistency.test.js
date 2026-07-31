@@ -16,6 +16,9 @@ import { RESTAURANT_UNAVAILABLE_REASONS } from '../config/dayGuideOptions';
 
 const LOCALES = { en, es, fr, zh, vi };
 const LOCALE_CODES = Object.keys(LOCALES);
+const PLANNING_KEYS = collectStrings(en.planning, 'planning').map(
+  ({ path }) => path,
+);
 
 // Derived, not hand-listed: adding a new restaurant-unavailable reason without
 // translating its message, hint and "What can I try?" guidance must fail this
@@ -42,6 +45,10 @@ const REQUIRED_KEYS = [
   'interests.childrenLabel',
   'interests.childrenYes',
   'interests.childrenNo',
+  // Packet 159's mounted planning workflow. Deriving every leaf from English
+  // prevents a later control or warning from silently falling back in one of
+  // the five supported locales.
+  ...PLANNING_KEYS,
   'activities.continueLabel',
   // Honest sample-data copy shown on activity cards and timeline rows.
   'activities.sampleBadge',
@@ -125,6 +132,16 @@ function extractPlaceholders(template) {
   return names.sort();
 }
 
+function extractI18nextPlaceholders(template) {
+  const names = [];
+  const pattern = /\{\{(\w+)\}\}/g;
+  let match;
+  while ((match = pattern.exec(template)) !== null) {
+    names.push(match[1]);
+  }
+  return names.sort();
+}
+
 function collectStrings(node, path, out = []) {
   if (typeof node === 'string') {
     out.push({ path, value: node });
@@ -151,6 +168,15 @@ describe.each(LOCALE_CODES)('locale %s', code => {
       extractPlaceholders(getPath(en, key)),
     );
   });
+
+  test.each(PLANNING_KEYS)(
+    'planning placeholders in %s match English',
+    key => {
+      expect(extractI18nextPlaceholders(getPath(locale, key))).toEqual(
+        extractI18nextPlaceholders(getPath(en, key)),
+      );
+    },
+  );
 
   test('dayNarrative strings use single braces, never i18next {{...}}', () => {
     const strings = collectStrings(

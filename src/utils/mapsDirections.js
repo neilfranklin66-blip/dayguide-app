@@ -37,4 +37,25 @@ export function buildGoogleMapsDirectionsUrl({
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
+export function buildGoogleMapsPlanningRouteUrl({
+  origin,
+  destination,
+} = {}) {
+  const originLabel =
+    typeof origin === 'string' ? origin.trim() : routePointLabel(origin);
+  const destinationLabel =
+    typeof destination === 'string'
+      ? destination.trim()
+      : routePointLabel(destination);
+
+  if (!originLabel || !destinationLabel) return null;
+
+  const params = new URLSearchParams({
+    api: '1',
+    origin: originLabel,
+    destination: destinationLabel,
+  });
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
+}
+
 export { routePointLabel };

@@ -1,10 +1,11 @@
 /**
  * planStorage
  * - Persists the finished timeline plan (and the settings needed to render it)
- *   to localStorage under a single versioned key.
- * - Deliberately narrow: no queues, no PlaceCard vendor data, no geolocation,
- *   no transient UI state, no migrations. A future schema change should use a
- *   new key rather than migrating v1 payloads.
+ *   to localStorage under a versioned key.
+ * - Saved-plan v2 may include the minimum selected geographical-plan data.
+ *   It never stores search queries, result lists, route evidence or transient
+ *   UI state.
+ * - Reads the legacy v1 key so an existing saved plan remains resumable.
  * - Storage failures (private mode, disabled storage, quota) degrade to
  *   null/no-op and never throw to the caller.
  * - A plan dated before the local calendar day it is loaded on is treated as
@@ -12,9 +13,16 @@
  *   for resume.
  */
 
-export const SAVED_PLAN_STORAGE_KEY = 'dayguide_saved_plan_v1';
+import {
+  restoreGeographicalPlanning,
+  serializeGeographicalPlanning,
+} from './geographicalPlanPersistence';
 
-const STORAGE_VERSION = 1;
+export const SAVED_PLAN_STORAGE_KEY = 'dayguide_saved_plan_v2';
+export const LEGACY_SAVED_PLAN_STORAGE_KEY = 'dayguide_saved_plan_v1';
+
+const STORAGE_VERSION = 2;
+const LEGACY_STORAGE_VERSION = 1;
 
 const SUPPORTED_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -39,6 +47,9 @@ export function isPlanDateExpired(selectedDate, today = new Date()) {
 
 export function savePlan(plan) {
   try {
+    const geographicalPlanning = serializeGeographicalPlanning(
+      plan.geographicalPlanning,
+    );
     localStorage.setItem(
       SAVED_PLAN_STORAGE_KEY,
       JSON.stringify({
@@ -53,28 +64,81 @@ export function savePlan(plan) {
           selectedPriceRange: plan.selectedPriceRange,
           selectedDate: plan.selectedDate,
           startWith: plan.startWith,
+          geographicalPlanning,
         },
       }),
     );
+    localStorage.removeItem(LEGACY_SAVED_PLAN_STORAGE_KEY);
   } catch (_) {}
 }
 
-export function loadPlan(today = new Date()) {
+const parseStoredPlan = (raw, expectedVersion) => {
+  if (!raw) return null;
   try {
-    const raw = localStorage.getItem(SAVED_PLAN_STORAGE_KEY);
-    if (!raw) return null;
-
     const parsed = JSON.parse(raw);
-    if (!parsed || parsed.version !== STORAGE_VERSION) return null;
+    if (!parsed || parsed.version !== expectedVersion) return null;
 
     const plan = parsed.plan;
     if (!plan || typeof plan !== 'object') return null;
-    if (!Array.isArray(plan.timeline) || plan.timeline.length === 0) return null;
-    if (typeof plan.startTime !== 'number' || !Number.isFinite(plan.startTime)) return null;
+    if (!Array.isArray(plan.timeline) || plan.timeline.length === 0) {
+      return null;
+    }
+    if (
+      typeof plan.startTime !== 'number' ||
+      !Number.isFinite(plan.startTime)
+    ) {
+      return null;
+    }
+    return plan;
+  } catch (_) {
+    return null;
+  }
+};
+
+const normalizeV2Plan = plan => {
+  if (!Object.prototype.hasOwnProperty.call(plan, 'geographicalPlanning')) {
+    return null;
+  }
+  const geographicalPlanning = restoreGeographicalPlanning(
+    plan.geographicalPlanning,
+  );
+  if (plan.geographicalPlanning != null && geographicalPlanning == null) {
+    return null;
+  }
+  return {
+    ...plan,
+    geographicalPlanning,
+  };
+};
+
+export function loadPlan(today = new Date()) {
+  try {
+    const current = parseStoredPlan(
+      localStorage.getItem(SAVED_PLAN_STORAGE_KEY),
+      STORAGE_VERSION,
+    );
+    const legacy =
+      current == null
+        ? parseStoredPlan(
+            localStorage.getItem(LEGACY_SAVED_PLAN_STORAGE_KEY),
+            LEGACY_STORAGE_VERSION,
+          )
+        : null;
+    const plan = current ? normalizeV2Plan(current) : legacy;
+    if (!plan) return null;
 
     if (isPlanDateExpired(plan.selectedDate, today)) {
       clearPlan();
       return null;
+    }
+
+    if (legacy) {
+      const migrated = {
+        ...legacy,
+        geographicalPlanning: null,
+      };
+      savePlan(migrated);
+      return migrated;
     }
 
     return plan;
@@ -86,5 +150,6 @@ export function loadPlan(today = new Date()) {
 export function clearPlan() {
   try {
     localStorage.removeItem(SAVED_PLAN_STORAGE_KEY);
+    localStorage.removeItem(LEGACY_SAVED_PLAN_STORAGE_KEY);
   } catch (_) {}
 }

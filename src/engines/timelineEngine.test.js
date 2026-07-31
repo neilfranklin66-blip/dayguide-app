@@ -538,6 +538,34 @@ test('buildTimelineShareText includes the selected date when provided', () => {
   ].join('\n'));
 });
 
+test('buildTimelineShareText never serializes geographical coordinates', () => {
+  const text = buildTimelineShareText({
+    activityCategories: new Set(['museums']),
+    t: key => key,
+    timeline: [
+      {
+        time: '9:00',
+        icon: 'museum-icon',
+        category: 'museums',
+        activity: 'Museum Visit',
+        duration: 1,
+      },
+    ],
+    geographicalPlanning: {
+      start: {
+        place: {
+          name: 'Private start',
+          coordinates: { lat: 51.5282, lng: -0.1337 },
+        },
+      },
+    },
+  });
+
+  expect(text).not.toContain('51.5282');
+  expect(text).not.toContain('-0.1337');
+  expect(text).not.toContain('Private start');
+});
+
 test('buildTimelineShareText falls back to the category for untranslated cuisine', () => {
   const t = (key, fallback) => fallback ?? key;
 

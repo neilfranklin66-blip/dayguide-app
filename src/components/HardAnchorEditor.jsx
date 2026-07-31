@@ -8,6 +8,8 @@ import {
 } from '../utils/planningInputWorkflow';
 import ResolvedPlaceSelect from './ResolvedPlaceSelect';
 
+const fallbackT = (_key, options) => options?.defaultValue ?? _key;
+
 const selectionForAnchor = (anchor, currentPlace) => {
   if (!anchor) return null;
   const isCurrent =
@@ -30,6 +32,7 @@ export default function HardAnchorEditor({
   availablePlaces = [],
   onSave,
   onCancel,
+  t = fallbackT,
 }) {
   const [title, setTitle] = useState(initialAnchor?.title ?? '');
   const [selection, setSelection] = useState(() =>
@@ -51,7 +54,12 @@ export default function HardAnchorEditor({
     const startTimeMinutes = timeInputToMinutes(startTime);
 
     if (!selection || startTimeMinutes == null) {
-      setError('Choose a verified place and valid time for this anchor.');
+      setError(
+        t('planning.anchorPlaceTimeError', {
+          defaultValue:
+            'Choose a verified place and valid time for this anchor.',
+        }),
+      );
       return;
     }
 
@@ -68,20 +76,34 @@ export default function HardAnchorEditor({
       onSave(anchor);
     } catch (_) {
       setError(
-        'Check the anchor title, time, duration, arrival buffer, and place.',
+        t('planning.anchorValidationError', {
+          defaultValue:
+            'Check the anchor title, time, duration, arrival buffer, and place.',
+        }),
       );
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="card hard-anchor-editor">
-      <h3>{initialAnchor ? 'Edit fixed anchor' : 'Add fixed anchor'}</h3>
+      <h3>
+        {initialAnchor
+          ? t('planning.editAnchor', { defaultValue: 'Edit fixed anchor' })
+          : t('planning.addAnchor', { defaultValue: 'Add fixed anchor' })}
+      </h3>
       <p className="start-order-hint">
-        DayGuide may plan around this commitment but may never move it.
+        {t('planning.anchorLockExplanation', {
+          defaultValue:
+            'DayGuide may plan around this commitment but may never move it.',
+        })}
       </p>
 
       <div className="time-selector">
-        <label htmlFor={`${anchorId}-title`}>Commitment name</label>
+        <label htmlFor={`${anchorId}-title`}>
+          {t('planning.commitmentName', {
+            defaultValue: 'Commitment name',
+          })}
+        </label>
         <input
           id={`${anchorId}-title`}
           value={title}
@@ -92,15 +114,20 @@ export default function HardAnchorEditor({
 
       <ResolvedPlaceSelect
         id={`${anchorId}-place`}
-        label="Fixed place"
+        label={t('planning.fixedPlace', { defaultValue: 'Fixed place' })}
         selection={selection}
         onChange={setSelection}
         currentPlace={currentPlace}
         availablePlaces={availablePlaces}
+        t={t}
       />
 
       <div className="time-selector">
-        <label htmlFor={`${anchorId}-time`}>Fixed start time</label>
+        <label htmlFor={`${anchorId}-time`}>
+          {t('planning.fixedStartTime', {
+            defaultValue: 'Fixed start time',
+          })}
+        </label>
         <input
           id={`${anchorId}-time`}
           type="time"
@@ -111,7 +138,11 @@ export default function HardAnchorEditor({
       </div>
 
       <div className="time-selector">
-        <label htmlFor={`${anchorId}-duration`}>Duration in minutes</label>
+        <label htmlFor={`${anchorId}-duration`}>
+          {t('planning.durationMinutes', {
+            defaultValue: 'Duration in minutes',
+          })}
+        </label>
         <input
           id={`${anchorId}-duration`}
           type="number"
@@ -125,7 +156,9 @@ export default function HardAnchorEditor({
 
       <div className="time-selector">
         <label htmlFor={`${anchorId}-buffer`}>
-          Arrive this many minutes early
+          {t('planning.arriveMinutesEarly', {
+            defaultValue: 'Arrive this many minutes early',
+          })}
         </label>
         <input
           id={`${anchorId}-buffer`}
@@ -142,10 +175,12 @@ export default function HardAnchorEditor({
 
       <div className="swipe-buttons">
         <button type="button" onClick={onCancel} className="btn-secondary">
-          Cancel
+          {t('planning.cancel', { defaultValue: 'Cancel' })}
         </button>
         <button type="submit" className="btn-primary">
-          {initialAnchor ? 'Save anchor' : 'Add anchor'}
+          {initialAnchor
+            ? t('planning.saveAnchor', { defaultValue: 'Save anchor' })
+            : t('planning.addAnchorAction', { defaultValue: 'Add anchor' })}
         </button>
       </div>
     </form>
