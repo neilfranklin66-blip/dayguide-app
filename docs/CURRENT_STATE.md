@@ -47,6 +47,14 @@ now serves `master@3cdcfd3`. The public welcome screen was observed with the
 approved universal wording and only Start Planning visible. No provider,
 credential, secret, or product-code change occurred during promotion.
 
+**Google Routes premium-trial design:** Packet 165 added
+[`docs/PACKET165_GOOGLE_ROUTES_PREMIUM_TRIAL_DESIGN_AND_SAFETY_GATE.md`](PACKET165_GOOGLE_ROUTES_PREMIUM_TRIAL_DESIGN_AND_SAFETY_GATE.md).
+It defines a proposed, separately authorised Route Confidence Preview trial and
+cost/safety gates after Packet 155's walking and public-transport failures. It
+does not activate Google Routes, create or restore a routing key, make a
+provider request, alter production, or approve a premium offering. Google
+Routes remains disabled.
+
 **Repository implementation workflow:** Packet 135 added
 [`docs/DEVELOPMENT_WORKFLOW.md`](DEVELOPMENT_WORKFLOW.md) as the repository-level
 process for implementation authority, packet execution, verification,
@@ -462,10 +470,12 @@ sign-in remain outside these checks.
   Firebase remains an operational requirement outside version control.
 - **Current production follows a traceable, manually locked repository
   deployment.** The existing Netlify project is linked to GitHub
-  `neilfranklin66-blip/dayguide-app`, production branch `master`, and exact
-  commit `3cdcfd3`. Packet 164 deliberately published deploy
-  `6a6ccd66eaaa320008175488` and then re-locked auto publishing; a future
-  release again requires a deliberate publish action.
+  `neilfranklin66-blip/dayguide-app`, production branch `master`, and a
+  published build from exact commit `3cdcfd3`. Packet 164 deliberately
+  published deploy `6a6ccd66eaaa320008175488` and then re-locked auto
+  publishing. The later docs-only Packet 164 merge advanced GitHub `master` to
+  `77947d0` without changing the published build; a future release again
+  requires a deliberate publish action.
 - **The Netlify plan does not permit Functions-only secret scope without an
   upgrade.** The Production secret remains scoped to Builds, Functions, and
   Runtime. It is marked secret, limited by Google to Places API, not read by
@@ -676,6 +686,16 @@ entry action. The older `master@5ef141b` / deploy
 The production run did not alter or newly verify location-denied browser
 permissions, Places credentials, provider calls, or Google Routes; the
 denied-location KI-003 evidence remains the accepted preview observation.
+
+**Packet 165 premium-trial design snapshot (2026-07-31):** this is a future
+trial design, not a current route capability. It preserves the Packet 155
+walking and public-transport FAIL decisions, keeps Google Routes disabled, and
+proposes a separately authorised opt-in Route Confidence Preview with no more
+than ten initial testers, two explicit checks per tester per day, six legs per
+check, and a 150-request daily maximum. It records the current global Compute
+Routes Essentials 10,000-request monthly free cap and illustrative costs, but
+does not approve an external trial, price, entitlement, credential, quota,
+budget, provider request, or production change.
 
 ## 8. Maintenance rule
 
