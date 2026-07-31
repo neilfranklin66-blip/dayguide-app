@@ -55,6 +55,21 @@ daily cap; budget alerts alone are insufficient.
 6. Remove the preview provider mode and key, revoke the temporary key, and
    retain only sanitised aggregate evidence.
 
+### External preflight record - 31 July 2026
+
+The Product Owner selected Google Cloud's **My First Project** for this closed
+exercise and authorised its upgrade from the expiring free trial to paid
+billing. The Routes API was already enabled. Google Cloud showed the applicable
+`Directions - ComputeRoutes per request quota per day` at **150**; it was
+verified rather than changed. Netlify then showed both
+`GOOGLE_ROUTES_API_KEY` and `DAYGUIDE_ROUTES_PROVIDER_MODE` with one value in
+the **Deploy Previews** context, with Production, branch deploys, preview
+server/agent runners and local development empty.
+
+This is configuration preflight evidence only. It is not evidence of a built
+preview, a provider call, a successful route response, a safety pass, or a
+Production capability. The temporary key's value is not recorded here.
+
 Any optimistic-understatement breach, anchor-critical breach, missing hard
 quota, privacy/entitlement failure, or user confusion stops the exercise. The
 Packet 155 FAIL outcome remains in force unless new independent evidence and a

@@ -708,6 +708,14 @@ call. The previous Packet 155 walking and public-transport FAIL decisions,
 disabled Production state, locked production deployment, and no-premium-claim
 boundary remain in force.
 
+**Packet 166 external preflight (2026-07-31):** the Product Owner authorised
+paid billing for the selected Google Cloud trial project; its existing Routes
+API daily ComputeRoutes cap was verified at 150. Netlify records one
+Deploy-Previews-only value each for the temporary Routes key and provider mode,
+with every other deploy context empty. This is configuration evidence only:
+there is still no Packet 166 preview, provider request, route result, safety
+pass, user-visible route feature, or Production Routes activation.
+
 ## 8. Maintenance rule
 
 Update this document **only** when a completed packet materially changes a
