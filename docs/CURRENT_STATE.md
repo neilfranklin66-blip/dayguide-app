@@ -602,13 +602,17 @@ setting change occurred.
 
 **Packet 161 acceptance snapshot (2026-07-28):** exact PR 8 candidate
 `afd053a` rebuilt successfully as unpublished Netlify Deploy Preview
-`6a68a3a3f9034449c8f4bf7e`; all deploy stages and secret scanning passed and
+`6a68a3a3f9034449c8f4bf7e` at
+`https://deploy-preview-8--ubiquitous-melomakarona-874d9c.netlify.app`; all
+deploy stages and secret scanning passed and
 two Functions were deployed. A bounded guest journey resolved live London
 start, destination, and hard-anchor places; used the searched start for live
 restaurant discovery; displayed a real photograph and `Live from Google
 Places`; preserved the live restaurant and honestly labelled sample activity;
 opened the intended venue in Google Maps; rendered the QR Share window; resumed
-the two-stop saved plan; and verified that Start Over removed the Resume option.
+the two-stop saved plan; and verified on that exact preview origin that the
+post-Start Over state exposed `Start Planning` with no Resume option. The
+locked production origin was excluded from that clearance evidence.
 The optional destination deadline was not entered in that live run but remains
 covered by automated workflow tests. The full suite passed (**61 suites and
 1,862 tests**). The Deploy Preview secret value was then removed: Netlify again

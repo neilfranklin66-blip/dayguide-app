@@ -6,15 +6,16 @@ This register records evidence-backed known issues, technical debt, architecture
 risks, operational uncertainties, security and configuration gaps, test and
 accessibility gaps, and explicitly accepted limitations for DayGuide.
 
-- **Current verification date:** 28 July 2026
+- **Current verification date:** 31 July 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packet 160 unpublished geographical candidate
-  and Deploy Preview evidence
+- **Latest targeted update:** Packet 161 exact Deploy Preview acceptance,
+  credential rollback, and cleared-plan verification
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository evidence, Product Owner-operated
   authenticated provider evidence, bounded public checks, Packets 141–143 build
-  and deployment evidence, and one Packet 144 production guest journey
+  and deployment evidence, one Packet 144 production guest journey, and the
+  bounded Packet 161 unpublished Deploy Preview journey
 - **Runtime scope:** Packet 143 clean-install, test, build, candidate, and
   production evidence is recorded in
   [`TRACEABLE_PRODUCTION_DEPLOYMENT.md`](TRACEABLE_PRODUCTION_DEPLOYMENT.md);
@@ -126,9 +127,32 @@ decision must be supported by the launch rules and evidence.
   in the current browser-testing surface.
 - **Verification date:** 26 July 2026
 
-No additional active working defect was established from the permitted static
-evidence. Entries elsewhere in this register are classified as debt, risk,
-uncertainty, gap, or accepted limitation rather than duplicated as known issues.
+### KI-003 — Location error can leave a one-word final line
+
+- **ID:** KI-003
+- **Category:** Responsive presentation
+- **Severity:** Low
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Directly reproduced on the exact Packet 161 Deploy
+  Preview at the observed desktop browser width and traced to tracked styling.
+- **Factual evidence:** The complete English message is `Unable to retrieve
+  your location. Please try again.` At the observed width, `again.` appears
+  alone on a second line. `.location-status` in `src/DayGuide.css` applies
+  `word-break: break-all`, which permits visually awkward breaks rather than
+  preserving natural word wrapping.
+- **Impact:** The wording and location fallback remain understandable and
+  usable, but the isolated final word makes the welcome card look unfinished.
+- **Likely dependency:** A small responsive-CSS adjustment and a representative
+  narrow-width visual check.
+- **Recommended next action:** Replace the forced break-all behaviour with
+  natural responsive wrapping and verify the location status at desktop and
+  phone widths in a separately authorised UI-repair packet.
+- **Verification date:** 31 July 2026
+
+No other active working defect was established from the permitted evidence.
+Entries elsewhere in this register are classified as debt, risk, uncertainty,
+gap, or accepted limitation rather than duplicated as known issues.
 
 ## 4. Launch blockers
 

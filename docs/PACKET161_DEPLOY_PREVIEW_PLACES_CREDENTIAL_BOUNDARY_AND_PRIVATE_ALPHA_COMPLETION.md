@@ -155,9 +155,18 @@ key-free Maps handoffs. The restaurant handoff opened the intended live Google
 Maps venue.
 
 The Share window rendered a QR code. Reload and Resume restored the two planned
-stops and the geographical summary. Start Over was then verified by reopening
-the guest journey: only `Start Planning` was offered and no `Resume your plan`
-option remained.
+stops and the geographical summary. The post-Start Over cleared state was then
+verified on the exact Packet 161 origin,
+`https://deploy-preview-8--ubiquitous-melomakarona-874d9c.netlify.app`: the
+universal `Plan your perfect day, wherever you are` wording and only
+`Start Planning` were shown, with no `Resume your plan` option. The locked
+production origin was explicitly excluded from this clearance evidence.
+
+The same exact-preview check reproduced one non-blocking presentation defect:
+the location-unavailable message can leave `again.` alone on a second line at
+the observed browser width. The message remains complete and the location
+fallback remains usable; the visual defect is recorded as KI-003 rather than
+misclassified as a Packet 161 acceptance failure.
 
 The complete automated suite finished successfully with **61 suites and 1,862
 tests passing**. The command host reached its time boundary only after Jest had
