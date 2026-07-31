@@ -600,6 +600,25 @@ conditional. Production remained published at `master@5ef141b`, deploy
 `6a6602bd6c7609eabb08d744`; no publish, merge, provider, credential, or external
 setting change occurred.
 
+**Packet 161 acceptance snapshot (2026-07-28):** exact PR 8 candidate
+`afd053a` rebuilt successfully as unpublished Netlify Deploy Preview
+`6a68a3a3f9034449c8f4bf7e`; all deploy stages and secret scanning passed and
+two Functions were deployed. A bounded guest journey resolved live London
+start, destination, and hard-anchor places; used the searched start for live
+restaurant discovery; displayed a real photograph and `Live from Google
+Places`; preserved the live restaurant and honestly labelled sample activity;
+opened the intended venue in Google Maps; rendered the QR Share window; resumed
+the two-stop saved plan; and verified that Start Over removed the Resume option.
+The optional destination deadline was not entered in that live run but remains
+covered by automated workflow tests. The full suite passed (**61 suites and
+1,862 tests**). The Deploy Preview secret value was then removed: Netlify again
+showed `GOOGLE_PLACES_API_KEY` only in Production, with all non-production
+contexts empty. The already-built preview was not rebuilt solely for a second
+`NO_API_KEY` response; Packet 160 already proves that safe state for a preview
+built without the value. PR 8 remains draft and unmerged, Google Routes remains
+off, and Production remains locked at `master@5ef141b`, deploy
+`6a6602bd6c7609eabb08d744`.
+
 ## 8. Maintenance rule
 
 Update this document **only** when a completed packet materially changes a

@@ -2,7 +2,7 @@
 
 **Date:** 28 July 2026
 
-**Status:** Authorised; external evidence pending
+**Status:** PASS — live acceptance completed and preview credential rolled back
 
 **Candidate:** draft PR 8 at
 `afd053a49bf86dac03797a169a3a1c0d1d13f541`
@@ -128,3 +128,56 @@ The final result is **PASS** only when both live acceptance and credential
 rollback succeed. A safe inability to add the narrow context is **BLOCKED**, not
 a reason to widen access. A credential exposure, Production change, or
 uncontrolled context expansion is **FAIL**.
+
+## 7. Completion evidence
+
+The exact PR 8 candidate at `afd053a` was rebuilt as Netlify Deploy Preview
+`6a68a3a3f9034449c8f4bf7e`. Initializing, building, deploying, cleanup, and
+post-processing completed; secret scanning passed; and two Functions were
+deployed. The deploy remained unpublished and Production remained locked at
+`master@5ef141b`, deploy `6a6602bd6c7609eabb08d744`.
+
+The bounded guest journey verified live Google Places choices for London
+Euston Station, The Hoxton Southwark, and the National Theatre. It selected the
+station as start, the hotel as destination, and a planner-locked 18:30 theatre
+anchor at the National Theatre with a 120-minute duration and 15-minute early
+arrival. The live run left the optional destination deadline blank; deadline
+entry and persistence remain covered by the existing automated workflow tests.
+
+Restaurant discovery initially returned no Italian/moderate match. Removing
+the cuisine filter produced the live Charlotte Street Hotel card with a real
+photograph, rating, price/distance evidence, and `Live from Google Places`.
+Accepting it added it to the timeline. The V&A Museum remained honestly marked
+as a sample activity. The completed two-stop itinerary preserved the live
+restaurant and sample activity together with the geographical input and locked
+anchor, displayed the fixed-time and unverified-travel warnings, and exposed
+key-free Maps handoffs. The restaurant handoff opened the intended live Google
+Maps venue.
+
+The Share window rendered a QR code. Reload and Resume restored the two planned
+stops and the geographical summary. Start Over was then verified by reopening
+the guest journey: only `Start Planning` was offered and no `Resume your plan`
+option remained.
+
+The complete automated suite finished successfully with **61 suites and 1,862
+tests passing**. The command host reached its time boundary only after Jest had
+reported completion. A separate local production-build rerun was blocked by a
+local `EPERM` write restriction on `build/asset-manifest.json`; the exact
+candidate's successful Netlify build is the authoritative build evidence.
+
+## 8. Credential rollback and decision
+
+After acceptance, the Product Owner removed the Deploy Previews value from
+`GOOGLE_PLACES_API_KEY`. Netlify showed **1 value in 1 deploy context**:
+Production retained its value, while Deploy Previews, Branch deploys, Preview
+Server and Agent Runners, and Local development were empty. No Routes variable
+or provider was enabled.
+
+Netlify deploys receive their environment at build time, so the already-built
+preview was not rebuilt solely to demonstrate `NO_API_KEY` after rollback. The
+configuration-level rollback is directly evidenced; a future rebuild of PR 8
+would be expected to return the same safe `NO_API_KEY` state previously proved
+by Packet 160. This recorded rebuild requirement is permitted by section 6.
+
+Packet 161 therefore closes as **PASS**. PR 8 remains draft and unmerged;
+Production, remote `master`, and the locked published deploy are unchanged.

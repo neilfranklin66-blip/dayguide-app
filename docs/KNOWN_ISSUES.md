@@ -379,28 +379,29 @@ No other entry is classified as launch blocking.
 - **ID:** OP-007
 - **Category:** Review-environment configuration boundary
 - **Severity:** Medium
-- **Status:** Verified open
-- **Launch blocking:** No for the locked current production; yes for complete
-  live-data acceptance in an unpublished Deploy Preview
-- **Verification status:** Directly verified against Packet 160 Netlify Deploy
-  Preview `6a68979af6debb00083c6aed`.
+- **Status:** Mitigated and procedurally closed by Packet 161
+- **Launch blocking:** No
+- **Verification status:** Packet 160 directly verified the safe absent-secret
+  state. Packet 161 directly verified the bounded temporary-preview procedure
+  and subsequent configuration rollback.
 - **Factual evidence:** The candidate built and deployed successfully, but its
   server-side `places-resolve` endpoint returned
   `REQUEST_DENIED / NO_API_KEY`. The rendered application showed the expected
   honest unavailable state. Public Netlify history continued to identify
   production as `master@5ef141b`, deploy `6a6602bd6c7609eabb08d744`.
-- **Impact:** The preview safely avoids exposing or inheriting the Production
-  credential, but cannot verify live typed-place results, searched-start
-  restaurant discovery, complete hard anchors, geographical saved-plan data,
-  live restaurant photographs, or place-specific Maps handoffs.
-- **Likely dependency:** A separately authorised Netlify deploy-context and
-  Google Places credential decision. No routing credential is required.
-- **Recommended next action:** Define a bounded follow-on packet that either
-  supplies the existing Places-only server credential to Deploy Previews or
-  creates a separate preview-only Places credential. Require server-only
-  Netlify use, secret masking, Places-only Google API restriction, explicit
-  preview context, no browser-prefixed variable, no production change, and
-  deletion or scope rollback after acceptance when appropriate.
+- **Impact:** Deploy Previews deliberately remain key-free by default. Live
+  Places acceptance is possible through the Packet 161 procedure: temporarily
+  add the existing Places-only server credential to the Deploy Previews
+  context, rebuild the exact candidate, perform bounded acceptance, and remove
+  the preview value. Packet 161 successfully exercised that procedure with
+  deploy `6a68a3a3f9034449c8f4bf7e` and then restored the narrow baseline.
+- **Operational rule:** Do not broaden the secret to Branch deploys, Preview
+  Server and Agent Runners, Local development, browser-prefixed variables, or
+  Routes. A rebuilt preview after rollback should return the safe `NO_API_KEY`
+  state; Packet 160 already proves that behaviour.
+- **Recommended next action:** None while the default key-free preview boundary
+  is retained. Reuse the separately authorised Packet 161 procedure only when
+  another live Places acceptance exercise is necessary.
 - **Verification date:** 28 July 2026
 
 The Packet 139 variable-name absence, incomplete function deployment, missing
