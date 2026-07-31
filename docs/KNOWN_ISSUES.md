@@ -132,7 +132,8 @@ decision must be supported by the launch rules and evidence.
 - **ID:** KI-003
 - **Category:** Responsive presentation
 - **Severity:** Low
-- **Status:** Verified open
+- **Status:** Resolved in Packet 163 release-candidate source; preview
+  verification pending
 - **Launch blocking:** No
 - **Verification status:** Directly reproduced on the exact Packet 161 Deploy
   Preview at the observed desktop browser width and traced to tracked styling.
@@ -149,6 +150,10 @@ decision must be supported by the launch rules and evidence.
   natural responsive wrapping and verify the location status at desktop and
   phone widths in a separately authorised UI-repair packet.
 - **Verification date:** 31 July 2026
+- **Resolution:** Packet 163 replaces `word-break: break-all` with natural word
+  wrapping, separates the warning icon from the message text, and adds focused
+  component coverage. Closure requires visual confirmation on the fresh
+  unpublished preview at representative desktop and phone widths.
 
 No other active working defect was established from the permitted evidence.
 Entries elsewhere in this register are classified as debt, risk, uncertainty,

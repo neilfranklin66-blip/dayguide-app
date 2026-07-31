@@ -146,18 +146,38 @@ body {
 
 .welcome-card {
   text-align: center;
+  padding: 36px;
+}
+
+.welcome-intro {
+  max-width: 360px;
+  margin: 0 auto 24px;
+}
+
+.welcome-mark {
+  display: block;
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 10px;
 }
 
 .welcome-card h1 {
-  font-size: 3em;
-  margin-bottom: 15px;
+  font-size: clamp(2.4rem, 10vw, 3rem);
+  line-height: 1.05;
+  margin-bottom: 12px;
   color: #667eea;
 }
 
-.welcome-card p {
-  font-size: 1.2em;
+.welcome-card .welcome-tagline {
+  font-size: 1.25rem;
+  font-weight: 650;
+  line-height: 1.35;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.welcome-card .subtitle {
+  line-height: 1.45;
 }
 
 .subtitle {
@@ -167,8 +187,8 @@ body {
 }
 
 .location-panel {
-  margin: 0 0 10px;
-  padding: 12px 16px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
   background: #f0f4ff;
   border-radius: 12px;
   border: 1px solid #d0d8f8;
@@ -184,11 +204,17 @@ body {
   color: #444;
   margin-bottom: 8px;
   font-size: 0.875em;
-  word-break: break-all;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .location-status--error {
   color: #c0392b;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px;
 }
 
 .location-accuracy {
@@ -415,6 +441,22 @@ p {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.welcome-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.welcome-actions .btn-primary,
+.welcome-actions .btn-secondary {
+  width: 100%;
+  margin: 0;
+}
+
+.welcome-resume-summary .subtitle {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
 }
 
 .planning-input-stage,
@@ -1280,6 +1322,10 @@ p {
 
   .welcome-card h1 {
     font-size: 2.5em;
+  }
+
+  .welcome-card {
+    padding: 24px 20px;
   }
 
   h2 {

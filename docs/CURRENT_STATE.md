@@ -27,6 +27,14 @@ organisational authority documents whose editable originals are not present in
 this repository. It changes no product, provider, credential, Netlify, GitHub,
 or production state.
 
+**Welcome-layout release candidate:** Packet 163 added
+[`docs/PACKET163_WELCOME_LAYOUT_RELEASE_CANDIDATE.md`](PACKET163_WELCOME_LAYOUT_RELEASE_CANDIDATE.md).
+Tracked candidate source improves the welcome hierarchy and action layout while
+preserving approved wording and behaviour, and replaces KI-003's forced
+character-level location-message wrapping with natural word wrapping. Local
+automated and build evidence has passed; fresh unpublished-preview evidence is
+recorded separately and must not be treated as production-live.
+
 **Repository implementation workflow:** Packet 135 added
 [`docs/DEVELOPMENT_WORKFLOW.md`](DEVELOPMENT_WORKFLOW.md) as the repository-level
 process for implementation authority, packet execution, verification,

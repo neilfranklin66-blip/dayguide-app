@@ -19,6 +19,20 @@ test('renders welcome copy and detected location', () => {
   expect(screen.getByText(/51\.50722, -0\.12750/)).toBeInTheDocument();
 });
 
+test('keeps a location error as naturally wrapping text', () => {
+  render(
+    <WelcomeStage
+      {...baseProps}
+      position={null}
+      locationError="location.unavailable"
+    />,
+  );
+
+  const alert = screen.getByRole('alert');
+  expect(alert).toHaveTextContent('location.unavailable');
+  expect(alert.querySelectorAll('span')).toHaveLength(2);
+});
+
 test('clicking start planning calls onStartPlanning', () => {
   const onStartPlanning = jest.fn();
   render(<WelcomeStage {...baseProps} onStartPlanning={onStartPlanning} />);
