@@ -21,6 +21,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "packet155:calibrate": "node scripts/run-packet155-calibration.cjs",
+    "packet166:calibrate": "node scripts/run-packet166-calibration.cjs",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

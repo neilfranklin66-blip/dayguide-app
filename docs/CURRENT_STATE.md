@@ -697,6 +697,17 @@ Routes Essentials 10,000-request monthly free cap and illustrative costs, but
 does not approve an external trial, price, entitlement, credential, quota,
 budget, provider request, or production change.
 
+**Packet 166 closed-evidence preparation (2026-07-31):** the Product Owner
+authorised a bounded external Google Routes evidence exercise under Packet
+165's limits. Tracked source records a new authenticated, no-retry runner for
+the fresh 24-event London calibration on 3 and 8 August 2026; it refuses the
+canonical Production origin and has no user-facing output. Execution still
+requires a fresh unpublished preview, a temporary separate Routes-only key,
+and a verified hard Google daily quota of 150 requests before any provider
+call. The previous Packet 155 walking and public-transport FAIL decisions,
+disabled Production state, locked production deployment, and no-premium-claim
+boundary remain in force.
+
 ## 8. Maintenance rule
 
 Update this document **only** when a completed packet materially changes a
