@@ -132,8 +132,7 @@ decision must be supported by the launch rules and evidence.
 - **ID:** KI-003
 - **Category:** Responsive presentation
 - **Severity:** Low
-- **Status:** Resolved in Packet 163 release-candidate source; preview
-  verification pending
+- **Status:** Closed in Packet 163 release candidate
 - **Launch blocking:** No
 - **Verification status:** Directly reproduced on the exact Packet 161 Deploy
   Preview at the observed desktop browser width and traced to tracked styling.
@@ -146,14 +145,14 @@ decision must be supported by the launch rules and evidence.
   usable, but the isolated final word makes the welcome card look unfinished.
 - **Likely dependency:** A small responsive-CSS adjustment and a representative
   narrow-width visual check.
-- **Recommended next action:** Replace the forced break-all behaviour with
-  natural responsive wrapping and verify the location status at desktop and
-  phone widths in a separately authorised UI-repair packet.
+- **Recommended next action:** None for KI-003. Retain the responsive regression
+  coverage through later integration and production-promotion validation.
 - **Verification date:** 31 July 2026
 - **Resolution:** Packet 163 replaces `word-break: break-all` with natural word
   wrapping, separates the warning icon from the message text, and adds focused
-  component coverage. Closure requires visual confirmation on the fresh
-  unpublished preview at representative desktop and phone widths.
+  component coverage. The Product Owner verified the exact PR 9 preview at
+  desktop and phone widths; the former isolated `again.` line was no longer
+  visible.
 
 No other active working defect was established from the permitted evidence.
 Entries elsewhere in this register are classified as debt, risk, uncertainty,

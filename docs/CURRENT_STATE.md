@@ -32,8 +32,11 @@ or production state.
 Tracked candidate source improves the welcome hierarchy and action layout while
 preserving approved wording and behaviour, and replaces KI-003's forced
 character-level location-message wrapping with natural word wrapping. Local
-automated and build evidence has passed; fresh unpublished-preview evidence is
-recorded separately and must not be treated as production-live.
+automated and build evidence passed. Exact commit `739c7c4` then passed the
+fresh PR 9 Netlify candidate gate at deploy `6a6cc92f8a05260008a6b48b`, and the
+Product Owner verified the denied-location state at desktop and phone widths
+without the former orphaned `again.` line. PR 9 remains open and unmerged; this
+evidence must not be treated as production-live.
 
 **Repository implementation workflow:** Packet 135 added
 [`docs/DEVELOPMENT_WORKFLOW.md`](DEVELOPMENT_WORKFLOW.md) as the repository-level

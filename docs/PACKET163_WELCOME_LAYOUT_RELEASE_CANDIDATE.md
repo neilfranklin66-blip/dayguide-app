@@ -2,8 +2,7 @@
 
 **Date:** 31 July 2026
 
-**Status:** Local candidate verified; fresh unpublished-preview verification
-pending
+**Status:** PASS — exact unpublished release candidate verified
 
 **Baseline:** Packet 162 commit
 `0c3f5b0844592fc50504e1239bb7856e11c41323`
@@ -80,8 +79,43 @@ Live Places-dependent acceptance is not required to close this UI packet. The
 Places key remains Production-only, and a newly built preview is expected to
 show the existing honest unavailable boundary. Google Routes remains off.
 
-## 6. Current boundary
+## 6. Fresh unpublished-preview evidence
 
-The local candidate has passed its automated gate. Preview evidence, exact
-candidate identity, KI-003 closure, and final Packet 163 decision will be added
-only after the fresh unpublished preview exists and is inspected.
+GitHub PR 9 was created from exact head commit
+`739c7c4e5805f63cc6567e923b1c42ddc66ede17`, targeting `master` at
+`f3de53628c20995d37ea87f9693565eefd93ed3d`. GitHub reported the PR open,
+unmerged, mergeable, and free of base conflicts. It was created as ready rather
+than draft; the available GitHub integration could not convert it to draft.
+This is a governance deviation to preserve, not merge authority.
+
+Netlify associated that exact head commit with Deploy Preview 9:
+
+- deploy: `6a6cc92f8a05260008a6b48b`;
+- URL:
+  `https://deploy-preview-9--ubiquitous-melomakarona-874d9c.netlify.app`;
+- preview HTTP result: **200 OK**;
+- Netlify check: **successful — Deploy Preview ready**; and
+- GitHub summary: **all checks passed** (one successful and three neutral).
+
+The Product Owner opened that exact preview and verified the denied-location
+welcome state at desktop and phone widths. The welcome screen looked correct,
+and the former isolated `again.` line was no longer visible. After continuing
+as guest, the second page appeared short; this is recorded as a non-blocking
+observation consistent with that stage's limited content, not as an established
+defect.
+
+No merge, `master` movement, Publish action, production promotion, credential
+change, secret expansion, provider activation, or Google Routes request was
+performed. Production retains the Packet 162 authority baseline of
+`master@5ef141b`, deploy `6a6602bd6c7609eabb08d744`; Packet 163 did not perform
+a fresh authenticated lock-settings audit.
+
+## 7. Decision and next boundary
+
+Packet 163 is **PASS**. The exact tracked candidate passed automated, build,
+Netlify, and representative responsive visual gates, and KI-003 is closed for
+this release candidate.
+
+PR 9 remains open, unmerged, and unpublished. Any conversion to draft, merge,
+integration, publication, production promotion, or post-promotion verification
+requires separate Product Owner authority.
