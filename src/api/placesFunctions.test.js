@@ -67,7 +67,7 @@ describe('places-nearby function', () => {
       json: async () => ({
         error: {
           status: 'INVALID_ARGUMENT',
-          message: 'provider detail that must not reach the browser',
+          message: 'API key is not valid. Provider detail must not reach the browser.',
         },
       }),
     });
@@ -78,6 +78,7 @@ describe('places-nearby function', () => {
       status: 'UNKNOWN_ERROR',
       error_message: 'UPSTREAM_HTTP_400',
       provider_status: 'INVALID_ARGUMENT',
+      provider_cause: 'INVALID_API_KEY',
     });
   });
 

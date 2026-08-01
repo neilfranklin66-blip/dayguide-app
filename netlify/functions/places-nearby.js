@@ -96,14 +96,21 @@ const providerFailure = (status, payload) => {
   // without returning Google's message or any credential material.
   const upstreamDiagnostic = `UPSTREAM_HTTP_${status}`;
   const providerStatus = payload?.error?.status;
+  const providerMessage = payload?.error?.message;
   const safeProviderStatus = SAFE_PROVIDER_ERROR_STATUSES.has(providerStatus)
     ? { provider_status: providerStatus }
+    : {};
+  const safeProviderCause = /api key (?:is )?not valid|provided api key is invalid/i.test(
+    providerMessage || '',
+  )
+    ? { provider_cause: 'INVALID_API_KEY' }
     : {};
   if (status === 429 || payload?.error?.status === 'RESOURCE_EXHAUSTED') {
     return {
       status: 'OVER_QUERY_LIMIT',
       error_message: upstreamDiagnostic,
       ...safeProviderStatus,
+      ...safeProviderCause,
     };
   }
   if (status === 401 || status === 403 || payload?.error?.status === 'PERMISSION_DENIED') {
@@ -111,12 +118,14 @@ const providerFailure = (status, payload) => {
       status: 'REQUEST_DENIED',
       error_message: upstreamDiagnostic,
       ...safeProviderStatus,
+      ...safeProviderCause,
     };
   }
   return {
     status: 'UNKNOWN_ERROR',
     error_message: upstreamDiagnostic,
     ...safeProviderStatus,
+    ...safeProviderCause,
   };
 };
 
