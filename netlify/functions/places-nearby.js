@@ -81,13 +81,17 @@ const toLegacyPlace = place => ({
 });
 
 const providerFailure = (status, payload) => {
+  // This diagnostic deliberately names only the HTTP family. It lets the
+  // preview prove whether a supplied credential reaches Places API (New),
+  // without returning Google's message or any credential material.
+  const upstreamDiagnostic = `UPSTREAM_HTTP_${status}`;
   if (status === 429 || payload?.error?.status === 'RESOURCE_EXHAUSTED') {
-    return { status: 'OVER_QUERY_LIMIT' };
+    return { status: 'OVER_QUERY_LIMIT', error_message: upstreamDiagnostic };
   }
   if (status === 401 || status === 403 || payload?.error?.status === 'PERMISSION_DENIED') {
-    return { status: 'REQUEST_DENIED' };
+    return { status: 'REQUEST_DENIED', error_message: upstreamDiagnostic };
   }
-  return { status: 'UNKNOWN_ERROR' };
+  return { status: 'UNKNOWN_ERROR', error_message: upstreamDiagnostic };
 };
 
 exports.handler = async event => {

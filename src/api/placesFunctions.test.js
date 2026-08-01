@@ -59,6 +59,24 @@ describe('places-nearby function', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
+  it('returns only a safe upstream HTTP diagnostic when Places API rejects a request', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: { message: 'provider detail that must not reach the browser' },
+      }),
+    });
+
+    const res = await nearby.handler(event);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'UNKNOWN_ERROR',
+      error_message: 'UPSTREAM_HTTP_400',
+    });
+  });
+
   it('attaches GOOGLE_PLACES_API_KEY to the Google request but never echoes it to the client', async () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockResolvedValue({
