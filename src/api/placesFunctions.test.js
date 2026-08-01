@@ -65,7 +65,10 @@ describe('places-nearby function', () => {
       ok: false,
       status: 400,
       json: async () => ({
-        error: { message: 'provider detail that must not reach the browser' },
+        error: {
+          status: 'INVALID_ARGUMENT',
+          message: 'provider detail that must not reach the browser',
+        },
       }),
     });
 
@@ -74,6 +77,7 @@ describe('places-nearby function', () => {
     expect(JSON.parse(res.body)).toEqual({
       status: 'UNKNOWN_ERROR',
       error_message: 'UPSTREAM_HTTP_400',
+      provider_status: 'INVALID_ARGUMENT',
     });
   });
 

@@ -35,6 +35,16 @@ const LEGACY_PRICE_LEVELS = {
   PRICE_LEVEL_VERY_EXPENSIVE: 4,
 };
 
+const SAFE_PROVIDER_ERROR_STATUSES = new Set([
+  'INVALID_ARGUMENT',
+  'FAILED_PRECONDITION',
+  'UNAUTHENTICATED',
+  'PERMISSION_DENIED',
+  'RESOURCE_EXHAUSTED',
+  'NOT_FOUND',
+  'UNAVAILABLE',
+]);
+
 const response = body => ({
   statusCode: 200,
   headers: { 'Content-Type': 'application/json' },
@@ -85,13 +95,29 @@ const providerFailure = (status, payload) => {
   // preview prove whether a supplied credential reaches Places API (New),
   // without returning Google's message or any credential material.
   const upstreamDiagnostic = `UPSTREAM_HTTP_${status}`;
+  const providerStatus = payload?.error?.status;
+  const safeProviderStatus = SAFE_PROVIDER_ERROR_STATUSES.has(providerStatus)
+    ? { provider_status: providerStatus }
+    : {};
   if (status === 429 || payload?.error?.status === 'RESOURCE_EXHAUSTED') {
-    return { status: 'OVER_QUERY_LIMIT', error_message: upstreamDiagnostic };
+    return {
+      status: 'OVER_QUERY_LIMIT',
+      error_message: upstreamDiagnostic,
+      ...safeProviderStatus,
+    };
   }
   if (status === 401 || status === 403 || payload?.error?.status === 'PERMISSION_DENIED') {
-    return { status: 'REQUEST_DENIED', error_message: upstreamDiagnostic };
+    return {
+      status: 'REQUEST_DENIED',
+      error_message: upstreamDiagnostic,
+      ...safeProviderStatus,
+    };
   }
-  return { status: 'UNKNOWN_ERROR', error_message: upstreamDiagnostic };
+  return {
+    status: 'UNKNOWN_ERROR',
+    error_message: upstreamDiagnostic,
+    ...safeProviderStatus,
+  };
 };
 
 exports.handler = async event => {
