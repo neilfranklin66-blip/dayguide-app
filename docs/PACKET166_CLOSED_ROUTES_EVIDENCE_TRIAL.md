@@ -78,6 +78,10 @@ requests a fresh unpublished Netlify Deploy Preview from the existing Packet
 call, credential expansion, or a safety decision. The exact preview identity
 and its source commit must be verified before the runner can be used.
 
+After the Product Owner explicitly unlocked Netlify on 1 August 2026, the
+follow-up documentation-only commit re-submits this branch event for PR 11.
+It retains the same no-Production, no-provider-call boundary.
+
 Any optimistic-understatement breach, anchor-critical breach, missing hard
 quota, privacy/entitlement failure, or user confusion stops the exercise. The
 Packet 155 FAIL outcome remains in force unless new independent evidence and a
