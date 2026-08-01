@@ -128,6 +128,27 @@ test('advances to interests when loading ends with a geolocation error', () => {
   expect(screen.getByText('interests.title')).toBeInTheDocument();
 });
 
+test('starts live restaurant discovery from the reset food flow only after the user asks to see options', async () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  searchRestaurants.mockResolvedValue([]);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('experienceReset.review'));
+  fireEvent.click(screen.getByText('experienceReset.nearbyNow'));
+  fireEvent.click(screen.getByText('experienceReset.moods.food'));
+
+  expect(searchRestaurants).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByText('experienceReset.showNearbyOptions'));
+
+  expect(searchRestaurants).toHaveBeenCalledWith(
+    resolvedGeo.position.lat,
+    resolvedGeo.position.lng,
+    [],
+    null,
+  );
+  expect(await screen.findByText('restaurants.noResultsTitle')).toBeInTheDocument();
+});
+
 test('skips the location stage when geolocation is already resolved', () => {
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);

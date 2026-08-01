@@ -385,7 +385,7 @@ describe('searchRestaurants existing behaviour', () => {
     expect(results.map(r => r.id)).toEqual(['good']);
   });
 
-  it('drops known non-matching cuisines but keeps undetected ones', async () => {
+  it('keeps provider-query matches even when venue-name heuristics disagree', async () => {
     mockFetchByKeyword({
       'Italian restaurant': () => Promise.resolve(okResponse([
         makePlace('match', 'Pizza Roma'),
@@ -396,7 +396,24 @@ describe('searchRestaurants existing behaviour', () => {
 
     const results = await searchRestaurants(LAT, LNG, ['italian']);
 
-    expect(results.map(r => r.id).sort()).toEqual(['match', 'unknown']);
+    // The provider returned all three for the Italian query. “Curry Palace”
+    // should not make the client claim that there were no Italian options just
+    // because the legacy response lacks a cuisine field and its name conflicts
+    // with our fallback classifier.
+    expect(results.map(r => r.id).sort()).toEqual(['match', 'mismatch', 'unknown']);
+    expect(results.find(r => r.id === 'mismatch').cuisine).toEqual(['indian']);
+    expect(results.find(r => r.id === 'mismatch').matchedCuisineQuery).toBe('italian');
+  });
+
+  it('uses a dedicated cafe query for coffee choices', async () => {
+    mockFetchByKeyword({
+      cafe: () => Promise.resolve(okResponse([makePlace('coffee', 'The Daily Grind')])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, ['cafe']);
+
+    expect(results.map(r => r.id)).toEqual(['coffee']);
+    expect(results[0].matchedCuisineQuery).toBe('cafe');
   });
 
   it('caps results at 12', async () => {

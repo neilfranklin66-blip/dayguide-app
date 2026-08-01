@@ -41,3 +41,49 @@ test('only leaves the prototype when the user chooses to return', () => {
 
   expect(onExit).toHaveBeenCalledTimes(1);
 });
+
+test('passes a food choice into the live-restaurant boundary only when requested', () => {
+  const onBrowseRestaurants = jest.fn();
+  render(
+    <ExperienceResetPrototype
+      t={t}
+      onExit={jest.fn()}
+      onBrowseRestaurants={onBrowseRestaurants}
+    />,
+  );
+
+  fireEvent.click(screen.getByText('experienceReset.nearbyNow'));
+  fireEvent.click(screen.getByText('experienceReset.moods.food'));
+  expect(onBrowseRestaurants).not.toHaveBeenCalled();
+
+  fireEvent.click(screen.getByText('experienceReset.showNearbyOptions'));
+
+  expect(onBrowseRestaurants).toHaveBeenCalledWith(
+    expect.objectContaining({ mood: 'food', mode: 'nearby' }),
+  );
+});
+
+test('only searches for a chosen start place after the user submits a query', async () => {
+  const searchPlaces = jest.fn().mockResolvedValue([]);
+  render(
+    <ExperienceResetPrototype
+      t={t}
+      onExit={jest.fn()}
+      searchPlaces={searchPlaces}
+    />,
+  );
+
+  fireEvent.click(screen.getByText('experienceReset.planAhead'));
+  fireEvent.click(screen.getByText('experienceReset.continue'));
+  fireEvent.click(screen.getByText('experienceReset.now'));
+  fireEvent.click(screen.getByText('experienceReset.placeToChoose'));
+  fireEvent.change(screen.getByLabelText('experienceReset.startSearchLabel'), {
+    target: { value: 'London Euston' },
+  });
+
+  expect(searchPlaces).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByText('experienceReset.search'));
+
+  expect(searchPlaces).toHaveBeenCalledWith('London Euston');
+  expect(await screen.findByText('experienceReset.startSearchEmpty')).toBeInTheDocument();
+});

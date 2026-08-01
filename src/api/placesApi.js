@@ -5,6 +5,7 @@ const NEARBY_URL = '/.netlify/functions/places-nearby';
 const PHOTO_URL = '/.netlify/functions/places-photo';
 
 const CUISINE_KEYWORDS = {
+  cafe: 'cafe',
   italian: 'Italian restaurant',
   indian: 'Indian restaurant',
   british: 'British restaurant',
@@ -94,7 +95,13 @@ function parsePlaces(results, lat, lng) {
         id: p.place_id,
         name,
         city: '',
+        // The name and generic legacy `types` are not a dependable cuisine
+        // classifier. Preserve the detected label for presentation, but retain
+        // the provider query that returned this record so later filtering does
+        // not silently discard a valid result simply because its name does not
+        // contain “pizza”, “pasta”, or another heuristic keyword.
         cuisine: detectCuisine(name, p.types),
+        matchedCuisineQuery: p.dayGuideMatchedCuisineQuery ?? null,
         priceRange: priceSymbol,
         rating: parseFloat((p.rating || 4.0).toFixed(1)),
         duration: PRICE_TO_DURATION[priceSymbol] ?? 1.5,
@@ -109,7 +116,7 @@ function parsePlaces(results, lat, lng) {
     });
 }
 
-async function nearbySearch(lat, lng, keyword, maxprice) {
+async function nearbySearch(lat, lng, keyword, maxprice, matchedCuisineQuery = null) {
   const params = new URLSearchParams({
     location: `${lat},${lng}`,
     radius: 5000,
@@ -140,7 +147,10 @@ async function nearbySearch(lat, lng, keyword, maxprice) {
   if (json.status === 'OVER_QUERY_LIMIT') throw new Error('QUOTA_EXCEEDED');
   if (json.status === 'ZERO_RESULTS') return [];
   if (json.status !== 'OK') throw new Error(`STATUS_${json.status}`);
-  return json.results || [];
+  return (json.results || []).map(result => ({
+    ...result,
+    dayGuideMatchedCuisineQuery: matchedCuisineQuery,
+  }));
 }
 
 // When every cuisine batch fails, surface the most actionable failure so the
@@ -177,10 +187,22 @@ export async function searchRestaurants(lat, lng, cuisineFilters = [], priceFilt
   if (cuisinesToQuery.length === 0) {
     raw = await nearbySearch(lat, lng, null, maxprice);
   } else if (cuisinesToQuery.length === 1) {
-    raw = await nearbySearch(lat, lng, CUISINE_KEYWORDS[cuisinesToQuery[0]], maxprice);
+    raw = await nearbySearch(
+      lat,
+      lng,
+      CUISINE_KEYWORDS[cuisinesToQuery[0]],
+      maxprice,
+      cuisinesToQuery[0],
+    );
   } else {
     const settled = await Promise.allSettled(
-      cuisinesToQuery.map(c => nearbySearch(lat, lng, CUISINE_KEYWORDS[c] ?? `${c} restaurant`, maxprice)),
+      cuisinesToQuery.map(c => nearbySearch(
+        lat,
+        lng,
+        CUISINE_KEYWORDS[c] ?? `${c} restaurant`,
+        maxprice,
+        c,
+      )),
     );
     const batches = settled.filter(s => s.status === 'fulfilled').map(s => s.value);
     if (batches.length === 0) {
@@ -200,11 +222,18 @@ export async function searchRestaurants(lat, lng, cuisineFilters = [], priceFilt
     .filter(r => r.rating >= 3.5 && r.distance <= 5)
     .sort((a, b) => b.rating - a.rating);
 
-  // Remove restaurants whose detected cuisine is known but doesn't match any selected filter.
-  // Restaurants with no detected cuisine (r.cuisine.length === 0) are always kept.
+  // Keep records returned by the provider's selected-cuisine query even when
+  // the legacy response has only a generic `restaurant` type and a venue name
+  // that defeats our heuristic. This directly avoids a false “no Italian
+  // restaurants” result caused by client-side name matching. Results from an
+  // unfiltered search retain the old cautious detected-cuisine behaviour.
   const cuisineFiltered = cuisineFilters.length === 0
     ? byRating
-    : byRating.filter(r => r.cuisine.length === 0 || r.cuisine.some(c => cuisineFilters.includes(c)));
+    : byRating.filter(r =>
+      r.matchedCuisineQuery != null ||
+      r.cuisine.length === 0 ||
+      r.cuisine.some(c => cuisineFilters.includes(c)),
+    );
 
   return cuisineFiltered.slice(0, 12);
 }

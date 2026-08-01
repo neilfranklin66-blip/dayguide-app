@@ -293,7 +293,8 @@ body {
 }
 
 .experience-date-choice,
-.experience-card input[type='text'] {
+.experience-card input[type='text'],
+.experience-card input[type='search'] {
   background: #f6f7ff;
   border: 2px solid #e0e4ff;
   border-radius: 16px;
@@ -302,7 +303,8 @@ body {
 }
 
 .experience-date-choice input,
-.experience-card input[type='text'] {
+.experience-card input[type='text'],
+.experience-card input[type='search'] {
   border: 1px solid #cfd5f7;
   border-radius: 10px;
   color: #28284a;
@@ -318,6 +320,28 @@ body {
 
 .experience-continue {
   margin: 22px 0 0;
+}
+
+.experience-place-search {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.experience-place-search .experience-continue {
+  margin-top: 0;
+}
+
+.experience-search-results {
+  display: grid;
+  gap: 10px;
+}
+
+.experience-search-attribution {
+  color: #5e5e5e;
+  font-family: Roboto, sans-serif;
+  font-size: 0.85rem;
+  margin-top: 4px;
 }
 
 .experience-day-preview {

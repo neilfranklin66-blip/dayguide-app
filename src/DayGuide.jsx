@@ -209,6 +209,52 @@ const DayGuide = () => {
     setStage('experience-reset');
   };
 
+  const handleBrowseExperienceRestaurants = ({
+    mood,
+    date,
+    duration,
+    startTime: experienceStartTime,
+    startPlaceDetails,
+  }) => {
+    const cuisine = mood === 'coffee' ? ['cafe'] : [];
+    const durationHours = {
+      coupleHours: 2,
+      halfDay: 4,
+      mostDay: 8,
+    }[duration] ?? 4;
+    const experienceHour = {
+      now: (() => {
+        const now = new Date();
+        return now.getHours() + now.getMinutes() / 60;
+      })(),
+      morning: 10,
+      afternoon: 14,
+      evening: 18,
+    }[experienceStartTime] ?? 10;
+
+    // Food and coffee are the reset categories with a live data boundary.
+    // Activities remain separately and honestly marked sample data until a
+    // live activity source is implemented and evidenced.
+    setSelectedCuisines(cuisine);
+    setSelectedPriceRange(null);
+    setSelectedRestaurants([]);
+    selectedRestaurantsRef.current = [];
+    setSelectedActivities([]);
+    setSelectedInterests([]);
+    setAvailableTime(durationHours);
+    setSelectedDate(date);
+    setStartTime(experienceHour);
+    setStartWith('activities');
+    setGeographicalPlanning(null);
+    setGeographicalAssessment(null);
+    setTimeline([]);
+
+    const searchedStart = startPlaceDetails
+      ? { start: { place: startPlaceDetails } }
+      : null;
+    goToRestaurants(cuisine, null, searchedStart);
+  };
+
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     localStorage.setItem('dayguide_language', lang);
@@ -543,7 +589,13 @@ const DayGuide = () => {
     }
 
     if (stage === 'experience-reset') {
-      return <ExperienceResetPrototype t={t} onExit={() => setStage('welcome')} />;
+      return (
+        <ExperienceResetPrototype
+          t={t}
+          onExit={() => setStage('welcome')}
+          onBrowseRestaurants={handleBrowseExperienceRestaurants}
+        />
+      );
     }
 
     if (stage === 'interests') {

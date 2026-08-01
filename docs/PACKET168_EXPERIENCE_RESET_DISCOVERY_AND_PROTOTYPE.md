@@ -20,7 +20,9 @@ The first useful option must hook the user. Later choices should extend an emerg
 
 ### Live-place distinction
 
-Restaurant discovery calls the protected server-side Places boundary only after a search is requested. It can truthfully show a live result, a zero-result state, or an unavailable state.
+Restaurant discovery calls the protected server-side Places boundary only after the user explicitly asks to show nearby options. It can truthfully show a live result, a zero-result state, or an unavailable state.
+
+The previous cuisine filter could discard valid provider results when a venue name and generic legacy place types did not match DayGuide's name-based cuisine heuristic. The restaurant client now preserves results returned by the selected provider cuisine query; it does not rewrite the detected cuisine displayed on a card. This removes a tracked source-level cause of a false no-result outcome, but it is not itself external evidence that a particular Italian search will succeed.
 
 Activity discovery does **not** yet have a live source: `DayGuide.jsx` deliberately derives activity cards from `mockActivityData.json` and marks every result as a London sample. It must not be represented as a real nearby recommendation.
 
@@ -42,7 +44,7 @@ The Welcome screen exposes **Try the new DayGuide** alongside the unchanged lega
 - **Plan a day:** day, start time, start area, optional later area, time available, then interest.
 - **Find something nearby:** interest immediately.
 
-It uses large, high-contrast controls (minimum 64px) with visible buttons rather than swipe-only controls. It reaches an acknowledgement and a small “day so far” view without a provider call.
+It uses large, high-contrast controls (minimum 64px) with visible buttons rather than swipe-only controls. Food and coffee choices now pass to the existing live restaurant boundary only after the user presses **Show nearby options**. A user may use their current location or explicitly search for a verified starting place; typing alone does not send a request.
 
 The prototype keeps its live-place and journey boundaries in this internal record rather than presenting a development disclaimer to the customer. It enables a visual and conversational review without falsely masking the live-discovery defect.
 
@@ -50,7 +52,7 @@ The prototype keeps its live-place and journey boundaries in this internal recor
 
 1. Whether the reset becomes the sole default entry route after Product Owner preview review.
 2. The exact data and ranking capability required for genuine nearby activities.
-3. The bounded live-restaurant evidence run and repair decision for Italian/no-result behaviour.
+3. A bounded live-restaurant evidence run for the repaired Italian/no-result behaviour.
 4. How a verified later destination should influence suggestions after live discovery is dependable.
 5. The simplified itinerary and amendable-detail design after the first place choice.
 

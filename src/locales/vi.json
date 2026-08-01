@@ -47,13 +47,13 @@
     "planAhead": "Lên kế hoạch cho một ngày", "nearbyNow": "Tìm điều gì đó gần đây", "progressLabel": "Các lựa chọn của bạn đến lúc này",
     "dateTitle": "Bạn định đi khi nào?", "today": "Hôm nay", "tomorrow": "Ngày mai", "chooseDate": "Chọn ngày",
     "timeTitle": "Bạn muốn bắt đầu khi nào?", "now": "Ngay bây giờ", "morning": "Buổi sáng", "afternoon": "Buổi chiều", "evening": "Buổi tối",
-    "startTitle": "Bạn sẽ bắt đầu ở đâu?", "startHelp": "Điều này giúp chúng tôi tìm lựa chọn trong đúng khu vực.", "currentLocation": "Dùng vị trí của tôi", "placeToChoose": "Chọn một địa điểm",
+    "startTitle": "Bạn sẽ bắt đầu ở đâu?", "startHelp": "Điều này giúp chúng tôi tìm lựa chọn trong đúng khu vực.", "currentLocation": "Dùng vị trí của tôi", "placeToChoose": "Chọn một địa điểm", "startSearchLabel": "Tên địa điểm, khách sạn hoặc ga", "search": "Tìm kiếm", "searching": "Đang tìm…", "startSearchEmpty": "Không tìm thấy địa điểm. Hãy thử tên hoặc địa chỉ đầy đủ hơn.", "startSearchError": "Tìm kiếm địa điểm hiện không khả dụng. Hãy thử dùng vị trí của bạn.", "chooseNamedPlace": "Chọn {{name}}",
     "laterTitle": "Bạn có cần đến đâu đó sau này không?", "laterHelp": "Nếu có, chúng tôi có thể lên kế hoạch các lựa chọn quanh khu vực đó.", "keepOpen": "Không, để mở", "addPlace": "Có, thêm một địa điểm", "laterPlaceLabel": "Bạn sẽ ở đâu sau đó?",
     "durationTitle": "Bạn có bao nhiêu thời gian?", "coupleHours": "Một vài giờ", "halfDay": "Nửa ngày", "mostDay": "Phần lớn cả ngày",
     "moodTitle": "Hôm nay bạn muốn gì?", "nearbyHelp": "Chọn một mối quan tâm và chúng tôi sẽ tìm gần đó.",
     "moods": { "food": "Ăn gì đó", "coffee": "Cà phê hoặc đồ uống", "thingsToDo": "Điều để làm", "explore": "Khám phá gần đây", "culture": "Văn hóa và điểm tham quan", "outdoors": "Ngoài trời", "shopping": "Mua sắm", "family": "Thời gian gia đình" },
     "readyTitle": "Ngày của bạn đang dần thành hình", "acknowledgement": "Vì điều đó quan trọng với bạn, chúng tôi sẽ tìm những lựa chọn tuyệt vời.", "daySoFar": "Ngày của bạn đến lúc này", "startLabel": "Bắt đầu", "laterLabel": "Sau đó", "nextLabel": "Ý tưởng đầu tiên",
-    "startAgain": "Bắt đầu lại", "backToCurrent": "Quay lại DayGuide hiện tại", "continue": "Tiếp tục"
+    "showNearbyOptions": "Hiển thị lựa chọn gần đây", "startAgain": "Bắt đầu lại", "backToCurrent": "Quay lại DayGuide hiện tại", "continue": "Tiếp tục"
   },
   "interests": {
     "title": "Bạn quan tâm đến điều gì?",
