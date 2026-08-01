@@ -40,6 +40,21 @@
     "findingLocation": "📍 Encontrando tu ubicación...",
     "gettingCoordinates": "Obteniendo tus coordenadas GPS..."
   },
+  "experienceReset": {
+    "review": "Probar el nuevo DayGuide",
+    "entryTitle": "¿Qué te gustaría hacer?",
+    "entryIntro": "Unas decisiones sencillas y después opciones que puedes hacer tuyas.",
+    "planAhead": "Planear un día", "nearbyNow": "Encontrar algo cerca", "progressLabel": "Tus elecciones hasta ahora",
+    "dateTitle": "¿Cuándo estás planeando?", "today": "Hoy", "tomorrow": "Mañana", "chooseDate": "Elegir un día",
+    "timeTitle": "¿Cuándo te gustaría empezar?", "now": "Ahora", "morning": "Por la mañana", "afternoon": "Por la tarde", "evening": "Por la noche",
+    "startTitle": "¿Dónde empezarás?", "startHelp": "Esto nos ayuda a encontrar opciones en la zona adecuada.", "currentLocation": "Usar mi ubicación", "placeToChoose": "Elegir un lugar",
+    "laterTitle": "¿Necesitas estar en algún sitio más tarde?", "laterHelp": "Si es así, podemos planear opciones cerca de allí.", "keepOpen": "No, dejarlo abierto", "addPlace": "Sí, añadir un lugar", "laterPlaceLabel": "¿Dónde estarás más tarde?",
+    "durationTitle": "¿Cuánto tiempo tienes?", "coupleHours": "Un par de horas", "halfDay": "Medio día", "mostDay": "La mayor parte del día",
+    "moodTitle": "¿Qué te apetece hoy?", "nearbyHelp": "Elige un interés y buscaremos cerca.",
+    "moods": { "food": "Algo para comer", "coffee": "Café o bebidas", "thingsToDo": "Cosas que hacer", "explore": "Explorar cerca", "culture": "Cultura y lugares de interés", "outdoors": "Al aire libre", "shopping": "Compras", "family": "Tiempo en familia" },
+    "readyTitle": "Tu día empieza a tomar forma", "acknowledgement": "Como eso es importante para ti, buscaremos opciones estupendas.", "daySoFar": "Tu día hasta ahora", "startLabel": "Inicio", "laterLabel": "Más tarde", "nextLabel": "Primeras ideas",
+    "prototypeNote": "Esta vista previa prueba la nueva conversación y los controles. Aún no afirma haber encontrado lugares en directo ni haber planificado un trayecto.", "startAgain": "Empezar de nuevo", "backToCurrent": "Volver al DayGuide actual", "continue": "Continuar"
+  },
   "interests": {
     "title": "¿Qué te interesa?",
     "subtitle": "Elige actividades y preferencias de comida",

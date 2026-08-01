@@ -31,6 +31,7 @@ import MealPromptStage from './components/MealPromptStage';
 import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
 import PlanningInputWithPlaceResolution from './components/PlanningInputWithPlaceResolution';
+import ExperienceResetPrototype from './components/ExperienceResetPrototype';
 import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
 import { getRestaurantSearchRequestOutcome } from './utils/restaurantSearchRequest';
 import {
@@ -202,6 +203,10 @@ const DayGuide = () => {
 
   const handleStartPlanning = () => {
     setStage(locationLoading ? 'location' : 'interests');
+  };
+
+  const handleExploreExperienceReset = () => {
+    setStage('experience-reset');
   };
 
   const changeLanguage = (lang) => {
@@ -526,6 +531,7 @@ const DayGuide = () => {
           position={position}
           refreshLocation={refreshLocation}
           onStartPlanning={handleStartPlanning}
+          onExploreExperienceReset={handleExploreExperienceReset}
           savedPlanSummary={savedPlanSummary}
           onResume={resumePlan}
         />
@@ -534,6 +540,10 @@ const DayGuide = () => {
 
     if (stage === 'location') {
       return <LocationStage t={t} />;
+    }
+
+    if (stage === 'experience-reset') {
+      return <ExperienceResetPrototype t={t} onExit={() => setStage('welcome')} />;
     }
 
     if (stage === 'interests') {

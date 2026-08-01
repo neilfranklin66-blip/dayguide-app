@@ -40,6 +40,21 @@
     "findingLocation": "📍 Localisation en cours...",
     "gettingCoordinates": "Récupération de vos coordonnées GPS..."
   },
+  "experienceReset": {
+    "review": "Essayer le nouveau DayGuide",
+    "entryTitle": "Que souhaitez-vous faire ?",
+    "entryIntro": "Quelques choix simples, puis des options à vous approprier.",
+    "planAhead": "Planifier une journée", "nearbyNow": "Trouver quelque chose à proximité", "progressLabel": "Vos choix jusqu’ici",
+    "dateTitle": "Quand prévoyez-vous cela ?", "today": "Aujourd’hui", "tomorrow": "Demain", "chooseDate": "Choisir un jour",
+    "timeTitle": "Quand souhaitez-vous commencer ?", "now": "Maintenant", "morning": "Le matin", "afternoon": "L’après-midi", "evening": "Le soir",
+    "startTitle": "D’où partirez-vous ?", "startHelp": "Cela nous aide à trouver des options dans le bon secteur.", "currentLocation": "Utiliser ma position", "placeToChoose": "Choisir un lieu",
+    "laterTitle": "Devez-vous être quelque part plus tard ?", "laterHelp": "Si oui, nous pouvons prévoir des options dans ce secteur.", "keepOpen": "Non, rester libre", "addPlace": "Oui, ajouter un lieu", "laterPlaceLabel": "Où serez-vous plus tard ?",
+    "durationTitle": "De combien de temps disposez-vous ?", "coupleHours": "Deux ou trois heures", "halfDay": "Une demi-journée", "mostDay": "La plus grande partie de la journée",
+    "moodTitle": "Qu’est-ce qui vous ferait plaisir aujourd’hui ?", "nearbyHelp": "Choisissez un centre d’intérêt et nous chercherons à proximité.",
+    "moods": { "food": "Manger quelque chose", "coffee": "Café ou boissons", "thingsToDo": "Des choses à faire", "explore": "Explorer les environs", "culture": "Culture et visites", "outdoors": "En plein air", "shopping": "Shopping", "family": "En famille" },
+    "readyTitle": "Votre journée commence à prendre forme", "acknowledgement": "Comme c’est important pour vous, nous allons chercher de belles options.", "daySoFar": "Votre journée jusqu’ici", "startLabel": "Départ", "laterLabel": "Plus tard", "nextLabel": "Premières idées",
+    "prototypeNote": "Cet aperçu teste la nouvelle conversation et les contrôles. Il ne prétend pas encore avoir trouvé des lieux en direct ni avoir planifié un trajet.", "startAgain": "Recommencer", "backToCurrent": "Revenir au DayGuide actuel", "continue": "Continuer"
+  },
   "interests": {
     "title": "Qu'est-ce qui vous intéresse ?",
     "subtitle": "Choisissez des activités et vos préférences culinaires",

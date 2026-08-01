@@ -42,6 +42,20 @@ test('clicking start planning calls onStartPlanning', () => {
   expect(onStartPlanning).toHaveBeenCalledTimes(1);
 });
 
+test('offers the contained experience-reset prototype when supplied', () => {
+  const onExploreExperienceReset = jest.fn();
+  render(
+    <WelcomeStage
+      {...baseProps}
+      onExploreExperienceReset={onExploreExperienceReset}
+    />,
+  );
+
+  fireEvent.click(screen.getByText('experienceReset.review'));
+
+  expect(onExploreExperienceReset).toHaveBeenCalledTimes(1);
+});
+
 test('resume button is hidden without a saved plan', () => {
   render(<WelcomeStage {...baseProps} savedPlanSummary={null} onResume={jest.fn()} />);
 

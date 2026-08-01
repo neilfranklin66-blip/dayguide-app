@@ -23,6 +23,10 @@ const TRAVEL_GUIDANCE_KEYS = collectStrings(
   en.timeline.travelGuidance,
   'timeline.travelGuidance',
 ).map(({ path }) => path);
+const EXPERIENCE_RESET_KEYS = collectStrings(
+  en.experienceReset,
+  'experienceReset',
+).map(({ path }) => path);
 
 // Derived, not hand-listed: adding a new restaurant-unavailable reason without
 // translating its message, hint and "What can I try?" guidance must fail this
@@ -57,6 +61,9 @@ const REQUIRED_KEYS = [
   // journey. Every supported locale must carry this whole subtree rather than
   // falling back to English for an arrival or accessibility limitation.
   ...TRAVEL_GUIDANCE_KEYS,
+  // The reset prototype is available in the same five languages as the app;
+  // an untranslated control would undermine its visual and language review.
+  ...EXPERIENCE_RESET_KEYS,
   'activities.continueLabel',
   // Honest sample-data copy shown on activity cards and timeline rows.
   'activities.sampleBadge',
