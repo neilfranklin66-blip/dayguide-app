@@ -267,7 +267,6 @@ export default function ExperienceResetPrototype({ t, onExit }) {
               )}
               <p><strong>{t('experienceReset.nextLabel')}:</strong> {titleForMood}</p>
             </section>
-            <p className="experience-prototype-note">{t('experienceReset.prototypeNote')}</p>
             <div className="experience-choice-stack">
               <ChoiceButton onClick={reset}>{t('experienceReset.startAgain')}</ChoiceButton>
               <ChoiceButton onClick={onExit}>{t('experienceReset.backToCurrent')}</ChoiceButton>

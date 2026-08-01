@@ -44,7 +44,7 @@ The Welcome screen exposes **Try the new DayGuide** alongside the unchanged lega
 
 It uses large, high-contrast controls (minimum 64px) with visible buttons rather than swipe-only controls. It reaches an acknowledgement and a small “day so far” view without a provider call.
 
-The prototype ends with an explicit statement that it has not found live places or planned a journey. This is intentional: it enables a visual and conversational review without falsely masking the live-discovery defect.
+The prototype keeps its live-place and journey boundaries in this internal record rather than presenting a development disclaimer to the customer. It enables a visual and conversational review without falsely masking the live-discovery defect.
 
 ## Deferred implementation decisions
 

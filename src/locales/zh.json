@@ -53,7 +53,7 @@
     "moodTitle": "今天想做什么？", "nearbyHelp": "选择一项兴趣，我们会在附近寻找。",
     "moods": { "food": "吃点东西", "coffee": "咖啡或饮品", "thingsToDo": "找点事做", "explore": "探索附近", "culture": "文化与景点", "outdoors": "户外", "shopping": "购物", "family": "家庭时光" },
     "readyTitle": "您的一天开始成形", "acknowledgement": "既然这对您很重要，我们会寻找一些很棒的选项。", "daySoFar": "您目前的一天", "startLabel": "开始", "laterLabel": "稍后", "nextLabel": "首先的想法",
-    "prototypeNote": "此预览测试新的对话和控件。它尚未声称已找到实时地点或规划了行程。", "startAgain": "重新开始", "backToCurrent": "返回当前 DayGuide", "continue": "继续"
+    "startAgain": "重新开始", "backToCurrent": "返回当前 DayGuide", "continue": "继续"
   },
   "interests": {
     "title": "您对什么感兴趣？",

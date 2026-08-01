@@ -53,7 +53,7 @@
     "moodTitle": "Hôm nay bạn muốn gì?", "nearbyHelp": "Chọn một mối quan tâm và chúng tôi sẽ tìm gần đó.",
     "moods": { "food": "Ăn gì đó", "coffee": "Cà phê hoặc đồ uống", "thingsToDo": "Điều để làm", "explore": "Khám phá gần đây", "culture": "Văn hóa và điểm tham quan", "outdoors": "Ngoài trời", "shopping": "Mua sắm", "family": "Thời gian gia đình" },
     "readyTitle": "Ngày của bạn đang dần thành hình", "acknowledgement": "Vì điều đó quan trọng với bạn, chúng tôi sẽ tìm những lựa chọn tuyệt vời.", "daySoFar": "Ngày của bạn đến lúc này", "startLabel": "Bắt đầu", "laterLabel": "Sau đó", "nextLabel": "Ý tưởng đầu tiên",
-    "prototypeNote": "Bản xem trước này kiểm tra cuộc trò chuyện và các nút điều khiển mới. Nó chưa khẳng định đã tìm được địa điểm trực tiếp hay lập hành trình.", "startAgain": "Bắt đầu lại", "backToCurrent": "Quay lại DayGuide hiện tại", "continue": "Tiếp tục"
+    "startAgain": "Bắt đầu lại", "backToCurrent": "Quay lại DayGuide hiện tại", "continue": "Tiếp tục"
   },
   "interests": {
     "title": "Bạn quan tâm đến điều gì?",

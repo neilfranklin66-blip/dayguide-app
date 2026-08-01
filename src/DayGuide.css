@@ -334,13 +334,6 @@ body {
   margin-top: 8px;
 }
 
-.experience-prototype-note {
-  color: #5b5b6d;
-  font-size: 0.88rem;
-  line-height: 1.45;
-  margin: 14px 0 20px;
-}
-
 .experience-progress {
   display: flex;
   gap: 7px;
