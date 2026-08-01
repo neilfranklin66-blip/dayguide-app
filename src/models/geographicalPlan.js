@@ -1,9 +1,9 @@
 /**
  * Provider-independent geographical planning models.
  *
- * Packet 148 deliberately keeps these models outside the current DayGuide
- * journey. They define the data contract needed by a future route-aware plan
- * without adding provider calls, UI controls, or persistence migration.
+ * Packet 148 established the provider-independent data contract. Later
+ * planning controls may record user choices alongside these points, but no
+ * model here performs a provider call or asserts route feasibility.
  */
 
 export const GEOGRAPHICAL_PLAN_SCHEMA_VERSION = 2;

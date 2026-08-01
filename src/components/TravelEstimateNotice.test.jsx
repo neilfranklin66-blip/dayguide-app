@@ -41,3 +41,31 @@ test('adds a stronger live-check warning when a hard anchor is present', () => {
     ),
   ).toBeInTheDocument();
 });
+
+test('time-sensitive guidance is advisory and never promises an arrival', () => {
+  render(
+    <TravelEstimateNotice
+      journeyIntent="time_sensitive"
+      t={t}
+    />,
+  );
+
+  expect(
+    screen.getByText(/cannot confirm an arrival time/i),
+  ).toBeInTheDocument();
+  expect(screen.queryByText(/you will make it/i)).not.toBeInTheDocument();
+});
+
+test('flexible walking guidance still acknowledges changing conditions', () => {
+  render(<TravelEstimateNotice journeyIntent="flexible" t={t} />);
+
+  expect(screen.getByText(/closures and accessibility can still change/i)).toBeInTheDocument();
+});
+
+test('extra-time guidance says that the user decides the amount to add', () => {
+  render(
+    <TravelEstimateNotice journeyIntent="comfortable_arrival" t={t} />,
+  );
+
+  expect(screen.getByText(/Decide how much to add/i)).toBeInTheDocument();
+});

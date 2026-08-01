@@ -23,6 +23,7 @@ const theatrePlace = createPlaceRef({
 });
 const planningInput = {
   schemaVersion: 2,
+  journeyIntent: 'time_sensitive',
   start: createStartPoint({
     place: startPlace,
     departureTimeMinutes: 10 * 60,
@@ -62,6 +63,9 @@ test('shows locked fixed details and an honest unverified-route warning', () => 
   expect(
     screen.getByText(/travel times are not route-verified/i),
   ).toBeInTheDocument();
+  expect(
+    screen.getByText(/cannot confirm that a target time can be met/i),
+  ).toBeInTheDocument();
 });
 
 test('offers a key-free Google Maps handoff without exposing coordinates', () => {
@@ -86,6 +90,24 @@ test('offers a key-free Google Maps handoff without exposing coordinates', () =>
   expect(url.searchParams.has('key')).toBe(false);
   expect(container).not.toHaveTextContent('51.5282');
   expect(container).not.toHaveTextContent('-0.1337');
+});
+
+test('comfortable-arrival context does not assert a buffer that was never set', () => {
+  render(
+    <GeographicalPlanSummary
+      planningInput={{
+        ...planningInput,
+        journeyIntent: 'comfortable_arrival',
+        anchors: [],
+      }}
+      planningAssessment={null}
+    />,
+  );
+
+  expect(
+    screen.getByText(/Review any deadline or buffer yourself/i),
+  ).toBeInTheDocument();
+  expect(screen.queryByText(/your chosen buffer/i)).not.toBeInTheDocument();
 });
 
 test('renders nothing when geographical planning was skipped', () => {

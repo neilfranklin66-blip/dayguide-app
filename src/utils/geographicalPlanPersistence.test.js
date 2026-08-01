@@ -8,6 +8,7 @@ import {
   restoreGeographicalPlanning,
   serializeGeographicalPlanning,
 } from './geographicalPlanPersistence';
+import { JOURNEY_INTENT } from './planningInputWorkflow';
 
 const place = (id, name, coordinates) =>
   createPlaceRef({
@@ -37,6 +38,7 @@ const hotel = place('hotel', 'Southwark Hotel', {
 
 const planningInput = {
   schemaVersion: 2,
+  journeyIntent: JOURNEY_INTENT.TIME_SENSITIVE,
   start: createStartPoint({
     place: euston,
     departureTimeMinutes: 9 * 60,
@@ -74,6 +76,7 @@ test('saved-plan v2 geographical data round-trips as valid planning input', () =
       coordinates: euston.coordinates,
     }),
   );
+  expect(restored.journeyIntent).toBe(JOURNEY_INTENT.TIME_SENSITIVE);
   expect(restored.anchors[0]).toEqual(
     expect.objectContaining({
       id: 'anchor-1',
@@ -114,6 +117,22 @@ test('malformed or unsupported geographical data is not restored', () => {
 
   const stored = serializeGeographicalPlanning(planningInput);
   stored.start.place.coordinates.lat = 999;
+  expect(restoreGeographicalPlanning(stored)).toBeNull();
+});
+
+test('a saved plan from before journey context is restored as flexible', () => {
+  const stored = serializeGeographicalPlanning(planningInput);
+  delete stored.journeyIntent;
+
+  expect(restoreGeographicalPlanning(stored).journeyIntent).toBe(
+    JOURNEY_INTENT.FLEXIBLE,
+  );
+});
+
+test('an unknown persisted journey context is rejected', () => {
+  const stored = serializeGeographicalPlanning(planningInput);
+  stored.journeyIntent = 'arrival_guaranteed';
+
   expect(restoreGeographicalPlanning(stored)).toBeNull();
 });
 

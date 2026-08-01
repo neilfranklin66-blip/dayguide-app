@@ -95,6 +95,16 @@
     "addNamedPlace": "Ajouter {{name}}",
     "startPlace": "Où commence votre journée ?",
     "startTime": "À quelle heure commence votre journée ?",
+    "journeyIntentTitle": "À quel point votre prochain engagement est-il fixe ?",
+    "journeyIntentHint": "Cela modifie uniquement les conseils de planification de DayGuide. Cela ne peut pas confirmer qu'un trajet est ouvert, accessible ou à l'heure.",
+    "journeyIntentFlexible": "Flexible — une étape peut changer ou être supprimée",
+    "journeyIntentFlexibleHint": "Prévoyez une pause, des achats ou un café si cela vous convient.",
+    "journeyIntentComfortableArrival": "Préférer prévoir plus de temps",
+    "journeyIntentComfortableArrivalHint": "Choisissez votre propre marge avant ce qui est important pour vous. Cela ne modifie ni les itinéraires, ni l'accès sans marche, ni les préférences de marche.",
+    "journeyIntentComfortableArrivalAction": "Ajoutez un repère fixe ou une heure limite d'arrivée si vous voulez enregistrer un objectif. Vérifiez vous-même toute marge ; DayGuide ne peut pas confirmer une arrivée.",
+    "journeyIntentTimeSensitive": "Sensible au temps — un retard compte",
+    "journeyIntentTimeSensitiveHint": "Ajoutez une heure limite ou un repère fixe, choisissez votre propre marge et vérifiez les itinéraires en direct avant de partir.",
+    "journeyIntentTimeSensitiveAction": "Ajoutez un repère fixe ou une heure limite d'arrivée si vous voulez enregistrer une heure cible. DayGuide ne calculera pas si elle peut être respectée.",
     "addDestination": "Ajouter une destination finale",
     "destinationPlace": "Où votre journée doit-elle se terminer ?",
     "destinationDeadline": "Heure limite d’arrivée facultative",
@@ -134,6 +144,9 @@
     "summaryDestinationWithoutDeadline": "Arrivée : {{name}}",
     "summaryDestinationWithDeadline": "Arrivée : {{name}} avant {{time}}",
     "routeNotVerified": "Ces créneaux fixes sont enregistrés, mais leurs temps de trajet ne sont pas vérifiés. Vérifiez chaque trajet et prévoyez une marge.",
+    "summaryJourneyFlexible": "Contexte du trajet : Flexible. Gardez les étapes ultérieures facultatives si vous voulez du temps pour une pause. DayGuide ne confirme ni l'état ni l'accessibilité d'un itinéraire.",
+    "summaryJourneyComfortableArrival": "Contexte du trajet : Préférer prévoir plus de temps. Vérifiez vous-même toute heure limite ou marge ; DayGuide ne peut pas confirmer une arrivée.",
+    "summaryJourneyTimeSensitive": "Contexte du trajet : Sensible au temps. Vérifiez chaque trajet en direct et décidez de votre propre marge ; DayGuide ne peut pas confirmer qu'une heure cible sera respectée.",
     "checkLegInMaps": "Vérifier {{from}} vers {{to}} dans Google Maps",
     "errors": {
       "startPlaceRequired": "Choisissez un lieu de départ vérifié.",
@@ -143,6 +156,7 @@
       "anchorInvalid": "Un ou plusieurs points fixes sont invalides.",
       "anchorIdReserved": "Un point fixe possède un identifiant invalide.",
       "anchorIdDuplicate": "Deux points fixes possèdent le même identifiant.",
+      "journeyIntentInvalid": "Choisissez à quel point votre prochain engagement est fixe.",
       "general": "Vérifiez les détails de planification géographique."
     }
   },
@@ -250,6 +264,16 @@
     "share": "📲 Partager",
     "shareTitle": "Partagez votre journée",
     "shareHint": "Scannez ce QR code pour ouvrir votre plan de journée sur un autre appareil",
+    "travelGuidance": {
+      "title": "Conseils sur le temps de trajet",
+      "general": "Les temps de trajet sont des estimations. Vérifiez les itinéraires, le trafic, les services et les conditions en direct avant de partir.",
+      "accountability": "DayGuide vous aide à organiser votre journée ; vous décidez quand partir et quelle marge prévoir.",
+      "walkingPreference": "Allure {{pace}} · normalement pas de marche de plus de {{count}} minutes",
+      "hardAnchor": "Une réservation à heure fixe est incluse. Vérifiez le trajet en direct et prévoyez une marge avant de partir.",
+      "flexibleJourney": "Ce trajet est flexible. Si la marche vous semble gérable, prévoyez une pause ; les conditions, fermetures et l'accessibilité peuvent changer.",
+      "comfortableArrival": "Vous préférez prévoir plus de temps. Décidez combien ajouter et vérifiez les itinéraires en direct avant de partir.",
+      "timeSensitiveJourney": "Ce trajet est sensible au temps. DayGuide ne peut pas confirmer une heure d'arrivée ; vérifiez les itinéraires, conditions et accès en direct avant de partir."
+    },
     "budget": {
       "planned": "🕒 Prévu : {{planned}} · Disponible : {{available}}",
       "over": "⚠️ Dépasse votre temps disponible de {{amount}}",

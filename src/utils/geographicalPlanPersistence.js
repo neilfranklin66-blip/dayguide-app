@@ -1,3 +1,5 @@
+import { isJourneyIntent, normalizeJourneyIntent } from './planningInputWorkflow';
+
 import {
   GEOGRAPHICAL_PLAN_SCHEMA_VERSION,
   createEndPoint,
@@ -34,6 +36,10 @@ const restorePlace = place =>
  */
 export function serializeGeographicalPlanning(planningInput) {
   if (!planningInput) return null;
+  const journeyIntent = normalizeJourneyIntent(planningInput.journeyIntent);
+  if (!isJourneyIntent(journeyIntent)) {
+    throw new TypeError('planningInput must contain a supported journey context');
+  }
 
   const start = createStartPoint({
     place: restorePlace(planningInput.start?.place),
@@ -60,6 +66,7 @@ export function serializeGeographicalPlanning(planningInput) {
   return {
     version: PERSISTED_GEOGRAPHICAL_PLAN_VERSION,
     schemaVersion: GEOGRAPHICAL_PLAN_SCHEMA_VERSION,
+    journeyIntent,
     start: {
       ...start,
       place: copyMinimumPlace(start.place),
@@ -92,6 +99,8 @@ export function restoreGeographicalPlanning(stored) {
   }
 
   try {
+    const journeyIntent = normalizeJourneyIntent(stored.journeyIntent);
+    if (!isJourneyIntent(journeyIntent)) return null;
     const start = createStartPoint({
       place: restorePlace(stored.start?.place),
       departureTimeMinutes: stored.start?.departureTimeMinutes,
@@ -120,6 +129,7 @@ export function restoreGeographicalPlanning(stored) {
 
     return {
       schemaVersion: GEOGRAPHICAL_PLAN_SCHEMA_VERSION,
+      journeyIntent,
       start,
       anchors,
       end,

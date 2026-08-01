@@ -1,5 +1,8 @@
 import React from 'react';
-import { minutesToTimeInput } from '../utils/planningInputWorkflow';
+import {
+  JOURNEY_INTENT,
+  minutesToTimeInput,
+} from '../utils/planningInputWorkflow';
 import { buildGoogleMapsPlanningRouteUrl } from '../utils/mapsDirections';
 
 const fallbackT = (_key, options) => options?.defaultValue ?? _key;
@@ -48,6 +51,31 @@ export default function GeographicalPlanSummary({
           )}`,
         })}
       </p>
+
+      {planningInput.journeyIntent === JOURNEY_INTENT.FLEXIBLE && (
+        <p>
+          {t('planning.summaryJourneyFlexible', {
+            defaultValue:
+              'Journey context: Flexible. Keep later stops optional if you want room for a pause. DayGuide does not confirm a route\'s condition or accessibility.',
+          })}
+        </p>
+      )}
+      {planningInput.journeyIntent === JOURNEY_INTENT.COMFORTABLE_ARRIVAL && (
+        <p>
+          {t('planning.summaryJourneyComfortableArrival', {
+            defaultValue:
+              'Journey context: Prefer to allow extra time. Review any deadline or buffer yourself; DayGuide cannot confirm an arrival.',
+          })}
+        </p>
+      )}
+      {planningInput.journeyIntent === JOURNEY_INTENT.TIME_SENSITIVE && (
+        <p className="hard-anchor-travel-warning">
+          {t('planning.summaryJourneyTimeSensitive', {
+            defaultValue:
+              'Journey context: Time-sensitive. Check every live journey and decide your own buffer; DayGuide cannot confirm that a target time can be met.',
+          })}
+        </p>
+      )}
 
       {(planningInput.anchors ?? []).map(anchor => (
         <article key={anchor.id} className="geographical-plan-point">

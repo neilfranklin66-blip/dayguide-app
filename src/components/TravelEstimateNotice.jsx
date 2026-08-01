@@ -1,8 +1,10 @@
 import React from 'react';
+import { JOURNEY_INTENT } from '../utils/planningInputWorkflow';
 
 export default function TravelEstimateNotice({
   hasHardAnchor = false,
   travelPreferences,
+  journeyIntent = null,
   t,
 }) {
   return (
@@ -39,6 +41,30 @@ export default function TravelEstimateNotice({
           {t(
             'timeline.travelGuidance.hardAnchor',
             'A fixed-time booking is included. Check the live journey and allow additional time before leaving.',
+          )}
+        </p>
+      )}
+      {journeyIntent === JOURNEY_INTENT.FLEXIBLE && (
+        <p>
+          {t(
+            'timeline.travelGuidance.flexibleJourney',
+            'This journey is flexible. If a walk feels manageable for you, leave room for a pause; conditions, closures and accessibility can still change.',
+          )}
+        </p>
+      )}
+      {journeyIntent === JOURNEY_INTENT.COMFORTABLE_ARRIVAL && (
+        <p>
+          {t(
+            'timeline.travelGuidance.comfortableArrival',
+            'You prefer to allow extra time. Decide how much to add and check live directions before leaving.',
+          )}
+        </p>
+      )}
+      {journeyIntent === JOURNEY_INTENT.TIME_SENSITIVE && (
+        <p className="hard-anchor-travel-warning">
+          {t(
+            'timeline.travelGuidance.timeSensitiveJourney',
+            'This journey is time-sensitive. DayGuide cannot confirm an arrival time; check live directions, conditions and access before setting off.',
           )}
         </p>
       )}
