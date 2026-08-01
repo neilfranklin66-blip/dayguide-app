@@ -70,6 +70,14 @@ This is configuration preflight evidence only. It is not evidence of a built
 preview, a provider call, a successful route response, a safety pass, or a
 Production capability. The temporary key's value is not recorded here.
 
+### Preview request record - 1 August 2026
+
+PR 11 was moved from draft to ready for review. This documentation-only commit
+requests a fresh unpublished Netlify Deploy Preview from the existing Packet
+166 branch. It does not authorise a Production deploy, publication, provider
+call, credential expansion, or a safety decision. The exact preview identity
+and its source commit must be verified before the runner can be used.
+
 Any optimistic-understatement breach, anchor-critical breach, missing hard
 quota, privacy/entitlement failure, or user confusion stops the exercise. The
 Packet 155 FAIL outcome remains in force unless new independent evidence and a
