@@ -99,8 +99,9 @@
     "journeyIntentHint": "Việc này chỉ thay đổi hướng dẫn lập kế hoạch của DayGuide. Nó không thể xác nhận bất kỳ hành trình nào đang mở, có thể tiếp cận hoặc đến đúng giờ.",
     "journeyIntentFlexible": "Linh hoạt — có thể thay đổi hoặc bỏ qua một điểm dừng",
     "journeyIntentFlexibleHint": "Hãy chừa chỗ cho nghỉ ngơi, mua sắm hoặc cà phê nếu phù hợp với ngày của bạn.",
-    "journeyIntentComfortableArrival": "Ưu tiên đến nơi thoải mái",
-    "journeyIntentComfortableArrivalHint": "Hãy tự chọn thời gian thêm trước điều quan trọng với bạn.",
+    "journeyIntentComfortableArrival": "Ưu tiên dành thêm thời gian",
+    "journeyIntentComfortableArrivalHint": "Hãy tự chọn thời gian thêm trước điều quan trọng với bạn. Việc này không thay đổi tuyến đường, lối đi không bậc thang hoặc tùy chọn đi bộ.",
+    "journeyIntentComfortableArrivalAction": "Thêm mốc cố định hoặc thời hạn đến nếu bạn muốn ghi lại mục tiêu. Hãy tự xem lại bất kỳ thời gian đệm nào; DayGuide không thể xác nhận việc đến nơi.",
     "journeyIntentTimeSensitive": "Nhạy cảm về thời gian — chậm trễ là quan trọng",
     "journeyIntentTimeSensitiveHint": "Thêm thời hạn hoặc mốc cố định, tự chọn thời gian đệm và kiểm tra chỉ đường trực tiếp trước khi đi.",
     "journeyIntentTimeSensitiveAction": "Thêm mốc cố định hoặc thời hạn đến nếu bạn muốn ghi lại thời điểm mục tiêu. DayGuide sẽ không tính xem có thể đạt được hay không.",
@@ -144,7 +145,7 @@
     "summaryDestinationWithDeadline": "Kết thúc: {{name}} trước {{time}}",
     "routeNotVerified": "Các khung kế hoạch cố định đã được ghi lại nhưng thời gian di chuyển chưa được xác minh. Hãy kiểm tra từng hành trình trực tiếp và dành thêm thời gian.",
     "summaryJourneyFlexible": "Bối cảnh hành trình: Linh hoạt. Giữ các điểm dừng sau là tùy chọn nếu bạn muốn có thời gian nghỉ. DayGuide không xác nhận tình trạng hay khả năng tiếp cận của tuyến đường.",
-    "summaryJourneyComfortableArrival": "Bối cảnh hành trình: Ưu tiên đến nơi thoải mái. Thời gian đệm bạn chọn là lựa chọn lập kế hoạch cá nhân, không phải xác nhận đến nơi.",
+    "summaryJourneyComfortableArrival": "Bối cảnh hành trình: Ưu tiên dành thêm thời gian. Hãy tự xem lại bất kỳ thời hạn hoặc thời gian đệm nào; DayGuide không thể xác nhận việc đến nơi.",
     "summaryJourneyTimeSensitive": "Bối cảnh hành trình: Nhạy cảm về thời gian. Kiểm tra từng hành trình trực tiếp và tự quyết định thời gian đệm; DayGuide không thể xác nhận có thể đạt thời điểm mục tiêu.",
     "checkLegInMaps": "Kiểm tra {{from}} đến {{to}} trong Google Maps",
     "errors": {
@@ -263,6 +264,16 @@
     "share": "📲 Chia sẻ",
     "shareTitle": "Chia sẻ ngày của bạn",
     "shareHint": "Quét mã QR này để mở kế hoạch trong ngày của bạn trên thiết bị khác",
+    "travelGuidance": {
+      "title": "Hướng dẫn về thời gian di chuyển",
+      "general": "Thời gian di chuyển là ước tính. Hãy kiểm tra tuyến đường, giao thông, dịch vụ và điều kiện trực tiếp trước khi đi.",
+      "accountability": "DayGuide giúp bạn sắp xếp ngày của mình; bạn quyết định khi nào đi và cần dành thêm bao nhiêu thời gian.",
+      "walkingPreference": "Nhịp {{pace}} · thông thường không đi bộ quá {{count}} phút",
+      "hardAnchor": "Có một đặt chỗ giờ cố định trong kế hoạch. Hãy kiểm tra hành trình trực tiếp và dành thêm thời gian trước khi đi.",
+      "flexibleJourney": "Hành trình này linh hoạt. Nếu việc đi bộ phù hợp với bạn, hãy chừa thời gian nghỉ; điều kiện, việc đóng cửa và khả năng tiếp cận vẫn có thể thay đổi.",
+      "comfortableArrival": "Bạn ưu tiên dành thêm thời gian. Hãy tự quyết định thêm bao nhiêu và kiểm tra chỉ đường trực tiếp trước khi đi.",
+      "timeSensitiveJourney": "Hành trình này nhạy cảm về thời gian. DayGuide không thể xác nhận giờ đến; hãy kiểm tra chỉ đường, điều kiện và khả năng tiếp cận trực tiếp trước khi đi."
+    },
     "budget": {
       "planned": "🕒 Dự kiến: {{planned}} · Thời gian có: {{available}}",
       "over": "⚠️ Vượt quá thời gian có sẵn {{amount}}",

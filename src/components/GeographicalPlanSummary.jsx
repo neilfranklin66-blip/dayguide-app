@@ -64,7 +64,7 @@ export default function GeographicalPlanSummary({
         <p>
           {t('planning.summaryJourneyComfortableArrival', {
             defaultValue:
-              'Journey context: Prefer a comfortable arrival. Your chosen buffer is a personal planning choice, not an arrival confirmation.',
+              'Journey context: Prefer to allow extra time. Review any deadline or buffer yourself; DayGuide cannot confirm an arrival.',
           })}
         </p>
       )}

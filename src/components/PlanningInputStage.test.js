@@ -173,6 +173,40 @@ test('planning input stage records a time-sensitive context without promising ar
   );
 });
 
+test('journey-context guidance is associated with each radio and announced when it changes', () => {
+  render(
+    <PlanningInputStage
+      currentPlace={currentPlace}
+      availablePlaces={availablePlaces}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  const comfortable = screen.getByRole('radio', {
+    name: 'Prefer to allow extra time',
+  });
+  expect(comfortable).toHaveAttribute(
+    'aria-describedby',
+    'journey-intent-guidance journey-intent-comfortable-arrival-hint',
+  );
+  expect(
+    screen.getByText(/does not change routes, step-free access, or walking preferences/i),
+  ).toBeInTheDocument();
+
+  fireEvent.click(comfortable);
+  expect(
+    screen.getByText(/DayGuide cannot confirm an arrival/i),
+  ).toBeInTheDocument();
+
+  fireEvent.click(
+    screen.getByRole('radio', { name: 'Time-sensitive — a delay matters' }),
+  );
+  expect(
+    screen.getByText(/will not calculate whether it can be met/i).parentElement,
+  ).toHaveAttribute('aria-live', 'polite');
+});
+
 test('planning input stage adds and completes with a planner-locked anchor', () => {
   const onComplete = jest.fn();
   render(

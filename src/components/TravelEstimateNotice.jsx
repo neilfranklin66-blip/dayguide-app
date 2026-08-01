@@ -56,7 +56,7 @@ export default function TravelEstimateNotice({
         <p>
           {t(
             'timeline.travelGuidance.comfortableArrival',
-            'You prefer a comfortable arrival. Choose your own extra time and check live directions before leaving.',
+            'You prefer to allow extra time. Decide how much to add and check live directions before leaving.',
           )}
         </p>
       )}

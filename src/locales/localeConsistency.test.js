@@ -19,6 +19,10 @@ const LOCALE_CODES = Object.keys(LOCALES);
 const PLANNING_KEYS = collectStrings(en.planning, 'planning').map(
   ({ path }) => path,
 );
+const TRAVEL_GUIDANCE_KEYS = collectStrings(
+  en.timeline.travelGuidance,
+  'timeline.travelGuidance',
+).map(({ path }) => path);
 
 // Derived, not hand-listed: adding a new restaurant-unavailable reason without
 // translating its message, hint and "What can I try?" guidance must fail this
@@ -49,6 +53,10 @@ const REQUIRED_KEYS = [
   // prevents a later control or warning from silently falling back in one of
   // the five supported locales.
   ...PLANNING_KEYS,
+  // Travel guidance contains the final safety caveat immediately before a
+  // journey. Every supported locale must carry this whole subtree rather than
+  // falling back to English for an arrival or accessibility limitation.
+  ...TRAVEL_GUIDANCE_KEYS,
   'activities.continueLabel',
   // Honest sample-data copy shown on activity cards and timeline rows.
   'activities.sampleBadge',
@@ -169,8 +177,8 @@ describe.each(LOCALE_CODES)('locale %s', code => {
     );
   });
 
-  test.each(PLANNING_KEYS)(
-    'planning placeholders in %s match English',
+  test.each([...PLANNING_KEYS, ...TRAVEL_GUIDANCE_KEYS])(
+    'planning and travel-guidance placeholders in %s match English',
     key => {
       expect(extractI18nextPlaceholders(getPath(locale, key))).toEqual(
         extractI18nextPlaceholders(getPath(en, key)),

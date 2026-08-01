@@ -92,6 +92,24 @@ test('offers a key-free Google Maps handoff without exposing coordinates', () =>
   expect(container).not.toHaveTextContent('-0.1337');
 });
 
+test('comfortable-arrival context does not assert a buffer that was never set', () => {
+  render(
+    <GeographicalPlanSummary
+      planningInput={{
+        ...planningInput,
+        journeyIntent: 'comfortable_arrival',
+        anchors: [],
+      }}
+      planningAssessment={null}
+    />,
+  );
+
+  expect(
+    screen.getByText(/Review any deadline or buffer yourself/i),
+  ).toBeInTheDocument();
+  expect(screen.queryByText(/your chosen buffer/i)).not.toBeInTheDocument();
+});
+
 test('renders nothing when geographical planning was skipped', () => {
   const { container } = render(
     <GeographicalPlanSummary planningInput={null} />,

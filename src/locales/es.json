@@ -99,8 +99,9 @@
     "journeyIntentHint": "Esto solo cambia la orientación de planificación de DayGuide. No puede confirmar que un trayecto esté abierto, sea accesible o llegue a tiempo.",
     "journeyIntentFlexible": "Flexible — una parada puede cambiar o omitirse",
     "journeyIntentFlexibleHint": "Deja margen para una pausa, compras o un café si te conviene.",
-    "journeyIntentComfortableArrival": "Prefiero llegar con comodidad",
-    "journeyIntentComfortableArrivalHint": "Elige tu propio tiempo extra antes de algo importante para ti.",
+    "journeyIntentComfortableArrival": "Prefiero dejar más tiempo",
+    "journeyIntentComfortableArrivalHint": "Elige tu propio tiempo extra antes de algo importante para ti. Esto no cambia las rutas, el acceso sin escalones ni las preferencias para caminar.",
+    "journeyIntentComfortableArrivalAction": "Añade un ancla fija o una hora límite de llegada si quieres registrar un objetivo. Revisa tú mismo cualquier margen; DayGuide no puede confirmar una llegada.",
     "journeyIntentTimeSensitive": "Sensible al tiempo — un retraso importa",
     "journeyIntentTimeSensitiveHint": "Añade una hora límite o un ancla fija, elige tu propio margen y consulta indicaciones en tiempo real antes de salir.",
     "journeyIntentTimeSensitiveAction": "Añade un ancla fija o una hora límite de llegada si quieres registrar una hora objetivo. DayGuide no calculará si se puede cumplir.",
@@ -144,7 +145,7 @@
     "summaryDestinationWithDeadline": "Final: {{name}} antes de las {{time}}",
     "routeNotVerified": "Estas ventanas fijas están registradas, pero sus tiempos de viaje no están verificados. Comprueba cada trayecto y deja tiempo adicional.",
     "summaryJourneyFlexible": "Contexto del trayecto: Flexible. Mantén opcionales las paradas posteriores si quieres margen para una pausa. DayGuide no confirma el estado ni la accesibilidad de una ruta.",
-    "summaryJourneyComfortableArrival": "Contexto del trayecto: Prefiero llegar con comodidad. El margen que elegiste es una decisión personal de planificación, no una confirmación de llegada.",
+    "summaryJourneyComfortableArrival": "Contexto del trayecto: Prefiero dejar más tiempo. Revisa tú mismo cualquier hora límite o margen; DayGuide no puede confirmar una llegada.",
     "summaryJourneyTimeSensitive": "Contexto del trayecto: Sensible al tiempo. Comprueba cada trayecto en tiempo real y decide tu propio margen; DayGuide no puede confirmar que se cumpla una hora objetivo.",
     "checkLegInMaps": "Comprobar {{from}} a {{to}} en Google Maps",
     "errors": {
@@ -263,6 +264,16 @@
     "share": "📲 Compartir",
     "shareTitle": "Comparte tu día",
     "shareHint": "Escanea este código QR para abrir tu plan del día en otro dispositivo",
+    "travelGuidance": {
+      "title": "Orientación sobre el tiempo de viaje",
+      "general": "Los tiempos de viaje son estimaciones. Consulta rutas, tráfico, servicios y condiciones en tiempo real antes de salir.",
+      "accountability": "DayGuide te ayuda a organizar el día; tú decides cuándo salir y cuánto tiempo adicional dejar.",
+      "walkingPreference": "Ritmo {{pace}} · normalmente ningún paseo de más de {{count}} minutos",
+      "hardAnchor": "Hay una reserva con hora fija incluida. Comprueba el trayecto en tiempo real y deja tiempo adicional antes de salir.",
+      "flexibleJourney": "Este trayecto es flexible. Si caminar te resulta manejable, deja tiempo para una pausa; las condiciones, los cierres y la accesibilidad pueden cambiar.",
+      "comfortableArrival": "Prefieres dejar más tiempo. Decide cuánto añadir y consulta indicaciones en tiempo real antes de salir.",
+      "timeSensitiveJourney": "Este trayecto es sensible al tiempo. DayGuide no puede confirmar una hora de llegada; consulta indicaciones, condiciones y accesibilidad en tiempo real antes de salir."
+    },
     "budget": {
       "planned": "🕒 Planificado: {{planned}} · Disponible: {{available}}",
       "over": "⚠️ Supera tu tiempo disponible en {{amount}}",

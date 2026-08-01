@@ -173,13 +173,16 @@ export default function PlanningInputStage({
           />
         </div>
 
-        <fieldset className="journey-intent-selector">
+        <fieldset
+          className="journey-intent-selector"
+          aria-describedby="journey-intent-guidance"
+        >
           <legend>
             {t('planning.journeyIntentTitle', {
               defaultValue: 'How fixed is your next commitment?',
             })}
           </legend>
-          <p className="start-order-hint">
+          <p id="journey-intent-guidance" className="start-order-hint">
             {t('planning.journeyIntentHint', {
               defaultValue:
                 'This changes DayGuide\'s planning guidance only. It cannot confirm that any journey is open, accessible or on time.',
@@ -190,6 +193,7 @@ export default function PlanningInputStage({
               type="radio"
               name="journey-intent"
               value={JOURNEY_INTENT.FLEXIBLE}
+              aria-describedby="journey-intent-guidance journey-intent-flexible-hint"
               checked={draft.journeyIntent === JOURNEY_INTENT.FLEXIBLE}
               onChange={event =>
                 setDraft(current => setJourneyIntent(current, event.target.value))
@@ -199,7 +203,7 @@ export default function PlanningInputStage({
               defaultValue: 'Flexible — a stop may move or be skipped',
             })}
           </label>
-          <p className="start-order-hint">
+          <p id="journey-intent-flexible-hint" className="start-order-hint">
             {t('planning.journeyIntentFlexibleHint', {
               defaultValue:
                 'Leave room for a pause, shopping or coffee if that suits your day.',
@@ -210,6 +214,7 @@ export default function PlanningInputStage({
               type="radio"
               name="journey-intent"
               value={JOURNEY_INTENT.COMFORTABLE_ARRIVAL}
+              aria-describedby="journey-intent-guidance journey-intent-comfortable-arrival-hint"
               checked={
                 draft.journeyIntent === JOURNEY_INTENT.COMFORTABLE_ARRIVAL
               }
@@ -218,13 +223,16 @@ export default function PlanningInputStage({
               }
             />
             {t('planning.journeyIntentComfortableArrival', {
-              defaultValue: 'Prefer a comfortable arrival',
+              defaultValue: 'Prefer to allow extra time',
             })}
           </label>
-          <p className="start-order-hint">
+          <p
+            id="journey-intent-comfortable-arrival-hint"
+            className="start-order-hint"
+          >
             {t('planning.journeyIntentComfortableArrivalHint', {
               defaultValue:
-                'Choose your own extra time before anything important to you.',
+                'Choose your own extra time before anything important to you. This does not change routes, step-free access, or walking preferences.',
             })}
           </p>
           <label>
@@ -232,6 +240,7 @@ export default function PlanningInputStage({
               type="radio"
               name="journey-intent"
               value={JOURNEY_INTENT.TIME_SENSITIVE}
+              aria-describedby="journey-intent-guidance journey-intent-time-sensitive-hint"
               checked={draft.journeyIntent === JOURNEY_INTENT.TIME_SENSITIVE}
               onChange={event =>
                 setDraft(current => setJourneyIntent(current, event.target.value))
@@ -241,22 +250,40 @@ export default function PlanningInputStage({
               defaultValue: 'Time-sensitive — a delay matters',
             })}
           </label>
-          <p className="start-order-hint">
+          <p
+            id="journey-intent-time-sensitive-hint"
+            className="start-order-hint"
+          >
             {t('planning.journeyIntentTimeSensitiveHint', {
               defaultValue:
                 'Add a deadline or fixed anchor, choose your own buffer, and check live directions before setting off.',
             })}
           </p>
-          {draft.journeyIntent === JOURNEY_INTENT.TIME_SENSITIVE &&
-            draft.anchors.length === 0 &&
-            draft.destination.arrivalDeadlineMinutes == null && (
-              <p className="hard-anchor-travel-warning">
-                {t('planning.journeyIntentTimeSensitiveAction', {
-                  defaultValue:
-                    'Add a fixed anchor or arrival deadline if you want to record a target time. DayGuide will not calculate whether it can be met.',
-                })}
-              </p>
-            )}
+          <div
+            id="journey-intent-time-sensitive-action-region"
+            aria-live="polite"
+          >
+            {draft.journeyIntent === JOURNEY_INTENT.COMFORTABLE_ARRIVAL &&
+              draft.anchors.length === 0 &&
+              draft.destination.arrivalDeadlineMinutes == null && (
+                <p className="hard-anchor-travel-warning">
+                  {t('planning.journeyIntentComfortableArrivalAction', {
+                    defaultValue:
+                      'Add a fixed anchor or arrival deadline if you want to record a target. Review any buffer yourself; DayGuide cannot confirm an arrival.',
+                  })}
+                </p>
+              )}
+            {draft.journeyIntent === JOURNEY_INTENT.TIME_SENSITIVE &&
+              draft.anchors.length === 0 &&
+              draft.destination.arrivalDeadlineMinutes == null && (
+                <p className="hard-anchor-travel-warning">
+                  {t('planning.journeyIntentTimeSensitiveAction', {
+                    defaultValue:
+                      'Add a fixed anchor or arrival deadline if you want to record a target time. DayGuide will not calculate whether it can be met.',
+                  })}
+                </p>
+              )}
+          </div>
         </fieldset>
 
         <div className="time-selector">

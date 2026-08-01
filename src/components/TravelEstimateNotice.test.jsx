@@ -61,3 +61,11 @@ test('flexible walking guidance still acknowledges changing conditions', () => {
 
   expect(screen.getByText(/closures and accessibility can still change/i)).toBeInTheDocument();
 });
+
+test('extra-time guidance says that the user decides the amount to add', () => {
+  render(
+    <TravelEstimateNotice journeyIntent="comfortable_arrival" t={t} />,
+  );
+
+  expect(screen.getByText(/Decide how much to add/i)).toBeInTheDocument();
+});
