@@ -1,6 +1,7 @@
 import {
   PLACE_SELECTION_MODE,
   PLANNING_INPUT_ERROR,
+  JOURNEY_INTENT,
   createCurrentLocationSelection,
   createPlaceSelection,
   createPlanningInputDraft,
@@ -13,6 +14,7 @@ import {
   setDestinationEnabled,
   setDestinationSelection,
   setDestinationTiming,
+  setJourneyIntent,
   setStartSelection,
   timeInputToMinutes,
   upsertHardAnchor,
@@ -122,6 +124,22 @@ test('draft updates are immutable and preserve location provenance', () => {
   expect(withStart.startSelection).not.toBe(currentSelection);
   expect(withTime.departureTimeMinutes).toBe(630);
   expect(withStart.departureTimeMinutes).toBe(600);
+  expect(draft.journeyIntent).toBe(JOURNEY_INTENT.FLEXIBLE);
+});
+
+test('journey context is explicit, validated and does not alter timing fields', () => {
+  const draft = createPlanningInputDraft();
+  const timeSensitive = setJourneyIntent(
+    draft,
+    JOURNEY_INTENT.TIME_SENSITIVE,
+  );
+
+  expect(draft.journeyIntent).toBe(JOURNEY_INTENT.FLEXIBLE);
+  expect(timeSensitive.journeyIntent).toBe(JOURNEY_INTENT.TIME_SENSITIVE);
+  expect(timeSensitive.destination).toEqual(draft.destination);
+  expect(() => setJourneyIntent(draft, 'arrival_guaranteed')).toThrow(
+    'supported journey context',
+  );
 });
 
 test('disabling destination clears place, deadline, and buffer', () => {
@@ -210,6 +228,7 @@ test('finalizePlanningInput requires a resolved start place', () => {
 test('finalizePlanningInput builds validated start, anchor, and destination models', () => {
   let draft = createPlanningInputDraft({ departureTimeMinutes: 9 * 60 });
   draft = setStartSelection(draft, currentSelection);
+  draft = setJourneyIntent(draft, JOURNEY_INTENT.TIME_SENSITIVE);
   draft = upsertHardAnchor(draft, theatre);
   draft = setDestinationEnabled(draft, true);
   draft = setDestinationSelection(draft, resolvedSelection(hotel));
@@ -223,6 +242,7 @@ test('finalizePlanningInput builds validated start, anchor, and destination mode
   expect(result.ok).toBe(true);
   expect(result.value).toMatchObject({
     schemaVersion: 2,
+    journeyIntent: JOURNEY_INTENT.TIME_SENSITIVE,
     start: {
       id: 'start',
       departureTimeMinutes: 540,
@@ -251,6 +271,7 @@ test('finalizePlanningInput builds validated start, anchor, and destination mode
 test('a finalized input can be reopened as an editable draft with its places', () => {
   let draft = createPlanningInputDraft({ departureTimeMinutes: 9 * 60 });
   draft = setStartSelection(draft, currentSelection);
+  draft = setJourneyIntent(draft, JOURNEY_INTENT.COMFORTABLE_ARRIVAL);
   draft = upsertHardAnchor(draft, theatre);
   draft = setDestinationEnabled(draft, true);
   draft = setDestinationSelection(draft, resolvedSelection(hotel));
@@ -259,6 +280,7 @@ test('a finalized input can be reopened as an editable draft with its places', (
   const reopened = createPlanningInputDraftFromValue(finalized);
 
   expect(reopened.startSelection).toEqual(currentSelection);
+  expect(reopened.journeyIntent).toBe(JOURNEY_INTENT.COMFORTABLE_ARRIVAL);
   expect(reopened.anchors).toEqual([theatre]);
   expect(reopened.destination.enabled).toBe(true);
   expect(reopened.destination.selection.place).toEqual(hotel);
@@ -309,6 +331,18 @@ test('finalizePlanningInput rejects duplicate anchor ids from an imported draft'
   expect(result.errors).toContain(
     PLANNING_INPUT_ERROR.ANCHOR_ID_DUPLICATE,
   );
+});
+
+test('finalizePlanningInput rejects an unsupported journey context', () => {
+  const draft = {
+    ...setStartSelection(createPlanningInputDraft(), currentSelection),
+    journeyIntent: 'arrival_guaranteed',
+  };
+
+  const result = finalizePlanningInput(draft);
+
+  expect(result.ok).toBe(false);
+  expect(result.errors).toContain(PLANNING_INPUT_ERROR.JOURNEY_INTENT_INVALID);
 });
 
 test('time input helpers round-trip valid local minutes and reject invalid text', () => {

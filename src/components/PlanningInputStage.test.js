@@ -142,6 +142,37 @@ test('planning input stage collects a destination and optional deadline', () => 
   );
 });
 
+test('planning input stage records a time-sensitive context without promising arrival', () => {
+  const onComplete = jest.fn();
+  render(
+    <PlanningInputStage
+      currentPlace={currentPlace}
+      availablePlaces={availablePlaces}
+      onComplete={onComplete}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  fireEvent.change(screen.getByLabelText('Where does your day start?'), {
+    target: { value: 'resolved:euston' },
+  });
+  fireEvent.click(screen.getByLabelText('Time-sensitive — a delay matters'));
+
+  expect(
+    screen.getByText(/will not calculate whether it can be met/i),
+  ).toBeInTheDocument();
+
+  fireEvent.click(
+    screen.getByRole('button', {
+      name: 'Continue with these fixed details',
+    }),
+  );
+
+  expect(onComplete).toHaveBeenCalledWith(
+    expect.objectContaining({ journeyIntent: 'time_sensitive' }),
+  );
+});
+
 test('planning input stage adds and completes with a planner-locked anchor', () => {
   const onComplete = jest.fn();
   render(

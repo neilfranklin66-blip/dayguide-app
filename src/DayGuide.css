@@ -490,6 +490,40 @@ p {
   font-size: 0.9em;
 }
 
+.journey-intent-selector {
+  margin: 0 0 30px;
+  padding: 16px;
+  border: 1px solid #d0d8f8;
+  border-radius: 12px;
+  background: #fafaff;
+}
+
+.journey-intent-selector legend {
+  padding: 0 6px;
+  color: #303655;
+  font-weight: 700;
+}
+
+.journey-intent-selector label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.journey-intent-selector input {
+  margin-top: 3px;
+}
+
+.journey-intent-selector .start-order-hint {
+  margin: 5px 0 15px 25px;
+}
+
+.journey-intent-selector .hard-anchor-travel-warning {
+  margin: 10px 0 0;
+}
+
 .hard-anchor-editor {
   margin: 20px 0;
   padding: 20px;

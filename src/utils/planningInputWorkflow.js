@@ -13,6 +13,14 @@ export const PLACE_SELECTION_MODE = {
   RESOLVED_PLACE: 'resolved_place',
 };
 
+export const JOURNEY_INTENT = {
+  FLEXIBLE: 'flexible',
+  COMFORTABLE_ARRIVAL: 'comfortable_arrival',
+  TIME_SENSITIVE: 'time_sensitive',
+};
+
+export const DEFAULT_JOURNEY_INTENT = JOURNEY_INTENT.FLEXIBLE;
+
 export const PLANNING_INPUT_ERROR = {
   START_PLACE_REQUIRED: 'start_place_required',
   START_TIME_INVALID: 'start_time_invalid',
@@ -21,12 +29,19 @@ export const PLANNING_INPUT_ERROR = {
   ANCHOR_INVALID: 'anchor_invalid',
   ANCHOR_ID_RESERVED: 'anchor_id_reserved',
   ANCHOR_ID_DUPLICATE: 'anchor_id_duplicate',
+  JOURNEY_INTENT_INVALID: 'journey_intent_invalid',
 };
 
 const RESERVED_POINT_IDS = new Set(['start', 'end']);
 
 const isMinuteOfDay = value =>
   Number.isInteger(value) && value >= 0 && value < 24 * 60;
+
+export const isJourneyIntent = value =>
+  Object.values(JOURNEY_INTENT).includes(value);
+
+export const normalizeJourneyIntent = value =>
+  value == null ? DEFAULT_JOURNEY_INTENT : value;
 
 const copyPlace = place => ({
   ...place,
@@ -99,11 +114,17 @@ export function createCurrentLocationSelection({
 
 export function createPlanningInputDraft({
   departureTimeMinutes = 9 * 60,
+  journeyIntent = DEFAULT_JOURNEY_INTENT,
 } = {}) {
+  if (!isJourneyIntent(journeyIntent)) {
+    throw new TypeError('journeyIntent must identify a supported journey context');
+  }
+
   return {
     schemaVersion: GEOGRAPHICAL_PLAN_SCHEMA_VERSION,
     startSelection: null,
     departureTimeMinutes,
+    journeyIntent,
     destination: {
       enabled: false,
       selection: null,
@@ -135,6 +156,7 @@ export function createPlanningInputDraftFromValue(planningInput) {
       place: planningInput.start.place,
     }),
     departureTimeMinutes: planningInput.start.departureTimeMinutes,
+    journeyIntent: normalizeJourneyIntent(planningInput.journeyIntent),
     destination: {
       enabled: planningInput.end != null,
       selection:
@@ -187,6 +209,17 @@ export function setDepartureTime(draft, departureTimeMinutes) {
   return {
     ...draft,
     departureTimeMinutes,
+  };
+}
+
+export function setJourneyIntent(draft, journeyIntent) {
+  if (!isJourneyIntent(journeyIntent)) {
+    throw new TypeError('journeyIntent must identify a supported journey context');
+  }
+
+  return {
+    ...draft,
+    journeyIntent,
   };
 }
 
@@ -339,6 +372,9 @@ export function finalizePlanningInput(draft) {
   if (!isMinuteOfDay(draft?.departureTimeMinutes)) {
     errors.push(PLANNING_INPUT_ERROR.START_TIME_INVALID);
   }
+  if (!isJourneyIntent(draft?.journeyIntent)) {
+    errors.push(PLANNING_INPUT_ERROR.JOURNEY_INTENT_INVALID);
+  }
 
   if (destination.enabled) {
     if (!isResolvedPlaceSelection(destination.selection)) {
@@ -403,6 +439,7 @@ export function finalizePlanningInput(draft) {
       value: {
         schemaVersion: GEOGRAPHICAL_PLAN_SCHEMA_VERSION,
         start,
+        journeyIntent: draft.journeyIntent,
         anchors: normalizedAnchors.map(copyAnchor),
         end,
         locationProvenance: {
@@ -430,12 +467,14 @@ const planningInputWorkflow = {
   collectPlanningPlaces,
   finalizePlanningInput,
   isResolvedPlaceSelection,
+  isJourneyIntent,
   minutesToTimeInput,
   removeHardAnchor,
   setDepartureTime,
   setDestinationEnabled,
   setDestinationSelection,
   setDestinationTiming,
+  setJourneyIntent,
   setStartSelection,
   timeInputToMinutes,
   upsertHardAnchor,

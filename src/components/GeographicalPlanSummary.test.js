@@ -23,6 +23,7 @@ const theatrePlace = createPlaceRef({
 });
 const planningInput = {
   schemaVersion: 2,
+  journeyIntent: 'time_sensitive',
   start: createStartPoint({
     place: startPlace,
     departureTimeMinutes: 10 * 60,
@@ -61,6 +62,9 @@ test('shows locked fixed details and an honest unverified-route warning', () => 
   expect(screen.getByText('Locked anchor')).toBeInTheDocument();
   expect(
     screen.getByText(/travel times are not route-verified/i),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText(/cannot confirm that a target time can be met/i),
   ).toBeInTheDocument();
 });
 

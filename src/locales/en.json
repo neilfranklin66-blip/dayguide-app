@@ -105,6 +105,15 @@
     "addNamedPlace": "Add {{name}}",
     "startPlace": "Where does your day start?",
     "startTime": "What time does your day start?",
+    "journeyIntentTitle": "How fixed is your next commitment?",
+    "journeyIntentHint": "This changes DayGuide's planning guidance only. It cannot confirm that any journey is open, accessible or on time.",
+    "journeyIntentFlexible": "Flexible — a stop may move or be skipped",
+    "journeyIntentFlexibleHint": "Leave room for a pause, shopping or coffee if that suits your day.",
+    "journeyIntentComfortableArrival": "Prefer a comfortable arrival",
+    "journeyIntentComfortableArrivalHint": "Choose your own extra time before anything important to you.",
+    "journeyIntentTimeSensitive": "Time-sensitive — a delay matters",
+    "journeyIntentTimeSensitiveHint": "Add a deadline or fixed anchor, choose your own buffer, and check live directions before setting off.",
+    "journeyIntentTimeSensitiveAction": "Add a fixed anchor or arrival deadline if you want to record a target time. DayGuide will not calculate whether it can be met.",
     "addDestination": "Add an end destination",
     "destinationPlace": "Where should your day finish?",
     "destinationDeadline": "Optional arrival deadline",
@@ -144,6 +153,9 @@
     "summaryDestinationWithoutDeadline": "Finish: {{name}}",
     "summaryDestinationWithDeadline": "Finish: {{name}} by {{time}}",
     "routeNotVerified": "These fixed planning windows are recorded, but their travel times are not route-verified. Check each live journey and allow additional time.",
+    "summaryJourneyFlexible": "Journey context: Flexible. Keep later stops optional if you want room for a pause. DayGuide does not confirm a route's condition or accessibility.",
+    "summaryJourneyComfortableArrival": "Journey context: Prefer a comfortable arrival. Your chosen buffer is a personal planning choice, not an arrival confirmation.",
+    "summaryJourneyTimeSensitive": "Journey context: Time-sensitive. Check every live journey and decide your own buffer; DayGuide cannot confirm that a target time can be met.",
     "checkLegInMaps": "Check {{from}} to {{to}} in Google Maps",
     "errors": {
       "startPlaceRequired": "Choose a verified starting place.",
@@ -153,6 +165,7 @@
       "anchorInvalid": "One or more fixed anchors is invalid.",
       "anchorIdReserved": "A fixed anchor has an invalid identifier.",
       "anchorIdDuplicate": "Two fixed anchors have the same identifier.",
+      "journeyIntentInvalid": "Choose how fixed your next commitment is.",
       "general": "Check the geographical planning details."
     }
   },
@@ -269,7 +282,10 @@
       "general": "Travel times are estimates. Check live routes, traffic, services and conditions before setting off.",
       "accountability": "DayGuide helps organise your day; you decide when to leave and how much additional time to allow.",
       "walkingPreference": "{{pace}} pace · normally no walks over {{count}} minutes",
-      "hardAnchor": "A fixed-time booking is included. Check the live journey and allow additional time before leaving."
+      "hardAnchor": "A fixed-time booking is included. Check the live journey and allow additional time before leaving.",
+      "flexibleJourney": "This journey is flexible. If a walk feels manageable for you, leave room for a pause; conditions, closures and accessibility can still change.",
+      "comfortableArrival": "You prefer a comfortable arrival. Choose your own extra time and check live directions before leaving.",
+      "timeSensitiveJourney": "This journey is time-sensitive. DayGuide cannot confirm an arrival time; check live directions, conditions and access before setting off."
     },
     "budget": {
       "planned": "🕒 Planned: {{planned}} · Available: {{available}}",

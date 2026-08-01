@@ -34,6 +34,7 @@ export default function TimelineCard({
           <TravelEstimateNotice
             hasHardAnchor={hasHardAnchor}
             travelPreferences={travelPreferences}
+            journeyIntent={geographicalPlanning?.journeyIntent ?? null}
             t={t}
           />
         )}

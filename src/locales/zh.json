@@ -95,6 +95,15 @@
     "addNamedPlace": "添加 {{name}}",
     "startPlace": "您的一天从哪里开始？",
     "startTime": "您的一天几点开始？",
+    "journeyIntentTitle": "您的下一项安排有多固定？",
+    "journeyIntentHint": "这只会改变 DayGuide 的规划提示，不能确认任何行程是否开放、无障碍或能准时到达。",
+    "journeyIntentFlexible": "灵活 — 可以调整或跳过一站",
+    "journeyIntentFlexibleHint": "如果适合您的安排，请为休息、购物或喝咖啡留出余地。",
+    "journeyIntentComfortableArrival": "希望从容到达",
+    "journeyIntentComfortableArrivalHint": "在对您重要的事项之前，自己选择额外时间。",
+    "journeyIntentTimeSensitive": "时间敏感 — 延误会造成影响",
+    "journeyIntentTimeSensitiveHint": "添加截止时间或固定锚点，自己选择缓冲时间，并在出发前查看实时路线。",
+    "journeyIntentTimeSensitiveAction": "如果您想记录目标时间，请添加固定锚点或到达截止时间。DayGuide 不会计算是否能达到该时间。",
     "addDestination": "添加最终目的地",
     "destinationPlace": "您的一天应在哪里结束？",
     "destinationDeadline": "可选抵达截止时间",
@@ -134,6 +143,9 @@
     "summaryDestinationWithoutDeadline": "结束：{{name}}",
     "summaryDestinationWithDeadline": "结束：{{name}}，{{time}} 前抵达",
     "routeNotVerified": "这些固定规划时间窗已记录，但行程时间尚未经过路线验证。请检查每段实时行程并预留额外时间。",
+    "summaryJourneyFlexible": "行程背景：灵活。若您希望有休息时间，请将后续站点保留为可选。DayGuide 不确认路线状况或无障碍条件。",
+    "summaryJourneyComfortableArrival": "行程背景：希望从容到达。您选择的缓冲时间是个人规划选择，并非到达确认。",
+    "summaryJourneyTimeSensitive": "行程背景：时间敏感。请查看每段实时行程并自行决定缓冲时间；DayGuide 无法确认能达到目标时间。",
     "checkLegInMaps": "在 Google Maps 中查看从 {{from}} 到 {{to}}",
     "errors": {
       "startPlaceRequired": "请选择已验证的起点。",
@@ -143,6 +155,7 @@
       "anchorInvalid": "一个或多个固定锚点无效。",
       "anchorIdReserved": "固定锚点的标识符无效。",
       "anchorIdDuplicate": "两个固定锚点使用了相同标识符。",
+      "journeyIntentInvalid": "请选择您的下一项安排有多固定。",
       "general": "请检查地理规划信息。"
     }
   },
