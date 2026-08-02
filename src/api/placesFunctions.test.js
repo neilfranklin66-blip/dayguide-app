@@ -126,6 +126,30 @@ describe('places-nearby function', () => {
     });
     expect(res.body).not.toContain(TEST_KEY);
   });
+
+  it('never sends PRICE_LEVEL_FREE in a Text Search price filter', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ places: [] }),
+    });
+
+    await nearby.handler({
+      queryStringParameters: {
+        location: '52.24034407147008,-0.8772621865413744',
+        keyword: 'Italian restaurant',
+        maxprice: '2',
+      },
+    });
+
+    const requestBody = JSON.parse(global.fetch.mock.calls[0][1].body);
+    expect(requestBody.priceLevels).toEqual([
+      'PRICE_LEVEL_INEXPENSIVE',
+      'PRICE_LEVEL_MODERATE',
+    ]);
+    expect(requestBody.priceLevels).not.toContain('PRICE_LEVEL_FREE');
+  });
 });
 
 describe('places-photo function', () => {

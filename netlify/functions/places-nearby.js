@@ -16,10 +16,11 @@ const PLACE_FIELD_MASK = [
 ].join(',');
 
 const PRICE_LEVELS_BY_MAX_PRICE = {
-  1: ['PRICE_LEVEL_FREE', 'PRICE_LEVEL_INEXPENSIVE'],
-  2: ['PRICE_LEVEL_FREE', 'PRICE_LEVEL_INEXPENSIVE', 'PRICE_LEVEL_MODERATE'],
+  // `PRICE_LEVEL_FREE` may be returned by Places API (New), but Google does
+  // not permit it in a Text Search request's priceLevels filter.
+  1: ['PRICE_LEVEL_INEXPENSIVE'],
+  2: ['PRICE_LEVEL_INEXPENSIVE', 'PRICE_LEVEL_MODERATE'],
   4: [
-    'PRICE_LEVEL_FREE',
     'PRICE_LEVEL_INEXPENSIVE',
     'PRICE_LEVEL_MODERATE',
     'PRICE_LEVEL_EXPENSIVE',
