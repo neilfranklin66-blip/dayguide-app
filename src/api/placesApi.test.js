@@ -16,10 +16,11 @@ const ORIGINAL_KEY = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
 const ORIGINAL_FETCH = global.fetch;
 
 let searchRestaurants;
+let searchRestaurantPage;
 
 const loadModule = () => {
   jest.resetModules();
-  ({ searchRestaurants } = require('./placesApi'));
+  ({ searchRestaurants, searchRestaurantPage } = require('./placesApi'));
 };
 
 const okResponse = (results) => ({
@@ -125,6 +126,40 @@ describe('searchRestaurants multi-cuisine resilience', () => {
 
     expect(results.filter(r => r.id === 'dup')).toHaveLength(1);
     expect(results.map(r => r.id).sort()).toEqual(['dup', 'p2', 'p3']);
+  });
+});
+
+describe('searchRestaurantPage', () => {
+  it('keeps Google\'s next-page token separate from the live cards', async () => {
+    global.fetch.mockResolvedValue(okResponse([
+      makePlace('cafe-1', 'Neighbourhood Cafe', {
+        primary_type: 'cafe',
+        primary_type_display_name: 'Cafe',
+        types: ['cafe', 'food'],
+      }),
+    ]));
+    // The proxy is responsible for returning this opaque value; the browser
+    // only sends it back on an explicit user request for more places.
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: 'OK',
+        results: [makePlace('cafe-1', 'Neighbourhood Cafe', {
+          primary_type: 'cafe',
+          primary_type_display_name: 'Cafe',
+          types: ['cafe', 'food'],
+        })],
+        next_page_token: 'provider-page-2',
+      }),
+    });
+
+    const page = await searchRestaurantPage(LAT, LNG, []);
+
+    expect(page.results).toHaveLength(1);
+    expect(page.results[0].venueType).toBe('Cafe');
+    expect(page.nextPageToken).toBe('provider-page-2');
+    expect(global.fetch.mock.calls[0][0]).toContain('keyword=food+and+drink');
+    expect(global.fetch.mock.calls[0][0]).toContain('unfiltered=1');
   });
 });
 
@@ -406,6 +441,7 @@ describe('searchRestaurants existing behaviour', () => {
         makePlace('restaurant', 'The Corner Spot'),
         makePlace('home-bargains', 'Home Bargains', {
           types: ['discount_store', 'store', 'point_of_interest'],
+          primary_type: 'discount_store',
         }),
       ])),
     });
@@ -414,6 +450,35 @@ describe('searchRestaurants existing behaviour', () => {
 
     expect(results.map(r => r.id)).toEqual(['restaurant']);
     expect(results.map(r => r.name)).not.toContain('Home Bargains');
+  });
+
+  it('uses the provider primary type over broad secondary restaurant types', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('shop-with-food', 'Home Bargains', {
+          primary_type: 'discount_store',
+          types: ['discount_store', 'restaurant', 'food'],
+        }),
+      ])),
+    });
+
+    await expect(searchRestaurants(LAT, LNG, [])).resolves.toEqual([]);
+  });
+
+  it('keeps the provider display label for an accurately described food venue', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('italian', 'Trattoria Uno', {
+          primary_type: 'italian_restaurant',
+          primary_type_display_name: 'Italian restaurant',
+          types: ['italian_restaurant', 'restaurant', 'food'],
+        }),
+      ])),
+    });
+
+    const [restaurant] = await searchRestaurants(LAT, LNG, []);
+
+    expect(restaurant.venueType).toBe('Italian restaurant');
   });
 
   it('excludes a record with no food venue type rather than guessing from its name', async () => {
@@ -426,13 +491,13 @@ describe('searchRestaurants existing behaviour', () => {
     await expect(searchRestaurants(LAT, LNG, [])).resolves.toEqual([]);
   });
 
-  it('caps results at 12', async () => {
+  it('keeps up to the provider page size for the user to continue browsing', async () => {
     const many = Array.from({ length: 15 }, (_, i) => makePlace(`p${i}`, `Venue ${i}`));
     mockFetchByKeyword({ '': () => Promise.resolve(okResponse(many)) });
 
     const results = await searchRestaurants(LAT, LNG, []);
 
-    expect(results).toHaveLength(12);
+    expect(results).toHaveLength(15);
   });
 });
 

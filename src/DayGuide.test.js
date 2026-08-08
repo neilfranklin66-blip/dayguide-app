@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import DayGuide from './DayGuide';
 import useGeolocation from './useGeolocation';
-import { searchRestaurants } from './api/placesApi';
+import { searchRestaurants, searchRestaurantPage } from './api/placesApi';
 import {
   LEGACY_SAVED_PLAN_STORAGE_KEY,
   SAVED_PLAN_STORAGE_KEY,
@@ -140,7 +140,7 @@ test('skips the location stage when geolocation is already resolved', () => {
 
 test('find nearby opens a live restaurant card without the preference questionnaire', async () => {
   useGeolocation.mockReturnValue(resolvedGeo);
-  searchRestaurants.mockResolvedValue([
+  searchRestaurantPage.mockResolvedValue({ results: [
     {
       id: 'live-restaurant-1',
       name: 'Live Restaurant',
@@ -152,15 +152,17 @@ test('find nearby opens a live restaurant card without the preference questionna
       address: '1 Real Street',
       coordinates: { lat: 51.5075, lng: -0.1272 },
     },
-  ]);
+  ], nextPageToken: null });
   render(<DayGuide />);
 
   fireEvent.click(screen.getByText('welcome.findNearby'));
+  fireEvent.click(screen.getByText('discovery.food'));
+  fireEvent.click(screen.getByText('discovery.allFood'));
 
   expect(await screen.findByText('Live Restaurant')).toBeInTheDocument();
   expect(screen.getByText('restaurants.liveResults')).toBeInTheDocument();
   expect(screen.queryByText('interests.title')).not.toBeInTheDocument();
-  expect(searchRestaurants).toHaveBeenCalledWith(
+  expect(searchRestaurantPage).toHaveBeenCalledWith(
     resolvedGeo.position.lat,
     resolvedGeo.position.lng,
     [],

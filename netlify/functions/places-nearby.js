@@ -9,10 +9,13 @@ const PLACE_FIELD_MASK = [
   'places.formattedAddress',
   'places.location',
   'places.types',
+  'places.primaryType',
+  'places.primaryTypeDisplayName',
   'places.businessStatus',
   'places.rating',
   'places.priceLevel',
   'places.photos',
+  'nextPageToken',
 ].join(',');
 
 const PRICE_LEVELS_BY_MAX_PRICE = {
@@ -71,6 +74,8 @@ const toLegacyPlace = place => ({
     },
   },
   types: Array.isArray(place.types) ? place.types : [],
+  primary_type: place.primaryType || null,
+  primary_type_display_name: place.primaryTypeDisplayName?.text || null,
   business_status: place.businessStatus,
   rating: place.rating,
   price_level: LEGACY_PRICE_LEVELS[place.priceLevel],
@@ -136,7 +141,7 @@ exports.handler = async event => {
     return response({ status: 'REQUEST_DENIED', error_message: 'NO_API_KEY' });
   }
 
-  const { location, radius, type, keyword, maxprice } =
+  const { location, radius, type, types, keyword, maxprice, pageToken, unfiltered } =
     event.queryStringParameters || {};
   const [latString, lngString] = typeof location === 'string' ? location.split(',') : [];
   const lat = number(latString);
@@ -161,16 +166,23 @@ exports.handler = async event => {
   };
   const priceLevels = PRICE_LEVELS_BY_MAX_PRICE[Number(maxprice)];
   const hasKeyword = typeof keyword === 'string' && keyword.trim().length > 0;
-  const requestBody = hasKeyword
+  const includedTypes = typeof types === 'string' && types.length > 0
+    ? types.split(',').filter(Boolean)
+    : [type || 'restaurant'];
+  const hasPageToken = typeof pageToken === 'string' && pageToken.length > 0;
+  const includedType = unfiltered === '1' ? null : (type || 'restaurant');
+  const requestBody = hasPageToken
+    ? { pageToken, pageSize: 20 }
+    : hasKeyword
     ? {
         textQuery: keyword.trim(),
-        includedType: type || 'restaurant',
+        ...(includedType ? { includedType, strictTypeFiltering: true } : {}),
         locationBias: { circle },
-        maxResultCount: 20,
+        pageSize: 20,
         ...(priceLevels ? { priceLevels } : {}),
       }
     : {
-        includedTypes: [type || 'restaurant'],
+        includedTypes,
         locationRestriction: { circle },
         rankPreference: 'POPULARITY',
         maxResultCount: 20,
@@ -187,6 +199,9 @@ exports.handler = async event => {
     return response({
       status: 'OK',
       results: (Array.isArray(payload?.places) ? payload.places : []).map(toLegacyPlace),
+      ...(typeof payload?.nextPageToken === 'string' && payload.nextPageToken.length > 0
+        ? { next_page_token: payload.nextPageToken }
+        : {}),
     });
   } catch (_) {
     return {

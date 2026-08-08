@@ -42,6 +42,22 @@
     "findingLocation": "📍 Finding your location...",
     "gettingCoordinates": "Getting your GPS coordinates..."
   },
+  "discovery": {
+    "title": "What would you like to find?",
+    "subtitle": "Pick one and we will show real nearby places.",
+    "food": "Food & drink",
+    "activities": "Things to do",
+    "foodTitle": "What sounds good?",
+    "foodHint": "Choose a food type, or see all nearby food and drink.",
+    "allFood": "All food & drink",
+    "showFood": "Show food places",
+    "activitiesTitle": "What would you enjoy?",
+    "activitiesHint": "Choose an activity type, or see all nearby places to go.",
+    "allActivities": "All things to do",
+    "showActivities": "Show things to do",
+    "searchingActivities": "Finding things to do nearby...",
+    "buildPicks": "Build my day ({{count}} picks)"
+  },
   "interests": {
     "title": "What interests you?",
     "subtitle": "Pick activities and food preferences",
@@ -182,6 +198,7 @@
   "restaurants": {
     "title": "Restaurants & Food",
     "noMore": "No more restaurants",
+    "showMore": "Show more matching places",
     "buildItinerary": "Build my itinerary",
     "continueToActivities": "Continue to activities",
     "skipAndContinue": "Skip restaurant and continue",
@@ -254,6 +271,7 @@
   "timeline": {
     "title": "Your Perfect Day",
     "empty": "Your itinerary is empty. Start over or change your selections to build your day.",
+    "remove": "Remove",
     "slideToAdjust": "Slide to adjust duration",
     "sampleActivity": "💡 Sample idea — example location, not a live nearby result",
     "howToGetThere": "↓ Travel choices for the next stop",

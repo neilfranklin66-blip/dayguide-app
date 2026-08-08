@@ -42,6 +42,12 @@
     "findingLocation": "📍 Đang tìm vị trí của bạn...",
     "gettingCoordinates": "Đang lấy tọa độ GPS của bạn..."
   },
+  "discovery": {
+    "title": "Bạn muốn tìm gì?", "subtitle": "Chọn một mục để xem các địa điểm thật ở gần bạn.",
+    "food": "Đồ ăn và thức uống", "activities": "Việc để làm", "foodTitle": "Bạn muốn gì?", "foodHint": "Chọn loại đồ ăn hoặc xem tất cả địa điểm gần đây.",
+    "allFood": "Tất cả đồ ăn và thức uống", "showFood": "Hiển thị địa điểm ăn uống", "activitiesTitle": "Bạn muốn làm gì?", "activitiesHint": "Chọn hoạt động hoặc xem các địa điểm gần đây.",
+    "allActivities": "Tất cả hoạt động", "showActivities": "Hiển thị việc để làm", "searchingActivities": "Đang tìm hoạt động gần đây...", "buildPicks": "Lập ngày của tôi ({{count}} lựa chọn)"
+  },
   "interests": {
     "title": "Bạn quan tâm đến điều gì?",
     "subtitle": "Chọn hoạt động và sở thích ẩm thực",
@@ -244,6 +250,7 @@
   "timeline": {
     "title": "Ngày hoàn hảo của bạn",
     "empty": "Lịch trình của bạn đang trống. Hãy bắt đầu lại hoặc thay đổi lựa chọn để xây dựng ngày của bạn.",
+    "remove": "Xóa",
     "slideToAdjust": "Trượt để điều chỉnh thời gian",
     "sampleActivity": "💡 Gợi ý mẫu — địa điểm ví dụ, không phải kết quả gần bạn thực tế",
     "howToGetThere": "↓ Lựa chọn di chuyển gần bạn (ước tính sơ bộ)",

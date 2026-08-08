@@ -42,6 +42,12 @@
     "findingLocation": "📍 Encontrando tu ubicación...",
     "gettingCoordinates": "Obteniendo tus coordenadas GPS..."
   },
+  "discovery": {
+    "title": "¿Qué te gustaría encontrar?", "subtitle": "Elige una opción para ver lugares reales cerca de ti.",
+    "food": "Comida y bebida", "activities": "Cosas que hacer", "foodTitle": "¿Qué te apetece?", "foodHint": "Elige un tipo de comida o mira toda la oferta cercana.",
+    "allFood": "Toda la comida y bebida", "showFood": "Mostrar lugares para comer", "activitiesTitle": "¿Qué te gustaría hacer?", "activitiesHint": "Elige una actividad o mira lugares cercanos.",
+    "allActivities": "Todas las actividades", "showActivities": "Mostrar cosas que hacer", "searchingActivities": "Buscando cosas que hacer cerca...", "buildPicks": "Crear mi día ({{count}} opciones)"
+  },
   "interests": {
     "title": "¿Qué te interesa?",
     "subtitle": "Elige actividades y preferencias de comida",
@@ -244,6 +250,7 @@
   "timeline": {
     "title": "Tu día perfecto",
     "empty": "Tu itinerario está vacío. Empieza de nuevo o cambia tus selecciones para crear tu día.",
+    "remove": "Eliminar",
     "slideToAdjust": "Desliza para ajustar la duración",
     "sampleActivity": "💡 Idea de muestra — ubicación de ejemplo, no un resultado real cercano",
     "howToGetThere": "↓ Opciones de transporte cercanas (estimaciones aproximadas)",

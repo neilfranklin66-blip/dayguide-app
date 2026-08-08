@@ -8,6 +8,8 @@ export default function RestaurantSwipeCard({
   restaurantSource,
   recommendationReason,
   onSwipe,
+  selectedCount = 0,
+  onBuild,
   t,
 }) {
   return (
@@ -29,7 +31,9 @@ export default function RestaurantSwipeCard({
               onError={e => { e.target.style.display = 'none'; }}
             />
           </div>
-          {currentRestaurant.cuisine.length > 0 && (
+          {currentRestaurant.venueType ? (
+            <p className="card-type-label">{currentRestaurant.venueType}</p>
+          ) : currentRestaurant.cuisine.length > 0 && (
             <p className="card-type-label">
               {getCuisineEmoji(currentRestaurant.cuisine)}&nbsp;
               {currentRestaurant.cuisine.map(c => t(`cuisine.${c}`)).join(' · ')}
@@ -83,6 +87,11 @@ export default function RestaurantSwipeCard({
           <button onClick={() => onSwipe(false)} className="btn-reject">{t('restaurants.skip')}</button>
           <button onClick={() => onSwipe(true)} className="btn-accept">{t('restaurants.yes')}</button>
         </div>
+        {selectedCount > 0 && (
+          <button onClick={onBuild} className="btn-secondary discovery-build">
+            {t('discovery.buildPicks', { count: selectedCount })}
+          </button>
+        )}
       </div>
     </div>
   );

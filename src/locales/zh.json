@@ -42,6 +42,12 @@
     "findingLocation": "📍 正在定位...",
     "gettingCoordinates": "正在获取 GPS 坐标..."
   },
+  "discovery": {
+    "title": "您想找什么？", "subtitle": "选择一项即可查看附近的真实地点。",
+    "food": "餐饮", "activities": "可做的事", "foodTitle": "您想吃点什么？", "foodHint": "选择餐饮类型，或查看附近所有餐饮地点。",
+    "allFood": "所有餐饮", "showFood": "查看餐饮地点", "activitiesTitle": "您想做什么？", "activitiesHint": "选择活动或查看附近地点。",
+    "allActivities": "所有活动", "showActivities": "查看可做的事", "searchingActivities": "正在寻找附近的活动...", "buildPicks": "安排我的一天（{{count}} 个选择）"
+  },
   "interests": {
     "title": "您对什么感兴趣？",
     "subtitle": "选择活动和饮食偏好",
@@ -244,6 +250,7 @@
   "timeline": {
     "title": "您的完美一天",
     "empty": "您的行程还是空的。请重新开始或更改您的选择来安排这一天。",
+    "remove": "删除",
     "slideToAdjust": "滑动调整时长",
     "sampleActivity": "💡 示例建议 — 仅为示例地点，并非真实的附近结果",
     "howToGetThere": "↓ 附近的出行方式（粗略估计）",
