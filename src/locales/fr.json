@@ -34,11 +34,19 @@
     "subtitle": "Faites glisser les activités et restaurants. Nous construirons votre itinéraire.",
     "detectingLocation": "📍 Détection de l'emplacement...",
     "refreshLocation": "Actualiser la position",
-    "startPlanning": "Commencer à planifier",
+    "startPlanning": "Planifier ma journée",
+    "findNearby": "Trouver quelque chose à proximité",
+    "findNearbyHint": "De vrais restaurants à proximité, choisis par vous.",
     "resumePlan": "Reprendre votre plan",
     "resumePlanDetails": "{{count}} étapes prévues",
     "findingLocation": "📍 Localisation en cours...",
     "gettingCoordinates": "Récupération de vos coordonnées GPS..."
+  },
+  "discovery": {
+    "title": "Qu’aimeriez-vous trouver ?", "subtitle": "Choisissez une option pour voir de vrais lieux à proximité.",
+    "food": "Manger et boire", "activities": "Idées de sortie", "foodTitle": "Qu’est-ce qui vous ferait plaisir ?", "foodHint": "Choisissez un type de cuisine ou voyez toutes les options à proximité.",
+    "allFood": "Tous les lieux pour manger et boire", "showFood": "Voir les lieux pour manger", "activitiesTitle": "Qu’aimeriez-vous faire ?", "activitiesHint": "Choisissez une activité ou voyez les lieux à proximité.",
+    "allActivities": "Toutes les activités", "showActivities": "Voir les idées de sortie", "searchingActivities": "Recherche d’idées de sortie à proximité...", "buildPicks": "Créer ma journée ({{count}} choix)", "changeActivity": "Choisir un autre type d'activité"
   },
   "interests": {
     "title": "Qu'est-ce qui vous intéresse ?",
@@ -242,6 +250,7 @@
   "timeline": {
     "title": "Votre journée parfaite",
     "empty": "Votre itinéraire est vide. Recommencez ou modifiez vos choix pour construire votre journée.",
+    "remove": "Supprimer",
     "slideToAdjust": "Faites glisser pour ajuster la durée",
     "sampleActivity": "💡 Idée d'exemple — lieu donné à titre indicatif, pas un résultat réel à proximité",
     "howToGetThere": "↓ Options de transport à proximité (estimations approximatives)",

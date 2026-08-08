@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import useGeolocation from './useGeolocation';
 import mockActivityData from './mockActivityData.json';
-import { searchRestaurants } from './api/placesApi';
+import { searchRestaurants, searchActivities, searchRestaurantPage } from './api/placesApi';
 import { getActivitiesForInterests as getFilteredActivitiesForInterests } from './engines/filterEngine';
 import { resolveRestaurantSearchOutcome } from './engines/restaurantEngine';
 import { createSwipeSelection, toggleIdSelection } from './engines/selectionEngine';
@@ -15,6 +15,7 @@ import {
 import {
   buildTimelineEntries,
   updateTimelineItemDuration,
+  recalculateTimelineTimes,
 } from './engines/timelineEngine';
 import {
   getPopupYesAction,
@@ -24,6 +25,7 @@ import {
 import TimelineShareQRModal from './components/TimelineShareQRModal';
 import PopupModal from './components/PopupModal';
 import WelcomeStage from './components/WelcomeStage';
+import NearbyDiscoveryStage from './components/NearbyDiscoveryStage';
 import LocationStage from './components/LocationStage';
 import InterestsStage from './components/InterestsStage';
 import ActivitiesStage from './components/ActivitiesStage';
@@ -80,6 +82,7 @@ const DayGuide = () => {
   const [currentActivityIndex, setCurrentActivityIndex] = useState(0);
   const [currentRestaurantIndex, setCurrentRestaurantIndex] = useState(0);
   const [activityQueue, setActivityQueue] = useState([]);
+  const [isActivitiesLoading, setIsActivitiesLoading] = useState(false);
   const [restaurantQueue, setRestaurantQueue] = useState(null);
   const [timeline, setTimeline] = useState([]);
   const [geographicalPlanning, setGeographicalPlanning] = useState(null);
@@ -94,6 +97,7 @@ const DayGuide = () => {
   const popupCooldowns = useRef({});
   const activePopupRef = useRef(null);
   const popupActivityReturnRef = useRef(false);
+  const nearbyDiscoveryPendingRef = useRef(false);
 
   // Mirror of selectedRestaurants in a ref so goToRestaurants always reads
   // the current list regardless of closure capture timing.
@@ -111,6 +115,8 @@ const DayGuide = () => {
   // Restaurant API state
   const [isRestaurantsLoading, setIsRestaurantsLoading] = useState(false);
   const [restaurantSource, setRestaurantSource] = useState(null);
+  const [restaurantNextPageToken, setRestaurantNextPageToken] = useState(null);
+  const [nearbyDiscoveryMode, setNearbyDiscoveryMode] = useState(null);
   const [travelPreferences, setTravelPreferences] = useState(
     loadTravelPreferences,
   );
@@ -196,12 +202,40 @@ const DayGuide = () => {
   // (success or error both end the loading state).
   useEffect(() => {
     if (stage === 'location' && !locationLoading) {
-      setStage('interests');
+      if (nearbyDiscoveryPendingRef.current) {
+        nearbyDiscoveryPendingRef.current = false;
+        goToRestaurants([], null, null);
+      } else {
+        setStage('interests');
+      }
     }
+  // goToRestaurants is declared later in this component. The effect is run
+  // after render, so it always calls the current search function.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage, locationLoading]);
 
   const handleStartPlanning = () => {
     setStage(locationLoading ? 'location' : 'interests');
+  };
+
+  // Discovery starts with one clear fork. Food and activities then use the
+  // same visible category lists as planning, without the full planning form.
+  const handleFindNearby = () => {
+    setSelectedInterests([]);
+    setSelectedCuisines([]);
+    setSelectedPriceRange(null);
+    setSelectedActivities([]);
+    setSelectedRestaurants([]);
+    selectedRestaurantsRef.current = [];
+    dismissedRestaurantKeysRef.current = new Set();
+    setHasChildren(null);
+    setStartWith('activities');
+    setGeographicalPlanning(null);
+    setGeographicalAssessment(null);
+
+    setNearbyDiscoveryMode(null);
+    setRestaurantNextPageToken(null);
+    setStage('discovery');
   };
 
   const changeLanguage = (lang) => {
@@ -225,6 +259,7 @@ const DayGuide = () => {
     setCurrentActivityIndex(0);
     setCurrentRestaurantIndex(0);
     setActivityQueue([]);
+    setIsActivitiesLoading(false);
     setRestaurantQueue(null);
     setTimeline([]);
     setGeographicalPlanning(null);
@@ -234,8 +269,10 @@ const DayGuide = () => {
     popupActivityReturnRef.current = false;
     popupCooldowns.current = {};
     setShowQR(false);
+    nearbyDiscoveryPendingRef.current = false;
     setIsRestaurantsLoading(false);
     setRestaurantSource(null);
+    setNearbyDiscoveryMode(null);
     setSelectedDate(new Date().toISOString().split('T')[0]);
     isResumedPlanRef.current = false;
     clearPlan();
@@ -305,16 +342,37 @@ const DayGuide = () => {
   };
 
   const continueAfterRestaurants = (restaurants = selectedRestaurantsRef.current) => {
+    if (restaurants.length === 0 && nearbyDiscoveryMode === 'food') {
+      setNearbyDiscoveryMode('food');
+      setStage('discovery');
+      return;
+    }
     const route = getRouteAfterRestaurants({ startWith });
 
     if (route === 'activities') {
-      goToActivities();
+      if (nearbyDiscoveryMode) {
+        // Nearby discovery never returns to London sample cards. If live
+        // activities were already chosen before the food popup, keep them and
+        // build the combined day; otherwise fetch a live activity batch.
+        if (selectedActivities.length > 0) {
+          buildTimeline(restaurants, selectedActivities);
+        } else {
+          goToLiveActivities(selectedInterests);
+        }
+      } else {
+        goToActivities();
+      }
     } else {
       buildTimeline(restaurants);
     }
   };
 
   const continueAfterActivities = (activities = selectedActivities) => {
+    if (activities.length === 0 && nearbyDiscoveryMode === 'activities') {
+      setNearbyDiscoveryMode('activities');
+      setStage('discovery');
+      return;
+    }
     const route = getRouteAfterActivities({ startWith });
 
     if (route === 'timeline') {
@@ -331,6 +389,27 @@ const DayGuide = () => {
     setStage('activities');
   };
 
+  const goToLiveActivities = async (interestsOverride = selectedInterests) => {
+    setIsActivitiesLoading(true);
+    setActivityQueue([]);
+    setCurrentActivityIndex(0);
+    setStage('activities');
+    setStartWith('food_drinks');
+
+    if (!position || !Number.isFinite(position.lat) || !Number.isFinite(position.lng)) {
+      setIsActivitiesLoading(false);
+      return;
+    }
+
+    try {
+      const activities = await searchActivities(position.lat, position.lng, interestsOverride);
+      setActivityQueue(activities);
+    } catch (_) {
+      setActivityQueue([]);
+    }
+    setIsActivitiesLoading(false);
+  };
+
   const goToRestaurants = async (
     cuisineOverride = selectedCuisines,
     priceOverride = selectedPriceRange,
@@ -338,6 +417,7 @@ const DayGuide = () => {
   ) => {
     setIsRestaurantsLoading(true);
     setRestaurantSource(null);
+    setRestaurantNextPageToken(null);
     setRestaurantQueue(null);
     setCurrentRestaurantIndex(0);
     setStage('restaurants');
@@ -362,15 +442,60 @@ const DayGuide = () => {
     // (which the user can fix) apart from a location we simply never got.
     const planningPosition =
       planningOverride?.start?.place?.coordinates ?? position;
+    let nextPageToken = null;
+    const discoverySearch = async (lat, lng, cuisines, price) => {
+      const page = await searchRestaurantPage(lat, lng, cuisines, price);
+      nextPageToken = page.nextPageToken;
+      return page.results;
+    };
     const searchOutcome = await getRestaurantSearchRequestOutcome({
       position: planningPosition,
       locationError: planningOverride?.start ? null : locationError,
       cuisines: cuisineOverride,
       price: priceOverride,
-      searchRestaurantsFn: searchRestaurants,
+      searchRestaurantsFn: nearbyDiscoveryMode === 'food'
+        ? discoverySearch
+        : searchRestaurants,
     });
 
-    applyOutcome(resolveOutcome(searchOutcome));
+    const outcome = resolveOutcome(searchOutcome);
+    applyOutcome(outcome);
+    if (outcome.source === 'live') setRestaurantNextPageToken(nextPageToken);
+    setIsRestaurantsLoading(false);
+  };
+
+  const showMoreRestaurants = async () => {
+    if (!restaurantNextPageToken || !position) return;
+    setIsRestaurantsLoading(true);
+    setRestaurantQueue(null);
+    setCurrentRestaurantIndex(0);
+    setStage('restaurants');
+    try {
+      const page = await searchRestaurantPage(
+        position.lat,
+        position.lng,
+        selectedCuisines,
+        selectedPriceRange,
+        restaurantNextPageToken,
+      );
+      const outcome = resolveRestaurantSearchOutcome({
+        results: page.results,
+        selectedRestaurants: selectedRestaurantsRef.current,
+        cuisines: selectedCuisines,
+        price: selectedPriceRange,
+        hasChildren,
+      });
+      setRestaurantQueue(outcome.queue);
+      setRestaurantSource(outcome.source);
+      setRestaurantNextPageToken(
+        outcome.source === 'live' ? page.nextPageToken : null,
+      );
+    } catch (error) {
+      const outcome = resolveRestaurantSearchOutcome({ error });
+      setRestaurantQueue(outcome.queue);
+      setRestaurantSource(outcome.source);
+      setRestaurantNextPageToken(null);
+    }
     setIsRestaurantsLoading(false);
   };
 
@@ -421,6 +546,17 @@ const DayGuide = () => {
     if (currentRestaurantIndex < restaurantQueue.length - 1) {
       setCurrentRestaurantIndex(i => i + 1);
     } else {
+      // A person who has skipped a whole live page has not finished looking.
+      // Leave the stage at its natural end so its explicit next-page action is
+      // available; never turn that into an empty itinerary or a silent stop.
+      if (
+        newSelected.length === 0 &&
+        nearbyDiscoveryMode === 'food' &&
+        restaurantNextPageToken
+      ) {
+        setCurrentRestaurantIndex(i => i + 1);
+        return;
+      }
       continueAfterRestaurants(newSelected);
     }
   };
@@ -499,6 +635,15 @@ const DayGuide = () => {
     persistPlan(updated);
   };
 
+  const removeTimelineItem = index => {
+    const updated = recalculateTimelineTimes(
+      timeline.filter((_, itemIndex) => itemIndex !== index),
+      startTime,
+    );
+    setTimeline(updated);
+    if (updated.length > 0) persistPlan(updated);
+  };
+
   // --- Popup action handlers ---
 
   const handlePopupYes = (popup) => {
@@ -510,7 +655,11 @@ const DayGuide = () => {
       goToRestaurants();
     } else if (action === 'activitiesThenTimeline') {
       popupActivityReturnRef.current = true;
-      goToActivities();
+      if (nearbyDiscoveryMode === 'food') {
+        goToLiveActivities([]);
+      } else {
+        goToActivities();
+      }
     }
   };
 
@@ -526,6 +675,7 @@ const DayGuide = () => {
           position={position}
           refreshLocation={refreshLocation}
           onStartPlanning={handleStartPlanning}
+          onFindNearby={handleFindNearby}
           savedPlanSummary={savedPlanSummary}
           onResume={resumePlan}
         />
@@ -534,6 +684,32 @@ const DayGuide = () => {
 
     if (stage === 'location') {
       return <LocationStage t={t} />;
+    }
+
+    if (stage === 'discovery') {
+      return (
+        <NearbyDiscoveryStage
+          mode={nearbyDiscoveryMode}
+          cuisineCategories={cuisineCategories}
+          selectedCuisines={selectedCuisines}
+          onToggleCuisine={toggleCuisine}
+          interestCategories={interestCategories}
+          selectedInterests={selectedInterests}
+          onToggleInterest={toggleInterest}
+          onChooseFood={() => setNearbyDiscoveryMode('food')}
+          onChooseActivities={() => setNearbyDiscoveryMode('activities')}
+          onFindFood={cuisines => {
+            setSelectedCuisines(cuisines);
+            setStartWith('activities');
+            goToRestaurants(cuisines, null, null);
+          }}
+          onFindActivities={interests => {
+            setSelectedInterests(interests);
+            goToLiveActivities(interests);
+          }}
+          t={t}
+        />
+      );
     }
 
     if (stage === 'interests') {
@@ -611,13 +787,22 @@ const DayGuide = () => {
       return (
         <ActivitiesStage
           activityQueue={activityQueue}
+          isActivitiesLoading={isActivitiesLoading}
           currentActivityIndex={currentActivityIndex}
           selectedInterests={selectedInterests}
           goToActivities={goToActivities}
+          isLiveDiscovery={nearbyDiscoveryMode === 'activities'}
+          onShowAllLive={() => goToLiveActivities([])}
+          onBackToDiscovery={() => {
+            setNearbyDiscoveryMode('activities');
+            setStage('discovery');
+          }}
           setStage={setStage}
           continueAfterActivities={continueAfterActivities}
           startWith={startWith}
           swipeActivity={swipeActivity}
+          selectedActivities={selectedActivities}
+          onBuild={() => buildTimeline(selectedRestaurantsRef.current, selectedActivities)}
           t={t}
         />
       );
@@ -650,6 +835,9 @@ const DayGuide = () => {
           hasChildren={hasChildren}
           startWith={startWith}
           swipeRestaurant={swipeRestaurant}
+          onBuild={() => buildTimeline(selectedRestaurantsRef.current, selectedActivities)}
+          onShowMore={showMoreRestaurants}
+          hasMore={nearbyDiscoveryMode === 'food' && !!restaurantNextPageToken}
           t={t}
         />
       );
@@ -667,6 +855,7 @@ const DayGuide = () => {
           selectedDate={selectedDate}
           startWith={startWith}
           updateActivityDuration={updateActivityDuration}
+          removeTimelineItem={removeTimelineItem}
           resetState={resetState}
           setShowQR={setShowQR}
           travelPreferences={travelPreferences}
