@@ -169,6 +169,7 @@ describe('searchRestaurants incomplete result normalisation', () => {
         {
           place_id: 'bare',
           name: 'Bare Minimum',
+          types: ['restaurant'],
           geometry: { location: { lat: LAT, lng: LNG } },
         },
       ])),
@@ -397,6 +398,32 @@ describe('searchRestaurants existing behaviour', () => {
     const results = await searchRestaurants(LAT, LNG, ['italian']);
 
     expect(results.map(r => r.id).sort()).toEqual(['match', 'unknown']);
+  });
+
+  it('excludes a live non-food shop even when the provider returned it', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('restaurant', 'The Corner Spot'),
+        makePlace('home-bargains', 'Home Bargains', {
+          types: ['discount_store', 'store', 'point_of_interest'],
+        }),
+      ])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, []);
+
+    expect(results.map(r => r.id)).toEqual(['restaurant']);
+    expect(results.map(r => r.name)).not.toContain('Home Bargains');
+  });
+
+  it('excludes a record with no food venue type rather than guessing from its name', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('unknown-type', 'Possibly Food', { types: [] }),
+      ])),
+    });
+
+    await expect(searchRestaurants(LAT, LNG, [])).resolves.toEqual([]);
   });
 
   it('caps results at 12', async () => {

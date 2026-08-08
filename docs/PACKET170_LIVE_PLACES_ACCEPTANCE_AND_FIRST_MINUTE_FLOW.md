@@ -60,6 +60,18 @@ origin with location permission granted:
 This evidence is intentionally separated from production. Google Routes stays
 disabled, and production is not in scope for Packet 170.
 
+## First preview observation and corrective rule
+
+The initial PR 14 preview run produced a card labelled `Live from Google
+Places` for Home Bargains, approximately 2 km away. That observation proves
+the hosted live connection is operating, but it **does not pass** restaurant
+relevance acceptance: Home Bargains is a real place, not a restaurant.
+
+The corrective rule validates returned Google place types before a restaurant
+card is created. Shops and any record with no known food-and-drink type are
+excluded. A regression test names this exact failure. The preview must be
+retested after that correction before Packet 170 is accepted.
+
 ## Deliberate deferrals
 
 - Live activities, events, and landmarks remain unimplemented; existing

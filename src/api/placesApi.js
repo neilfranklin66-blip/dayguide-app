@@ -77,9 +77,37 @@ function hasUsableGeometry(p) {
   return typeof loc?.lat === 'number' && typeof loc?.lng === 'number';
 }
 
+// Provider search constraints improve relevance but are not a substitute for
+// validating each returned record. A live result may still be a shop or other
+// non-food venue, so restaurant discovery accepts only food-and-drink types.
+const FOOD_AND_DRINK_PLACE_TYPES = new Set([
+  'restaurant',
+  'cafe',
+  'coffee_shop',
+  'bakery',
+  'bar',
+  'pub',
+  'meal_takeaway',
+  'ice_cream_shop',
+]);
+
+function isFoodAndDrinkVenue(types) {
+  return Array.isArray(types) && types.some(type =>
+    typeof type === 'string' && (
+      FOOD_AND_DRINK_PLACE_TYPES.has(type) ||
+      type.endsWith('_restaurant') ||
+      type.endsWith('_cafe')
+    ),
+  );
+}
+
 function parsePlaces(results, lat, lng) {
   return results
-    .filter(p => hasUsableGeometry(p) && p.business_status !== 'CLOSED_PERMANENTLY')
+    .filter(p =>
+      hasUsableGeometry(p) &&
+      p.business_status !== 'CLOSED_PERMANENTLY' &&
+      isFoodAndDrinkVenue(p.types),
+    )
     .map(p => {
       const name = p.name || '';
       const priceSymbol = PRICE_LEVEL_TO_SYMBOL[p.price_level] ?? '$$';
