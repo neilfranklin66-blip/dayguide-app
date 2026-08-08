@@ -1,54 +1,57 @@
-# Packet 171 — Unified Live Discovery
+# Packet 171 - Unified Live Discovery
 
 ## Status
 
-**Local implementation candidate; unpublished-preview acceptance required.**
+**Accepted on the unpublished preview, 8 August 2026.**
 
-This packet extends the existing draft branch only. It does not merge, publish,
-or alter Production. Google Routes and Ticketmaster remain out of scope.
+This packet extends the existing draft branch only. It does not merge,
+publish, or alter Production. Google Routes and Ticketmaster remain out of
+scope.
 
-## Implemented direction
+## Delivered discovery flow
 
-- `Find something nearby` now makes one friendly binary choice: **Food &
-  drink** or **Things to do**.
-- Food reuses the established DayGuide cuisine choices, including **Café** as
-  the practical quick-food route for cafés, bakeries and takeaway food.
-- Things to do requests real Google Places venues for the established activity
-  choices. Sample activity cards are not used by that discovery route.
-- Food card labels now prefer Google Places' primary-type display label, so a
-  venue can appear as `Italian restaurant`, `Café`, `Bakery`, and so on.
-- Restaurant acceptance uses the provider primary type when available. A shop
-  cannot qualify only because a broad secondary type is food-related.
-- **Choose** adds a card to the user’s current picks while browsing continues;
-  **Build my day** is available once at least one pick exists; itinerary rows
-  have **Remove**.
-- A no-selection discovery return goes back to the relevant category choices,
-  rather than attempting to build an empty itinerary.
+- Find something nearby opens one simple choice: Food & drink or Things to do.
+- Food uses the established DayGuide cuisine choices, including Cafe as the
+  practical quick-food route for cafes, bakeries and takeaway food.
+- Things to do uses genuine Google Places venues. Sample London activity cards
+  are never used by the nearby discovery route.
+- Food labels retain a Google venue type and any available cuisine clue. A
+  food venue cannot qualify as an activity only because it also has a
+  sport-related provider tag.
+- Choose keeps browsing possible; Build my day is offered after a choice;
+  itinerary rows can be removed.
+- A no-selection route returns to useful live choices rather than building an
+  empty itinerary.
 
 ## Result-volume boundary
 
-The client now retains up to 20 suitable results from its first provider page,
-rather than silently discarding after 12. When Google returns an opaque next
-page token, the end of that card batch offers **Show more matching places**.
-That asks Google for the next page only when the person chooses it. It makes no
-claim to know the total number of matches: Google controls the order and its
-current maximum. Multi-cuisine discovery remains a combined first-page search;
-the explicit continuation route is verified for All food & drink and a single
-cuisine.
+The first provider page contains up to 20 suitable results. When Google
+returns an opaque next-page token, the end of that batch offers Show more
+matching places. Google controls the order and maximum; DayGuide does not
+claim to know the total number of nearby places.
 
-## Acceptance evidence required
+## Unpublished-preview acceptance evidence
 
-On the exact unpublished preview, with location enabled:
+With location enabled, the Product Owner confirmed:
 
-1. Confirm Food & drink shows the established categories and Café makes sense
-   as a quick-food choice.
-2. Confirm each returned food card has an accurate visible type, and that
-   shops such as Home Bargains do not appear.
-3. Confirm Things to do returns genuine live venues with accurate labels, not
-   sample London cards.
-4. Choose more than one card, keep browsing, build a day deliberately, and
-   remove a card from the itinerary.
-5. Skip every card and confirm no empty itinerary is presented.
-6. If **Show more matching places** appears, use it once and confirm the next
-   cards are live, different places; if it does not appear, record that Google
-   supplied no further page rather than calling that an app failure.
+1. Food & drink showed plentiful genuine live places. The established choice
+   list was visible; a further live batch appeared after the first one was
+   skipped, then Google supplied no more.
+2. Where Google supplied a specific food type or reliable cuisine clue, cards
+   displayed it. Generic Restaurant remains an honest fallback rather than an
+   invented cuisine claim.
+3. Things to do showed many genuine live venues across the activity choices.
+   The recovery check independently returned Northampton Museum and Art
+   Gallery and Abington Park Museum from the preview function.
+4. Food venues were excluded from Things to do, and nearby discovery did not
+   fall through to sample London activity cards, including after the food
+   popup.
+5. Chosen food cards built an itinerary. Transport options and the Google Maps
+   live-route handoff worked in the hosted app.
+
+## Accepted limitations
+
+- Google does not supply a specific cuisine/type for every venue. Those cards
+  remain generic.
+- Displayed transport options are planning estimates between selected stops.
+  Google Maps provides the live journey check; Google Routes remains off.
