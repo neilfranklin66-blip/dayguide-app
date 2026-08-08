@@ -172,6 +172,11 @@ describe('searchActivities', () => {
         primary_type_display_name: 'Tourist attraction',
         types: ['tourist_attraction', 'museum'],
       }),
+      makePlace('sports-food-1', 'Tuck In Turkish Restaurant', {
+        primary_type: 'restaurant',
+        primary_type_display_name: 'Restaurant',
+        types: ['restaurant', 'sports_club', 'food'],
+      }),
     ]));
 
     const activities = await searchActivities(LAT, LNG, ['museums']);
@@ -183,6 +188,7 @@ describe('searchActivities', () => {
       venueType: null,
       source: 'google_places',
     });
+    expect(activities.map(activity => activity.name)).not.toContain('Tuck In Turkish Restaurant');
   });
 });
 

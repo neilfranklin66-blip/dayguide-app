@@ -340,7 +340,11 @@ export async function searchActivities(lat, lng, categories = []) {
   const raw = await nearbySearch(lat, lng, null, null, 'tourist_attraction', types);
 
   return raw
-    .filter(place => hasUsableGeometry(place) && place.business_status !== 'CLOSED_PERMANENTLY')
+    .filter(place =>
+      hasUsableGeometry(place) &&
+      place.business_status !== 'CLOSED_PERMANENTLY' &&
+      !isFoodAndDrinkVenue(place.primary_type, place.types),
+    )
     .map(place => {
       const category = activityCategoryFor(
         place.primary_type,

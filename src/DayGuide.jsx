@@ -350,7 +350,18 @@ const DayGuide = () => {
     const route = getRouteAfterRestaurants({ startWith });
 
     if (route === 'activities') {
-      goToActivities();
+      if (nearbyDiscoveryMode) {
+        // Nearby discovery never returns to London sample cards. If live
+        // activities were already chosen before the food popup, keep them and
+        // build the combined day; otherwise fetch a live activity batch.
+        if (selectedActivities.length > 0) {
+          buildTimeline(restaurants, selectedActivities);
+        } else {
+          goToLiveActivities(selectedInterests);
+        }
+      } else {
+        goToActivities();
+      }
     } else {
       buildTimeline(restaurants);
     }
