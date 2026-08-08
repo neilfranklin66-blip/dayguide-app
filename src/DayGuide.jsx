@@ -94,6 +94,7 @@ const DayGuide = () => {
   const popupCooldowns = useRef({});
   const activePopupRef = useRef(null);
   const popupActivityReturnRef = useRef(false);
+  const nearbyDiscoveryPendingRef = useRef(false);
 
   // Mirror of selectedRestaurants in a ref so goToRestaurants always reads
   // the current list regardless of closure capture timing.
@@ -196,12 +197,46 @@ const DayGuide = () => {
   // (success or error both end the loading state).
   useEffect(() => {
     if (stage === 'location' && !locationLoading) {
-      setStage('interests');
+      if (nearbyDiscoveryPendingRef.current) {
+        nearbyDiscoveryPendingRef.current = false;
+        goToRestaurants([], null, null);
+      } else {
+        setStage('interests');
+      }
     }
+  // goToRestaurants is declared later in this component. The effect is run
+  // after render, so it always calls the current search function.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage, locationLoading]);
 
   const handleStartPlanning = () => {
     setStage(locationLoading ? 'location' : 'interests');
+  };
+
+  // This route has no preliminary questionnaire: it opens the first live
+  // restaurant card as soon as the device location is ready. The normal
+  // outcome handling remains in place, so a failure can never turn into a
+  // demo card.
+  const handleFindNearby = () => {
+    setSelectedInterests([]);
+    setSelectedCuisines([]);
+    setSelectedPriceRange(null);
+    setSelectedActivities([]);
+    setSelectedRestaurants([]);
+    selectedRestaurantsRef.current = [];
+    dismissedRestaurantKeysRef.current = new Set();
+    setHasChildren(null);
+    setStartWith('activities');
+    setGeographicalPlanning(null);
+    setGeographicalAssessment(null);
+
+    if (locationLoading) {
+      nearbyDiscoveryPendingRef.current = true;
+      setStage('location');
+      return;
+    }
+
+    goToRestaurants([], null, null);
   };
 
   const changeLanguage = (lang) => {
@@ -234,6 +269,7 @@ const DayGuide = () => {
     popupActivityReturnRef.current = false;
     popupCooldowns.current = {};
     setShowQR(false);
+    nearbyDiscoveryPendingRef.current = false;
     setIsRestaurantsLoading(false);
     setRestaurantSource(null);
     setSelectedDate(new Date().toISOString().split('T')[0]);
@@ -526,6 +562,7 @@ const DayGuide = () => {
           position={position}
           refreshLocation={refreshLocation}
           onStartPlanning={handleStartPlanning}
+          onFindNearby={handleFindNearby}
           savedPlanSummary={savedPlanSummary}
           onResume={resumePlan}
         />

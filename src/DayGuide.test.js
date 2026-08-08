@@ -138,6 +138,36 @@ test('skips the location stage when geolocation is already resolved', () => {
   expect(screen.queryByText('welcome.findingLocation')).not.toBeInTheDocument();
 });
 
+test('find nearby opens a live restaurant card without the preference questionnaire', async () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  searchRestaurants.mockResolvedValue([
+    {
+      id: 'live-restaurant-1',
+      name: 'Live Restaurant',
+      cuisine: ['italian'],
+      priceRange: '$$',
+      rating: 4.7,
+      distance: 0.3,
+      duration: 1.5,
+      address: '1 Real Street',
+      coordinates: { lat: 51.5075, lng: -0.1272 },
+    },
+  ]);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.findNearby'));
+
+  expect(await screen.findByText('Live Restaurant')).toBeInTheDocument();
+  expect(screen.getByText('restaurants.liveResults')).toBeInTheDocument();
+  expect(screen.queryByText('interests.title')).not.toBeInTheDocument();
+  expect(searchRestaurants).toHaveBeenCalledWith(
+    resolvedGeo.position.lat,
+    resolvedGeo.position.lng,
+    [],
+    null,
+  );
+});
+
 test('mounts the private-alpha geographical planning stage before selections', () => {
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);

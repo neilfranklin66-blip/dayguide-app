@@ -30,11 +30,13 @@
     "unavailable": "Unable to retrieve your location. Please try again."
   },
   "welcome": {
-    "tagline": "Plan your perfect day, wherever you are",
-    "subtitle": "Swipe through activities and restaurants. We'll build your itinerary.",
+    "tagline": "Your day, your choices",
+    "subtitle": "Find something nearby, or shape a day around what you enjoy.",
     "detectingLocation": "📍 Detecting location...",
     "refreshLocation": "Refresh Location",
-    "startPlanning": "Start Planning",
+    "startPlanning": "Plan a day",
+    "findNearby": "Find something nearby",
+    "findNearbyHint": "Real nearby restaurants, chosen by you.",
     "resumePlan": "Resume your plan",
     "resumePlanDetails": "{{count}} planned stops",
     "findingLocation": "📍 Finding your location...",
