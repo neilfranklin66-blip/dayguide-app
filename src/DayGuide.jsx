@@ -535,6 +535,17 @@ const DayGuide = () => {
     if (currentRestaurantIndex < restaurantQueue.length - 1) {
       setCurrentRestaurantIndex(i => i + 1);
     } else {
+      // A person who has skipped a whole live page has not finished looking.
+      // Leave the stage at its natural end so its explicit next-page action is
+      // available; never turn that into an empty itinerary or a silent stop.
+      if (
+        newSelected.length === 0 &&
+        nearbyDiscoveryMode === 'food' &&
+        restaurantNextPageToken
+      ) {
+        setCurrentRestaurantIndex(i => i + 1);
+        return;
+      }
       continueAfterRestaurants(newSelected);
     }
   };
