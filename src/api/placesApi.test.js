@@ -17,10 +17,11 @@ const ORIGINAL_FETCH = global.fetch;
 
 let searchRestaurants;
 let searchRestaurantPage;
+let searchActivities;
 
 const loadModule = () => {
   jest.resetModules();
-  ({ searchRestaurants, searchRestaurantPage } = require('./placesApi'));
+  ({ searchRestaurants, searchRestaurantPage, searchActivities } = require('./placesApi'));
 };
 
 const okResponse = (results) => ({
@@ -160,6 +161,28 @@ describe('searchRestaurantPage', () => {
     expect(page.nextPageToken).toBe('provider-page-2');
     expect(global.fetch.mock.calls[0][0]).toContain('keyword=food+and+drink');
     expect(global.fetch.mock.calls[0][0]).toContain('unfiltered=1');
+  });
+});
+
+describe('searchActivities', () => {
+  it('keeps a museum when Google assigns a broader primary type', async () => {
+    global.fetch.mockResolvedValue(okResponse([
+      makePlace('museum-1', 'Northampton Museum', {
+        primary_type: 'tourist_attraction',
+        primary_type_display_name: 'Tourist attraction',
+        types: ['tourist_attraction', 'museum'],
+      }),
+    ]));
+
+    const activities = await searchActivities(LAT, LNG, ['museums']);
+
+    expect(activities).toHaveLength(1);
+    expect(activities[0]).toMatchObject({
+      name: 'Northampton Museum',
+      category: 'museums',
+      venueType: 'Tourist attraction',
+      source: 'google_places',
+    });
   });
 });
 

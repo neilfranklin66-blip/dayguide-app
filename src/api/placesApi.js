@@ -326,8 +326,13 @@ const ACTIVITY_ICONS = {
   historicalSites: '🏰', foodMarkets: '🥕', cinema: '🎬', comedy: '😂',
 };
 
-const activityCategoryFor = (primaryType, requestedCategories) =>
-  requestedCategories.find(category => ACTIVITY_TYPES[category]?.includes(primaryType)) ?? null;
+const activityCategoryFor = (primaryType, types, requestedCategories) => {
+  const providerTypes = [primaryType, ...(Array.isArray(types) ? types : [])]
+    .filter(type => typeof type === 'string');
+  return requestedCategories.find(category =>
+    ACTIVITY_TYPES[category]?.some(type => providerTypes.includes(type)),
+  ) ?? null;
+};
 
 export async function searchActivities(lat, lng, categories = []) {
   const requestedCategories = categories.length > 0 ? categories : Object.keys(ACTIVITY_TYPES);
@@ -337,7 +342,11 @@ export async function searchActivities(lat, lng, categories = []) {
   return raw
     .filter(place => hasUsableGeometry(place) && place.business_status !== 'CLOSED_PERMANENTLY')
     .map(place => {
-      const category = activityCategoryFor(place.primary_type, requestedCategories);
+      const category = activityCategoryFor(
+        place.primary_type,
+        place.types,
+        requestedCategories,
+      );
       if (!category) return null;
       const distance = parseFloat(haversineKm(
         lat, lng, place.geometry.location.lat, place.geometry.location.lng,
