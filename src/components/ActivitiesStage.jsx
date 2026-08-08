@@ -38,6 +38,7 @@ export default function ActivitiesStage({
           hasSelectedInterests={selectedInterests.length > 0}
           onShowAll={() => onShowAllLive?.()}
           onBackToInterests={() => onBackToDiscovery?.()}
+          isLiveDiscovery
           t={t}
         />
       );

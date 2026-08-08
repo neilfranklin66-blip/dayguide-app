@@ -56,6 +56,7 @@
     "allActivities": "All things to do",
     "showActivities": "Show things to do",
     "searchingActivities": "Finding things to do nearby...",
+    "changeActivity": "Choose a different activity type",
     "buildPicks": "Build my day ({{count}} picks)"
   },
   "interests": {

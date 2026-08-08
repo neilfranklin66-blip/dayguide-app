@@ -46,7 +46,7 @@
     "title": "您想找什么？", "subtitle": "选择一项即可查看附近的真实地点。",
     "food": "餐饮", "activities": "可做的事", "foodTitle": "您想吃点什么？", "foodHint": "选择餐饮类型，或查看附近所有餐饮地点。",
     "allFood": "所有餐饮", "showFood": "查看餐饮地点", "activitiesTitle": "您想做什么？", "activitiesHint": "选择活动或查看附近地点。",
-    "allActivities": "所有活动", "showActivities": "查看可做的事", "searchingActivities": "正在寻找附近的活动...", "buildPicks": "安排我的一天（{{count}} 个选择）"
+    "allActivities": "所有活动", "showActivities": "查看可做的事", "searchingActivities": "正在寻找附近的活动...", "buildPicks": "安排我的一天（{{count}} 个选择）", "changeActivity": "选择其他活动类型"
   },
   "interests": {
     "title": "您对什么感兴趣？",

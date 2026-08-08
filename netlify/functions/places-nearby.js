@@ -15,8 +15,12 @@ const PLACE_FIELD_MASK = [
   'places.rating',
   'places.priceLevel',
   'places.photos',
-  'nextPageToken',
 ].join(',');
+
+// `nextPageToken` belongs to Text Search responses, not Nearby Search. A
+// shared mask caused Google to reject an otherwise valid Things-to-do request
+// with INVALID_ARGUMENT, leaving genuine activity venues looking unavailable.
+const TEXT_SEARCH_FIELD_MASK = `${PLACE_FIELD_MASK},nextPageToken`;
 
 const PRICE_LEVELS_BY_MAX_PRICE = {
   // `PRICE_LEVEL_FREE` may be returned by Places API (New), but Google does
@@ -159,11 +163,6 @@ exports.handler = async event => {
     center: { latitude: lat, longitude: lng },
     radius: safeRadius,
   };
-  const headers = {
-    'Content-Type': 'application/json',
-    'X-Goog-Api-Key': apiKey,
-    'X-Goog-FieldMask': PLACE_FIELD_MASK,
-  };
   const priceLevels = PRICE_LEVELS_BY_MAX_PRICE[Number(maxprice)];
   const hasKeyword = typeof keyword === 'string' && keyword.trim().length > 0;
   const includedTypes = typeof types === 'string' && types.length > 0
@@ -171,6 +170,13 @@ exports.handler = async event => {
     : [type || 'restaurant'];
   const hasPageToken = typeof pageToken === 'string' && pageToken.length > 0;
   const includedType = unfiltered === '1' ? null : (type || 'restaurant');
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Goog-Api-Key': apiKey,
+    'X-Goog-FieldMask': hasKeyword || hasPageToken
+      ? TEXT_SEARCH_FIELD_MASK
+      : PLACE_FIELD_MASK,
+  };
   const requestBody = hasPageToken
     ? { pageToken, pageSize: 20 }
     : hasKeyword

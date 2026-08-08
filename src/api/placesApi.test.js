@@ -180,7 +180,7 @@ describe('searchActivities', () => {
     expect(activities[0]).toMatchObject({
       name: 'Northampton Museum',
       category: 'museums',
-      venueType: 'Tourist attraction',
+      venueType: null,
       source: 'google_places',
     });
   });

@@ -644,7 +644,11 @@ const DayGuide = () => {
       goToRestaurants();
     } else if (action === 'activitiesThenTimeline') {
       popupActivityReturnRef.current = true;
-      goToActivities();
+      if (nearbyDiscoveryMode === 'food') {
+        goToLiveActivities([]);
+      } else {
+        goToActivities();
+      }
     }
   };
 

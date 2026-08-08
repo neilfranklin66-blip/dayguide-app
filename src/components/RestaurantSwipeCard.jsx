@@ -31,9 +31,15 @@ export default function RestaurantSwipeCard({
               onError={e => { e.target.style.display = 'none'; }}
             />
           </div>
-          {currentRestaurant.venueType ? (
-            <p className="card-type-label">{currentRestaurant.venueType}</p>
-          ) : currentRestaurant.cuisine.length > 0 && (
+          {currentRestaurant.venueType && (
+            <p className="card-type-label">
+              {currentRestaurant.venueType}
+              {currentRestaurant.cuisine.length > 0 && (
+                <>&nbsp;Â·&nbsp;{currentRestaurant.cuisine.map(c => t(`cuisine.${c}`)).join(' Â· ')}</>
+              )}
+            </p>
+          )}
+          {!currentRestaurant.venueType && currentRestaurant.cuisine.length > 0 && (
             <p className="card-type-label">
               {getCuisineEmoji(currentRestaurant.cuisine)}&nbsp;
               {currentRestaurant.cuisine.map(c => t(`cuisine.${c}`)).join(' · ')}

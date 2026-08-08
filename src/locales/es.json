@@ -46,7 +46,7 @@
     "title": "¿Qué te gustaría encontrar?", "subtitle": "Elige una opción para ver lugares reales cerca de ti.",
     "food": "Comida y bebida", "activities": "Cosas que hacer", "foodTitle": "¿Qué te apetece?", "foodHint": "Elige un tipo de comida o mira toda la oferta cercana.",
     "allFood": "Toda la comida y bebida", "showFood": "Mostrar lugares para comer", "activitiesTitle": "¿Qué te gustaría hacer?", "activitiesHint": "Elige una actividad o mira lugares cercanos.",
-    "allActivities": "Todas las actividades", "showActivities": "Mostrar cosas que hacer", "searchingActivities": "Buscando cosas que hacer cerca...", "buildPicks": "Crear mi día ({{count}} opciones)"
+    "allActivities": "Todas las actividades", "showActivities": "Mostrar cosas que hacer", "searchingActivities": "Buscando cosas que hacer cerca...", "buildPicks": "Crear mi día ({{count}} opciones)", "changeActivity": "Elige otro tipo de actividad"
   },
   "interests": {
     "title": "¿Qué te interesa?",

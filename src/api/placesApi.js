@@ -355,7 +355,12 @@ export async function searchActivities(lat, lng, categories = []) {
         id: place.place_id,
         name: place.name || '',
         category,
-        venueType: place.primary_type_display_name || null,
+        // If Google uses a broad primary type (for example, Tourist
+        // attraction) but its verified type list says museum, prefer the
+        // clearer matching activity label shown by ActivitySwipeCard.
+        venueType: ACTIVITY_TYPES[category]?.includes(place.primary_type)
+          ? place.primary_type_display_name || null
+          : null,
         image: ACTIVITY_ICONS[category],
         rating: parseFloat((place.rating || 4.0).toFixed(1)),
         duration: 1.5,

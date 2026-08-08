@@ -127,6 +127,29 @@ describe('places-nearby function', () => {
     expect(res.body).not.toContain(TEST_KEY);
   });
 
+  it('uses the Text Search page field only for Text Search, never Nearby Search', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ places: [] }),
+    });
+
+    await nearby.handler({
+      queryStringParameters: {
+        location: '52.2372,-0.8959',
+        types: 'museum,art_museum,history_museum',
+      },
+    });
+
+    const [nearbyUrl, nearbyRequest] = global.fetch.mock.calls[0];
+    expect(nearbyUrl).toBe('https://places.googleapis.com/v1/places:searchNearby');
+    expect(nearbyRequest.headers['X-Goog-FieldMask']).not.toContain('nextPageToken');
+    expect(JSON.parse(nearbyRequest.body).includedTypes).toEqual([
+      'museum', 'art_museum', 'history_museum',
+    ]);
+  });
+
   it('never sends PRICE_LEVEL_FREE in a Text Search price filter', async () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockResolvedValue({

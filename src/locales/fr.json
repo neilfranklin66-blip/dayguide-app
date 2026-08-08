@@ -46,7 +46,7 @@
     "title": "Qu’aimeriez-vous trouver ?", "subtitle": "Choisissez une option pour voir de vrais lieux à proximité.",
     "food": "Manger et boire", "activities": "Idées de sortie", "foodTitle": "Qu’est-ce qui vous ferait plaisir ?", "foodHint": "Choisissez un type de cuisine ou voyez toutes les options à proximité.",
     "allFood": "Tous les lieux pour manger et boire", "showFood": "Voir les lieux pour manger", "activitiesTitle": "Qu’aimeriez-vous faire ?", "activitiesHint": "Choisissez une activité ou voyez les lieux à proximité.",
-    "allActivities": "Toutes les activités", "showActivities": "Voir les idées de sortie", "searchingActivities": "Recherche d’idées de sortie à proximité...", "buildPicks": "Créer ma journée ({{count}} choix)"
+    "allActivities": "Toutes les activités", "showActivities": "Voir les idées de sortie", "searchingActivities": "Recherche d’idées de sortie à proximité...", "buildPicks": "Créer ma journée ({{count}} choix)", "changeActivity": "Choisir un autre type d'activité"
   },
   "interests": {
     "title": "Qu'est-ce qui vous intéresse ?",
