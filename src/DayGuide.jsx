@@ -316,7 +316,7 @@ const DayGuide = () => {
         planningOverride,
       );
     } else {
-      goToActivities();
+      goToActivities(undefined, planningOverride);
     }
   };
 

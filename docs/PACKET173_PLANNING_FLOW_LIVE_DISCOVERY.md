@@ -46,6 +46,11 @@ or call a provider. Google Routes and Ticketmaster remain out of scope.
 - The preview exposed that the previous named-start control was not clear or
   usable without interpreting a separate search-and-add sequence. The direct
   control above is the controlled correction; it still needs preview evidence.
+- A first correction-preview check confirmed that a named place could be found
+  and selected, but also exposed that the activity-first hand-off discarded the
+  selected planning start. A follow-up local correction now passes that same
+  planning input to the live activity search. It requires a rebuilt preview
+  check before acceptance.
 
 ## Legacy-record boundary
 
@@ -59,6 +64,8 @@ nearby-distance claim. The current selection flow cannot import
 - Focused activity, configuration, locale, engine, named-start and place
   resolution tests passed.
 - The named-start correction's focused suite passed: 5 suites, 1,359 tests.
+- The selected-start hand-off correction's broader focused suite passed: 6
+  suites, 1,414 tests, including a denied-location named-start activity test.
 - `src/DayGuide.test.js`: 54 tests passed after the asynchronous live-search
   conversion.
 - Full-suite and production-build validation are still required before review

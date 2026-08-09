@@ -268,6 +268,47 @@ test('a searched start location becomes the origin for a restaurant-first search
   );
 });
 
+test('a searched start location enables live activities when location is denied', async () => {
+  const euston = {
+    id: 'euston',
+    name: 'London Euston',
+    address: 'Euston Road, London',
+    coordinates: { lat: 51.5282, lng: -0.1337 },
+    source: 'google_places',
+    accuracyMeters: null,
+    locality: 'London',
+    countryCode: 'GB',
+    timezone: null,
+  };
+  mockResolvePlaceQueryImpl = () => Promise.resolve([euston]);
+  useGeolocation.mockReturnValue(erroredGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+  fireEvent.click(
+    screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`),
+  );
+  fireEvent.click(
+    screen.getByRole('button', { name: 'interests.childrenNo' }),
+  );
+  fireEvent.click(screen.getByText('interests.next'));
+
+  fireEvent.change(screen.getByLabelText('planning.startSearchLabel'), {
+    target: { value: 'London Euston' },
+  });
+  fireEvent.click(screen.getByText('planning.searchAction'));
+  expect(await screen.findByText('London Euston')).toBeInTheDocument();
+  fireEvent.click(screen.getByText('planning.selectStartPlace'));
+  fireEvent.click(screen.getByText('planning.continue'));
+
+  expect(await screen.findByText('Live Test Museum')).toBeInTheDocument();
+  expect(searchActivities).toHaveBeenCalledWith(
+    euston.coordinates.lat,
+    euston.coordinates.lng,
+    [INTEREST_CATEGORY_OPTIONS[0].id],
+  );
+});
+
 // --- Header logout (Packet 124) ---
 
 describe('header logout', () => {
