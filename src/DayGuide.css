@@ -542,6 +542,27 @@ p {
   gap: 10px;
 }
 
+.planning-start-place-search {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #d0d8f8;
+  border-radius: 14px;
+  background: #f8f9ff;
+}
+
+.planning-start-place-search h3 {
+  margin-top: 0;
+}
+
+.planning-start-place-search form {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-start-place-search .btn-secondary {
+  width: 100%;
+}
+
 .planning-place-results {
   margin-top: 20px;
 }

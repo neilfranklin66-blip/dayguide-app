@@ -201,9 +201,8 @@ test('mounts the private-alpha geographical planning stage before selections', (
   expect(screen.getByText('planning.title')).toBeInTheDocument();
   expect(screen.getByText('planning.privateAlphaNotice')).toBeInTheDocument();
   expect(screen.getByText('planning.storageNotice')).toBeInTheDocument();
-  expect(screen.getByLabelText('planning.startPlace')).toHaveValue(
-    'current_location',
-  );
+  expect(screen.getByText('planning.startPlaceSelected')).toBeInTheDocument();
+  expect(screen.getByText('planning.useCurrentStart')).toBeInTheDocument();
 });
 
 test('accepting the current start passes the geographical plan into the selection journey', async () => {
@@ -250,15 +249,12 @@ test('a searched start location becomes the origin for a restaurant-first search
   fireEvent.click(screen.getByText('interests.startWithFoodDrinks'));
   fireEvent.click(screen.getByText('interests.next'));
 
-  fireEvent.change(screen.getByLabelText('planning.searchLabel'), {
+  fireEvent.change(screen.getByLabelText('planning.startSearchLabel'), {
     target: { value: 'London Euston' },
   });
   fireEvent.click(screen.getByText('planning.searchAction'));
   expect(await screen.findByText('London Euston')).toBeInTheDocument();
-  fireEvent.click(screen.getByText('planning.addNamedPlace'));
-  fireEvent.change(screen.getByLabelText('planning.startPlace'), {
-    target: { value: 'resolved:euston' },
-  });
+  fireEvent.click(screen.getByText('planning.selectStartPlace'));
   fireEvent.click(screen.getByText('planning.continue'));
 
   expect(

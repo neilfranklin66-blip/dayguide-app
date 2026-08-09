@@ -2,6 +2,12 @@ import React, { useRef, useState } from 'react';
 import PlanningInputStage from './PlanningInputStage';
 import { isPlaceRef } from '../models/geographicalPlan';
 import {
+  PLACE_SELECTION_MODE,
+  createPlaceSelection,
+  createPlanningInputDraft,
+  setStartSelection,
+} from '../utils/planningInputWorkflow';
+import {
   PLACE_QUERY_MAX_LENGTH,
   PLACE_QUERY_MIN_LENGTH,
   PLACE_RESOLUTION_ERROR,
@@ -73,6 +79,9 @@ export default function PlanningInputWithPlaceResolution({
   const [availablePlaces, setAvailablePlaces] = useState(() =>
     mergePlaces(initialPlaces),
   );
+  const [draft, setDraft] = useState(() =>
+    initialDraft ?? createPlanningInputDraft(),
+  );
   const [searchState, setSearchState] = useState('idle');
   const [feedback, setFeedback] = useState('');
   const searchInFlight = useRef(false);
@@ -120,144 +129,167 @@ export default function PlanningInputWithPlaceResolution({
     }
   };
 
-  const addPlace = place => {
+  const selectStartPlace = place => {
     setAvailablePlaces(current => mergePlaces(current, [place]));
-    setFeedback(
-      t('planning.placeAdded', {
-        name: place.name,
-        defaultValue: `${place.name} is now available in the planning choices.`,
-      }),
+    setDraft(current =>
+      setStartSelection(
+        current,
+        createPlaceSelection({
+          mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
+          place,
+        }),
+      ),
     );
+    setResults([]);
+    setSearchState('idle');
   };
 
-  const hasPlace = place =>
-    availablePlaces.some(item => placeKey(item) === placeKey(place));
+  const useCurrentLocation = () => {
+    if (!isPlaceRef(currentPlace) || currentPlace.source !== 'current_gps') {
+      return;
+    }
+    setDraft(current =>
+      setStartSelection(
+        current,
+        createPlaceSelection({
+          mode: PLACE_SELECTION_MODE.CURRENT_LOCATION,
+          place: currentPlace,
+        }),
+      ),
+    );
+    setFeedback('');
+  };
 
-  return (
-    <>
-      <div className="dayguide-container">
-        <section
-          className="card planning-place-resolution"
-          aria-labelledby="place-resolution-title"
+  const startPlaceControl = (
+    <section className="planning-start-place-search" aria-labelledby="planning-start-place-title">
+      <h3 id="planning-start-place-title">
+        {t('planning.startSearchTitle', {
+          defaultValue: 'Where will you start?',
+        })}
+      </h3>
+      <p className="start-order-hint">
+        {t('planning.startSearchHint', {
+          defaultValue: 'Search for a place, address, postcode or ZIP code.',
+        })}
+      </p>
+
+      {draft.startSelection?.place && (
+        <p role="status" className="start-order-hint">
+          {t('planning.startPlaceSelected', {
+            name: draft.startSelection.place.name,
+            defaultValue: `Your day will start at ${draft.startSelection.place.name}.`,
+          })}
+        </p>
+      )}
+
+      {isPlaceRef(currentPlace) && currentPlace.source === 'current_gps' && (
+        <button type="button" className="btn-secondary" onClick={useCurrentLocation}>
+          {t('planning.useCurrentStart', {
+            name: currentPlace.name,
+            defaultValue: `Use my current location — ${currentPlace.name}`,
+          })}
+        </button>
+      )}
+
+      <form onSubmit={search}>
+        <label htmlFor="planning-place-query">
+          {t('planning.startSearchLabel', {
+            defaultValue: 'Place, address, postcode or ZIP code',
+          })}
+        </label>
+        <input
+          id="planning-place-query"
+          type="search"
+          value={query}
+          minLength={PLACE_QUERY_MIN_LENGTH}
+          maxLength={PLACE_QUERY_MAX_LENGTH}
+          placeholder={t('planning.startSearchPlaceholder', {
+            defaultValue: 'For example: Northampton Museum or NN1 1DP',
+          })}
+          onChange={event => setQuery(event.target.value)}
+          className="time-input"
+          autoComplete="postal-code"
+        />
+        <button
+          type="submit"
+          className="btn-secondary"
+          disabled={searchState === 'loading'}
         >
-          <h2 id="place-resolution-title">
-            {t('planning.searchTitle', {
-              defaultValue: 'Find a verified planning place',
-            })}
-          </h2>
-          <p>
-            {t('planning.searchSubtitle', {
-              defaultValue:
-                'Search for a station, venue, hotel or address, then add the correct match to your planning choices.',
-            })}
+          {searchState === 'loading'
+            ? t('planning.searching', { defaultValue: 'Searching...' })
+            : t('planning.searchAction', { defaultValue: 'Search' })}
+        </button>
+      </form>
+
+      {feedback && (
+        <p
+          role={searchState === 'error' ? 'alert' : 'status'}
+          className="start-order-hint"
+        >
+          {feedback}
+        </p>
+      )}
+
+      {searchState === 'success' && (
+        <section
+          aria-label={t('planning.searchResultsLabel', {
+            defaultValue: 'Place matches',
+          })}
+          className="planning-place-results"
+        >
+          <p
+            translate="no"
+            aria-label="Google Maps"
+            style={{
+              color: '#5e5e5e',
+              fontFamily: 'Roboto, Sans-Serif',
+              fontSize: '14px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              letterSpacing: 'normal',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Google Maps
           </p>
           <p className="start-order-hint">
-            {t('planning.searchPrivacy', {
+            {t('planning.searchOrdering', {
               defaultValue:
-                'A search is sent to Google Maps only when you press Search. DayGuide does not send searches while you type.',
+                'Matches are ordered using factors including relevance, distance and prominence.',
             })}
           </p>
-
-          <form onSubmit={search}>
-            <label htmlFor="planning-place-query">
-              {t('planning.searchLabel', {
-                defaultValue: 'Place name or address',
-              })}
-            </label>
-            <input
-              id="planning-place-query"
-              type="search"
-              value={query}
-              minLength={PLACE_QUERY_MIN_LENGTH}
-              maxLength={PLACE_QUERY_MAX_LENGTH}
-              onChange={event => setQuery(event.target.value)}
-              className="time-input"
-              autoComplete="off"
-            />
-            <button
-              type="submit"
-              className="btn-secondary"
-              disabled={searchState === 'loading'}
-            >
-              {searchState === 'loading'
-                ? t('planning.searching', { defaultValue: 'Searching...' })
-                : t('planning.searchAction', { defaultValue: 'Search' })}
-            </button>
-          </form>
-
-          {feedback && (
-            <p
-              role={searchState === 'error' ? 'alert' : 'status'}
-              className="start-order-hint"
-            >
-              {feedback}
-            </p>
-          )}
-
-          {searchState === 'success' && (
-            <section
-              aria-label={t('planning.searchResultsLabel', {
-                defaultValue: 'Verified place matches',
-              })}
-              className="planning-place-results"
-            >
-              <p
-                translate="no"
-                aria-label="Google Maps"
-                style={{
-                  color: '#5e5e5e',
-                  fontFamily: 'Roboto, Sans-Serif',
-                  fontSize: '14px',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  letterSpacing: 'normal',
-                  whiteSpace: 'nowrap',
-                }}
+          {results.map(place => (
+            <article key={placeKey(place)} className="swipe-item">
+              <h4>{place.name}</h4>
+              {place.address && <p>{place.address}</p>}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => selectStartPlace(place)}
               >
-                Google Maps
-              </p>
-              <p className="start-order-hint">
-                {t('planning.searchOrdering', {
-                  defaultValue:
-                    'Matches are ordered using factors including relevance, distance and prominence.',
+                {t('planning.selectStartPlace', {
+                  name: place.name,
+                  defaultValue: `Start at ${place.name}`,
                 })}
-              </p>
-              {results.map(place => (
-                <article key={placeKey(place)} className="swipe-item">
-                  <h3>{place.name}</h3>
-                  {place.address && <p>{place.address}</p>}
-                  <button
-                    type="button"
-                    className="btn-secondary"
-                    disabled={hasPlace(place)}
-                    onClick={() => addPlace(place)}
-                  >
-                    {hasPlace(place)
-                      ? t('planning.placeAlreadyAdded', {
-                          name: place.name,
-                          defaultValue: `${place.name} added`,
-                        })
-                      : t('planning.addNamedPlace', {
-                          name: place.name,
-                          defaultValue: `Add ${place.name}`,
-                        })}
-                  </button>
-                </article>
-              ))}
-            </section>
-          )}
+              </button>
+            </article>
+          ))}
         </section>
-      </div>
+      )}
+    </section>
+  );
 
-      <PlanningInputStage
-        currentPlace={currentPlace}
-        availablePlaces={availablePlaces}
-        initialDraft={initialDraft}
-        onComplete={onComplete}
-        onCancel={onCancel}
-        onSkip={onSkip}
-        t={t}
-      />
-    </>
+  return (
+    <PlanningInputStage
+      currentPlace={currentPlace}
+      availablePlaces={availablePlaces}
+      draft={draft}
+      onDraftChange={setDraft}
+      startPlaceControl={startPlaceControl}
+      onComplete={onComplete}
+      onCancel={onCancel}
+      onSkip={onSkip}
+      t={t}
+    />
   );
 }

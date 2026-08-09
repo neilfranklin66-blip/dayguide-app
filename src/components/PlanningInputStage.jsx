@@ -70,25 +70,30 @@ export default function PlanningInputStage({
   currentPlace = null,
   availablePlaces = [],
   initialDraft = null,
+  draft: controlledDraft = null,
+  onDraftChange = null,
+  startPlaceControl = null,
   onComplete,
   onCancel,
   onSkip,
   t = fallbackT,
 }) {
-  const [draft, setDraft] = useState(
+  const [internalDraft, setInternalDraft] = useState(
     initialDraft ?? createPlanningInputDraft(),
   );
+  const draft = controlledDraft ?? internalDraft;
+  const updateDraft = onDraftChange ?? setInternalDraft;
   const [editor, setEditor] = useState(null);
   const [errors, setErrors] = useState([]);
 
   const updateStartTime = value => {
     const minutes = timeInputToMinutes(value);
-    setDraft(current => setDepartureTime(current, minutes));
+    updateDraft(current => setDepartureTime(current, minutes));
   };
 
   const updateDestinationDeadline = value => {
     const minutes = value === '' ? null : timeInputToMinutes(value);
-    setDraft(current =>
+    updateDraft(current =>
       setDestinationTiming(current, {
         arrivalDeadlineMinutes: minutes,
         arrivalBufferMinutes:
@@ -98,7 +103,7 @@ export default function PlanningInputStage({
   };
 
   const saveAnchor = anchor => {
-    setDraft(current => upsertHardAnchor(current, anchor));
+    updateDraft(current => upsertHardAnchor(current, anchor));
     setEditor(null);
     setErrors([]);
   };
@@ -138,19 +143,21 @@ export default function PlanningInputStage({
           })}
         </p>
 
-        <ResolvedPlaceSelect
-          id="planning-start-place"
-          label={t('planning.startPlace', {
-            defaultValue: 'Where does your day start?',
-          })}
-          selection={draft.startSelection}
-          onChange={selection =>
-            setDraft(current => setStartSelection(current, selection))
-          }
-          currentPlace={currentPlace}
-          availablePlaces={availablePlaces}
-          t={t}
-        />
+        {startPlaceControl ?? (
+          <ResolvedPlaceSelect
+            id="planning-start-place"
+            label={t('planning.startPlace', {
+              defaultValue: 'Where does your day start?',
+            })}
+            selection={draft.startSelection}
+            onChange={selection =>
+              updateDraft(current => setStartSelection(current, selection))
+            }
+            currentPlace={currentPlace}
+            availablePlaces={availablePlaces}
+            t={t}
+          />
+        )}
 
         <div className="time-selector">
           <label htmlFor="planning-start-time">
@@ -174,7 +181,7 @@ export default function PlanningInputStage({
               type="checkbox"
               checked={draft.destination.enabled}
               onChange={event =>
-                setDraft(current =>
+                updateDraft(current =>
                   setDestinationEnabled(current, event.target.checked),
                 )
               }
@@ -194,7 +201,7 @@ export default function PlanningInputStage({
               })}
               selection={draft.destination.selection}
               onChange={selection =>
-                setDraft(current =>
+                updateDraft(current =>
                   setDestinationSelection(current, selection),
                 )
               }
@@ -235,7 +242,7 @@ export default function PlanningInputStage({
                   step="5"
                   value={draft.destination.arrivalBufferMinutes}
                   onChange={event =>
-                    setDraft(current =>
+                    updateDraft(current =>
                       setDestinationTiming(current, {
                         arrivalDeadlineMinutes:
                           current.destination.arrivalDeadlineMinutes,
@@ -304,7 +311,7 @@ export default function PlanningInputStage({
                   type="button"
                   className="btn-secondary"
                   onClick={() =>
-                    setDraft(current =>
+                    updateDraft(current =>
                       removeHardAnchor(current, anchor.id),
                     )
                   }
