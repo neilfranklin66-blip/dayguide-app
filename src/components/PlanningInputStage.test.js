@@ -161,14 +161,16 @@ test('planning input stage collects a destination and optional deadline', () => 
   );
 });
 
-test('planning input stage adds and completes with a planner-locked anchor', () => {
+test('planning input stage adds and completes with a planner-locked anchor', async () => {
   const onComplete = jest.fn();
+  const anchorSearchPlaces = jest.fn().mockResolvedValue([theatre]);
   render(
     <PlanningInputStage
       currentPlace={currentPlace}
       availablePlaces={availablePlaces}
       onComplete={onComplete}
       onCancel={jest.fn()}
+      anchorSearchPlaces={anchorSearchPlaces}
     />,
   );
 
@@ -179,9 +181,15 @@ test('planning input stage adds and completes with a planner-locked anchor', () 
   fireEvent.change(screen.getByLabelText('Commitment name'), {
     target: { value: 'Evening theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed place'), {
-    target: { value: 'resolved:theatre' },
+  fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
+    target: { value: 'Theatre' },
   });
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  fireEvent.click(
+    await screen.findByRole('button', {
+      name: 'Use Theatre for this commitment',
+    }),
+  );
   fireEvent.change(screen.getByLabelText('Fixed start time'), {
     target: { value: '18:30' },
   });
@@ -209,13 +217,15 @@ test('planning input stage adds and completes with a planner-locked anchor', () 
   );
 });
 
-test('planning input stage edits and removes a fixed anchor deliberately', () => {
+test('planning input stage edits and removes a fixed anchor deliberately', async () => {
+  const anchorSearchPlaces = jest.fn().mockResolvedValue([theatre]);
   render(
     <PlanningInputStage
       currentPlace={currentPlace}
       availablePlaces={availablePlaces}
       onComplete={jest.fn()}
       onCancel={jest.fn()}
+      anchorSearchPlaces={anchorSearchPlaces}
     />,
   );
 
@@ -223,9 +233,15 @@ test('planning input stage edits and removes a fixed anchor deliberately', () =>
   fireEvent.change(screen.getByLabelText('Commitment name'), {
     target: { value: 'Theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed place'), {
-    target: { value: 'resolved:theatre' },
+  fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
+    target: { value: 'Theatre' },
   });
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  fireEvent.click(
+    await screen.findByRole('button', {
+      name: 'Use Theatre for this commitment',
+    }),
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
 
   fireEvent.click(screen.getByRole('button', { name: 'Edit Theatre' }));

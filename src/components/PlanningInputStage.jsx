@@ -76,6 +76,7 @@ export default function PlanningInputStage({
   onDraftChange = null,
   startPlaceControl = null,
   destinationPlaceControl = null,
+  anchorSearchPlaces = undefined,
   onComplete,
   onCancel,
   onSkip,
@@ -358,6 +359,7 @@ export default function PlanningInputStage({
             initialAnchor={editor.anchor}
             currentPlace={currentPlace}
             availablePlaces={availablePlaces}
+            searchPlaces={anchorSearchPlaces}
             onSave={saveAnchor}
             onCancel={() => setEditor(null)}
             t={t}

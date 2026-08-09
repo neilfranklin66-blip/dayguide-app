@@ -6,7 +6,8 @@ import {
   minutesToTimeInput,
   timeInputToMinutes,
 } from '../utils/planningInputWorkflow';
-import ResolvedPlaceSelect from './ResolvedPlaceSelect';
+import DirectPlaceSearch from './DirectPlaceSearch';
+import { resolvePlaceQuery } from '../api/placeResolutionApi';
 
 const fallbackT = (_key, options) => options?.defaultValue ?? _key;
 
@@ -29,9 +30,9 @@ export default function HardAnchorEditor({
   anchorId,
   initialAnchor = null,
   currentPlace = null,
-  availablePlaces = [],
   onSave,
   onCancel,
+  searchPlaces = resolvePlaceQuery,
   t = fallbackT,
 }) {
   const [title, setTitle] = useState(initialAnchor?.title ?? '');
@@ -48,6 +49,27 @@ export default function HardAnchorEditor({
     initialAnchor?.arrivalBufferMinutes ?? 15,
   );
   const [error, setError] = useState(null);
+
+  const selectAnchorPlace = place => {
+    setSelection(
+      createPlaceSelection({
+        mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
+        place,
+      }),
+    );
+    setError(null);
+  };
+
+  const useCurrentLocation = () => {
+    if (currentPlace?.source !== 'current_gps') return;
+    setSelection(
+      createPlaceSelection({
+        mode: PLACE_SELECTION_MODE.CURRENT_LOCATION,
+        place: currentPlace,
+      }),
+    );
+    setError(null);
+  };
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -112,13 +134,34 @@ export default function HardAnchorEditor({
         />
       </div>
 
-      <ResolvedPlaceSelect
+      <DirectPlaceSearch
         id={`${anchorId}-place`}
-        label={t('planning.fixedPlace', { defaultValue: 'Fixed place' })}
-        selection={selection}
-        onChange={setSelection}
-        currentPlace={currentPlace}
-        availablePlaces={availablePlaces}
+        titleKey="planning.anchorSearchTitle"
+        titleDefault="Where do you need to be?"
+        hintKey="planning.anchorSearchHint"
+        hintDefault="Search for a place, address, postcode or ZIP code."
+        labelKey="planning.anchorSearchLabel"
+        labelDefault="Place, address, postcode or ZIP code"
+        placeholderKey="planning.anchorSearchPlaceholder"
+        placeholderDefault="For example: Northampton Museum or NN1 1DP"
+        selectedPlace={selection?.place ?? null}
+        selectedKey="planning.anchorPlaceSelected"
+        selectedDefault="This commitment is at {{name}}."
+        selectKey="planning.selectAnchorPlace"
+        selectDefault="Use {{name}} for this commitment"
+        onSelect={selectAnchorPlace}
+        secondaryAction={
+          currentPlace?.source === 'current_gps'
+            ? {
+                key: 'planning.useCurrentAnchor',
+                name: currentPlace.name,
+                defaultValue: `Use my current location — ${currentPlace.name}`,
+                onClick: useCurrentLocation,
+              }
+            : null
+        }
+        embedded
+        searchPlaces={searchPlaces}
         t={t}
       />
 

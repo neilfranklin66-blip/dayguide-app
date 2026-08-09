@@ -71,6 +71,7 @@ export default function DirectPlaceSearch({
   selectDefault,
   onSelect,
   secondaryAction = null,
+  embedded = false,
   searchPlaces = resolvePlaceQuery,
   t = fallbackT,
 }) {
@@ -132,6 +133,8 @@ export default function DirectPlaceSearch({
     setFeedback('');
   };
 
+  const SearchContainer = embedded ? 'div' : 'form';
+
   return (
     <section className="planning-place-search" aria-labelledby={titleId}>
       <h3 id={titleId}>{t(titleKey, { defaultValue: titleDefault })}</h3>
@@ -161,7 +164,10 @@ export default function DirectPlaceSearch({
         </button>
       )}
 
-      <form onSubmit={search}>
+      <SearchContainer
+        className={embedded ? 'place-search-form' : undefined}
+        onSubmit={embedded ? undefined : search}
+      >
         <label htmlFor={inputId}>{t(labelKey, { defaultValue: labelDefault })}</label>
         <input
           id={inputId}
@@ -175,15 +181,16 @@ export default function DirectPlaceSearch({
           autoComplete="postal-code"
         />
         <button
-          type="submit"
+          type={embedded ? 'button' : 'submit'}
           className="btn-secondary"
           disabled={searchState === 'loading'}
+          onClick={embedded ? search : undefined}
         >
           {searchState === 'loading'
             ? t('planning.searching', { defaultValue: 'Searching...' })
             : t('planning.searchAction', { defaultValue: 'Search' })}
         </button>
-      </form>
+      </SearchContainer>
 
       {feedback && (
         <p

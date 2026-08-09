@@ -29,6 +29,9 @@ or the production deployment.
 - The orange focus treatment now applies to the focused date/time fields as
   well as keyboard-focused controls. It is a temporary focus indicator, not a
   permanent change of the DayGuide colour theme.
+- Fixed anchors now use the same direct verified-place search as start and
+  finish. A person can type a place, address, postcode or ZIP code, search,
+  and choose a result; an anchor never accepts unverified free text.
 - Secondary card copy and fact labels use darker text for improved contrast.
 
 ## Boundaries

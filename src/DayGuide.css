@@ -578,7 +578,8 @@ select:focus-visible {
   margin-top: 0;
 }
 
-.planning-place-search form {
+.planning-place-search form,
+.planning-place-search .place-search-form {
   display: grid;
   gap: 10px;
 }
@@ -1246,18 +1247,21 @@ select:focus-visible {
   margin-bottom: 16px;
 }
 
-/* Activities grid: 3-column compact layout for 12 categories */
-.activities-grid {
+/* Activity and food choices share the same compact three-column treatment. */
+.activities-grid,
+.cuisine-grid {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.activities-grid .interest-btn {
+.activities-grid .interest-btn,
+.cuisine-grid .interest-btn {
   padding: 14px 6px;
   font-size: 0.82em;
   gap: 6px;
 }
 
-.activities-grid .interest-btn .icon {
+.activities-grid .interest-btn .icon,
+.cuisine-grid .interest-btn .icon {
   font-size: 1.6em;
 }
 
