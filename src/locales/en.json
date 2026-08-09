@@ -152,6 +152,7 @@
     "continue": "Continue with these fixed details",
     "back": "Back",
     "skip": "Continue without fixed route details",
+    "setStartingPlace": "Set a starting place",
     "storageNotice": "If you save this plan, its selected place names and coordinates stay only in this browser until the plan expires or you press Start Over. They are not included in the share QR code.",
     "useCurrentLocation": "Use my current location — {{name}}",
     "placeWithAddress": "{{name}} — {{address}}",
@@ -221,6 +222,7 @@
     "networkGuidance": "Check your internet connection, then try again.",
     "errorGuidance": "The live activity service may be temporarily down. Try again in a moment, or continue building your plan.",
     "tryAgain": "Try again",
+    "setStartingPlace": "Set a starting place",
     "skipAndContinue": "Skip activities and continue",
     "skip": "❌ Skip",
     "yes": "✅ Yes!"
@@ -266,6 +268,7 @@
     "errorWarning": "We couldn't reach the live restaurant search, so we can't show real nearby restaurants right now.",
     "errorHint": "This is usually temporary. Try again, or carry on without a restaurant.",
     "tryAgain": "Try again",
+    "setStartingPlace": "Set a starting place",
     "whatCanITryTitle": "What can I try?",
     "noLocationGuidance": "Enter or pick a clearer start location, or allow location access, then search again.",
     "locationDeniedGuidance": "Turn on location permission for this site in your browser settings, or set your start location manually if you can, then search again.",

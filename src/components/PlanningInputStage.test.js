@@ -42,7 +42,7 @@ const hotel = createPlaceRef({
 
 const availablePlaces = [euston, theatre, hotel];
 
-test('planning input stage requires a verified start place', () => {
+test('planning input stage disables fixed-details continuation until a verified start is selected', () => {
   const onComplete = jest.fn();
   render(
     <PlanningInputStage
@@ -52,16 +52,35 @@ test('planning input stage requires a verified start place', () => {
     />,
   );
 
-  fireEvent.click(
+  expect(
     screen.getByRole('button', {
       name: 'Continue with these fixed details',
     }),
+  ).toBeDisabled();
+  expect(onComplete).not.toHaveBeenCalled();
+});
+
+test('a selected start keeps the recovery route and hides the no-details escape', () => {
+  const draft = setStartSelection(
+    createPlanningInputDraft(),
+    createPlaceSelection({
+      mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
+      place: euston,
+    }),
   );
 
-  expect(onComplete).not.toHaveBeenCalled();
-  expect(screen.getByRole('alert')).toHaveTextContent(
-    'Choose a verified starting place.',
+  render(
+    <PlanningInputStage
+      availablePlaces={availablePlaces}
+      initialDraft={draft}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+      onSkip={jest.fn()}
+    />,
   );
+
+  expect(screen.queryByText('Continue without fixed route details')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Continue with these fixed details' })).toBeEnabled();
 });
 
 test('planning input stage distinguishes current GPS from another start place', () => {

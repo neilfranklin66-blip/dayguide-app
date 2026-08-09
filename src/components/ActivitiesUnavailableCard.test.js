@@ -3,20 +3,22 @@ import ActivitiesUnavailableCard from './ActivitiesUnavailableCard';
 
 const t = (key) => key;
 
-test('names a denied location and offers a retry', () => {
-  const onRetry = jest.fn();
+test('names a denied location and sends the user directly to set a starting place', () => {
+  const onSetStart = jest.fn();
   render(
     <ActivitiesUnavailableCard
       activitySource="location_denied"
-      onRetry={onRetry}
+      onRetry={jest.fn()}
+      onSetStart={onSetStart}
       onSkip={jest.fn()}
       t={t}
     />,
   );
 
   expect(screen.getByText('activities.locationDeniedWarning')).toBeInTheDocument();
-  fireEvent.click(screen.getByText('activities.tryAgain'));
-  expect(onRetry).toHaveBeenCalledTimes(1);
+  expect(screen.queryByText('activities.tryAgain')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText('activities.setStartingPlace'));
+  expect(onSetStart).toHaveBeenCalledTimes(1);
 });
 
 test('does not offer retry for a DayGuide setup failure', () => {

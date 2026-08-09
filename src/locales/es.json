@@ -131,6 +131,7 @@
     "continue": "Continuar con estos datos fijos",
     "back": "Atrás",
     "skip": "Continuar sin datos de ruta fijos",
+    "setStartingPlace": "Elige un lugar de inicio",
     "storageNotice": "Si guardas este plan, los nombres y coordenadas seleccionados solo permanecen en este navegador hasta que caduque el plan o pulses Empezar de nuevo. No se incluyen en el código QR.",
     "useCurrentLocation": "Usar mi ubicación actual — {{name}}",
     "placeWithAddress": "{{name}} — {{address}}",
@@ -200,6 +201,7 @@
     "networkGuidance": "Comprueba tu conexión a internet y vuelve a intentarlo.",
     "errorGuidance": "El servicio de actividades en directo puede estar temporalmente fuera de servicio. Vuelve a intentarlo en un momento o continúa creando tu plan.",
     "tryAgain": "Intentar de nuevo",
+    "setStartingPlace": "Elige un lugar de inicio",
     "skipAndContinue": "Omitir actividades y continuar",
     "skip": "❌ Omitir",
     "yes": "✅ ¡Sí!"
@@ -244,6 +246,7 @@
     "errorWarning": "No pudimos conectar con la búsqueda de restaurantes en vivo, así que ahora mismo no podemos mostrar restaurantes reales cercanos.",
     "errorHint": "Suele ser temporal. Vuelve a intentarlo o continúa sin restaurante.",
     "tryAgain": "Volver a intentar",
+    "setStartingPlace": "Elige un lugar de inicio",
     "whatCanITryTitle": "¿Qué puedo probar?",
     "noLocationGuidance": "Introduce o elige una ubicación de inicio más clara, o permite el acceso a la ubicación, y vuelve a buscar.",
     "locationDeniedGuidance": "Activa el permiso de ubicación para este sitio en la configuración de tu navegador, o define tu ubicación de inicio manualmente si puedes, y vuelve a buscar.",

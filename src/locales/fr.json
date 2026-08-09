@@ -131,6 +131,7 @@
     "continue": "Continuer avec ces détails fixes",
     "back": "Retour",
     "skip": "Continuer sans détails d’itinéraire fixes",
+    "setStartingPlace": "Choisir un lieu de départ",
     "storageNotice": "Si vous enregistrez ce plan, les noms et coordonnées sélectionnés restent uniquement dans ce navigateur jusqu’à l’expiration du plan ou jusqu’à Nouveau départ. Ils ne figurent pas dans le code QR.",
     "useCurrentLocation": "Utiliser ma position actuelle — {{name}}",
     "placeWithAddress": "{{name}} — {{address}}",
@@ -200,6 +201,7 @@
     "networkGuidance": "Vérifiez votre connexion internet, puis réessayez.",
     "errorGuidance": "Le service d'activités en direct est peut-être temporairement indisponible. Réessayez dans un instant ou continuez votre plan.",
     "tryAgain": "Réessayer",
+    "setStartingPlace": "Choisir un lieu de départ",
     "skipAndContinue": "Passer les activités et continuer",
     "skip": "❌ Passer",
     "yes": "✅ Oui !"
@@ -244,6 +246,7 @@
     "errorWarning": "Impossible de joindre la recherche de restaurants en direct, nous ne pouvons donc pas afficher de vrais restaurants à proximité pour le moment.",
     "errorHint": "C'est généralement temporaire. Réessayez ou continuez sans restaurant.",
     "tryAgain": "Réessayer",
+    "setStartingPlace": "Choisir un lieu de départ",
     "whatCanITryTitle": "Que puis-je essayer ?",
     "noLocationGuidance": "Saisissez ou choisissez un point de départ plus précis, ou autorisez l'accès à la localisation, puis relancez la recherche.",
     "locationDeniedGuidance": "Activez l'autorisation de localisation pour ce site dans les paramètres de votre navigateur, ou définissez votre point de départ manuellement si possible, puis relancez la recherche.",

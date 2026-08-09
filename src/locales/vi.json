@@ -131,6 +131,7 @@
     "continue": "Tiếp tục với các chi tiết cố định này",
     "back": "Quay lại",
     "skip": "Tiếp tục mà không có chi tiết tuyến cố định",
+    "setStartingPlace": "Chọn địa điểm bắt đầu",
     "storageNotice": "Nếu lưu kế hoạch, tên và tọa độ địa điểm đã chọn chỉ ở trong trình duyệt này cho đến khi kế hoạch hết hạn hoặc bạn nhấn Bắt đầu lại. Chúng không nằm trong mã QR chia sẻ.",
     "useCurrentLocation": "Dùng vị trí hiện tại — {{name}}",
     "placeWithAddress": "{{name}} — {{address}}",
@@ -200,6 +201,7 @@
     "networkGuidance": "Kiểm tra kết nối internet rồi thử lại.",
     "errorGuidance": "Dịch vụ hoạt động trực tiếp có thể tạm thời ngừng hoạt động. Hãy thử lại sau hoặc tiếp tục lập kế hoạch.",
     "tryAgain": "Thử lại",
+    "setStartingPlace": "Chọn địa điểm bắt đầu",
     "skipAndContinue": "Bỏ qua hoạt động và tiếp tục",
     "skip": "❌ Bỏ qua",
     "yes": "✅ Có!"
@@ -244,6 +246,7 @@
     "errorWarning": "Không thể kết nối với tìm kiếm nhà hàng trực tiếp, nên hiện không thể hiển thị các nhà hàng thật gần bạn.",
     "errorHint": "Thường chỉ là tạm thời. Hãy thử lại, hoặc tiếp tục mà không chọn nhà hàng.",
     "tryAgain": "Thử lại",
+    "setStartingPlace": "Chọn địa điểm bắt đầu",
     "whatCanITryTitle": "Tôi có thể thử gì?",
     "noLocationGuidance": "Nhập hoặc chọn một điểm xuất phát rõ ràng hơn, hoặc cho phép truy cập vị trí, rồi tìm kiếm lại.",
     "locationDeniedGuidance": "Bật quyền truy cập vị trí cho trang này trong cài đặt trình duyệt, hoặc tự đặt điểm xuất phát nếu có thể, rồi tìm kiếm lại.",

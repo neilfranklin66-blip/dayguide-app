@@ -3,8 +3,10 @@ import HardAnchorEditor from './HardAnchorEditor';
 import ResolvedPlaceSelect from './ResolvedPlaceSelect';
 import {
   PLANNING_INPUT_ERROR,
+  PLACE_SELECTION_MODE,
   createPlanningInputDraft,
   finalizePlanningInput,
+  isResolvedPlaceSelection,
   minutesToTimeInput,
   removeHardAnchor,
   setDepartureTime,
@@ -122,6 +124,9 @@ export default function PlanningInputStage({
   const destinationDeadline = minutesToTimeInput(
     draft.destination.arrivalDeadlineMinutes,
   );
+  const hasSelectedStart = isResolvedPlaceSelection(draft.startSelection);
+  const hasNamedStartingPlace =
+    draft.startSelection?.mode === PLACE_SELECTION_MODE.RESOLVED_PLACE;
 
   return (
     <div className="dayguide-container">
@@ -371,7 +376,7 @@ export default function PlanningInputStage({
           <button type="button" onClick={onCancel} className="btn-secondary">
             {t('planning.back', { defaultValue: 'Back' })}
           </button>
-          {onSkip && (
+          {onSkip && !hasNamedStartingPlace && (
             <button
               type="button"
               onClick={onSkip}
@@ -382,7 +387,12 @@ export default function PlanningInputStage({
               })}
             </button>
           )}
-          <button type="button" onClick={complete} className="btn-primary">
+          <button
+            type="button"
+            onClick={complete}
+            className="btn-primary"
+            disabled={!hasSelectedStart}
+          >
             {t('planning.continue', {
               defaultValue: 'Continue with these fixed details',
             })}

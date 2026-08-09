@@ -813,7 +813,8 @@ const DayGuide = () => {
           currentActivityIndex={currentActivityIndex}
           selectedInterests={selectedInterests}
           goToActivities={goToActivities}
-          onRetry={() => goToActivities(selectedInterests)}
+          onRetry={() => goToActivities(selectedInterests, geographicalPlanning)}
+          onSetStart={() => setStage('planning')}
           isLiveDiscovery={nearbyDiscoveryMode === 'activities'}
           onShowAllLive={() => goToActivities([])}
           onBackToDiscovery={() => {
@@ -860,6 +861,8 @@ const DayGuide = () => {
           swipeRestaurant={swipeRestaurant}
           onBuild={() => buildTimeline(selectedRestaurantsRef.current, selectedActivities)}
           onShowMore={showMoreRestaurants}
+          onSetStart={() => setStage('planning')}
+          planningOverride={geographicalPlanning}
           hasMore={nearbyDiscoveryMode === 'food' && !!restaurantNextPageToken}
           t={t}
         />

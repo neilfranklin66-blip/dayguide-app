@@ -25,6 +25,8 @@ export default function RestaurantsStage({
   swipeRestaurant,
   onBuild,
   onShowMore,
+  onSetStart,
+  planningOverride,
   hasMore = false,
   t,
 }) {
@@ -43,7 +45,14 @@ export default function RestaurantsStage({
       return (
         <RestaurantsUnavailableCard
           restaurantSource={restaurantSource}
-          onRetry={() => goToRestaurants(selectedCuisines, selectedPriceRange)}
+          onRetry={() =>
+            goToRestaurants(
+              selectedCuisines,
+              selectedPriceRange,
+              planningOverride,
+            )
+          }
+          onSetStart={onSetStart}
           onSkip={() => continueAfterRestaurants([])}
           t={t}
         />

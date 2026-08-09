@@ -1046,6 +1046,9 @@ test('a denied location shows an honest activity-unavailable card, never a sampl
 
   expect(await screen.findByText('activities.locationDeniedWarning')).toBeInTheDocument();
   expect(screen.queryByText('activities.sampleBadge')).not.toBeInTheDocument();
+  expect(screen.queryByText('activities.tryAgain')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText('activities.setStartingPlace'));
+  expect(screen.getByLabelText('planning.startSearchLabel')).toBeInTheDocument();
   expect(searchActivities).not.toHaveBeenCalled();
 });
 
@@ -1290,6 +1293,9 @@ describe('restaurant selection flow', () => {
       expect(await screen.findByText('restaurants.locationDeniedWarning')).toBeInTheDocument();
       expect(screen.getByText('restaurants.locationDeniedHint')).toBeInTheDocument();
       expect(screen.queryByText('restaurants.noLocationWarning')).not.toBeInTheDocument();
+      expect(screen.queryByText('restaurants.tryAgain')).not.toBeInTheDocument();
+      fireEvent.click(screen.getByText('restaurants.setStartingPlace'));
+      expect(screen.getByLabelText('planning.startSearchLabel')).toBeInTheDocument();
 
       expect(searchRestaurants).not.toHaveBeenCalled();
     });

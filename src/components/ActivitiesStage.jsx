@@ -23,6 +23,7 @@ export default function ActivitiesStage({
   onShowAllLive,
   onBackToDiscovery,
   onRetry,
+  onSetStart,
   t,
 }) {
   if (isActivitiesLoading) {
@@ -41,6 +42,7 @@ export default function ActivitiesStage({
         <ActivitiesUnavailableCard
           activitySource={activitySource}
           onRetry={onRetry}
+          onSetStart={onSetStart}
           onSkip={() => continueAfterActivities([])}
           t={t}
         />

@@ -63,6 +63,7 @@ const REQUIRED_KEYS = [
   'activities.unavailableTitle',
   'activities.skipAndContinue',
   'activities.tryAgain',
+  'activities.setStartingPlace',
   // Honest sample-data copy shown on activity cards and timeline rows.
   'activities.sampleBadge',
   'activities.sampleNote',
@@ -79,6 +80,7 @@ const REQUIRED_KEYS = [
   'restaurants.unavailableTitle',
   'restaurants.skipAndContinue',
   'restaurants.tryAgain',
+  'restaurants.setStartingPlace',
   'restaurants.whatCanITryTitle',
   // The search ran and found matches, but all had already been shown/selected —
   // a distinct, honest message from "nothing found nearby".

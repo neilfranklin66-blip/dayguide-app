@@ -62,7 +62,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     hintKey: 'locationDeniedHint',
     guidanceKey: 'locationDeniedGuidance',
     icon: '📍',
-    canRetry: true,
+    canRetry: false,
   },
   no_location: {
     category: UNAVAILABLE_CATEGORY.USER,
@@ -70,7 +70,7 @@ export const RESTAURANT_UNAVAILABLE_REASONS = {
     hintKey: 'noLocationHint',
     guidanceKey: 'noLocationGuidance',
     icon: '📍',
-    canRetry: true,
+    canRetry: false,
   },
   bad_request: {
     category: UNAVAILABLE_CATEGORY.APP,
@@ -135,7 +135,7 @@ export const ACTIVITY_UNAVAILABLE_REASONS = {
     hintKey: 'locationDeniedHint',
     guidanceKey: 'locationDeniedGuidance',
     icon: '📍',
-    canRetry: true,
+    canRetry: false,
   },
   no_location: {
     category: UNAVAILABLE_CATEGORY.USER,
@@ -143,7 +143,7 @@ export const ACTIVITY_UNAVAILABLE_REASONS = {
     hintKey: 'noLocationHint',
     guidanceKey: 'noLocationGuidance',
     icon: '📍',
-    canRetry: true,
+    canRetry: false,
   },
   bad_request: {
     category: UNAVAILABLE_CATEGORY.APP,
