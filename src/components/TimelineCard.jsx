@@ -31,7 +31,7 @@ export default function TimelineCard({
           selectedDate={selectedDate}
           t={t}
         />
-        {hasTimelineItems && (
+        {timeline.length > 1 && (
           <TravelEstimateNotice
             hasHardAnchor={hasHardAnchor}
             travelPreferences={travelPreferences}

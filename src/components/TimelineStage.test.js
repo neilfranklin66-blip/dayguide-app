@@ -44,6 +44,24 @@ test('does not render a day-guide summary for a one-stop itinerary', () => {
   expect(screen.queryByText('timeline.dayGuideLabel')).not.toBeInTheDocument();
 });
 
+test('keeps one-stop results calm by omitting generic travel guidance', () => {
+  render(<TimelineStage {...baseProps} />);
+
+  expect(screen.queryByText('timeline.travelGuidance.title')).not.toBeInTheDocument();
+  expect(screen.queryByText('timeline.travelGuidance.general')).not.toBeInTheDocument();
+});
+
+test('keeps travel guidance for a multi-stop itinerary', () => {
+  render(
+    <TimelineStage
+      {...baseProps}
+      timeline={[timelineItem, { ...timelineItem, id: 2, activity: 'City Gallery' }]}
+    />,
+  );
+
+  expect(screen.getByText('timeline.travelGuidance.title')).toBeInTheDocument();
+});
+
 test('renders a factual day-guide summary for multiple selected cards', () => {
   const tWithNarrative = (key) => ({
     'timeline.dayNarrative.foodStop': 'food',
