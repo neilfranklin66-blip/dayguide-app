@@ -38,7 +38,9 @@ export default function RestaurantSwipeCard({
             />
           </div>
           {typeLabel && <p className="card-type-label">{typeLabel}</p>}
-          <h3>{currentRestaurant.name}</h3>
+          <h3 className="place-name" title={currentRestaurant.name}>
+            {currentRestaurant.name}
+          </h3>
           {currentRestaurant.city && <p className="city-tag">{currentRestaurant.city}</p>}
           <div className="guide-note">
             <p className="guide-note-label">{t('restaurants.whyThisFits', 'Why this fits')}</p>

@@ -19,7 +19,9 @@ export default function ActivitySwipeCard({
           <p className="card-type-label">
             {currentActivity.venueType || t(`interests.${currentActivity.category}`)}
           </p>
-          <h3>{currentActivity.name}</h3>
+          <h3 className="place-name" title={currentActivity.name}>
+            {currentActivity.name}
+          </h3>
           {currentActivity.isSample && (
             <p className="sample-badge">{t('activities.sampleBadge')}</p>
           )}
