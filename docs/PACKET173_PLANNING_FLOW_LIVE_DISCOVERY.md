@@ -2,8 +2,9 @@
 
 ## Status
 
-**Unpublished-preview candidate in review. A named-start usability correction
-is implemented locally and awaits its own preview verification.**
+**Unpublished-preview candidate in review. The named-start correction has
+passed its focused hosted checks; remaining Packet 173 checks still require
+Product Owner review before closure.**
 
 This packet is based on `692fe59` from the unmerged Packet 170/172 release
 candidate source. The Packet 173 candidate was pushed for an unpublished
@@ -49,8 +50,15 @@ or call a provider. Google Routes and Ticketmaster remain out of scope.
 - A first correction-preview check confirmed that a named place could be found
   and selected, but also exposed that the activity-first hand-off discarded the
   selected planning start. A follow-up local correction now passes that same
-  planning input to the live activity search. It requires a rebuilt preview
-  check before acceptance.
+  planning input to the live activity search.
+- In a location-denied preview session, a search for **London Euston** returned
+  real Google Maps matches; selecting **Euston** then produced a real National
+  Gallery activity card marked **Live from Google Places**. No sample card or
+  unavailable message appeared in that named-start route.
+- A public-postcode check, **SW1A 1AA**, returned an immediately selectable
+  Google Maps result. This confirms that a postcode reaches and is resolved by
+  the same direct start control. ZIP-code resolution remains the same provider
+  query path but has not been manually checked in this packet.
 
 ## Legacy-record boundary
 
