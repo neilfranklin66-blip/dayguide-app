@@ -454,6 +454,79 @@ p {
   margin: 0;
 }
 
+.welcome-actions .btn-discovery {
+  width: 100%;
+  min-height: 60px;
+  margin: 0;
+  padding: 16px 24px;
+  border: 2px solid #667eea;
+  border-radius: 14px;
+  background: #fff;
+  color: #3949ab;
+  font-size: 1.05em;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.welcome-actions .btn-discovery:hover {
+  background: #f4f6ff;
+}
+
+.welcome-discovery-hint {
+  margin: -2px 8px 4px;
+  color: #606775;
+  font-size: 0.86em;
+  line-height: 1.35;
+}
+
+.discovery-options {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.discovery-option {
+  min-height: 82px;
+  padding: 16px;
+  border: 2px solid #d7dcff;
+  border-radius: 16px;
+  background: #fff;
+  color: #333;
+  font-size: 1.05em;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.discovery-option span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.4em;
+}
+
+.discovery-option:hover {
+  border-color: #667eea;
+  background: #f6f7ff;
+}
+
+.discovery-all {
+  width: 100%;
+  margin: 8px 0 12px;
+}
+
+.discovery-build {
+  width: 100%;
+  margin: 12px 0 0;
+}
+
+.timeline-remove {
+  border: 0;
+  background: transparent;
+  color: #b42318;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
 .welcome-resume-summary .subtitle {
   margin: 12px 0 0;
   font-size: 0.9rem;
@@ -467,6 +540,27 @@ p {
 .planning-place-resolution form {
   display: grid;
   gap: 10px;
+}
+
+.planning-place-search {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #d0d8f8;
+  border-radius: 14px;
+  background: #f8f9ff;
+}
+
+.planning-place-search h3 {
+  margin-top: 0;
+}
+
+.planning-place-search form {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-place-search .btn-secondary {
+  width: 100%;
 }
 
 .planning-place-results {

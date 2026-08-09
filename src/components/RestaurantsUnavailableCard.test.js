@@ -148,6 +148,16 @@ test('clicking try again calls onRetry exactly once', () => {
   expect(onRetry).toHaveBeenCalledTimes(1);
 });
 
+test('a missing or denied location sends the user to set a starting place, not retry', () => {
+  const onSetStart = jest.fn();
+  renderCard({ restaurantSource: 'location_denied', onSetStart });
+
+  expect(screen.queryByText('restaurants.tryAgain')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText('restaurants.setStartingPlace'));
+
+  expect(onSetStart).toHaveBeenCalledTimes(1);
+});
+
 // Retry re-runs the search; if the click event leaked through as an argument it
 // could be consumed as `cuisineOverride`, repeating the Packet 103 bug.
 test('onRetry is called with zero arguments, never the click event', () => {

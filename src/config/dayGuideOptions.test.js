@@ -7,6 +7,8 @@ import {
   PRICE_OPTIONS,
   INTEREST_CATEGORY_OPTIONS,
   RESTAURANT_UNAVAILABLE_REASONS,
+  ACTIVITY_UNAVAILABLE_REASONS,
+  LIVE_ACTIVITY_FAILURE_SOURCES,
   LIVE_SEARCH_FAILURE_SOURCES,
   DEFAULT_UNAVAILABLE_SOURCE,
   UNAVAILABLE_CATEGORY,
@@ -58,6 +60,22 @@ test('the default unavailable source is itself a known reason', () => {
 test('LIVE_SEARCH_FAILURE_SOURCES is exactly the set of unavailable reasons', () => {
   expect([...LIVE_SEARCH_FAILURE_SOURCES].sort())
     .toEqual(Object.keys(RESTAURANT_UNAVAILABLE_REASONS).sort());
+});
+
+test('LIVE_ACTIVITY_FAILURE_SOURCES is exactly the set of activity unavailable reasons', () => {
+  expect([...LIVE_ACTIVITY_FAILURE_SOURCES].sort())
+    .toEqual(Object.keys(ACTIVITY_UNAVAILABLE_REASONS).sort());
+});
+
+test('activity-unavailable reasons are fully specified and use the same taxonomy', () => {
+  Object.entries(ACTIVITY_UNAVAILABLE_REASONS).forEach(([source, reason]) => {
+    expect(Object.values(UNAVAILABLE_CATEGORY)).toContain(reason.category);
+    expect(typeof reason.messageKey).toBe('string');
+    expect(typeof reason.hintKey).toBe('string');
+    expect(typeof reason.guidanceKey).toBe('string');
+    expect(typeof reason.canRetry).toBe('boolean');
+    expect(source).not.toBe('');
+  });
 });
 
 // no_results ("searched, found nothing") and no_unseen_results ("matches all
