@@ -207,7 +207,7 @@ test('a location-denied nearby activity search offers a clear return and fresh s
   expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
 });
 
-test('mounts the private-alpha geographical planning stage before selections', () => {
+test('mounts the concise geographical planning stage before selections', () => {
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);
 
@@ -221,8 +221,8 @@ test('mounts the private-alpha geographical planning stage before selections', (
   fireEvent.click(screen.getByText('interests.next'));
 
   expect(screen.getByText('planning.title')).toBeInTheDocument();
-  expect(screen.getByText('planning.privateAlphaNotice')).toBeInTheDocument();
-  expect(screen.getByText('planning.storageNotice')).toBeInTheDocument();
+  expect(screen.queryByText('planning.privateAlphaNotice')).not.toBeInTheDocument();
+  expect(screen.queryByText('planning.storageNotice')).not.toBeInTheDocument();
   expect(screen.queryByText('planning.startPlaceSelected')).not.toBeInTheDocument();
   expect(screen.getByText('planning.useCurrentStart')).toBeInTheDocument();
 });

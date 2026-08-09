@@ -311,7 +311,5 @@ test('planning input stage can begin from a preselected draft', () => {
   expect(screen.getByLabelText('Where does your day start?')).toHaveValue(
     'resolved:euston',
   );
-  expect(screen.getByLabelText('What time does your day start?')).toHaveValue(
-    '10:00',
-  );
+  expect(screen.queryByLabelText('What time does your day start?')).not.toBeInTheDocument();
 });

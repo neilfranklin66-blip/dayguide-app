@@ -9,7 +9,6 @@ import {
   isResolvedPlaceSelection,
   minutesToTimeInput,
   removeHardAnchor,
-  setDepartureTime,
   setDestinationEnabled,
   setDestinationSelection,
   setDestinationTiming,
@@ -90,11 +89,6 @@ export default function PlanningInputStage({
   const [editor, setEditor] = useState(null);
   const [errors, setErrors] = useState([]);
 
-  const updateStartTime = value => {
-    const minutes = timeInputToMinutes(value);
-    updateDraft(current => setDepartureTime(current, minutes));
-  };
-
   const updateDestinationDeadline = value => {
     const minutes = value === '' ? null : timeInputToMinutes(value);
     updateDraft(current =>
@@ -135,23 +129,7 @@ export default function PlanningInputStage({
   return (
     <div className="dayguide-container">
       <div className="card planning-input-stage">
-        <h2>
-          {t('planning.title', {
-            defaultValue: 'Where should your day flow?',
-          })}
-        </h2>
-        <p>
-          {t('planning.subtitle', {
-            defaultValue:
-              'Set a starting place, an optional destination, and any commitments that DayGuide must never move.',
-          })}
-        </p>
-        <p className="planning-private-alpha-notice">
-          {t('planning.privateAlphaNotice', {
-            defaultValue:
-              'Private alpha: fixed places and times guide your plan, but travel legs are not route-verified. Check live journeys before leaving.',
-          })}
-        </p>
+        <h2>{t('planning.title', { defaultValue: 'Plan a day' })}</h2>
 
         {startPlaceControl ?? (
           <ResolvedPlaceSelect
@@ -168,21 +146,6 @@ export default function PlanningInputStage({
             t={t}
           />
         )}
-
-        <div className="time-selector">
-          <label htmlFor="planning-start-time">
-            {t('planning.startTime', {
-              defaultValue: 'What time does your day start?',
-            })}
-          </label>
-          <input
-            id="planning-start-time"
-            type="time"
-            value={minutesToTimeInput(draft.departureTimeMinutes)}
-            onChange={event => updateStartTime(event.target.value)}
-            className="time-input"
-          />
-        </div>
 
         <div className="time-selector">
           <label htmlFor="planning-add-destination">
@@ -293,7 +256,13 @@ export default function PlanningInputStage({
           </>
         )}
 
-        <section aria-labelledby="hard-anchors-title">
+        <details className="planning-more-options">
+          <summary>
+            {t('planning.addAnchor', {
+              defaultValue: 'Add a time you need to keep',
+            })}
+          </summary>
+          <section aria-labelledby="hard-anchors-title">
           <h3 id="hard-anchors-title">
             {t('planning.anchorsTitle', {
               defaultValue: 'Fixed anchors',
@@ -372,12 +341,13 @@ export default function PlanningInputStage({
                 })
               }
             >
-              {t('planning.addAnchor', {
+              {t('planning.addAnchorAction', {
                 defaultValue: 'Add fixed anchor',
               })}
             </button>
           )}
-        </section>
+          </section>
+        </details>
 
         {editor && (
           <HardAnchorEditor
@@ -427,12 +397,6 @@ export default function PlanningInputStage({
             })}
           </button>
         </div>
-        <p className="planning-storage-notice">
-          {t('planning.storageNotice', {
-            defaultValue:
-              'If you save this plan, its selected place names and coordinates stay only in this browser until the plan expires or you press Start Over. They are not included in the share QR code.',
-          })}
-        </p>
       </div>
     </div>
   );

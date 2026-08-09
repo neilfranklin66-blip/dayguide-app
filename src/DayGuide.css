@@ -456,8 +456,8 @@ select:focus-visible {
 .time-input,
 .date-input {
   width: 100%;
-  min-height: 56px;
-  padding: 13px 14px;
+  min-height: 64px;
+  padding: 15px 16px;
   border: 2px solid #6b7280;
   border-radius: 12px;
   font-size: 1.1em;
@@ -467,6 +467,41 @@ select:focus-visible {
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: monospace;
+}
+
+.minute-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.minute-shortcut {
+  min-height: 48px;
+  border: 2px solid #6b7280;
+  border-radius: 10px;
+  background: #fff;
+  color: #1f2937;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.minute-shortcut.selected {
+  border-color: #3949ab;
+  background: #3949ab;
+  color: #fff;
+}
+
+.planning-more-options {
+  margin: 8px 0 24px;
+  border-top: 1px solid #d7dcff;
+}
+
+.planning-more-options summary {
+  padding: 16px 0;
+  color: #3949ab;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 .time-input:focus,

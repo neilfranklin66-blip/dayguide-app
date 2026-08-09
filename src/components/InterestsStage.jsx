@@ -40,6 +40,17 @@ function InterestsStage({
         <h2>{t('interests.title')}</h2>
         <p>{t('interests.subtitle')}</p>
 
+        <DateSelector
+          selectedDate={selectedDate}
+          onChange={setSelectedDate}
+          t={t}
+        />
+        <StartTimeSelector
+          startTime={startTime}
+          onChange={setStartTime}
+          t={t}
+        />
+
         <ActivityInterestGrid
           interestCategories={interestCategories}
           selectedInterests={selectedInterests}
@@ -60,39 +71,32 @@ function InterestsStage({
           t={t}
         />
 
-        <AvailableTimeSelector
-          availableTime={availableTime}
-          onChange={setAvailableTime}
-          t={t}
-        />
-        <DateSelector
-          selectedDate={selectedDate}
-          onChange={setSelectedDate}
-          t={t}
-        />
-        <StartTimeSelector
-          startTime={startTime}
-          onChange={setStartTime}
-          t={t}
-        />
-
         <ChildrenInPartySelector
           hasChildren={hasChildren}
           onChange={setHasChildren}
           t={t}
         />
 
-        <StartOrderSelector
-          startWith={startWith}
-          onChange={setStartWith}
+        <AvailableTimeSelector
+          availableTime={availableTime}
+          onChange={setAvailableTime}
           t={t}
         />
 
-        <WalkingPreferenceSelector
-          preferences={travelPreferences}
-          onChange={onTravelPreferencesChange}
-          t={t}
-        />
+        <details className="planning-more-options">
+          <summary>{t('interests.moreOptions', 'More planning options')}</summary>
+          <StartOrderSelector
+            startWith={startWith}
+            onChange={setStartWith}
+            t={t}
+          />
+
+          <WalkingPreferenceSelector
+            preferences={travelPreferences}
+            onChange={onTravelPreferencesChange}
+            t={t}
+          />
+        </details>
 
         <InterestsNextButton
           onClick={goToNextSelectionStage}
