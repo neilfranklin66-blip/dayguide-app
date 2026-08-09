@@ -910,9 +910,10 @@ const DayGuide = () => {
           isLiveDiscovery={nearbyDiscoveryMode === 'activities'}
           onShowAllLive={() => goToActivities([])}
           onBackToDiscovery={() => {
-            setNearbyDiscoveryMode('activities');
+            setNearbyDiscoveryMode(null);
             setStage('discovery');
           }}
+          onStartOver={resetState}
           setStage={setStage}
           continueAfterActivities={continueAfterActivities}
           startWith={startWith}
@@ -956,6 +957,12 @@ const DayGuide = () => {
           onSetStart={() => setStage('planning')}
           planningOverride={geographicalPlanning}
           hasMore={nearbyDiscoveryMode === 'food' && !!restaurantNextPageToken}
+          isLiveDiscovery={nearbyDiscoveryMode === 'food'}
+          onBackToDiscovery={() => {
+            setNearbyDiscoveryMode(null);
+            setStage('discovery');
+          }}
+          onStartOver={resetState}
           t={t}
         />
       );

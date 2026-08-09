@@ -4,6 +4,7 @@ export default function ActivitiesNoResultsCard({
   hasSelectedInterests,
   onShowAll,
   onBackToInterests,
+  onStartOver,
   isLiveDiscovery = false,
   t,
 }) {
@@ -29,6 +30,11 @@ export default function ActivitiesNoResultsCard({
           >
             {backLabel}
           </button>
+          {typeof onStartOver === 'function' && (
+            <button onClick={() => onStartOver()} className="btn-secondary">
+              {t('discovery.startOver')}
+            </button>
+          )}
         </div>
       </div>
     </div>

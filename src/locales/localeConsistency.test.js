@@ -55,6 +55,8 @@ const REQUIRED_KEYS = [
   'interests.childrenLabel',
   'interests.childrenYes',
   'interests.childrenNo',
+  'discovery.backToNearby',
+  'discovery.startOver',
   // Packet 159's mounted planning workflow. Deriving every leaf from English
   // prevents a later control or warning from silently falling back in one of
   // the five supported locales.
@@ -64,6 +66,7 @@ const REQUIRED_KEYS = [
   'activities.skipAndContinue',
   'activities.tryAgain',
   'activities.setStartingPlace',
+  'activities.nearbyLocationNeeded',
   // The optional geographic-choice step must never fall back to raw English
   // while a person is making a location choice in the planning flow.
   'geography.eyebrow',
@@ -95,6 +98,7 @@ const REQUIRED_KEYS = [
   'restaurants.skipAndContinue',
   'restaurants.tryAgain',
   'restaurants.setStartingPlace',
+  'restaurants.nearbyLocationNeeded',
   'restaurants.whatCanITryTitle',
   // The search ran and found matches, but all had already been shown/selected —
   // a distinct, honest message from "nothing found nearby".

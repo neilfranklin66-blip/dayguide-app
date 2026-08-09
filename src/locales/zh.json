@@ -46,7 +46,7 @@
     "title": "您想找什么？", "subtitle": "选择一项即可查看附近的真实地点。",
     "food": "餐饮", "activities": "可做的事", "foodTitle": "您想吃点什么？", "foodHint": "选择餐饮类型，或查看附近所有餐饮地点。",
     "allFood": "所有餐饮", "showFood": "查看餐饮地点", "activitiesTitle": "您想做什么？", "activitiesHint": "选择活动或查看附近地点。",
-    "allActivities": "所有活动", "showActivities": "查看可做的事", "searchingActivities": "正在寻找附近的活动...", "buildPicks": "安排我的一天（{{count}} 个选择）", "changeActivity": "选择其他活动类型"
+    "allActivities": "所有活动", "showActivities": "查看可做的事", "searchingActivities": "正在寻找附近的活动...", "buildPicks": "安排我的一天（{{count}} 个选择）", "changeActivity": "选择其他活动类型", "backToNearby": "返回附近选择", "startOver": "重新开始"
   },
   "interests": {
     "title": "您对什么感兴趣？",
@@ -191,6 +191,7 @@
     "locationDeniedWarning": "我们需要您的位置或已命名的出发地点，才能找到真实的活动去处。",
     "locationDeniedHint": "允许位置访问，或返回添加出发地点。",
     "locationDeniedGuidance": "允许位置访问或添加已命名的出发地点，然后再试一次。",
+    "nearbyLocationNeeded": "请为 DayGuide 开启位置访问后重试，或选择附近的其他内容。",
     "noLocationWarning": "我们需要您的位置或已命名的出发地点，才能找到真实的活动去处。",
     "noLocationHint": "开启定位服务，或返回添加出发地点。",
     "noLocationGuidance": "开启定位服务或添加已命名的出发地点，然后再试一次。",
@@ -271,6 +272,7 @@
     "whatCanITryTitle": "我可以尝试什么？",
     "noLocationGuidance": "请输入或选择更明确的出发地点，或允许使用定位，然后重新搜索。",
     "locationDeniedGuidance": "请在浏览器设置中为本网站开启定位权限，或如果可以，手动设置出发地点，然后重新搜索。",
+    "nearbyLocationNeeded": "请为 DayGuide 开启位置访问后重试，或选择附近的其他内容。",
     "badRequestGuidance": "DayGuide 无法完成搜索设置。请跳过餐厅，继续完成行程的其余部分。",
     "liveDataUnavailableGuidance": "目前无法获取实时餐厅数据。您可以继续完成行程的其余部分。",
     "networkGuidance": "请检查您的网络连接，然后重新搜索。",

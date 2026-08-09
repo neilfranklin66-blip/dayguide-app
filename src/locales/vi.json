@@ -46,7 +46,7 @@
     "title": "Bạn muốn tìm gì?", "subtitle": "Chọn một mục để xem các địa điểm thật ở gần bạn.",
     "food": "Đồ ăn và thức uống", "activities": "Việc để làm", "foodTitle": "Bạn muốn gì?", "foodHint": "Chọn loại đồ ăn hoặc xem tất cả địa điểm gần đây.",
     "allFood": "Tất cả đồ ăn và thức uống", "showFood": "Hiển thị địa điểm ăn uống", "activitiesTitle": "Bạn muốn làm gì?", "activitiesHint": "Chọn hoạt động hoặc xem các địa điểm gần đây.",
-    "allActivities": "Tất cả hoạt động", "showActivities": "Hiển thị việc để làm", "searchingActivities": "Đang tìm hoạt động gần đây...", "buildPicks": "Lập ngày của tôi ({{count}} lựa chọn)", "changeActivity": "Chọn loại hoạt động khác"
+    "allActivities": "Tất cả hoạt động", "showActivities": "Hiển thị việc để làm", "searchingActivities": "Đang tìm hoạt động gần đây...", "buildPicks": "Lập ngày của tôi ({{count}} lựa chọn)", "changeActivity": "Chọn loại hoạt động khác", "backToNearby": "Quay lại lựa chọn gần đây", "startOver": "Bắt đầu lại"
   },
   "interests": {
     "title": "Bạn quan tâm đến điều gì?",
@@ -191,6 +191,7 @@
     "locationDeniedWarning": "Chúng tôi cần vị trí của bạn hoặc một điểm xuất phát có tên để tìm hoạt động thực tế.",
     "locationDeniedHint": "Cho phép truy cập vị trí, hoặc quay lại và thêm điểm xuất phát.",
     "locationDeniedGuidance": "Cho phép truy cập vị trí hoặc thêm điểm xuất phát có tên, rồi thử lại.",
+    "nearbyLocationNeeded": "Bật quyền truy cập vị trí cho DayGuide rồi thử lại, hoặc chọn một điều khác ở gần đây.",
     "noLocationWarning": "Chúng tôi cần vị trí của bạn hoặc một điểm xuất phát có tên để tìm hoạt động thực tế.",
     "noLocationHint": "Bật dịch vụ vị trí, hoặc quay lại và thêm điểm xuất phát.",
     "noLocationGuidance": "Bật dịch vụ vị trí hoặc thêm điểm xuất phát có tên, rồi thử lại.",
@@ -271,6 +272,7 @@
     "whatCanITryTitle": "Tôi có thể thử gì?",
     "noLocationGuidance": "Nhập hoặc chọn một điểm xuất phát rõ ràng hơn, hoặc cho phép truy cập vị trí, rồi tìm kiếm lại.",
     "locationDeniedGuidance": "Bật quyền truy cập vị trí cho trang này trong cài đặt trình duyệt, hoặc tự đặt điểm xuất phát nếu có thể, rồi tìm kiếm lại.",
+    "nearbyLocationNeeded": "Bật quyền truy cập vị trí cho DayGuide rồi thử lại, hoặc chọn một điều khác ở gần đây.",
     "badRequestGuidance": "DayGuide không thể hoàn tất việc thiết lập tìm kiếm. Hãy bỏ qua nhà hàng và tiếp tục với phần còn lại trong kế hoạch của bạn.",
     "liveDataUnavailableGuidance": "Dữ liệu nhà hàng trực tiếp hiện không có sẵn. Bạn có thể tiếp tục và hoàn thành phần còn lại trong kế hoạch.",
     "networkGuidance": "Kiểm tra kết nối internet của bạn, rồi thử tìm kiếm lại.",

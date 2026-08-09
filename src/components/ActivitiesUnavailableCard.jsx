@@ -12,6 +12,9 @@ export default function ActivitiesUnavailableCard({
   onRetry,
   onSetStart,
   onSkip,
+  isLiveDiscovery = false,
+  onBackToDiscovery,
+  onStartOver,
   t,
 }) {
   const reason =
@@ -21,21 +24,36 @@ export default function ActivitiesUnavailableCard({
   const needsStartingPlace =
     (activitySource === 'location_denied' || activitySource === 'no_location') &&
     typeof onSetStart === 'function';
+  const nearbyLocationRecovery =
+    isLiveDiscovery &&
+    (activitySource === 'location_denied' || activitySource === 'no_location');
 
   return (
     <div className="dayguide-container">
       <div className="card no-results-card">
         <div className="no-results-icon">{reason.icon}</div>
         <h2>{t('activities.unavailableTitle')}</h2>
-        <p className="no-results-msg">{t(`activities.${reason.messageKey}`)}</p>
-        <p className="no-results-hint">{t(`activities.${reason.hintKey}`)}</p>
-        <div className="no-results-guidance">
-          <p className="no-results-guidance-text">
-            {t(`activities.${reason.guidanceKey}`)}
+        {nearbyLocationRecovery ? (
+          <p className="no-results-msg">
+            {t('activities.nearbyLocationNeeded')}
           </p>
-        </div>
+        ) : (
+          <>
+            <p className="no-results-msg">{t(`activities.${reason.messageKey}`)}</p>
+            <p className="no-results-hint">{t(`activities.${reason.hintKey}`)}</p>
+            <div className="no-results-guidance">
+              <p className="no-results-guidance-text">
+                {t(`activities.${reason.guidanceKey}`)}
+              </p>
+            </div>
+          </>
+        )}
         <div className="no-results-actions">
-          {needsStartingPlace && (
+          {nearbyLocationRecovery && typeof onBackToDiscovery === 'function' ? (
+            <button onClick={() => onBackToDiscovery()} className="btn-primary">
+              {t('discovery.backToNearby')}
+            </button>
+          ) : needsStartingPlace && (
             <button onClick={() => onSetStart()} className="btn-primary">
               {t('activities.setStartingPlace')}
             </button>
@@ -45,12 +63,19 @@ export default function ActivitiesUnavailableCard({
               {t('activities.tryAgain')}
             </button>
           )}
-          <button
-            onClick={() => onSkip()}
-            className={showRetry || needsStartingPlace ? 'btn-secondary' : 'btn-primary'}
-          >
-            {t('activities.skipAndContinue')}
-          </button>
+          {!nearbyLocationRecovery && (
+            <button
+              onClick={() => onSkip()}
+              className={showRetry || needsStartingPlace ? 'btn-secondary' : 'btn-primary'}
+            >
+              {t('activities.skipAndContinue')}
+            </button>
+          )}
+          {typeof onStartOver === 'function' && (
+            <button onClick={() => onStartOver()} className="btn-secondary">
+              {t('discovery.startOver')}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -22,6 +22,7 @@ export default function ActivitiesStage({
   isLiveDiscovery = false,
   onShowAllLive,
   onBackToDiscovery,
+  onStartOver,
   onRetry,
   onSetStart,
   t,
@@ -44,6 +45,9 @@ export default function ActivitiesStage({
           onRetry={onRetry}
           onSetStart={onSetStart}
           onSkip={() => continueAfterActivities([])}
+          isLiveDiscovery={isLiveDiscovery}
+          onBackToDiscovery={onBackToDiscovery}
+          onStartOver={onStartOver}
           t={t}
         />
       );
@@ -55,6 +59,7 @@ export default function ActivitiesStage({
           onShowAll={() => onShowAllLive?.()}
           onBackToInterests={() => onBackToDiscovery?.()}
           isLiveDiscovery
+          onStartOver={onStartOver}
           t={t}
         />
       );
@@ -64,6 +69,7 @@ export default function ActivitiesStage({
         hasSelectedInterests={selectedInterests.length > 0}
         onShowAll={() => goToActivities([])}
         onBackToInterests={() => setStage('interests')}
+        onStartOver={onStartOver}
         t={t}
       />
     );

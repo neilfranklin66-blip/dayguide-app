@@ -158,6 +158,23 @@ test('a missing or denied location sends the user to set a starting place, not r
   expect(onSetStart).toHaveBeenCalledTimes(1);
 });
 
+test('nearby location denial returns to nearby choices instead of setting a planning start', () => {
+  const onBackToDiscovery = jest.fn();
+  renderCard({
+    restaurantSource: 'location_denied',
+    isLiveDiscovery: true,
+    onSetStart: jest.fn(),
+    onBackToDiscovery,
+    onStartOver: jest.fn(),
+  });
+
+  expect(screen.getByText('restaurants.nearbyLocationNeeded')).toBeInTheDocument();
+  expect(screen.queryByText('restaurants.setStartingPlace')).not.toBeInTheDocument();
+  expect(screen.queryByText('restaurants.skipAndContinue')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText('discovery.backToNearby'));
+  expect(onBackToDiscovery).toHaveBeenCalledTimes(1);
+});
+
 // Retry re-runs the search; if the click event leaked through as an argument it
 // could be consumed as `cuisineOverride`, repeating the Packet 103 bug.
 test('onRetry is called with zero arguments, never the click event', () => {

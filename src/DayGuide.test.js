@@ -185,6 +185,28 @@ test('find nearby opens a live restaurant card without the preference questionna
   );
 });
 
+test('a location-denied nearby activity search offers a clear return and fresh start', async () => {
+  useGeolocation.mockReturnValue(erroredGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.findNearby'));
+  fireEvent.click(screen.getByText('discovery.activities'));
+  fireEvent.click(screen.getByText('discovery.allActivities'));
+
+  expect(await screen.findByText('activities.nearbyLocationNeeded')).toBeInTheDocument();
+  expect(screen.queryByText('activities.setStartingPlace')).not.toBeInTheDocument();
+  expect(screen.queryByText('activities.skipAndContinue')).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('discovery.backToNearby'));
+  expect(screen.getByText('discovery.title')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByText('discovery.activities'));
+  fireEvent.click(screen.getByText('discovery.allActivities'));
+  expect(await screen.findByText('discovery.startOver')).toBeInTheDocument();
+  fireEvent.click(screen.getByText('discovery.startOver'));
+  expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
+});
+
 test('mounts the private-alpha geographical planning stage before selections', () => {
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);

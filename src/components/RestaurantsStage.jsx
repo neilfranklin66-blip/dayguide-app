@@ -26,6 +26,9 @@ export default function RestaurantsStage({
   onBuild,
   onShowMore,
   onSetStart,
+  isLiveDiscovery = false,
+  onBackToDiscovery,
+  onStartOver,
   planningOverride,
   hasMore = false,
   t,
@@ -56,6 +59,9 @@ export default function RestaurantsStage({
           }
           onSetStart={onSetStart}
           onSkip={() => continueAfterRestaurants([])}
+          isLiveDiscovery={isLiveDiscovery}
+          onBackToDiscovery={onBackToDiscovery}
+          onStartOver={onStartOver}
           t={t}
         />
       );
@@ -88,6 +94,7 @@ export default function RestaurantsStage({
           goToRestaurants(selectedCuisines, null);
         }}
         onSkip={() => continueAfterRestaurants([])}
+        onStartOver={onStartOver}
         t={t}
       />
     );

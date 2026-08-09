@@ -46,7 +46,7 @@
     "title": "Qu’aimeriez-vous trouver ?", "subtitle": "Choisissez une option pour voir de vrais lieux à proximité.",
     "food": "Manger et boire", "activities": "Idées de sortie", "foodTitle": "Qu’est-ce qui vous ferait plaisir ?", "foodHint": "Choisissez un type de cuisine ou voyez toutes les options à proximité.",
     "allFood": "Tous les lieux pour manger et boire", "showFood": "Voir les lieux pour manger", "activitiesTitle": "Qu’aimeriez-vous faire ?", "activitiesHint": "Choisissez une activité ou voyez les lieux à proximité.",
-    "allActivities": "Toutes les activités", "showActivities": "Voir les idées de sortie", "searchingActivities": "Recherche d’idées de sortie à proximité...", "buildPicks": "Créer ma journée ({{count}} choix)", "changeActivity": "Choisir un autre type d'activité"
+    "allActivities": "Toutes les activités", "showActivities": "Voir les idées de sortie", "searchingActivities": "Recherche d’idées de sortie à proximité...", "buildPicks": "Créer ma journée ({{count}} choix)", "changeActivity": "Choisir un autre type d'activité", "backToNearby": "Retour aux choix à proximité", "startOver": "Recommencer"
   },
   "interests": {
     "title": "Qu'est-ce qui vous intéresse ?",
@@ -191,6 +191,7 @@
     "locationDeniedWarning": "Nous avons besoin de votre position ou d'un lieu de départ nommé pour trouver de vraies activités.",
     "locationDeniedHint": "Autorisez l'accès à votre position ou revenez en arrière pour ajouter un lieu de départ.",
     "locationDeniedGuidance": "Autorisez l'accès à votre position ou ajoutez un lieu de départ nommé, puis réessayez.",
+    "nearbyLocationNeeded": "Activez l'accès à la position pour DayGuide, puis réessayez, ou choisissez autre chose à proximité.",
     "noLocationWarning": "Nous avons besoin de votre position ou d'un lieu de départ nommé pour trouver de vraies activités.",
     "noLocationHint": "Activez les services de localisation ou revenez en arrière pour ajouter un lieu de départ.",
     "noLocationGuidance": "Activez les services de localisation ou ajoutez un lieu de départ nommé, puis réessayez.",
@@ -271,6 +272,7 @@
     "whatCanITryTitle": "Que puis-je essayer ?",
     "noLocationGuidance": "Saisissez ou choisissez un point de départ plus précis, ou autorisez l'accès à la localisation, puis relancez la recherche.",
     "locationDeniedGuidance": "Activez l'autorisation de localisation pour ce site dans les paramètres de votre navigateur, ou définissez votre point de départ manuellement si possible, puis relancez la recherche.",
+    "nearbyLocationNeeded": "Activez l'accès à la position pour DayGuide, puis réessayez, ou choisissez autre chose à proximité.",
     "badRequestGuidance": "DayGuide n'a pas pu terminer la préparation de la recherche. Continuez sans restaurant et poursuivez le reste de votre programme.",
     "liveDataUnavailableGuidance": "Les données de restaurants en direct ne sont pas disponibles pour le moment. Vous pouvez continuer et terminer le reste de votre programme.",
     "networkGuidance": "Vérifiez votre connexion internet, puis relancez la recherche.",

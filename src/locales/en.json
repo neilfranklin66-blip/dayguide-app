@@ -57,6 +57,8 @@
     "showActivities": "Show things to do",
     "searchingActivities": "Finding things to do nearby...",
     "changeActivity": "Choose a different activity type",
+    "backToNearby": "Back to nearby choices",
+    "startOver": "Start over",
     "buildPicks": "Build my day ({{count}} picks)"
   },
   "interests": {
@@ -212,6 +214,7 @@
     "locationDeniedWarning": "We need your location or a named starting place to find real things to do.",
     "locationDeniedHint": "Allow location access, or go back and add a starting place.",
     "locationDeniedGuidance": "Allow location access or add a named starting place, then try again.",
+    "nearbyLocationNeeded": "Turn on location access for DayGuide, then try again. Or choose something else nearby.",
     "noLocationWarning": "We need your location or a named starting place to find real things to do.",
     "noLocationHint": "Turn on location services, or go back and add a starting place.",
     "noLocationGuidance": "Turn on location services or add a named starting place, then try again.",
@@ -293,6 +296,7 @@
     "whatCanITryTitle": "What can I try?",
     "noLocationGuidance": "Enter or pick a clearer start location, or allow location access, then search again.",
     "locationDeniedGuidance": "Turn on location permission for this site in your browser settings, or set your start location manually if you can, then search again.",
+    "nearbyLocationNeeded": "Turn on location access for DayGuide, then try again. Or choose something else nearby.",
     "badRequestGuidance": "DayGuide couldn't finish setting up the search. Continue without a restaurant and carry on with the rest of your plan.",
     "liveDataUnavailableGuidance": "Live restaurant data isn't available right now. You can carry on and finish the rest of your plan.",
     "networkGuidance": "Check your internet connection, then try the search again.",
