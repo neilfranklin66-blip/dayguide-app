@@ -1,12 +1,15 @@
 import React from 'react';
 import ActivitiesNoResultsCard from './ActivitiesNoResultsCard';
+import ActivitiesUnavailableCard from './ActivitiesUnavailableCard';
 import NoMoreActivitiesCard from './NoMoreActivitiesCard';
 import ActivitySwipeCard from './ActivitySwipeCard';
 import { getRouteAfterActivities } from '../engines/itineraryRouteEngine';
+import { LIVE_ACTIVITY_FAILURE_SOURCES } from '../config/dayGuideOptions';
 
 export default function ActivitiesStage({
   activityQueue,
   isActivitiesLoading = false,
+  activitySource = null,
   currentActivityIndex,
   selectedInterests,
   goToActivities,
@@ -19,6 +22,7 @@ export default function ActivitiesStage({
   isLiveDiscovery = false,
   onShowAllLive,
   onBackToDiscovery,
+  onRetry,
   t,
 }) {
   if (isActivitiesLoading) {
@@ -32,6 +36,16 @@ export default function ActivitiesStage({
   const currentActivity = activityQueue[currentActivityIndex];
 
   if (activityQueue.length === 0) {
+    if (LIVE_ACTIVITY_FAILURE_SOURCES.has(activitySource)) {
+      return (
+        <ActivitiesUnavailableCard
+          activitySource={activitySource}
+          onRetry={onRetry}
+          onSkip={() => continueAfterActivities([])}
+          t={t}
+        />
+      );
+    }
     if (isLiveDiscovery) {
       return (
         <ActivitiesNoResultsCard

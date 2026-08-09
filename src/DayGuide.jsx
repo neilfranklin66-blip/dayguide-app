@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import useGeolocation from './useGeolocation';
-import mockActivityData from './mockActivityData.json';
 import { searchRestaurants, searchActivities, searchRestaurantPage } from './api/placesApi';
-import { getActivitiesForInterests as getFilteredActivitiesForInterests } from './engines/filterEngine';
+import { excludeAlreadySelected, resolveActivityCategories } from './engines/filterEngine';
 import { resolveRestaurantSearchOutcome } from './engines/restaurantEngine';
+import { getLiveSearchSourceFromError } from './engines/liveSearchOutcome';
 import { createSwipeSelection, toggleIdSelection } from './engines/selectionEngine';
 import {
   getInitialSelectionRoute,
@@ -60,6 +60,16 @@ import {
   saveTravelPreferences,
 } from './utils/travelPreferences';
 import './DayGuide.css';
+
+const hasUsableCoordinates = (place) =>
+  Number.isFinite(place?.lat) && Number.isFinite(place?.lng);
+
+// A named planning start is the user's deliberate location for the day. It
+// takes precedence over the device position, so planning can work without GPS
+// and results stay where the user chose to begin.
+const getSearchOrigin = (planningOverride, fallbackPosition) =>
+  planningOverride?.start?.place?.coordinates ?? fallbackPosition;
+
 const DayGuide = () => {
   const { currentUser, logout } = useAuth();
   const { t, i18n } = useTranslation();
@@ -83,6 +93,7 @@ const DayGuide = () => {
   const [currentRestaurantIndex, setCurrentRestaurantIndex] = useState(0);
   const [activityQueue, setActivityQueue] = useState([]);
   const [isActivitiesLoading, setIsActivitiesLoading] = useState(false);
+  const [activitySource, setActivitySource] = useState(null);
   const [restaurantQueue, setRestaurantQueue] = useState(null);
   const [timeline, setTimeline] = useState([]);
   const [geographicalPlanning, setGeographicalPlanning] = useState(null);
@@ -260,6 +271,7 @@ const DayGuide = () => {
     setCurrentRestaurantIndex(0);
     setActivityQueue([]);
     setIsActivitiesLoading(false);
+    setActivitySource(null);
     setRestaurantQueue(null);
     setTimeline([]);
     setGeographicalPlanning(null);
@@ -293,18 +305,6 @@ const DayGuide = () => {
       ),
     );
   };
-
-  const getActivitiesForInterests = (interests = selectedInterests) =>
-    // Activities are still sample London demo data (no live activity search
-    // yet), so flag every one as sample. The flag rides along into the
-    // timeline entries so cards and rows never present them as real nearby
-    // recommendations.
-    getFilteredActivitiesForInterests({
-      activityData: mockActivityData,
-      interests,
-      selectedActivities,
-      hasChildren,
-    }).map(activity => ({ ...activity, isSample: true }));
 
   const continueToSelectionRoute = (planningOverride = geographicalPlanning) => {
     const route = getInitialSelectionRoute({ startWith });
@@ -357,7 +357,7 @@ const DayGuide = () => {
         if (selectedActivities.length > 0) {
           buildTimeline(restaurants, selectedActivities);
         } else {
-          goToLiveActivities(selectedInterests);
+          goToActivities(selectedInterests);
         }
       } else {
         goToActivities();
@@ -382,30 +382,55 @@ const DayGuide = () => {
     }
   };
 
-  const goToActivities = (interestsOverride = selectedInterests) => {
-    const activities = getActivitiesForInterests(interestsOverride);
-    setActivityQueue(activities);
-    setCurrentActivityIndex(0);
-    setStage('activities');
-  };
-
-  const goToLiveActivities = async (interestsOverride = selectedInterests) => {
+  const goToActivities = async (
+    interestsOverride = selectedInterests,
+    planningOverride = geographicalPlanning,
+  ) => {
     setIsActivitiesLoading(true);
+    setActivitySource(null);
     setActivityQueue([]);
     setCurrentActivityIndex(0);
     setStage('activities');
-    setStartWith('food_drinks');
 
-    if (!position || !Number.isFinite(position.lat) || !Number.isFinite(position.lng)) {
+    const searchOrigin = getSearchOrigin(planningOverride, position);
+    if (!hasUsableCoordinates(searchOrigin)) {
+      setActivitySource(
+        !planningOverride?.start && locationError === 'location.denied'
+          ? 'location_denied'
+          : 'no_location',
+      );
       setIsActivitiesLoading(false);
       return;
     }
 
     try {
-      const activities = await searchActivities(position.lat, position.lng, interestsOverride);
-      setActivityQueue(activities);
-    } catch (_) {
+      const categories = resolveActivityCategories({
+        interests: interestsOverride,
+        hasChildren,
+        allCategories: [...ACTIVITY_CATEGORIES],
+      });
+      // An unrestricted search is expressed as [] to the API. A party with
+      // children still sends its explicit safe category list, so the adult-only
+      // safeguard is applied at the provider boundary rather than after cards
+      // have already been fetched.
+      const categoryFilters = interestsOverride.length > 0 || hasChildren === true
+        ? categories
+        : [];
+      const activities = await searchActivities(
+        searchOrigin.lat,
+        searchOrigin.lng,
+        categoryFilters,
+      );
+      const unseenActivities = excludeAlreadySelected(activities, selectedActivities);
+      setActivityQueue(unseenActivities);
+      setActivitySource(
+        unseenActivities.length > 0
+          ? 'live'
+          : activities.length > 0 ? 'no_unseen_results' : 'no_results',
+      );
+    } catch (error) {
       setActivityQueue([]);
+      setActivitySource(getLiveSearchSourceFromError(error));
     }
     setIsActivitiesLoading(false);
   };
@@ -440,8 +465,7 @@ const DayGuide = () => {
 
     // locationError lets the request layer tell a denied browser permission
     // (which the user can fix) apart from a location we simply never got.
-    const planningPosition =
-      planningOverride?.start?.place?.coordinates ?? position;
+    const planningPosition = getSearchOrigin(planningOverride, position);
     let nextPageToken = null;
     const discoverySearch = async (lat, lng, cuisines, price) => {
       const page = await searchRestaurantPage(lat, lng, cuisines, price);
@@ -655,11 +679,7 @@ const DayGuide = () => {
       goToRestaurants();
     } else if (action === 'activitiesThenTimeline') {
       popupActivityReturnRef.current = true;
-      if (nearbyDiscoveryMode === 'food') {
-        goToLiveActivities([]);
-      } else {
-        goToActivities();
-      }
+      goToActivities([]);
     }
   };
 
@@ -705,7 +725,8 @@ const DayGuide = () => {
           }}
           onFindActivities={interests => {
             setSelectedInterests(interests);
-            goToLiveActivities(interests);
+            setStartWith('food_drinks');
+            goToActivities(interests, null);
           }}
           t={t}
         />
@@ -788,11 +809,13 @@ const DayGuide = () => {
         <ActivitiesStage
           activityQueue={activityQueue}
           isActivitiesLoading={isActivitiesLoading}
+          activitySource={activitySource}
           currentActivityIndex={currentActivityIndex}
           selectedInterests={selectedInterests}
           goToActivities={goToActivities}
+          onRetry={() => goToActivities(selectedInterests)}
           isLiveDiscovery={nearbyDiscoveryMode === 'activities'}
-          onShowAllLive={() => goToLiveActivities([])}
+          onShowAllLive={() => goToActivities([])}
           onBackToDiscovery={() => {
             setNearbyDiscoveryMode('activities');
             setStage('discovery');

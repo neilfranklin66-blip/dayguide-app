@@ -125,6 +125,72 @@ export const LIVE_SEARCH_FAILURE_SOURCES = new Set(
   Object.keys(RESTAURANT_UNAVAILABLE_REASONS),
 );
 
+// Activity search has the same failure taxonomy as restaurant search, but the
+// wording must stay activity-specific. In particular, a missing device
+// location is recoverable in Plan a day when the person names a starting place.
+export const ACTIVITY_UNAVAILABLE_REASONS = {
+  location_denied: {
+    category: UNAVAILABLE_CATEGORY.USER,
+    messageKey: 'locationDeniedWarning',
+    hintKey: 'locationDeniedHint',
+    guidanceKey: 'locationDeniedGuidance',
+    icon: '📍',
+    canRetry: true,
+  },
+  no_location: {
+    category: UNAVAILABLE_CATEGORY.USER,
+    messageKey: 'noLocationWarning',
+    hintKey: 'noLocationHint',
+    guidanceKey: 'noLocationGuidance',
+    icon: '📍',
+    canRetry: true,
+  },
+  bad_request: {
+    category: UNAVAILABLE_CATEGORY.APP,
+    messageKey: 'badRequestWarning',
+    hintKey: 'badRequestHint',
+    guidanceKey: 'liveDataUnavailableGuidance',
+    icon: '🛠️',
+    canRetry: false,
+  },
+  no_key: {
+    category: UNAVAILABLE_CATEGORY.APP,
+    messageKey: 'noKeyWarning',
+    hintKey: 'noKeyHint',
+    guidanceKey: 'liveDataUnavailableGuidance',
+    icon: '🛠️',
+    canRetry: false,
+  },
+  quota: {
+    category: UNAVAILABLE_CATEGORY.APP,
+    messageKey: 'quotaWarning',
+    hintKey: 'quotaHint',
+    guidanceKey: 'liveDataUnavailableGuidance',
+    icon: '🛠️',
+    canRetry: false,
+  },
+  network: {
+    category: UNAVAILABLE_CATEGORY.EXTERNAL,
+    messageKey: 'networkWarning',
+    hintKey: 'networkHint',
+    guidanceKey: 'networkGuidance',
+    icon: '📡',
+    canRetry: true,
+  },
+  error: {
+    category: UNAVAILABLE_CATEGORY.EXTERNAL,
+    messageKey: 'errorWarning',
+    hintKey: 'errorHint',
+    guidanceKey: 'errorGuidance',
+    icon: '📡',
+    canRetry: true,
+  },
+};
+
+export const LIVE_ACTIVITY_FAILURE_SOURCES = new Set(
+  Object.keys(ACTIVITY_UNAVAILABLE_REASONS),
+);
+
 // Costs are shown as a fare *type*, not a price. The app does not know the
 // user's city, currency, or the actual route, so it must not quote specific
 // London fares (e.g. "from £2.80") as if they applied everywhere. costKey maps

@@ -12,7 +12,10 @@ import es from './es.json';
 import fr from './fr.json';
 import zh from './zh.json';
 import vi from './vi.json';
-import { RESTAURANT_UNAVAILABLE_REASONS } from '../config/dayGuideOptions';
+import {
+  ACTIVITY_UNAVAILABLE_REASONS,
+  RESTAURANT_UNAVAILABLE_REASONS,
+} from '../config/dayGuideOptions';
 
 const LOCALES = { en, es, fr, zh, vi };
 const LOCALE_CODES = Object.keys(LOCALES);
@@ -29,6 +32,13 @@ const UNAVAILABLE_REASON_KEYS = Object.values(RESTAURANT_UNAVAILABLE_REASONS)
     `restaurants.${messageKey}`,
     `restaurants.${hintKey}`,
     `restaurants.${guidanceKey}`,
+  ]);
+
+const ACTIVITY_UNAVAILABLE_REASON_KEYS = Object.values(ACTIVITY_UNAVAILABLE_REASONS)
+  .flatMap(({ messageKey, hintKey, guidanceKey }) => [
+    `activities.${messageKey}`,
+    `activities.${hintKey}`,
+    `activities.${guidanceKey}`,
   ]);
 
 const REQUIRED_KEYS = [
@@ -50,6 +60,9 @@ const REQUIRED_KEYS = [
   // the five supported locales.
   ...PLANNING_KEYS,
   'activities.continueLabel',
+  'activities.unavailableTitle',
+  'activities.skipAndContinue',
+  'activities.tryAgain',
   // Honest sample-data copy shown on activity cards and timeline rows.
   'activities.sampleBadge',
   'activities.sampleNote',
@@ -72,6 +85,7 @@ const REQUIRED_KEYS = [
   'restaurants.noUnseenResultsTitle',
   'restaurants.noUnseenResults',
   ...UNAVAILABLE_REASON_KEYS,
+  ...ACTIVITY_UNAVAILABLE_REASON_KEYS,
   'timeline.empty',
   'timeline.shareHint',
   'timeline.howToGetThere',

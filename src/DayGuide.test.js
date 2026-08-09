@@ -1,13 +1,12 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import DayGuide from './DayGuide';
 import useGeolocation from './useGeolocation';
-import { searchRestaurants, searchRestaurantPage } from './api/placesApi';
+import { searchActivities, searchRestaurants, searchRestaurantPage } from './api/placesApi';
 import {
   LEGACY_SAVED_PLAN_STORAGE_KEY,
   SAVED_PLAN_STORAGE_KEY,
 } from './utils/planStorage';
 import { INTEREST_CATEGORY_OPTIONS } from './config/dayGuideOptions';
-import mockActivityData from './mockActivityData.json';
 import * as popupEngine from './engines/popupEngine';
 
 jest.mock('./useGeolocation');
@@ -39,10 +38,26 @@ jest.mock('./AuthContext', () => ({
   }),
 }));
 
+const defaultLiveActivity = {
+  id: 'live-activity-1',
+  name: 'Live Test Museum',
+  category: 'museums',
+  venueType: 'Museum',
+  image: '🏛️',
+  rating: 4.7,
+  distance: 0.8,
+  duration: 2,
+  address: '1 Test Street',
+  coordinates: { lat: 51.508, lng: -0.128 },
+  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Live%20Test%20Museum',
+  source: 'google_places',
+};
+
 beforeEach(() => {
   mockLogoutCalls = [];
   mockLogoutImpl = () => Promise.resolve();
   mockResolvePlaceQueryImpl = () => Promise.resolve([]);
+  searchActivities.mockResolvedValue([defaultLiveActivity]);
 });
 
 jest.mock('react-i18next', () => ({
@@ -191,7 +206,7 @@ test('mounts the private-alpha geographical planning stage before selections', (
   );
 });
 
-test('accepting the current start passes the geographical plan into the selection journey', () => {
+test('accepting the current start passes the geographical plan into the selection journey', async () => {
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);
 
@@ -205,7 +220,7 @@ test('accepting the current start passes the geographical plan into the selectio
   fireEvent.click(screen.getByText('interests.next'));
   fireEvent.click(screen.getByText('planning.continue'));
 
-  expect(screen.getByText('activities.title')).toBeInTheDocument();
+  expect(await screen.findByText('Live Test Museum')).toBeInTheDocument();
 });
 
 test('a searched start location becomes the origin for a restaurant-first search', async () => {
@@ -272,17 +287,19 @@ describe('header logout', () => {
     expect(mockLogoutCalls).toHaveLength(1);
   });
 
-  test('the logout button is still reachable once the user is deep in the planning flow', () => {
+  test('the logout button is still reachable once the user is deep in the planning flow', async () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
     fireEvent.click(screen.getByText('welcome.startPlanning'));
     fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
     fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
-    fireEvent.click(screen.getByText('interests.next'));
-    continueWithoutGeographicalPlanning();
+  fireEvent.click(screen.getByText('interests.next'));
+  continueWithoutGeographicalPlanning();
 
-    fireEvent.click(screen.getByRole('button', { name: 'header.logout' }));
+  await screen.findByText('Live Test Museum');
+
+  fireEvent.click(screen.getByRole('button', { name: 'header.logout' }));
 
     expect(mockLogoutCalls).toHaveLength(1);
   });
@@ -609,7 +626,7 @@ test('a future-dated saved plan remains resumable', () => {
   jest.useRealTimers();
 });
 
-test('building a timeline saves the plan and start over clears it', () => {
+test('building a timeline saves the plan and start over clears it', async () => {
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);
 
@@ -622,6 +639,7 @@ test('building a timeline saves the plan and start over clears it', () => {
   continueWithoutGeographicalPlanning();
 
   // Like every activity in the queue until the flow moves on.
+  await screen.findByText('Live Test Museum');
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
     fireEvent.click(screen.getByText('activities.yes'));
   }
@@ -642,7 +660,7 @@ test('building a timeline saves the plan and start over clears it', () => {
   expect(screen.queryByText(/welcome\.resumePlanDetails/)).not.toBeInTheDocument();
 });
 
-test('saved-plan v2 keeps the selected start locally without transient GPS metadata', () => {
+test('saved-plan v2 keeps the selected start locally without transient GPS metadata', async () => {
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);
 
@@ -656,6 +674,7 @@ test('saved-plan v2 keeps the selected start locally without transient GPS metad
   fireEvent.click(screen.getByText('interests.next'));
   fireEvent.click(screen.getByText('planning.continue'));
 
+  await screen.findByText('Live Test Museum');
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
     fireEvent.click(screen.getByText('activities.yes'));
   }
@@ -677,7 +696,7 @@ test('saved-plan v2 keeps the selected start locally without transient GPS metad
   ).not.toHaveProperty('accuracyMeters');
 });
 
-test('selecting sample activities still reaches the timeline with honest sample labels, not real distances', () => {
+test('selecting live activities reaches the timeline with a real distance and Maps link', async () => {
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);
 
@@ -688,8 +707,8 @@ test('selecting sample activities still reaches the timeline with honest sample 
   fireEvent.click(screen.getByText('interests.next'));
   continueWithoutGeographicalPlanning();
 
-  // The activity swipe card flags its venues as sample ideas, not live nearby results.
-  expect(screen.getByText('activities.sampleBadge')).toBeInTheDocument();
+  expect(await screen.findByText('Live Test Museum')).toBeInTheDocument();
+  expect(screen.queryByText('activities.sampleBadge')).not.toBeInTheDocument();
 
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
     fireEvent.click(screen.getByText('activities.yes'));
@@ -699,10 +718,8 @@ test('selecting sample activities still reaches the timeline with honest sample 
 
   // The user still reaches the timeline...
   expect(screen.getByText('timeline.title')).toBeInTheDocument();
-  // ...where activity rows are labelled as sample and never present a
-  // fabricated km distance as a real travel fact.
-  expect(screen.getAllByText('timeline.sampleActivity').length).toBeGreaterThan(0);
-  expect(screen.queryByText(/\d+(\.\d+)?km/)).not.toBeInTheDocument();
+  expect(screen.queryByText('timeline.sampleActivity')).not.toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'restaurants.openInMaps' })).toBeInTheDocument();
 });
 
 // --- Popup suppression for resumed plans ---
@@ -711,13 +728,15 @@ const popupTitlePattern = /^popups\.(nearbyRestaurant|coffeeBreak|activityBreak)
 
 // Walks the planning flow from the welcome screen to an activities-only
 // timeline, matching the steps in the persistence test above.
-const buildPlanFromWelcome = () => {
+const buildPlanFromWelcome = async () => {
   fireEvent.click(screen.getByText('welcome.startPlanning'));
 
   fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
   fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
   fireEvent.click(screen.getByText('interests.next'));
   continueWithoutGeographicalPlanning();
+
+  await screen.findByText('Live Test Museum');
 
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
     fireEvent.click(screen.getByText('activities.yes'));
@@ -754,6 +773,7 @@ const buildPlanThroughRestaurantsFromWelcome = async () => {
   fireEvent.click(screen.getByText('interests.next'));
   continueWithoutGeographicalPlanning();
 
+  await screen.findByText('Live Test Museum');
   for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
     fireEvent.click(screen.getByText('activities.yes'));
   }
@@ -799,11 +819,11 @@ describe('timeline popup suggestions', () => {
     expect(screen.queryByText(popupTitlePattern)).not.toBeInTheDocument();
   });
 
-  test('a freshly built plan still triggers a popup suggestion', () => {
+  test('a freshly built plan still triggers a popup suggestion', async () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    buildPlanFromWelcome();
+    await buildPlanFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
@@ -842,11 +862,11 @@ describe('timeline popup suggestions', () => {
     expect(screen.queryByText('popups.nearbyRestaurant.title')).not.toBeInTheDocument();
   });
 
-  test('a popup shown in one plan can appear again in a fresh plan after start over', () => {
+  test('a popup shown in one plan can appear again in a fresh plan after start over', async () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    buildPlanFromWelcome();
+    await buildPlanFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
@@ -856,7 +876,7 @@ describe('timeline popup suggestions', () => {
 
     fireEvent.click(screen.getByText('timeline.startOver'));
 
-    buildPlanFromWelcome();
+    await buildPlanFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
@@ -865,7 +885,7 @@ describe('timeline popup suggestions', () => {
     expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
   });
 
-  test('building a fresh plan after resume and start over re-enables popups', () => {
+  test('building a fresh plan after resume and start over re-enables popups', async () => {
     localStorage.setItem(SAVED_PLAN_STORAGE_KEY, JSON.stringify(savedPlanPayload));
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
@@ -873,7 +893,7 @@ describe('timeline popup suggestions', () => {
     fireEvent.click(screen.getByText('welcome.resumePlan'));
     fireEvent.click(screen.getByText('timeline.startOver'));
 
-    buildPlanFromWelcome();
+    await buildPlanFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
@@ -882,7 +902,7 @@ describe('timeline popup suggestions', () => {
     expect(screen.getByText(popupTitlePattern)).toBeInTheDocument();
   });
 
-  test('closing a nearby restaurant popup dismisses that restaurant across timeline updates', () => {
+  test('closing a nearby restaurant popup dismisses that restaurant across timeline updates', async () => {
     jest.spyOn(popupEngine, 'getTimelinePopupSuggestion').mockImplementation(({
       canShowPopup,
       dismissedRestaurantKeys,
@@ -902,7 +922,7 @@ describe('timeline popup suggestions', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    buildPlanFromWelcome();
+    await buildPlanFromWelcome();
 
     act(() => {
       jest.advanceTimersByTime(2000);
@@ -931,13 +951,11 @@ describe('timeline popup suggestions', () => {
 
 // --- Activities no-results "show all" ---
 
-test('show all broadens an empty filtered activity queue to all activity types', () => {
+test('show all broadens an empty filtered live activity search', async () => {
   useGeolocation.mockReturnValue(resolvedGeo);
-  // Return no activities while interests are selected, but delegate to the
-  // real engine for the broadened empty-interests query, so this fails if
-  // the show-all override is ignored and the same filtered query re-runs.
-  mockGetActivitiesOverride = (params, actualFn) =>
-    params.interests.length > 0 ? [] : actualFn(params);
+  searchActivities.mockImplementation((_lat, _lng, categories) =>
+    Promise.resolve(categories.length > 0 ? [] : [defaultLiveActivity]),
+  );
   render(<DayGuide />);
 
   fireEvent.click(screen.getByText('welcome.startPlanning'));
@@ -946,12 +964,31 @@ test('show all broadens an empty filtered activity queue to all activity types',
   fireEvent.click(screen.getByText('interests.next'));
   continueWithoutGeographicalPlanning();
 
-  expect(screen.getByText('activities.noResultsTitle')).toBeInTheDocument();
+  expect(await screen.findByText('activities.noResultsTitle')).toBeInTheDocument();
 
   fireEvent.click(screen.getByText('activities.showAll'));
 
-  expect(screen.queryByText('activities.noResultsTitle')).not.toBeInTheDocument();
-  expect(screen.getByText('activities.yes')).toBeInTheDocument();
+  expect(await screen.findByText('activities.yes')).toBeInTheDocument();
+  expect(searchActivities).toHaveBeenLastCalledWith(
+    resolvedGeo.position.lat,
+    resolvedGeo.position.lng,
+    [],
+  );
+});
+
+test('a denied location shows an honest activity-unavailable card, never a sample card', async () => {
+  useGeolocation.mockReturnValue(erroredGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+  fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+  fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
+  fireEvent.click(screen.getByText('interests.next'));
+  continueWithoutGeographicalPlanning();
+
+  expect(await screen.findByText('activities.locationDeniedWarning')).toBeInTheDocument();
+  expect(screen.queryByText('activities.sampleBadge')).not.toBeInTheDocument();
+  expect(searchActivities).not.toHaveBeenCalled();
 });
 
 // --- Restaurant selection flow ---
@@ -959,13 +996,15 @@ test('show all broadens an empty filtered activity queue to all activity types',
 describe('restaurant selection flow', () => {
   // Walks from the welcome screen to the meal prompt: pick the first interest,
   // answer the children question, and like every offered activity.
-  const walkToMealPrompt = () => {
+  const walkToMealPrompt = async () => {
     fireEvent.click(screen.getByText('welcome.startPlanning'));
 
     fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
     fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
     fireEvent.click(screen.getByText('interests.next'));
     continueWithoutGeographicalPlanning();
+
+    await screen.findByText('Live Test Museum');
 
     for (let i = 0; i < 50 && screen.queryByText('activities.yes'); i += 1) {
       fireEvent.click(screen.getByText('activities.yes'));
@@ -993,7 +1032,7 @@ describe('restaurant selection flow', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    walkToMealPrompt();
+    await walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     expect(await screen.findByText('restaurants.unavailableTitle')).toBeInTheDocument();
@@ -1017,7 +1056,7 @@ describe('restaurant selection flow', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    walkToMealPrompt();
+    await walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     expect(await screen.findByText('restaurants.quotaWarning')).toBeInTheDocument();
@@ -1030,7 +1069,7 @@ describe('restaurant selection flow', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    walkToMealPrompt();
+    await walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     expect(await screen.findByText('restaurants.errorWarning')).toBeInTheDocument();
@@ -1046,7 +1085,7 @@ describe('restaurant selection flow', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    walkToMealPrompt();
+    await walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     expect(await screen.findByText('restaurants.noResultsTitle')).toBeInTheDocument();
@@ -1066,7 +1105,7 @@ describe('restaurant selection flow', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    walkToMealPrompt();
+    await walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     expect(await screen.findByText('restaurants.noResultsTitle')).toBeInTheDocument();
@@ -1081,11 +1120,7 @@ describe('restaurant selection flow', () => {
     // every offered activity for the first interest, so every venue in that
     // category's fixture should still be in the stored timeline.
     const storedActivityNames = stored.plan.timeline.map(item => item.activity);
-    const expectedActivityNames = mockActivityData[INTEREST_CATEGORY_OPTIONS[0].id]
-      .map(activity => activity.name);
-    expectedActivityNames.forEach(name => {
-      expect(storedActivityNames).toContain(name);
-    });
+    expect(storedActivityNames).toContain('Live Test Museum');
     // No restaurant was added: the skipped search contributes no food entry.
     expect(stored.plan.timeline.some(item => item.category === 'Food and Drinks')).toBe(false);
   });
@@ -1168,7 +1203,7 @@ describe('restaurant selection flow', () => {
       useGeolocation.mockReturnValue(resolvedGeo);
       render(<DayGuide />);
 
-      walkToMealPrompt();
+      await walkToMealPrompt();
       fireEvent.click(screen.getByText('mealPrompt.yes'));
 
       expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
@@ -1276,7 +1311,7 @@ describe('restaurant selection flow', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    walkToMealPrompt();
+    await walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     expect(await screen.findByText('restaurants.liveResults')).toBeInTheDocument();
@@ -1305,7 +1340,7 @@ describe('restaurant selection flow', () => {
     useGeolocation.mockReturnValue(resolvedGeo);
     render(<DayGuide />);
 
-    walkToMealPrompt();
+    await walkToMealPrompt();
     fireEvent.click(screen.getByText('mealPrompt.yes'));
 
     // The honest unavailable notice, not a mock venue dressed up as real.

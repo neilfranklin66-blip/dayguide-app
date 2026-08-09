@@ -306,7 +306,7 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Manual start place / future planning location | **Implemented in tracked Private Alpha source — External-service dependent** | `PlanningInputWithPlaceResolution` is mounted after interests. Current GPS or an explicitly searched verified place can be selected; a searched start becomes the restaurant-search origin. Search depends on the server Places resolver and existing Places-only credential. |
 | End place / arrival deadline | **Implemented in tracked Private Alpha source** | The mounted workflow collects an optional verified destination with an optional deadline and arrival buffer. It is preserved in saved-plan v2 and shown on the timeline with live-check guidance. |
 | Hard anchors | **Implemented in tracked Private Alpha source — route time unverified** | `HardAnchorEditor` adds/edits/removes planner-locked fixed commitments. Finalized anchors reach the Packet 148 planning-window engine, persist in v2, and appear in the timeline without being moved. Route feasibility is not claimed while live route evidence is absent. |
-| Activities | **Implemented — sample/demo-backed** | Sourced from `src/mockActivityData.json`, filtered in `src/engines/filterEngine.js`; every activity is flagged `isSample` in `DayGuide.jsx`. No live activity search exists. |
+| Activities | **Implemented in Packet 173 source — External-service dependent (live-only)** | Plan a day and Find something nearby call `searchActivities` through the existing Places boundary. The current activity flow has no sample fallback; `activityMockVisibility.test.js` guards against reintroducing mock activity data. Unpublished-preview verification remains pending. |
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
 | Itinerary generation | **Implemented** | `src/engines/timelineEngine.js` `buildTimelineEntries` orders items by `startWith` and assigns times with a 0.25h inter-stop gap. |
@@ -328,11 +328,15 @@ setting; the timeline stage is the terminal screen of the main journey.
 The application takes deliberate care not to present demonstration data as real
 local recommendations. Verified distinctions:
 
-- **Sample activity ideas vs live/local results.** Activities come from
-  `mockActivityData.json` and are flagged `isSample`. The timeline row
-  (`TimelineItemRow.jsx`) withholds the fabricated "km" proximity claim for
-  sample items and shows a "sample activity" note instead. There is **no live
-  activity search**; activity ideas are demonstration content only.
+- **Live activity results vs legacy sample records.** The current Plan-a-Day
+  and Find something nearby activity flows use Google Places through the
+  existing server boundary. When live activity results cannot be produced, the
+  queue stays empty and the UI shows an honest unavailable or no-results card;
+  sample activity cards are not substituted. The structural guard
+  `activityMockVisibility.test.js` prevents the current flow from importing
+  `mockActivityData.json`. Old saved plans may still contain `isSample` items:
+  their cards and timeline rows retain the sample note and never claim a real
+  nearby distance.
 - **Live restaurant results vs unavailable / no-results states.** Restaurants are
   live-only via Google Places. When live results cannot be produced, the queue
   stays empty and the UI shows an honest unavailable or no-results card
