@@ -12,6 +12,7 @@ export default function TimelineCard({
   selectedDate,
   timeline,
   onDurationChange,
+  onRemoveItem,
   onStartOver,
   onShare,
   travelPreferences,
@@ -45,6 +46,7 @@ export default function TimelineCard({
         <TimelineList
           timeline={timeline}
           onDurationChange={onDurationChange}
+          onRemoveItem={onRemoveItem}
           travelPreferences={travelPreferences}
           t={t}
         />

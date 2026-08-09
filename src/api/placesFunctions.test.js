@@ -59,22 +59,119 @@ describe('places-nearby function', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
+  it('returns only a safe upstream HTTP diagnostic when Places API rejects a request', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: {
+          status: 'INVALID_ARGUMENT',
+          message: 'API key is not valid. Provider detail must not reach the browser.',
+        },
+      }),
+    });
+
+    const res = await nearby.handler(event);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'UNKNOWN_ERROR',
+      error_message: 'UPSTREAM_HTTP_400',
+      provider_status: 'INVALID_ARGUMENT',
+      provider_cause: 'INVALID_API_KEY',
+    });
+  });
+
   it('attaches GOOGLE_PLACES_API_KEY to the Google request but never echoes it to the client', async () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
-    const googleBody = { status: 'OK', results: [{ place_id: 'p1', name: 'Pizza Roma' }] };
-    global.fetch.mockResolvedValue({ json: async () => googleBody });
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        places: [{
+          id: 'p1',
+          displayName: { text: 'Pizza Roma' },
+          formattedAddress: 'Roma Road',
+          location: { latitude: 51.5, longitude: -0.1 },
+          types: ['restaurant'],
+          priceLevel: 'PRICE_LEVEL_MODERATE',
+        }],
+      }),
+    });
 
     const res = await nearby.handler({
       queryStringParameters: { location: '51.5,-0.1', keyword: 'Italian restaurant' },
     });
 
-    const googleUrl = global.fetch.mock.calls[0][0];
-    expect(googleUrl).toContain('https://maps.googleapis.com/maps/api/place/nearbysearch/json');
-    expect(googleUrl).toContain(`key=${TEST_KEY}`);
+    const [googleUrl, request] = global.fetch.mock.calls[0];
+    expect(googleUrl).toBe('https://places.googleapis.com/v1/places:searchText');
+    expect(request.headers['X-Goog-Api-Key']).toBe(TEST_KEY);
+    expect(request.headers['X-Goog-FieldMask']).toContain('places.displayName');
+    expect(JSON.parse(request.body)).toMatchObject({
+      textQuery: 'Italian restaurant',
+      includedType: 'restaurant',
+    });
 
     expect(res.statusCode).toBe(200);
-    expect(JSON.parse(res.body)).toEqual(googleBody);
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'OK',
+      results: [
+        expect.objectContaining({
+          place_id: 'p1',
+          name: 'Pizza Roma',
+          price_level: 2,
+          geometry: { location: { lat: 51.5, lng: -0.1 } },
+        }),
+      ],
+    });
     expect(res.body).not.toContain(TEST_KEY);
+  });
+
+  it('uses the Text Search page field only for Text Search, never Nearby Search', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ places: [] }),
+    });
+
+    await nearby.handler({
+      queryStringParameters: {
+        location: '52.2372,-0.8959',
+        types: 'museum,art_museum,history_museum',
+      },
+    });
+
+    const [nearbyUrl, nearbyRequest] = global.fetch.mock.calls[0];
+    expect(nearbyUrl).toBe('https://places.googleapis.com/v1/places:searchNearby');
+    expect(nearbyRequest.headers['X-Goog-FieldMask']).not.toContain('nextPageToken');
+    expect(JSON.parse(nearbyRequest.body).includedTypes).toEqual([
+      'museum', 'art_museum', 'history_museum',
+    ]);
+  });
+
+  it('never sends PRICE_LEVEL_FREE in a Text Search price filter', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ places: [] }),
+    });
+
+    await nearby.handler({
+      queryStringParameters: {
+        location: '52.24034407147008,-0.8772621865413744',
+        keyword: 'Italian restaurant',
+        maxprice: '2',
+      },
+    });
+
+    const requestBody = JSON.parse(global.fetch.mock.calls[0][1].body);
+    expect(requestBody.priceLevels).toEqual([
+      'PRICE_LEVEL_INEXPENSIVE',
+      'PRICE_LEVEL_MODERATE',
+    ]);
+    expect(requestBody.priceLevels).not.toContain('PRICE_LEVEL_FREE');
   });
 });
 
@@ -105,15 +202,18 @@ describe('places-photo function', () => {
       headers: { get: (name) => (name.toLowerCase() === 'location' ? cdnUrl : null) },
     });
 
-    const res = await photo.handler({ queryStringParameters: { ref: 'ref-1', maxwidth: '400' } });
+    const res = await photo.handler({
+      queryStringParameters: { ref: 'places/p1/photos/photo-abc', maxwidth: '400' },
+    });
 
     const googleUrl = global.fetch.mock.calls[0][0];
-    expect(googleUrl).toContain('https://maps.googleapis.com/maps/api/place/photo');
-    expect(googleUrl).toContain('photo_reference=ref-1');
+    expect(googleUrl).toContain('https://places.googleapis.com/v1/places/p1/photos/photo-abc/media');
+    expect(googleUrl).toContain('maxWidthPx=400');
     expect(googleUrl).toContain(`key=${TEST_KEY}`);
 
     expect(res.statusCode).toBe(302);
     expect(res.headers.Location).toBe(cdnUrl);
+    expect(res.headers['Cache-Control']).toBe('public, max-age=0');
     expect(JSON.stringify(res)).not.toContain(TEST_KEY);
   });
 
@@ -124,7 +224,9 @@ describe('places-photo function', () => {
       headers: { get: () => null },
     });
 
-    const res = await photo.handler({ queryStringParameters: { ref: 'ref-1' } });
+    const res = await photo.handler({
+      queryStringParameters: { ref: 'places/p1/photos/photo-abc' },
+    });
 
     expect(res.statusCode).toBe(302);
     expect(res.headers.Location).toContain('placehold.co');
@@ -134,7 +236,9 @@ describe('places-photo function', () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockRejectedValue(new Error('network down'));
 
-    const res = await photo.handler({ queryStringParameters: { ref: 'ref-1' } });
+    const res = await photo.handler({
+      queryStringParameters: { ref: 'places/p1/photos/photo-abc' },
+    });
 
     expect(res.statusCode).toBe(302);
     expect(res.headers.Location).toContain('placehold.co');
@@ -210,36 +314,25 @@ describe('places-resolve function', () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockResolvedValue({
       ok: true,
+      status: 200,
       json: async () => ({
-        status: 'OK',
-        candidates: [
+        places: [
           {
-            place_id: 'euston-id',
-            name: 'London Euston',
-            formatted_address: 'Euston Road, London',
-            geometry: {
-              location: { lat: 51.5282, lng: -0.1337 },
-              viewport: { ignored: true },
-            },
-            rating: 4.2,
+            id: 'euston-id',
+            displayName: { text: 'London Euston' },
+            formattedAddress: 'Euston Road, London',
+            location: { latitude: 51.5282, longitude: -0.1337 },
           },
         ],
-        html_attributions: [],
       }),
     });
 
     const res = await resolve.handler(event);
-    const googleUrl = new URL(global.fetch.mock.calls[0][0]);
-
-    expect(googleUrl.origin + googleUrl.pathname).toBe(
-      'https://maps.googleapis.com/maps/api/place/findplacefromtext/json',
-    );
-    expect(googleUrl.searchParams.get('input')).toBe('London Euston');
-    expect(googleUrl.searchParams.get('inputtype')).toBe('textquery');
-    expect(googleUrl.searchParams.get('fields')).toBe(
-      'place_id,name,formatted_address,geometry',
-    );
-    expect(googleUrl.searchParams.get('key')).toBe(TEST_KEY);
+    const [googleUrl, request] = global.fetch.mock.calls[0];
+    expect(googleUrl).toBe('https://places.googleapis.com/v1/places:searchText');
+    expect(request.headers['X-Goog-Api-Key']).toBe(TEST_KEY);
+    expect(request.headers['X-Goog-FieldMask']).toContain('places.location');
+    expect(JSON.parse(request.body)).toEqual({ textQuery: 'London Euston', maxResultCount: 5 });
 
     expect(JSON.parse(res.body)).toEqual({
       status: 'OK',
@@ -262,14 +355,14 @@ describe('places-resolve function', () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockResolvedValue({
       ok: true,
+      status: 200,
       json: async () => ({
-        status: 'OK',
-        candidates: [
-          { place_id: 'missing-geometry', name: 'Unresolved' },
+        places: [
+          { id: 'missing-geometry', displayName: { text: 'Unresolved' } },
           {
-            place_id: 'valid',
-            name: 'Valid station',
-            geometry: { location: { lat: 51.5, lng: -0.1 } },
+            id: 'valid',
+            displayName: { text: 'Valid station' },
+            location: { latitude: 51.5, longitude: -0.1 },
           },
         ],
       }),
@@ -295,7 +388,8 @@ describe('places-resolve function', () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockResolvedValue({
       ok: true,
-      json: async () => ({ status: 'ZERO_RESULTS', candidates: [] }),
+      status: 200,
+      json: async () => ({ places: [] }),
     });
 
     const res = await resolve.handler(event);
@@ -310,11 +404,9 @@ describe('places-resolve function', () => {
   it('does not forward provider error details to the client', async () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        status: 'REQUEST_DENIED',
-        error_message: 'provider account detail',
-      }),
+      ok: false,
+      status: 403,
+      json: async () => ({ error: { message: 'provider account detail' } }),
     });
 
     const res = await resolve.handler(event);

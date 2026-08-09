@@ -23,6 +23,11 @@ export default function RestaurantsStage({
   hasChildren,
   startWith,
   swipeRestaurant,
+  onBuild,
+  onShowMore,
+  onSetStart,
+  planningOverride,
+  hasMore = false,
   t,
 }) {
   if (isRestaurantsLoading) {
@@ -40,7 +45,16 @@ export default function RestaurantsStage({
       return (
         <RestaurantsUnavailableCard
           restaurantSource={restaurantSource}
-          onRetry={() => goToRestaurants(selectedCuisines, selectedPriceRange)}
+          onRetry={() =>
+            planningOverride
+              ? goToRestaurants(
+                  selectedCuisines,
+                  selectedPriceRange,
+                  planningOverride,
+                )
+              : goToRestaurants(selectedCuisines, selectedPriceRange)
+          }
+          onSetStart={onSetStart}
           onSkip={() => continueAfterRestaurants([])}
           t={t}
         />
@@ -85,6 +99,8 @@ export default function RestaurantsStage({
     return (
       <NoMoreRestaurantsCard
         onContinue={() => continueAfterRestaurants(selectedRestaurants)}
+        onShowMore={onShowMore}
+        hasMore={hasMore}
         nextRoute={getRouteAfterRestaurants({ startWith })}
         t={t}
       />
@@ -98,13 +114,15 @@ export default function RestaurantsStage({
   });
 
   return (
-    <RestaurantSwipeCard
+      <RestaurantSwipeCard
       currentRestaurant={currentRestaurant}
       currentRestaurantIndex={currentRestaurantIndex}
       restaurantQueueLength={restaurantQueue.length}
       restaurantSource={restaurantSource}
       recommendationReason={recommendationReason}
-      onSwipe={swipeRestaurant}
+        onSwipe={swipeRestaurant}
+        selectedCount={selectedRestaurants.length}
+        onBuild={onBuild}
       t={t}
     />
   );

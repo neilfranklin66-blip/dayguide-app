@@ -12,7 +12,10 @@ import es from './es.json';
 import fr from './fr.json';
 import zh from './zh.json';
 import vi from './vi.json';
-import { RESTAURANT_UNAVAILABLE_REASONS } from '../config/dayGuideOptions';
+import {
+  ACTIVITY_UNAVAILABLE_REASONS,
+  RESTAURANT_UNAVAILABLE_REASONS,
+} from '../config/dayGuideOptions';
 
 const LOCALES = { en, es, fr, zh, vi };
 const LOCALE_CODES = Object.keys(LOCALES);
@@ -29,6 +32,13 @@ const UNAVAILABLE_REASON_KEYS = Object.values(RESTAURANT_UNAVAILABLE_REASONS)
     `restaurants.${messageKey}`,
     `restaurants.${hintKey}`,
     `restaurants.${guidanceKey}`,
+  ]);
+
+const ACTIVITY_UNAVAILABLE_REASON_KEYS = Object.values(ACTIVITY_UNAVAILABLE_REASONS)
+  .flatMap(({ messageKey, hintKey, guidanceKey }) => [
+    `activities.${messageKey}`,
+    `activities.${hintKey}`,
+    `activities.${guidanceKey}`,
   ]);
 
 const REQUIRED_KEYS = [
@@ -50,6 +60,24 @@ const REQUIRED_KEYS = [
   // the five supported locales.
   ...PLANNING_KEYS,
   'activities.continueLabel',
+  'activities.unavailableTitle',
+  'activities.skipAndContinue',
+  'activities.tryAgain',
+  'activities.setStartingPlace',
+  // The optional geographic-choice step must never fall back to raw English
+  // while a person is making a location choice in the planning flow.
+  'geography.eyebrow',
+  'geography.title',
+  'geography.anchorIntro',
+  'geography.finishIntro',
+  'geography.fromStart',
+  'geography.toLater',
+  'geography.remainingTime',
+  'geography.question',
+  'geography.nearStart',
+  'geography.nearLater',
+  'geography.between',
+  'geography.note',
   // Honest sample-data copy shown on activity cards and timeline rows.
   'activities.sampleBadge',
   'activities.sampleNote',
@@ -66,12 +94,14 @@ const REQUIRED_KEYS = [
   'restaurants.unavailableTitle',
   'restaurants.skipAndContinue',
   'restaurants.tryAgain',
+  'restaurants.setStartingPlace',
   'restaurants.whatCanITryTitle',
   // The search ran and found matches, but all had already been shown/selected —
   // a distinct, honest message from "nothing found nearby".
   'restaurants.noUnseenResultsTitle',
   'restaurants.noUnseenResults',
   ...UNAVAILABLE_REASON_KEYS,
+  ...ACTIVITY_UNAVAILABLE_REASON_KEYS,
   'timeline.empty',
   'timeline.shareHint',
   'timeline.howToGetThere',
