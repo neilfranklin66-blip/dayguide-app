@@ -332,6 +332,10 @@
     },
     "dayGuideLabel": "Hướng dẫn trong ngày",
     "dayNarrative": {
+      "foodStop": "điểm ăn uống",
+      "activityStop": "hoạt động",
+      "otherStop": "điểm dừng",
+      "template": "Kế hoạch {count} điểm dừng: {sequence}.",
       "foodFirst": "bắt đầu bằng bữa ăn trước khi chuyển sang phần còn lại của ngày",
       "activitiesFirst": "bắt đầu bằng các hoạt động trước khi dừng ăn uống",
       "neutralOrder": "đi qua các lựa chọn của bạn từng điểm một",
@@ -354,9 +358,9 @@
       },
       "stopLabelOne": "1 điểm dừng",
       "stopLabelOther": "{count} điểm dừng",
-      "listTwoSeparator": " và ",
+      "listTwoSeparator": ", rồi ",
       "listMiddleSeparator": ", ",
-      "listFinalSeparator": " và "
+      "listFinalSeparator": ", rồi "
     }
   },
   "transport": {

@@ -332,6 +332,10 @@
     },
     "dayGuideLabel": "Guide de la journée",
     "dayNarrative": {
+      "foodStop": "repas",
+      "activityStop": "activité",
+      "otherStop": "étape",
+      "template": "Programme de {count} étapes : {sequence}.",
       "foodFirst": "commence par un repas avant de passer au reste de votre journée",
       "activitiesFirst": "commence par des activités avant toute pause repas",
       "neutralOrder": "parcourt vos choix une étape à la fois",
@@ -354,9 +358,9 @@
       },
       "stopLabelOne": "1 étape",
       "stopLabelOther": "{count} étapes",
-      "listTwoSeparator": " et ",
+      "listTwoSeparator": ", puis ",
       "listMiddleSeparator": ", ",
-      "listFinalSeparator": " et "
+      "listFinalSeparator": ", puis "
     }
   },
   "transport": {

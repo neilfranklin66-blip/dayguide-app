@@ -332,6 +332,10 @@
     },
     "dayGuideLabel": "行程指南",
     "dayNarrative": {
+      "foodStop": "用餐",
+      "activityStop": "活动",
+      "otherStop": "地点",
+      "template": "{count}站计划：{sequence}。",
       "foodFirst": "先安排用餐，再进行当天的其他行程",
       "activitiesFirst": "先安排活动，再安排用餐",
       "neutralOrder": "按顺序逐站完成您的选择",
@@ -354,9 +358,9 @@
       },
       "stopLabelOne": "1站",
       "stopLabelOther": "{count}站",
-      "listTwoSeparator": "和",
+      "listTwoSeparator": "，然后",
       "listMiddleSeparator": "、",
-      "listFinalSeparator": "和"
+      "listFinalSeparator": "，然后"
     }
   },
   "transport": {

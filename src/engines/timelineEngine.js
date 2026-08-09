@@ -50,6 +50,9 @@ export const buildTimelineEntries = ({
     : [...activities, ...restaurants];
 
   return allItems.map((item, index) => {
+    const isFoodStop = item.type === 'food_drink' ||
+      item.category === 'Food and Drinks' ||
+      Array.isArray(item.cuisine);
     const entry = {
       id: `${index}-${item.id}`,
       time: formatTimelineTime(currentTime),
@@ -57,6 +60,9 @@ export const buildTimelineEntries = ({
       duration: item.duration,
       distance: item.distance,
       category: item.category || (Array.isArray(item.cuisine) ? item.cuisine[0] : item.cuisine),
+      // This is the selected card's actual kind, not the internal next-stage
+      // route. It keeps the itinerary summary factual for Nearby journeys.
+      selectionType: isFoodStop ? 'food' : 'activity',
       icon: item.type === 'food_drink' || item.category === 'Food and Drinks'
         ? getCuisineEmoji(item.cuisine)
         : item.image,

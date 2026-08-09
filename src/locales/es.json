@@ -332,6 +332,10 @@
     },
     "dayGuideLabel": "Guía del día",
     "dayNarrative": {
+      "foodStop": "comida",
+      "activityStop": "actividad",
+      "otherStop": "parada",
+      "template": "Plan de {count} paradas: {sequence}.",
       "foodFirst": "comienza con comida antes de pasar al resto del día",
       "activitiesFirst": "empieza con actividades antes de las paradas para comer",
       "neutralOrder": "recorre tus selecciones una parada a la vez",
@@ -354,9 +358,9 @@
       },
       "stopLabelOne": "1 parada",
       "stopLabelOther": "{count} paradas",
-      "listTwoSeparator": " y ",
+      "listTwoSeparator": ", luego ",
       "listMiddleSeparator": ", ",
-      "listFinalSeparator": " y "
+      "listFinalSeparator": ", luego "
     }
   },
   "transport": {

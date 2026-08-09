@@ -367,6 +367,10 @@
     },
     "dayGuideLabel": "Day guide",
     "dayNarrative": {
+      "foodStop": "food",
+      "activityStop": "activity",
+      "otherStop": "stop",
+      "template": "{count}-stop plan: {sequence}.",
       "foodFirst": "begins with food before moving on to the rest of your day",
       "activitiesFirst": "starts with activities before any food stops",
       "neutralOrder": "moves through your picks one stop at a time",
@@ -389,9 +393,9 @@
       },
       "stopLabelOne": "1-stop",
       "stopLabelOther": "{count}-stop",
-      "listTwoSeparator": " and ",
+      "listTwoSeparator": ", then ",
       "listMiddleSeparator": ", ",
-      "listFinalSeparator": ", and "
+      "listFinalSeparator": ", then "
     }
   },
   "transport": {

@@ -115,24 +115,10 @@ const REQUIRED_KEYS = [
   'transport.cost.taxi',
   // Day narrative subtree.
   'timeline.dayGuideLabel',
-  'timeline.dayNarrative.foodFirst',
-  'timeline.dayNarrative.activitiesFirst',
-  'timeline.dayNarrative.neutralOrder',
-  'timeline.dayNarrative.fitsTime',
-  'timeline.dayNarrative.tightTime',
-  'timeline.dayNarrative.familyFriendlyPacing',
-  'timeline.dayNarrative.priceLabels.budget',
-  'timeline.dayNarrative.priceLabels.moderate',
-  'timeline.dayNarrative.priceLabels.higherEnd',
-  'timeline.dayNarrative.templates.openerWithTime',
-  'timeline.dayNarrative.templates.openerWithoutTime',
-  'timeline.dayNarrative.templates.fitWithPreferences',
-  'timeline.dayNarrative.templates.fitOnly',
-  'timeline.dayNarrative.templates.preferencesOnly',
-  'timeline.dayNarrative.templates.cuisinePreference',
-  'timeline.dayNarrative.templates.budgetPreference',
-  'timeline.dayNarrative.stopLabelOne',
-  'timeline.dayNarrative.stopLabelOther',
+  'timeline.dayNarrative.foodStop',
+  'timeline.dayNarrative.activityStop',
+  'timeline.dayNarrative.otherStop',
+  'timeline.dayNarrative.template',
   'timeline.dayNarrative.listTwoSeparator',
   'timeline.dayNarrative.listMiddleSeparator',
   'timeline.dayNarrative.listFinalSeparator',
@@ -140,14 +126,7 @@ const REQUIRED_KEYS = [
 
 // Keys whose single-brace placeholders must match English exactly.
 const PLACEHOLDER_KEYS = [
-  'timeline.dayNarrative.templates.openerWithTime',
-  'timeline.dayNarrative.templates.openerWithoutTime',
-  'timeline.dayNarrative.templates.fitWithPreferences',
-  'timeline.dayNarrative.templates.fitOnly',
-  'timeline.dayNarrative.templates.preferencesOnly',
-  'timeline.dayNarrative.templates.cuisinePreference',
-  'timeline.dayNarrative.templates.budgetPreference',
-  'timeline.dayNarrative.stopLabelOther',
+  'timeline.dayNarrative.template',
 ];
 
 function getPath(object, dotPath) {
