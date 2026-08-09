@@ -4,6 +4,7 @@ import {
   filterRestaurants,
   findNearestRestaurant,
   getActivitiesForInterests,
+  resolveActivityCategories,
 } from './filterEngine';
 
 const activities = {
@@ -149,6 +150,25 @@ test('getActivitiesForInterests fallback pool still excludes nightlife when chil
 
   expect(result.length).toBeGreaterThan(0);
   expect(result.map(a => a.id)).not.toContain('bar-1');
+});
+
+test('resolveActivityCategories omits nightlife only for an implicit children-in-party search', () => {
+  const allCategories = ['museums', 'nightlife', 'parks'];
+
+  expect(resolveActivityCategories({ interests: [], hasChildren: true, allCategories }))
+    .toEqual(['museums', 'parks']);
+  expect(resolveActivityCategories({ interests: [], hasChildren: false, allCategories }))
+    .toEqual(allCategories);
+  expect(resolveActivityCategories({ interests: [], hasChildren: null, allCategories }))
+    .toEqual(allCategories);
+});
+
+test('resolveActivityCategories respects an explicit nightlife choice', () => {
+  expect(resolveActivityCategories({
+    interests: ['nightlife'],
+    hasChildren: true,
+    allCategories: ['museums', 'nightlife'],
+  })).toEqual(['nightlife']);
 });
 
 test('filterRestaurants applies distance, cuisine, price, and selected filters', () => {

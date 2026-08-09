@@ -3,8 +3,11 @@ import React from 'react';
 export default function DateSelector({ selectedDate, onChange, t }) {
   return (
     <div className="time-selector">
-      <label>{t('interests.dateLabel') || 'What date do you want to plan?'}</label>
+      <label htmlFor="interests-date">
+        {t('interests.dateLabel') || 'What date do you want to plan?'}
+      </label>
       <input
+        id="interests-date"
         type="date"
         value={selectedDate}
         onChange={e => onChange(e.target.value)}

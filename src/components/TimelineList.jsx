@@ -5,6 +5,7 @@ import TimelineTransportSection from './TimelineTransportSection';
 export default function TimelineList({
   timeline,
   onDurationChange,
+  onRemoveItem,
   travelPreferences,
   t,
 }) {
@@ -19,6 +20,7 @@ export default function TimelineList({
               item={item}
               index={index}
               onDurationChange={onDurationChange}
+              onRemove={() => onRemoveItem(index)}
               t={t}
             />
             {index < timeline.length - 1 && (

@@ -102,6 +102,16 @@ test('places adapter keeps metadata.isFamilyFriendly null (live data carries no 
   expect(card.metadata.isFamilyFriendly).toBeNull();
 });
 
+test('places adapter preserves a provider venue type for the live card label', () => {
+  const card = fromPlacesParsed({
+    ...mockPlacesItem,
+    venueType: 'Italian restaurant',
+  });
+
+  expect(card.venueType).toBe('Italian restaurant');
+  expect(card.subCategory).toBe('Italian restaurant');
+});
+
 test('places adapter normalises a sparse parsed result (id and name only) without crashing', () => {
   const card = fromPlacesParsed({ id: 'sparse-1', name: 'Sparse Bistro' });
 

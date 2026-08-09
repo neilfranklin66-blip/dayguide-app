@@ -11,44 +11,49 @@ const theatrePlace = createPlaceRef({
 
 test('hard anchor editor creates a planner-locked fixed commitment', () => {
   const onSave = jest.fn();
+  const searchPlaces = jest.fn().mockResolvedValue([theatrePlace]);
   render(
     <HardAnchorEditor
       anchorId="anchor-1"
-      availablePlaces={[theatrePlace]}
       onSave={onSave}
       onCancel={jest.fn()}
+      searchPlaces={searchPlaces}
     />,
   );
 
   fireEvent.change(screen.getByLabelText('Commitment name'), {
     target: { value: 'Evening theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed place'), {
-    target: { value: 'resolved:theatre-place' },
+  fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
+    target: { value: 'Theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed start time'), {
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  return screen.findByRole('button', { name: 'Use Theatre for this commitment' }).then(selectButton => {
+    fireEvent.click(selectButton);
+    fireEvent.change(screen.getByLabelText('Fixed start time'), {
     target: { value: '18:30' },
-  });
-  fireEvent.change(screen.getByLabelText('Duration in minutes'), {
-    target: { value: '150' },
-  });
-  fireEvent.change(
-    screen.getByLabelText('Arrive this many minutes early'),
-    { target: { value: '20' } },
-  );
-  fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
+    });
+    fireEvent.change(screen.getByLabelText('Duration in minutes'), {
+      target: { value: '150' },
+    });
+    fireEvent.change(
+      screen.getByLabelText('Arrive this many minutes early'),
+      { target: { value: '20' } },
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
 
-  expect(onSave).toHaveBeenCalledWith(
-    expect.objectContaining({
-      id: 'anchor-1',
-      title: 'Evening theatre',
-      place: theatrePlace,
-      startTimeMinutes: 1110,
-      durationMinutes: 150,
-      arrivalBufferMinutes: 20,
-      plannerLocked: true,
-    }),
-  );
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'anchor-1',
+        title: 'Evening theatre',
+        place: theatrePlace,
+        startTimeMinutes: 1110,
+        durationMinutes: 150,
+        arrivalBufferMinutes: 20,
+        plannerLocked: true,
+      }),
+    );
+  });
 });
 
 test('hard anchor editor reports unresolved place instead of saving free text', () => {
