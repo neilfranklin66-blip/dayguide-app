@@ -124,6 +124,8 @@
     "startPlace": "您的一天从哪里开始？",
     "startTime": "您的一天几点开始？",
     "addDestination": "添加最终目的地",
+    "removeDestination": "移除最终目的地",
+    "destinationSelectionNeeded": "请选择已验证的结束地点，或移除此可选目的地。",
     "destinationPlace": "您的一天应在哪里结束？",
     "destinationDeadline": "可选抵达截止时间",
     "destinationBuffer": "在截止时间前提前多少分钟抵达",

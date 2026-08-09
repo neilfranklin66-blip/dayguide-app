@@ -390,6 +390,21 @@ p {
   color: #333;
 }
 
+.destination-choice-notice {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 10px;
+  color: #312e81;
+  margin: 10px 0 16px;
+  padding: 12px;
+}
+
+.destination-choice-notice p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
 /* A bright, non-colour-only focus treatment keeps the next control visible
    in dim rooms and outdoor glare without replacing the established palette. */
 button:focus-visible,

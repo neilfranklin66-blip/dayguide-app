@@ -128,6 +128,9 @@ export default function PlanningInputStage({
   const hasSelectedStart = isResolvedPlaceSelection(draft.startSelection);
   const hasNamedStartingPlace =
     draft.startSelection?.mode === PLACE_SELECTION_MODE.RESOLVED_PLACE;
+  const destinationNeedsPlace =
+    draft.destination.enabled &&
+    !isResolvedPlaceSelection(draft.destination.selection);
 
   return (
     <div className="dayguide-container">
@@ -187,11 +190,12 @@ export default function PlanningInputStage({
               id="planning-add-destination"
               type="checkbox"
               checked={draft.destination.enabled}
-              onChange={event =>
+              onChange={event => {
                 updateDraft(current =>
                   setDestinationEnabled(current, event.target.checked),
-                )
-              }
+                );
+                setErrors([]);
+              }}
             />
             {t('planning.addDestination', {
               defaultValue: 'Add an end destination',
@@ -217,6 +221,29 @@ export default function PlanningInputStage({
                 availablePlaces={availablePlaces}
                 t={t}
               />
+            )}
+
+            {destinationNeedsPlace && (
+              <div className="destination-choice-notice" role="status">
+                <p>
+                  {t('planning.destinationSelectionNeeded', {
+                    defaultValue:
+                      'Choose a verified finish, or remove this optional destination.',
+                  })}
+                </p>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => {
+                    updateDraft(current => setDestinationEnabled(current, false));
+                    setErrors([]);
+                  }}
+                >
+                  {t('planning.removeDestination', {
+                    defaultValue: 'Remove end destination',
+                  })}
+                </button>
+              </div>
             )}
 
             <div className="time-selector">

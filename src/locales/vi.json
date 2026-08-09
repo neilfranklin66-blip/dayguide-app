@@ -124,6 +124,8 @@
     "startPlace": "Ngày của bạn bắt đầu ở đâu?",
     "startTime": "Ngày của bạn bắt đầu lúc mấy giờ?",
     "addDestination": "Thêm điểm đến cuối",
+    "removeDestination": "Xóa điểm đến cuối",
+    "destinationSelectionNeeded": "Chọn điểm kết thúc đã xác minh hoặc xóa điểm đến tùy chọn này.",
     "destinationPlace": "Ngày của bạn nên kết thúc ở đâu?",
     "destinationDeadline": "Hạn giờ đến tùy chọn",
     "destinationBuffer": "Đến sớm hơn hạn giờ bao nhiêu phút",

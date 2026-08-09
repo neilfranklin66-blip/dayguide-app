@@ -124,6 +124,8 @@
     "startPlace": "¿Dónde comienza tu día?",
     "startTime": "¿A qué hora comienza tu día?",
     "addDestination": "Añadir destino final",
+    "removeDestination": "Eliminar destino final",
+    "destinationSelectionNeeded": "Elige un final verificado o elimina este destino opcional.",
     "destinationPlace": "¿Dónde debe terminar tu día?",
     "destinationDeadline": "Hora límite de llegada opcional",
     "destinationBuffer": "Llegar estos minutos antes de la hora límite",

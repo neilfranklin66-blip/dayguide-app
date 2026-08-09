@@ -161,6 +161,36 @@ test('planning input stage collects a destination and optional deadline', () => 
   );
 });
 
+test('an unselected optional destination is explained and can be deliberately removed', () => {
+  const onComplete = jest.fn();
+  render(
+    <PlanningInputStage
+      availablePlaces={availablePlaces}
+      onComplete={onComplete}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  fireEvent.change(screen.getByLabelText('Where does your day start?'), {
+    target: { value: 'resolved:euston' },
+  });
+  fireEvent.click(screen.getByLabelText('Add an end destination'));
+
+  expect(
+    screen.getByText('Choose a verified finish, or remove this optional destination.'),
+  ).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Remove end destination' }));
+
+  expect(
+    screen.queryByText('Choose a verified finish, or remove this optional destination.'),
+  ).not.toBeInTheDocument();
+  expect(screen.getByLabelText('Add an end destination')).not.toBeChecked();
+  fireEvent.click(screen.getByRole('button', { name: 'Continue with these fixed details' }));
+  expect(onComplete).toHaveBeenCalledWith(
+    expect.objectContaining({ end: null }),
+  );
+});
+
 test('planning input stage adds and completes with a planner-locked anchor', async () => {
   const onComplete = jest.fn();
   const anchorSearchPlaces = jest.fn().mockResolvedValue([theatre]);

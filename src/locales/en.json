@@ -147,6 +147,8 @@
     "startPlace": "Where does your day start?",
     "startTime": "What time does your day start?",
     "addDestination": "Add an end destination",
+    "removeDestination": "Remove end destination",
+    "destinationSelectionNeeded": "Choose a verified finish, or remove this optional destination.",
     "destinationPlace": "Where should your day finish?",
     "destinationDeadline": "Optional arrival deadline",
     "destinationBuffer": "Arrive this many minutes before the deadline",
