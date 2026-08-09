@@ -22,12 +22,10 @@ or the production deployment.
 - Long live venue names wrap within their card and retain the full name as the
   heading title. Card height remains content-led: real cards can legitimately
   differ in height because name, category, address, photo, and live facts vary.
-- Food and activity interest options share the same two-column card grid,
-  minimum height, and mobile padding. The former three-column cuisine grid and
-  activity-only mobile override made the two groups look unrelated.
-- A missing venue photo now uses the neutral **Food & drink** image label. It
-  no longer abbreviates the live restaurant name inside the blue fallback
-  image; the full live name remains in the heading below.
+- Food and activity interest options use the same three-column desktop grid,
+  and the same two-column mobile grid, minimum height, and mobile padding.
+- A restaurant with no live photo omits the image area altogether. The app does
+  not show a blue fallback block or repeat an abbreviated venue name.
 - The orange focus treatment now applies to the focused date/time fields as
   well as keyboard-focused controls. It is a temporary focus indicator, not a
   permanent change of the DayGuide colour theme.

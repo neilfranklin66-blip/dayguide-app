@@ -252,9 +252,7 @@ describe('searchRestaurants incomplete result normalisation', () => {
     expect(bare.address).toBeUndefined();
     expect(bare.coordinates).toEqual({ lat: LAT, lng: LNG });
     expect(bare.cuisine).toEqual([]);
-    expect(bare.image).toContain('placehold.co');
-    expect(bare.image).toContain(encodeURIComponent('Food & drink'));
-    expect(bare.image).not.toContain(encodeURIComponent('Bare Minimum'));
+    expect(bare.image).toBeNull();
   });
 
   it('retains each live place coordinate for future leg-to-leg planning', async () => {
@@ -273,7 +271,7 @@ describe('searchRestaurants incomplete result normalisation', () => {
     expect(results[0].coordinates).not.toBe(venueCoordinates);
   });
 
-  it('falls back to the placeholder image when photos are empty or lack a photo_reference', async () => {
+  it('omits the image when photos are empty or lack a photo_reference', async () => {
     mockFetchByKeyword({
       '': () => Promise.resolve(okResponse([
         makePlace('empty-photos', 'Empty Photos', { photos: [] }),
@@ -285,8 +283,8 @@ describe('searchRestaurants incomplete result normalisation', () => {
     const results = await searchRestaurants(LAT, LNG, []);
     const byId = Object.fromEntries(results.map(r => [r.id, r]));
 
-    expect(byId['empty-photos'].image).toContain('placehold.co');
-    expect(byId['no-ref'].image).toContain('placehold.co');
+    expect(byId['empty-photos'].image).toBeNull();
+    expect(byId['no-ref'].image).toBeNull();
     expect(byId['with-ref'].image).toContain('/.netlify/functions/places-photo?ref=ref-1');
   });
 

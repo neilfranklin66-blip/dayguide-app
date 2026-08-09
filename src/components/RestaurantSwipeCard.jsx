@@ -29,14 +29,16 @@ export default function RestaurantSwipeCard({
           </div>
         )}
         <div className="swipe-item">
-          <div className="restaurant-img-wrapper">
-            <img
-              src={currentRestaurant.image}
-              alt={currentRestaurant.name}
-              className="restaurant-img"
-              onError={event => { event.target.style.display = 'none'; }}
-            />
-          </div>
+          {currentRestaurant.image && (
+            <div className="restaurant-img-wrapper">
+              <img
+                src={currentRestaurant.image}
+                alt={currentRestaurant.name}
+                className="restaurant-img"
+                onError={event => { event.currentTarget.parentElement.style.display = 'none'; }}
+              />
+            </div>
+          )}
           {typeLabel && <p className="card-type-label">{typeLabel}</p>}
           <h3 className="place-name" title={currentRestaurant.name}>
             {currentRestaurant.name}

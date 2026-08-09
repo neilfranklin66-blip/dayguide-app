@@ -25,4 +25,5 @@ test('keeps a long live venue name intact and available as the heading title', (
   );
 
   expect(screen.getByRole('heading', { name })).toHaveAttribute('title', name);
+  expect(screen.queryByRole('img')).not.toBeInTheDocument();
 });
