@@ -2,7 +2,9 @@
 
 ## Status
 
-**Complete and accepted on the unpublished preview. This remains a draft PR
+**Recovery candidate published to the unpublished preview. The original core
+flow was accepted, but the reported no-location recovery route was reopened on
+2026-08-09 and now awaits Product Owner confirmation. This remains a draft PR
 candidate; it has not been merged or promoted to Production.**
 
 This packet is based on `692fe59` from the unmerged Packet 170/172 release
@@ -66,6 +68,12 @@ credentials. Google Routes and Ticketmaster remain out of scope.
   Square** as finish through separate direct searches. The activity search
   returned the real National Gallery from the Euston start area, and the final
   itinerary retained both distinct places with a Google Maps link between them.
+- The recovery preview was rechecked with browser location denied and no named
+  start: the activity unavailable card now offers **Set a starting place** and
+  returns directly to the place/address/postcode/ZIP start search. It no longer
+  offers a Retry action that would repeat the same missing-location request.
+  The matching restaurant route is covered by its integration test and shares
+  the same unavailable-card recovery rule.
 
 ## Legacy-record boundary
 
@@ -84,6 +92,9 @@ nearby-distance claim. The current selection flow cannot import
 - The independent-destination correction's broader focused suite passed: 6
   suites, 1,475 tests. It verifies distinct selected start/end places and that
   live activities still use the start coordinates.
+- The no-location recovery patch passed 5 focused suites and 1,518 tests,
+  including restaurant and activity recovery-to-start-search coverage and
+  five-language key consistency.
 - `src/DayGuide.test.js`: 54 tests passed after the asynchronous live-search
   conversion.
 - Full-suite and production-build validation are still required before review
