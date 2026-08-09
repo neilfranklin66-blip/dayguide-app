@@ -122,7 +122,7 @@ function parsePlaces(results, lat, lng) {
       );
       const imgSrc = p.photos?.[0]?.photo_reference
         ? buildPhotoUrl(p.photos[0].photo_reference)
-        : `https://placehold.co/400x300/667eea/ffffff?text=${encodeURIComponent(name.slice(0, 14) || 'Restaurant')}`;
+        : `https://placehold.co/400x300/667eea/ffffff?text=${encodeURIComponent('Food & drink')}`;
 
       return {
         id: p.place_id,

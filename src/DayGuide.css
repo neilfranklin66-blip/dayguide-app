@@ -343,6 +343,7 @@ p {
 }
 
 .interest-btn {
+  min-height: 102px;
   padding: 20px;
   border: 2px solid #e0e0e0;
   border-radius: 15px;
@@ -352,6 +353,7 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   font-size: 1em;
   font-weight: 600;
@@ -454,7 +456,8 @@ select:focus-visible {
 
 .time-input:focus,
 .date-input:focus {
-  outline: none;
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
   border-color: #3949ab;
   box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.18);
 }
@@ -642,7 +645,7 @@ select:focus-visible {
 }
 
 .cuisine-grid {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .price-options {
@@ -1459,7 +1462,7 @@ select:focus-visible {
   }
 
   .interest-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .discovery-options {
@@ -1503,7 +1506,7 @@ select:focus-visible {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .activities-grid .interest-btn {
+  .interest-grid .interest-btn {
     padding: 16px 8px;
     font-size: 0.88em;
   }

@@ -253,7 +253,8 @@ describe('searchRestaurants incomplete result normalisation', () => {
     expect(bare.coordinates).toEqual({ lat: LAT, lng: LNG });
     expect(bare.cuisine).toEqual([]);
     expect(bare.image).toContain('placehold.co');
-    expect(bare.image).toContain(encodeURIComponent('Bare Minimum'));
+    expect(bare.image).toContain(encodeURIComponent('Food & drink'));
+    expect(bare.image).not.toContain(encodeURIComponent('Bare Minimum'));
   });
 
   it('retains each live place coordinate for future leg-to-leg planning', async () => {
