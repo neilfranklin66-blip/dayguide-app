@@ -9,6 +9,7 @@ export default function RestaurantsNoResultsCard({
   onRemoveCuisineFilter,
   onRemovePriceFilter,
   onSkip,
+  onStartOver,
   t,
 }) {
   // Two distinct, truthful stories share this card: the search genuinely found
@@ -49,6 +50,11 @@ export default function RestaurantsNoResultsCard({
           <button onClick={onSkip} className="btn-secondary">
             {t('restaurants.skipAndContinue')}
           </button>
+          {typeof onStartOver === 'function' && (
+            <button onClick={() => onStartOver()} className="btn-secondary">
+              {t('discovery.startOver')}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -279,11 +279,12 @@ Verified stage flow (`src/DayGuide.jsx`, `src/engines/itineraryRouteEngine.js`):
 3. **interests** — preference capture on one screen: activity interests, cuisines,
    price range, available time, date, start time, children-in-party, and whether
    to start with activities or food & drink.
-4. **planning** — use current location or explicitly search for a verified
-   start; optionally add a destination/deadline and fixed anchors; or continue
-   without fixed route details. Travel legs are visibly not route-verified.
-5. **activities** — swipe through sample activity ideas filtered by the chosen
-   interests (and children filter).
+4. **planning** — use current location or directly search and select a start;
+   optionally search and select a different end destination/deadline and add
+   fixed anchors; or continue without fixed route details. Travel legs are
+   visibly not route-verified.
+5. **activities** — swipe through live activity ideas filtered by the chosen
+   interests (and children filter); no current-flow sample fallback exists.
 6. **meal-prompt** — offered only on the activities-first route, asking whether to
    add food.
 7. **restaurants** — live nearby-restaurant search around the chosen planning
@@ -303,10 +304,10 @@ setting; the timeline stage is the terminal screen of the main journey.
 | Authentication (Google, email/password, guest) | **Implemented — External-service dependent** | `src/AuthContext.jsx` wires Firebase `signInWithPopup`, `signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `signInAnonymously`, `signOut`; `src/Login.jsx` exposes all three paths with per-action pending/error handling. Requires a working Firebase project. |
 | Guest access | **Implemented** | Anonymous Firebase sign-in (`signInAsGuest` → `signInAnonymously`); guest users have no email and are handled explicitly (`AuthContext` removes the stored email string). |
 | Onboarding / preferences | **Implemented** | `InterestsStage` collects interests, cuisines, price, available time, date, start time, children, start order, and user-owned walking pace/maximum. Travel preferences persist locally under a separate versioned key; DayGuide does not infer pace from age or weight. |
-| Manual start place / future planning location | **Implemented in tracked Private Alpha source — External-service dependent** | `PlanningInputWithPlaceResolution` is mounted after interests. Current GPS or an explicitly searched verified place can be selected; a searched start becomes the restaurant-search origin. Search depends on the server Places resolver and existing Places-only credential. |
-| End place / arrival deadline | **Implemented in tracked Private Alpha source** | The mounted workflow collects an optional verified destination with an optional deadline and arrival buffer. It is preserved in saved-plan v2 and shown on the timeline with live-check guidance. |
+| Manual start place / future planning location | **Implemented and unpublished-preview verified — External-service dependent** | `PlanningInputWithPlaceResolution` provides a direct place/address/postcode/ZIP search. A selected start becomes the restaurant and activity-search origin, including when browser location is denied. Search depends on the server Places resolver and existing Places-only credential. |
+| End place / arrival deadline | **Implemented and unpublished-preview verified** | The mounted workflow provides an independent direct place/address/postcode/ZIP search for an optional destination, with an optional deadline and arrival buffer. Distinct start/end selections persist in saved-plan v2 and appeared in the verified timeline with a Google Maps link. |
 | Hard anchors | **Implemented in tracked Private Alpha source — route time unverified** | `HardAnchorEditor` adds/edits/removes planner-locked fixed commitments. Finalized anchors reach the Packet 148 planning-window engine, persist in v2, and appear in the timeline without being moved. Route feasibility is not claimed while live route evidence is absent. |
-| Activities | **Implemented — sample/demo-backed** | Sourced from `src/mockActivityData.json`, filtered in `src/engines/filterEngine.js`; every activity is flagged `isSample` in `DayGuide.jsx`. No live activity search exists. |
+| Activities | **Implemented and unpublished-preview verified in Packet 173 candidate — External-service dependent (live-only)** | Plan a day and Find something nearby call `searchActivities` through the existing Places boundary. The current activity flow has no sample fallback; `activityMockVisibility.test.js` guards against reintroducing mock activity data. The candidate is not Production-live. |
 | Restaurants | **Implemented — External-service dependent (live-only)** | `src/api/placesApi.js` calls the Places nearby function; results ranked by `src/utils/recommendationScore.js`. Mock restaurant data is *not* in the live path — enforced by `src/engines/restaurantMockVisibility.test.js`. |
 | Restaurant unavailable / no-results honesty | **Implemented** | `src/engines/restaurantEngine.js` + `RESTAURANT_UNAVAILABLE_REASONS` in `src/config/dayGuideOptions.js` distinguish no-key, quota, network, denied-location, no-location, bad-request, exhausted-unseen, and genuine no-results states. |
 | Itinerary generation | **Implemented** | `src/engines/timelineEngine.js` `buildTimelineEntries` orders items by `startWith` and assigns times with a 0.25h inter-stop gap. |
@@ -328,11 +329,15 @@ setting; the timeline stage is the terminal screen of the main journey.
 The application takes deliberate care not to present demonstration data as real
 local recommendations. Verified distinctions:
 
-- **Sample activity ideas vs live/local results.** Activities come from
-  `mockActivityData.json` and are flagged `isSample`. The timeline row
-  (`TimelineItemRow.jsx`) withholds the fabricated "km" proximity claim for
-  sample items and shows a "sample activity" note instead. There is **no live
-  activity search**; activity ideas are demonstration content only.
+- **Live activity results vs legacy sample records.** The current Plan-a-Day
+  and Find something nearby activity flows use Google Places through the
+  existing server boundary. When live activity results cannot be produced, the
+  queue stays empty and the UI shows an honest unavailable or no-results card;
+  sample activity cards are not substituted. The structural guard
+  `activityMockVisibility.test.js` prevents the current flow from importing
+  `mockActivityData.json`. Old saved plans may still contain `isSample` items:
+  their cards and timeline rows retain the sample note and never claim a real
+  nearby distance.
 - **Live restaurant results vs unavailable / no-results states.** Restaurants are
   live-only via Google Places. When live results cannot be produced, the queue
   stays empty and the UI shows an honest unavailable or no-results card

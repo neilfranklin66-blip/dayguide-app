@@ -5,6 +5,18 @@ const hasSameIdentity = (a, b) => a.id === b.id || a.name === b.name;
 export const excludeAlreadySelected = (items, selectedItems = []) =>
   items.filter(item => !selectedItems.some(selected => hasSameIdentity(item, selected)));
 
+export const resolveActivityCategories = ({
+  interests = [],
+  hasChildren = null,
+  allCategories = [],
+}) => {
+  if (interests.length > 0) return interests;
+
+  return allCategories.filter(
+    category => !(hasChildren === true && ADULT_ONLY_CATEGORIES.includes(category)),
+  );
+};
+
 export const getActivitiesForInterests = ({
   activityData,
   interests = [],
@@ -19,11 +31,11 @@ export const getActivitiesForInterests = ({
   // drops adult-only categories when children are in the party. The
   // already-selected fallback below draws from the same pool, so adult-only
   // categories cannot be reintroduced there.
-  const categories = interests.length > 0
-    ? interests
-    : Object.keys(activityData).filter(
-        category => !(hasChildren === true && ADULT_ONLY_CATEGORIES.includes(category))
-      );
+  const categories = resolveActivityCategories({
+    interests,
+    hasChildren,
+    allCategories: Object.keys(activityData),
+  });
 
   categories.forEach(category => {
     (activityData[category] || []).forEach(activity => {

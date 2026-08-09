@@ -13,6 +13,7 @@ export default function TimelineStage({
   selectedDate,
   startWith,
   updateActivityDuration,
+  removeTimelineItem,
   resetState,
   setShowQR,
   travelPreferences,
@@ -87,6 +88,7 @@ export default function TimelineStage({
       selectedDate={selectedDate}
       timeline={timeline}
       onDurationChange={updateActivityDuration}
+      onRemoveItem={removeTimelineItem}
       onStartOver={resetState}
       onShare={() => setShowQR(true)}
       travelPreferences={travelPreferences}

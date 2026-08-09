@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCuisineEmoji, SOURCE_BANNER_KEY } from '../config/dayGuideOptions';
+import { SOURCE_BANNER_KEY } from '../config/dayGuideOptions';
 
 export default function RestaurantSwipeCard({
   currentRestaurant,
@@ -8,8 +8,16 @@ export default function RestaurantSwipeCard({
   restaurantSource,
   recommendationReason,
   onSwipe,
+  selectedCount = 0,
+  onBuild,
   t,
 }) {
+  const cuisineLabels = (currentRestaurant.cuisine || [])
+    .map(cuisine => t(`cuisine.${cuisine}`));
+  const typeLabel = [currentRestaurant.venueType, ...cuisineLabels]
+    .filter(Boolean)
+    .join(' / ');
+
   return (
     <div className="dayguide-container">
       <div className="card swipe-card">
@@ -21,22 +29,21 @@ export default function RestaurantSwipeCard({
           </div>
         )}
         <div className="swipe-item">
-          <div className="restaurant-img-wrapper">
-            <img
-              src={currentRestaurant.image}
-              alt={currentRestaurant.name}
-              className="restaurant-img"
-              onError={e => { e.target.style.display = 'none'; }}
-            />
-          </div>
-          {currentRestaurant.cuisine.length > 0 && (
-            <p className="card-type-label">
-              {getCuisineEmoji(currentRestaurant.cuisine)}&nbsp;
-              {currentRestaurant.cuisine.map(c => t(`cuisine.${c}`)).join(' · ')}
-            </p>
+          {currentRestaurant.image && (
+            <div className="restaurant-img-wrapper">
+              <img
+                src={currentRestaurant.image}
+                alt={currentRestaurant.name}
+                className="restaurant-img"
+                onError={event => { event.currentTarget.parentElement.style.display = 'none'; }}
+              />
+            </div>
           )}
-          <h3>{currentRestaurant.name}</h3>
-          {currentRestaurant.city && <p className="city-tag">📍 {currentRestaurant.city}</p>}
+          {typeLabel && <p className="card-type-label">{typeLabel}</p>}
+          <h3 className="place-name" title={currentRestaurant.name}>
+            {currentRestaurant.name}
+          </h3>
+          {currentRestaurant.city && <p className="city-tag">{currentRestaurant.city}</p>}
           <div className="guide-note">
             <p className="guide-note-label">{t('restaurants.whyThisFits', 'Why this fits')}</p>
             <p className="guide-note-text">{recommendationReason}</p>
@@ -45,13 +52,13 @@ export default function RestaurantSwipeCard({
             {typeof currentRestaurant.rating === 'number' && (
               <div className="place-fact">
                 <span className="place-fact-label">{t('restaurants.ratingLabel', 'Rating')}</span>
-                <span className="place-fact-value">⭐ {currentRestaurant.rating} / 5</span>
+                <span className="place-fact-value">{currentRestaurant.rating} / 5</span>
               </div>
             )}
             {currentRestaurant.priceRange && (
               <div className="place-fact">
                 <span className="place-fact-label">{t('restaurants.priceLabel', 'Price level')}</span>
-                <span className="place-fact-value">💷 {currentRestaurant.priceRange}</span>
+                <span className="place-fact-value">{currentRestaurant.priceRange}</span>
               </div>
             )}
             {typeof currentRestaurant.distance === 'number' && (
@@ -83,6 +90,11 @@ export default function RestaurantSwipeCard({
           <button onClick={() => onSwipe(false)} className="btn-reject">{t('restaurants.skip')}</button>
           <button onClick={() => onSwipe(true)} className="btn-accept">{t('restaurants.yes')}</button>
         </div>
+        {selectedCount > 0 && (
+          <button onClick={onBuild} className="btn-secondary discovery-build">
+            {t('discovery.buildPicks', { count: selectedCount })}
+          </button>
+        )}
       </div>
     </div>
   );
