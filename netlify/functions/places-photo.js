@@ -1,44 +1,39 @@
-// Photo proxy: the client asks for /.netlify/functions/places-photo?ref=…
-// and this function attaches the private key server-side, then forwards the
-// browser to Google's keyless googleusercontent CDN URL. The key never
-// appears in any URL the client sees.
+// Photo proxy for Places API (New). The browser supplies a short-lived photo
+// resource name; this function adds the private key and follows no redirect.
 const PLACEHOLDER_URL = 'https://placehold.co/400x300/667eea/ffffff?text=Restaurant';
 
 const redirect = (location, maxAge) => ({
   statusCode: 302,
-  headers: {
-    Location: location,
-    'Cache-Control': `public, max-age=${maxAge}`,
-  },
+  headers: { Location: location, 'Cache-Control': `public, max-age=${maxAge}` },
   body: '',
 });
 
-exports.handler = async (event) => {
-  // Server-side only — must NOT use a REACT_APP_* name, or CRA would embed
-  // the key into the client bundle.
-  const API_KEY = process.env.GOOGLE_PLACES_API_KEY;
+const validPhotoReference = ref =>
+  typeof ref === 'string' && /^places\/[^/]+\/photos\/[^/]+$/.test(ref);
+
+exports.handler = async event => {
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY;
   const { ref, maxwidth } = event.queryStringParameters || {};
+  if (!apiKey || !validPhotoReference(ref)) return redirect(PLACEHOLDER_URL, 300);
 
-  // Short cache on the placeholder so images recover quickly once configured.
-  if (!API_KEY || !ref) return redirect(PLACEHOLDER_URL, 300);
-
-  const params = new URLSearchParams({
-    maxwidth: maxwidth || '400',
-    photo_reference: ref,
-    key: API_KEY,
-  });
+  const encodedReference = ref.split('/').map(encodeURIComponent).join('/');
+  const width = Number(maxwidth);
+  const maxWidthPx = Number.isFinite(width) ? Math.min(Math.max(width, 1), 4800) : 400;
+  const params = new URLSearchParams({ maxWidthPx: String(maxWidthPx), key: apiKey });
 
   try {
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/photo?${params}`,
+    const upstream = await fetch(
+      `https://places.googleapis.com/v1/${encodedReference}/media?${params}`,
       { redirect: 'manual' },
     );
-    const location = response.headers.get('location');
-    if (response.status >= 300 && response.status < 400 && location) {
-      return redirect(location, 86400);
+    const location = upstream.headers.get('location');
+    if (upstream.status >= 300 && upstream.status < 400 && location) {
+      // Places API (New) photo resource names are short-lived.  Do not cache
+      // the redirect beyond this response.
+      return redirect(location, 0);
     }
     return redirect(PLACEHOLDER_URL, 300);
-  } catch (err) {
+  } catch (_) {
     return redirect(PLACEHOLDER_URL, 300);
   }
 };

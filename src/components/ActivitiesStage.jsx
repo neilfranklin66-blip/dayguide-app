@@ -1,11 +1,15 @@
 import React from 'react';
 import ActivitiesNoResultsCard from './ActivitiesNoResultsCard';
+import ActivitiesUnavailableCard from './ActivitiesUnavailableCard';
 import NoMoreActivitiesCard from './NoMoreActivitiesCard';
 import ActivitySwipeCard from './ActivitySwipeCard';
 import { getRouteAfterActivities } from '../engines/itineraryRouteEngine';
+import { LIVE_ACTIVITY_FAILURE_SOURCES } from '../config/dayGuideOptions';
 
 export default function ActivitiesStage({
   activityQueue,
+  isActivitiesLoading = false,
+  activitySource = null,
   currentActivityIndex,
   selectedInterests,
   goToActivities,
@@ -13,16 +17,59 @@ export default function ActivitiesStage({
   continueAfterActivities,
   startWith,
   swipeActivity,
+  selectedActivities = [],
+  onBuild,
+  isLiveDiscovery = false,
+  onShowAllLive,
+  onBackToDiscovery,
+  onStartOver,
+  onRetry,
+  onSetStart,
   t,
 }) {
+  if (isActivitiesLoading) {
+    return (
+      <div className="dayguide-container">
+        <div className="card loading"><h2>{t('discovery.searchingActivities')}</h2></div>
+      </div>
+    );
+  }
+
   const currentActivity = activityQueue[currentActivityIndex];
 
   if (activityQueue.length === 0) {
+    if (LIVE_ACTIVITY_FAILURE_SOURCES.has(activitySource)) {
+      return (
+        <ActivitiesUnavailableCard
+          activitySource={activitySource}
+          onRetry={onRetry}
+          onSetStart={onSetStart}
+          onSkip={() => continueAfterActivities([])}
+          isLiveDiscovery={isLiveDiscovery}
+          onBackToDiscovery={onBackToDiscovery}
+          onStartOver={onStartOver}
+          t={t}
+        />
+      );
+    }
+    if (isLiveDiscovery) {
+      return (
+        <ActivitiesNoResultsCard
+          hasSelectedInterests={selectedInterests.length > 0}
+          onShowAll={() => onShowAllLive?.()}
+          onBackToInterests={() => onBackToDiscovery?.()}
+          isLiveDiscovery
+          onStartOver={onStartOver}
+          t={t}
+        />
+      );
+    }
     return (
       <ActivitiesNoResultsCard
         hasSelectedInterests={selectedInterests.length > 0}
         onShowAll={() => goToActivities([])}
         onBackToInterests={() => setStage('interests')}
+        onStartOver={onStartOver}
         t={t}
       />
     );
@@ -44,6 +91,8 @@ export default function ActivitiesStage({
       currentActivityIndex={currentActivityIndex}
       activityQueueLength={activityQueue.length}
       onSwipe={swipeActivity}
+      selectedCount={selectedActivities.length}
+      onBuild={onBuild}
       t={t}
     />
   );

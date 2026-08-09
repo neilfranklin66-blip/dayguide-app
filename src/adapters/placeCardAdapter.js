@@ -171,6 +171,10 @@ export function fromPlacesParsed(p) {
   const distanceMeters = kmToMeters(p.distance);
   const durationMinutes = hoursToMinutes(p.duration);
   const photoUrl = p.image || null;
+  const photoAttributions = Array.isArray(p.photoAttributions)
+    ? p.photoAttributions.map(attribution => ({ ...attribution }))
+    : [];
+  const photoMapsUrl = typeof p.photoMapsUrl === 'string' ? p.photoMapsUrl : null;
   // parsePlaces emits the Places ID as `id`; accept an explicit `place_id` first.
   // query_place_id is only valid alongside a query, so a record without a name
   // falls back to the plain name/address search (possibly null).
@@ -179,13 +183,17 @@ export function fromPlacesParsed(p) {
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}&query_place_id=${encodeURIComponent(placeId)}`
     : buildMapsSearchUrl(p.name, p.address);
   const cuisineArray = p.cuisine ?? [];
+  const venueType = typeof p.venueType === 'string' && p.venueType.trim()
+    ? p.venueType.trim()
+    : null;
 
   const base = {
     id: normalizePlaceId(p.id),
     name: p.name || null,
     type: 'food_drink',
     category: 'Food and Drinks',
-    subCategory: FOOD_DRINK_SUBCATEGORIES.RESTAURANT,
+    subCategory: venueType || FOOD_DRINK_SUBCATEGORIES.RESTAURANT,
+    venueType,
     cuisine: cuisineArray,
     rating: typeof p.rating === 'number' ? p.rating : null,
     priceRange: p.priceRange ?? null,
@@ -195,6 +203,8 @@ export function fromPlacesParsed(p) {
     address: p.address ?? null,
     coordinates: normalizeCoordinates(p.coordinates),
     photoUrl,
+    photoAttributions,
+    photoMapsUrl,
     mapsUrl,
     reason: null,
     source: PLACE_CARD_SOURCES.GOOGLE_PLACES,
