@@ -11,6 +11,21 @@ const euston = createPlaceRef({
   source: 'google_places',
 });
 
+const theatre = createPlaceRef({
+  id: 'theatre-id',
+  name: 'Royal Theatre',
+  address: 'Guildhall Road, Northampton',
+  coordinates: { lat: 52.237, lng: -0.895 },
+  source: 'google_places',
+});
+
+const currentPlace = createPlaceRef({
+  id: 'current-location',
+  name: 'Current location',
+  coordinates: { lat: 52.237, lng: -0.895 },
+  source: 'current_gps',
+});
+
 test('does not search while the user is typing', () => {
   const searchPlaces = jest.fn();
   render(
@@ -21,9 +36,12 @@ test('does not search while the user is typing', () => {
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Place name or address'), {
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    {
     target: { value: 'London Euston' },
-  });
+    },
+  );
 
   expect(searchPlaces).not.toHaveBeenCalled();
 });
@@ -44,15 +62,22 @@ test('shows and holds an honest loading state until search completes', async () 
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Place name or address'), {
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    {
     target: { value: 'London Euston' },
-  });
+    },
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
   expect(
     screen.getByRole('button', { name: 'Searching...' }),
   ).toBeDisabled();
-  fireEvent.submit(screen.getByLabelText('Place name or address').closest('form'));
+  fireEvent.submit(
+    screen
+      .getByLabelText('Place, address, postcode or ZIP code')
+      .closest('form'),
+  );
   expect(searchPlaces).toHaveBeenCalledTimes(1);
 
   finishSearch([]);
@@ -72,9 +97,12 @@ test('rejects a short query locally without a provider call', () => {
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Place name or address'), {
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    {
     target: { value: 'x' },
-  });
+    },
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
   expect(searchPlaces).not.toHaveBeenCalled();
@@ -93,9 +121,12 @@ test('shows attributed verified matches without exposing coordinates', async () 
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Place name or address'), {
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    {
     target: { value: 'London Euston' },
-  });
+    },
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
   expect(await screen.findByText('London Euston')).toBeInTheDocument();
@@ -105,7 +136,7 @@ test('shows attributed verified matches without exposing coordinates', async () 
   expect(screen.queryByText(/51\.5282|-0\.1337/)).not.toBeInTheDocument();
 });
 
-test('adds a verified match to Packet 149 choices and completes with it', async () => {
+test('selects a searched start place directly and completes with it', async () => {
   const onComplete = jest.fn();
   render(
     <PlanningInputWithPlaceResolution
@@ -115,22 +146,25 @@ test('adds a verified match to Packet 149 choices and completes with it', async 
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Place name or address'), {
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    {
     target: { value: 'London Euston' },
-  });
+    },
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Search' }));
   fireEvent.click(
-    await screen.findByRole('button', { name: 'Add London Euston' }),
+    await screen.findByRole('button', { name: 'Start at London Euston' }),
   );
 
   expect(
     screen.getByText(
-      'London Euston is now available in the planning choices.',
+      'Your day will start at London Euston.',
     ),
   ).toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText('Where does your day start?'), {
-    target: { value: 'resolved:euston-id' },
-  });
+  expect(
+    screen.queryByLabelText('Where does your day start?'),
+  ).not.toBeInTheDocument();
   fireEvent.click(
     screen.getByRole('button', {
       name: 'Continue with these fixed details',
@@ -146,7 +180,96 @@ test('adds a verified match to Packet 149 choices and completes with it', async 
   );
 });
 
-test('deduplicates repeated provider matches and already-added places', async () => {
+test('uses the available current location only after the user explicitly chooses it', () => {
+  render(
+    <PlanningInputWithPlaceResolution
+      currentPlace={currentPlace}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  expect(screen.queryByText('Your day will start at Current location.')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Use my current location — Current location' }));
+
+  expect(screen.getByText('Your day will start at Current location.')).toBeInTheDocument();
+});
+
+test('sends a postcode unchanged to the place search', async () => {
+  const searchPlaces = jest.fn().mockResolvedValue([]);
+  render(
+    <PlanningInputWithPlaceResolution
+      searchPlaces={searchPlaces}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    { target: { value: 'NN1 1DP' } },
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+
+  await waitFor(() =>
+    expect(searchPlaces).toHaveBeenCalledWith('NN1 1DP'),
+  );
+  await screen.findByText(
+    'No verified matches were found. Try a station name, venue, hotel or fuller address.',
+  );
+});
+
+test('selects a different searched destination without replacing the start', async () => {
+  const onComplete = jest.fn();
+  const searchPlaces = jest.fn(query =>
+    Promise.resolve(query === 'London Euston' ? [euston] : [theatre]),
+  );
+  render(
+    <PlanningInputWithPlaceResolution
+      searchPlaces={searchPlaces}
+      onComplete={onComplete}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    { target: { value: 'London Euston' } },
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  fireEvent.click(
+    await screen.findByRole('button', { name: 'Start at London Euston' }),
+  );
+
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  fireEvent.change(
+    screen.getByLabelText(
+      'Place, address, postcode or ZIP code for your destination',
+    ),
+    { target: { value: 'Royal Theatre' } },
+  );
+  fireEvent.click(screen.getAllByRole('button', { name: 'Search' }).at(-1));
+  fireEvent.click(
+    await screen.findByRole('button', { name: 'Finish at Royal Theatre' }),
+  );
+
+  expect(screen.getByText('Your day will start at London Euston.')).toBeInTheDocument();
+  expect(screen.getByText('Your day will finish at Royal Theatre.')).toBeInTheDocument();
+  fireEvent.click(
+    screen.getByRole('button', {
+      name: 'Continue with these fixed details',
+    }),
+  );
+
+  expect(onComplete).toHaveBeenCalledWith(
+    expect.objectContaining({
+      start: expect.objectContaining({ place: euston }),
+      end: expect.objectContaining({ place: theatre }),
+    }),
+  );
+});
+
+test('deduplicates repeated provider matches and keeps the chosen start place available', async () => {
   render(
     <PlanningInputWithPlaceResolution
       initialPlaces={[euston]}
@@ -156,17 +279,23 @@ test('deduplicates repeated provider matches and already-added places', async ()
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Place name or address'), {
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    {
     target: { value: 'London Euston' },
-  });
+    },
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
   expect(
-    await screen.findByRole('button', { name: 'London Euston added' }),
-  ).toBeDisabled();
-  expect(
-    screen.getAllByRole('option', { name: /London Euston/ }),
+    await screen.findAllByRole('button', { name: 'Start at London Euston' }),
   ).toHaveLength(1);
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Start at London Euston' }),
+  );
+  expect(
+    screen.getByText('Your day will start at London Euston.'),
+  ).toBeInTheDocument();
 });
 
 test('shows an honest zero-results state', async () => {
@@ -178,9 +307,12 @@ test('shows an honest zero-results state', async () => {
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Place name or address'), {
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    {
     target: { value: 'Unknown station' },
-  });
+    },
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
   expect(
@@ -215,9 +347,12 @@ test.each([
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Place name or address'), {
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    {
     target: { value: 'London Euston' },
-  });
+    },
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
   await waitFor(() =>

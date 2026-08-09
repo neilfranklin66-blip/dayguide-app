@@ -244,6 +244,7 @@ body {
 .btn-secondary,
 .btn-reject,
 .btn-accept {
+  min-height: 52px;
   padding: 15px 30px;
   border: none;
   border-radius: 12px;
@@ -342,6 +343,7 @@ p {
 }
 
 .interest-btn {
+  min-height: 102px;
   padding: 20px;
   border: 2px solid #e0e0e0;
   border-radius: 15px;
@@ -351,6 +353,7 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   font-size: 1em;
   font-weight: 600;
@@ -385,6 +388,31 @@ p {
   margin-bottom: 15px;
   font-weight: 600;
   color: #333;
+}
+
+.destination-choice-notice {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 10px;
+  color: #312e81;
+  margin: 10px 0 16px;
+  padding: 12px;
+}
+
+.destination-choice-notice p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+/* A bright, non-colour-only focus treatment keeps the next control visible
+   in dim rooms and outdoor glare without replacing the established palette. */
+button:focus-visible,
+input:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
 }
 
 .slider {
@@ -423,24 +451,129 @@ p {
   font-weight: 600;
   color: #667eea;
   font-size: 1.1em;
-}.time-input {
+}
+
+.time-input,
+.date-input {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  font-size: 1em;
+  min-height: 64px;
+  padding: 15px 16px;
+  border: 2px solid #6b7280;
+  border-radius: 12px;
+  font-size: 1.1em;
   font-weight: 600;
-  color: #333;
+  color: #172033;
   background: white;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: monospace;
+  font-family: inherit;
 }
 
-.time-input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+.planning-more-options {
+  margin: 8px 0 24px;
+  border-top: 1px solid #d7dcff;
+}
+
+.planning-more-options summary {
+  padding: 16px 0;
+  color: #3949ab;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.later-plans-panel {
+  margin: 8px 0 24px;
+  border: 1px solid #d7dcff;
+  border-radius: 14px;
+  background: #f8f9ff;
+  overflow: hidden;
+}
+
+.later-plans-toggle {
+  width: 100%;
+  min-height: 64px;
+  padding: 16px;
+  border: 0;
+  background: transparent;
+  color: #24358e;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.later-plans-toggle::after {
+  content: '+';
+  float: right;
+  font-size: 1.4rem;
+}
+
+.later-plans-toggle[aria-expanded='true']::after {
+  content: '−';
+}
+
+.later-plans-panel > .planning-place-search,
+.later-plans-panel > section,
+.later-plans-panel > .later-plan-timing {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.later-plans-panel .planning-place-search {
+  margin-top: 0;
+  margin-bottom: 16px;
+  background: #fff;
+}
+
+.selected-place-summary,
+.later-plan-card {
+  margin: 0 16px 16px;
+  padding: 16px;
+  border: 1px solid #d0d8f8;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.selected-place-summary p,
+.later-plan-card p {
+  margin: 0 0 8px;
+}
+
+.selected-place-summary .btn-secondary,
+.later-plan-card .btn-secondary {
+  min-height: 44px;
+  margin: 4px 4px 0 0;
+  padding: 10px 14px;
+}
+
+.later-plan-option {
+  min-height: 48px;
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 2px solid #6b7280;
+  border-radius: 10px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  font-weight: 700;
+}
+
+.later-plan-option[aria-pressed='true'] {
+  border-color: #3949ab;
+  background: #e8ebff;
+}
+
+.hard-anchor-editor input[type='number'] {
+  max-width: 9rem;
+}
+
+.time-input:focus,
+.date-input:focus {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+  border-color: #3949ab;
+  box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.18);
 }
 
 .welcome-actions {
@@ -452,6 +585,84 @@ p {
 .welcome-actions .btn-secondary {
   width: 100%;
   margin: 0;
+}
+
+.welcome-actions .btn-discovery {
+  width: 100%;
+  min-height: 60px;
+  margin: 0;
+  padding: 16px 24px;
+  border: 2px solid #667eea;
+  border-radius: 14px;
+  background: #fff;
+  color: #3949ab;
+  font-size: 1.05em;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.welcome-actions .btn-discovery:hover {
+  background: #f4f6ff;
+}
+
+.welcome-discovery-hint {
+  margin: -2px 8px 4px;
+  color: #606775;
+  font-size: 0.86em;
+  line-height: 1.35;
+}
+
+.discovery-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.discovery-option {
+  min-height: 120px;
+  padding: 16px;
+  border: 2px solid #d7dcff;
+  border-radius: 16px;
+  background: #fff;
+  color: #333;
+  font-size: 1.05em;
+  font-weight: 700;
+  cursor: pointer;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  line-height: 1.25;
+}
+
+.discovery-option span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.4em;
+}
+
+.discovery-option:hover {
+  border-color: #667eea;
+  background: #f6f7ff;
+}
+
+.discovery-all {
+  width: 100%;
+  margin: 8px 0 12px;
+}
+
+.discovery-build {
+  width: 100%;
+  margin: 12px 0 0;
+}
+
+.timeline-remove {
+  border: 0;
+  background: transparent;
+  color: #b42318;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
 }
 
 .welcome-resume-summary .subtitle {
@@ -467,6 +678,28 @@ p {
 .planning-place-resolution form {
   display: grid;
   gap: 10px;
+}
+
+.planning-place-search {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #d0d8f8;
+  border-radius: 14px;
+  background: #f8f9ff;
+}
+
+.planning-place-search h3 {
+  margin-top: 0;
+}
+
+.planning-place-search form,
+.planning-place-search .place-search-form {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-place-search .btn-secondary {
+  width: 100%;
 }
 
 .planning-place-results {
@@ -561,6 +794,7 @@ p {
 
 .price-btn {
   flex: 1;
+  min-height: 52px;
   padding: 10px 8px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
@@ -589,7 +823,6 @@ p {
   height: 160px;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 15px;
   background: #f0f0f0;
 }
 
@@ -597,6 +830,62 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.restaurant-photo-figure {
+  margin: 0 0 15px;
+}
+
+.restaurant-photo--unavailable {
+  display: none;
+}
+
+.restaurant-photo-credit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 9px;
+  border: 1px solid #dbe4f0;
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  background: #fff;
+  color: #374151;
+  font-size: 0.76rem;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.restaurant-photo-authors {
+  min-width: 0;
+}
+
+.restaurant-photo-authors a,
+.restaurant-photo-source {
+  color: #1d4ed8;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.restaurant-photo-author-avatar {
+  width: 18px;
+  height: 18px;
+  margin: 0 4px -4px 0;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.restaurant-photo-source {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .restaurant-photo-credit {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 
 .city-tag {
@@ -652,6 +941,16 @@ p {
   margin-bottom: 10px;
 }
 
+/* Google Places names can be long. Let the card grow naturally and wrap the
+   real name rather than clipping it or abbreviating a live venue. */
+.place-name {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+  line-height: 1.22;
+}
+
 .rating {
   font-size: 1.2em;
   margin-bottom: 15px;
@@ -666,13 +965,13 @@ p {
 
 .details {
   font-size: 0.95em;
-  color: #666;
+  color: #475569;
   margin: 5px 0;
 }
 
 .address {
   font-size: 0.85em;
-  color: #999;
+  color: #526071;
   font-style: italic;
   margin-top: 15px;
   overflow-wrap: anywhere;
@@ -717,7 +1016,7 @@ p {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #999;
+  color: #526071;
   margin-bottom: 2px;
 }
 
@@ -1117,18 +1416,21 @@ p {
   margin-bottom: 16px;
 }
 
-/* Activities grid: 3-column compact layout for 12 categories */
-.activities-grid {
+/* Activity and food choices share the same compact three-column treatment. */
+.activities-grid,
+.cuisine-grid {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.activities-grid .interest-btn {
+.activities-grid .interest-btn,
+.cuisine-grid .interest-btn {
   padding: 14px 6px;
   font-size: 0.82em;
   gap: 6px;
 }
 
-.activities-grid .interest-btn .icon {
+.activities-grid .interest-btn .icon,
+.cuisine-grid .interest-btn .icon {
   font-size: 1.6em;
 }
 
@@ -1310,6 +1612,69 @@ p {
   border: 1px solid #fde68a;
 }
 
+/* A short, optional junction in the planning flow. It keeps the three area
+   choices easy to compare without turning a geographical suggestion into a
+   dense route explanation. */
+.geographic-choice-card {
+  text-align: center;
+}
+
+.geographic-choice-eyebrow {
+  color: #4f46e5;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+.geographic-choice-intro {
+  color: #374151;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  margin: 14px auto 10px;
+  max-width: 360px;
+}
+
+.geographic-choice-distance,
+.geographic-choice-time {
+  color: #4b5563;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  margin: 8px auto;
+}
+
+.geographic-choice-time {
+  background: #eef2ff;
+  border-radius: 10px;
+  color: #3730a3;
+  font-weight: 650;
+  padding: 10px 12px;
+}
+
+.geographic-choice-card h3 {
+  color: #1f2937;
+  font-size: 1.05rem;
+  margin: 22px 0 12px;
+}
+
+.geographic-choice-options {
+  display: grid;
+  gap: 10px;
+}
+
+.geographic-choice-options button {
+  min-height: 52px;
+  width: 100%;
+}
+
+.geographic-choice-note {
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 18px auto 0;
+  max-width: 360px;
+}
+
 @media (max-width: 600px) {
   .dayguide-container {
     padding: 10px;
@@ -1333,7 +1698,15 @@ p {
   }
 
   .interest-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .discovery-options {
     grid-template-columns: 1fr;
+  }
+
+  .discovery-option {
+    min-height: 104px;
   }
 
   .btn-primary,
@@ -1369,7 +1742,7 @@ p {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .activities-grid .interest-btn {
+  .interest-grid .interest-btn {
     padding: 16px 8px;
     font-size: 0.88em;
   }

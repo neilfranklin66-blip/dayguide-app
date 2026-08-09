@@ -32,7 +32,7 @@ export default function GeographicalPlanSummary({
     >
       <h3 id="geographical-plan-summary-title">
         {t('planning.summaryTitle', {
-          defaultValue: 'Your fixed route details',
+          defaultValue: 'Your later plans',
         })}
       </h3>
       <p>
@@ -53,7 +53,7 @@ export default function GeographicalPlanSummary({
         <article key={anchor.id} className="geographical-plan-point">
           <p className="card-type-label">
             {t('planning.lockedAnchor', {
-              defaultValue: 'Locked anchor',
+              defaultValue: 'Planned time',
             })}
           </p>
           <h4>{anchor.title}</h4>

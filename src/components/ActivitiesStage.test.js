@@ -130,6 +130,13 @@ test('renders the no-results card when the queue is empty', () => {
   expect(screen.getByText('activities.noResultsTitle')).toBeInTheDocument();
 });
 
+test('renders the unavailable card for a failed live activity search', () => {
+  render(<ActivitiesStage {...baseProps} activityQueue={[]} activitySource="location_denied" />);
+
+  expect(screen.getByText('activities.locationDeniedWarning')).toBeInTheDocument();
+  expect(screen.queryByText('activities.noResultsTitle')).not.toBeInTheDocument();
+});
+
 test('show-all button broadens the search by calling goToActivities with no interests', () => {
   const goToActivities = jest.fn();
   render(<ActivitiesStage {...baseProps} activityQueue={[]} goToActivities={goToActivities} />);

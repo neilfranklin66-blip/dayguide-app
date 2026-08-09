@@ -12,7 +12,10 @@ import es from './es.json';
 import fr from './fr.json';
 import zh from './zh.json';
 import vi from './vi.json';
-import { RESTAURANT_UNAVAILABLE_REASONS } from '../config/dayGuideOptions';
+import {
+  ACTIVITY_UNAVAILABLE_REASONS,
+  RESTAURANT_UNAVAILABLE_REASONS,
+} from '../config/dayGuideOptions';
 
 const LOCALES = { en, es, fr, zh, vi };
 const LOCALE_CODES = Object.keys(LOCALES);
@@ -31,6 +34,13 @@ const UNAVAILABLE_REASON_KEYS = Object.values(RESTAURANT_UNAVAILABLE_REASONS)
     `restaurants.${guidanceKey}`,
   ]);
 
+const ACTIVITY_UNAVAILABLE_REASON_KEYS = Object.values(ACTIVITY_UNAVAILABLE_REASONS)
+  .flatMap(({ messageKey, hintKey, guidanceKey }) => [
+    `activities.${messageKey}`,
+    `activities.${hintKey}`,
+    `activities.${guidanceKey}`,
+  ]);
+
 const REQUIRED_KEYS = [
   // Header controls, the in-progress label, and the failure notice shown when
   // signing out breaks.
@@ -45,11 +55,32 @@ const REQUIRED_KEYS = [
   'interests.childrenLabel',
   'interests.childrenYes',
   'interests.childrenNo',
+  'discovery.backToNearby',
+  'discovery.startOver',
   // Packet 159's mounted planning workflow. Deriving every leaf from English
   // prevents a later control or warning from silently falling back in one of
   // the five supported locales.
   ...PLANNING_KEYS,
   'activities.continueLabel',
+  'activities.unavailableTitle',
+  'activities.skipAndContinue',
+  'activities.tryAgain',
+  'activities.setStartingPlace',
+  'activities.nearbyLocationNeeded',
+  // The optional geographic-choice step must never fall back to raw English
+  // while a person is making a location choice in the planning flow.
+  'geography.eyebrow',
+  'geography.title',
+  'geography.anchorIntro',
+  'geography.finishIntro',
+  'geography.fromStart',
+  'geography.toLater',
+  'geography.remainingTime',
+  'geography.question',
+  'geography.nearStart',
+  'geography.nearLater',
+  'geography.between',
+  'geography.note',
   // Honest sample-data copy shown on activity cards and timeline rows.
   'activities.sampleBadge',
   'activities.sampleNote',
@@ -66,12 +97,15 @@ const REQUIRED_KEYS = [
   'restaurants.unavailableTitle',
   'restaurants.skipAndContinue',
   'restaurants.tryAgain',
+  'restaurants.setStartingPlace',
+  'restaurants.nearbyLocationNeeded',
   'restaurants.whatCanITryTitle',
   // The search ran and found matches, but all had already been shown/selected —
   // a distinct, honest message from "nothing found nearby".
   'restaurants.noUnseenResultsTitle',
   'restaurants.noUnseenResults',
   ...UNAVAILABLE_REASON_KEYS,
+  ...ACTIVITY_UNAVAILABLE_REASON_KEYS,
   'timeline.empty',
   'timeline.shareHint',
   'timeline.howToGetThere',
@@ -81,24 +115,10 @@ const REQUIRED_KEYS = [
   'transport.cost.taxi',
   // Day narrative subtree.
   'timeline.dayGuideLabel',
-  'timeline.dayNarrative.foodFirst',
-  'timeline.dayNarrative.activitiesFirst',
-  'timeline.dayNarrative.neutralOrder',
-  'timeline.dayNarrative.fitsTime',
-  'timeline.dayNarrative.tightTime',
-  'timeline.dayNarrative.familyFriendlyPacing',
-  'timeline.dayNarrative.priceLabels.budget',
-  'timeline.dayNarrative.priceLabels.moderate',
-  'timeline.dayNarrative.priceLabels.higherEnd',
-  'timeline.dayNarrative.templates.openerWithTime',
-  'timeline.dayNarrative.templates.openerWithoutTime',
-  'timeline.dayNarrative.templates.fitWithPreferences',
-  'timeline.dayNarrative.templates.fitOnly',
-  'timeline.dayNarrative.templates.preferencesOnly',
-  'timeline.dayNarrative.templates.cuisinePreference',
-  'timeline.dayNarrative.templates.budgetPreference',
-  'timeline.dayNarrative.stopLabelOne',
-  'timeline.dayNarrative.stopLabelOther',
+  'timeline.dayNarrative.foodStop',
+  'timeline.dayNarrative.activityStop',
+  'timeline.dayNarrative.otherStop',
+  'timeline.dayNarrative.template',
   'timeline.dayNarrative.listTwoSeparator',
   'timeline.dayNarrative.listMiddleSeparator',
   'timeline.dayNarrative.listFinalSeparator',
@@ -106,14 +126,7 @@ const REQUIRED_KEYS = [
 
 // Keys whose single-brace placeholders must match English exactly.
 const PLACEHOLDER_KEYS = [
-  'timeline.dayNarrative.templates.openerWithTime',
-  'timeline.dayNarrative.templates.openerWithoutTime',
-  'timeline.dayNarrative.templates.fitWithPreferences',
-  'timeline.dayNarrative.templates.fitOnly',
-  'timeline.dayNarrative.templates.preferencesOnly',
-  'timeline.dayNarrative.templates.cuisinePreference',
-  'timeline.dayNarrative.templates.budgetPreference',
-  'timeline.dayNarrative.stopLabelOther',
+  'timeline.dayNarrative.template',
 ];
 
 function getPath(object, dotPath) {

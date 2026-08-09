@@ -1,10 +1,21 @@
 import React from 'react';
 
-export default function ActivitiesNoResultsCard({ hasSelectedInterests, onShowAll, onBackToInterests, t }) {
+export default function ActivitiesNoResultsCard({
+  hasSelectedInterests,
+  onShowAll,
+  onBackToInterests,
+  onStartOver,
+  isLiveDiscovery = false,
+  t,
+}) {
+  const backLabel = isLiveDiscovery
+    ? t('discovery.changeActivity')
+    : t('interests.title');
+
   return (
     <div className="dayguide-container">
       <div className="card no-results-card">
-        <div className="no-results-icon">🎭</div>
+        <div className="no-results-icon" aria-hidden="true">Explore</div>
         <h2>{t('activities.noResultsTitle')}</h2>
         <p className="no-results-msg">{t('activities.noResults')}</p>
         <div className="no-results-actions">
@@ -13,9 +24,17 @@ export default function ActivitiesNoResultsCard({ hasSelectedInterests, onShowAl
               {t('activities.showAll')}
             </button>
           )}
-          <button onClick={() => onBackToInterests()} className="btn-secondary">
-            ← {t('interests.title')}
+          <button
+            onClick={() => onBackToInterests()}
+            className={isLiveDiscovery ? 'btn-primary' : 'btn-secondary'}
+          >
+            {backLabel}
           </button>
+          {typeof onStartOver === 'function' && (
+            <button onClick={() => onStartOver()} className="btn-secondary">
+              {t('discovery.startOver')}
+            </button>
+          )}
         </div>
       </div>
     </div>

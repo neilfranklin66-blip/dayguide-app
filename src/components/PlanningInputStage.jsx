@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import HardAnchorEditor from './HardAnchorEditor';
+import DirectTimeInput from './DirectTimeInput';
 import ResolvedPlaceSelect from './ResolvedPlaceSelect';
 import {
   PLANNING_INPUT_ERROR,
+  PLACE_SELECTION_MODE,
   createPlanningInputDraft,
   finalizePlanningInput,
+  isResolvedPlaceSelection,
   minutesToTimeInput,
   removeHardAnchor,
-  setDepartureTime,
   setDestinationEnabled,
   setDestinationSelection,
   setDestinationTiming,
@@ -70,25 +72,30 @@ export default function PlanningInputStage({
   currentPlace = null,
   availablePlaces = [],
   initialDraft = null,
+  draft: controlledDraft = null,
+  onDraftChange = null,
+  startPlaceControl = null,
+  destinationPlaceControl = null,
+  anchorSearchPlaces = undefined,
   onComplete,
   onCancel,
   onSkip,
   t = fallbackT,
 }) {
-  const [draft, setDraft] = useState(
+  const [internalDraft, setInternalDraft] = useState(
     initialDraft ?? createPlanningInputDraft(),
   );
+  const draft = controlledDraft ?? internalDraft;
+  const updateDraft = onDraftChange ?? setInternalDraft;
   const [editor, setEditor] = useState(null);
   const [errors, setErrors] = useState([]);
-
-  const updateStartTime = value => {
-    const minutes = timeInputToMinutes(value);
-    setDraft(current => setDepartureTime(current, minutes));
-  };
+  const [laterPlansOpen, setLaterPlansOpen] = useState(
+    () => draft.destination.enabled || draft.anchors.length > 0,
+  );
 
   const updateDestinationDeadline = value => {
     const minutes = value === '' ? null : timeInputToMinutes(value);
-    setDraft(current =>
+    updateDraft(current =>
       setDestinationTiming(current, {
         arrivalDeadlineMinutes: minutes,
         arrivalBufferMinutes:
@@ -98,7 +105,7 @@ export default function PlanningInputStage({
   };
 
   const saveAnchor = anchor => {
-    setDraft(current => upsertHardAnchor(current, anchor));
+    updateDraft(current => upsertHardAnchor(current, anchor));
     setEditor(null);
     setErrors([]);
   };
@@ -116,77 +123,49 @@ export default function PlanningInputStage({
   const destinationDeadline = minutesToTimeInput(
     draft.destination.arrivalDeadlineMinutes,
   );
+  const hasSelectedStart = isResolvedPlaceSelection(draft.startSelection);
+  const hasNamedStartingPlace =
+    draft.startSelection?.mode === PLACE_SELECTION_MODE.RESOLVED_PLACE;
+  const destinationNeedsPlace =
+    draft.destination.enabled &&
+    !isResolvedPlaceSelection(draft.destination.selection);
 
   return (
     <div className="dayguide-container">
       <div className="card planning-input-stage">
-        <h2>
-          {t('planning.title', {
-            defaultValue: 'Where should your day flow?',
-          })}
-        </h2>
-        <p>
-          {t('planning.subtitle', {
-            defaultValue:
-              'Set a starting place, an optional destination, and any commitments that DayGuide must never move.',
-          })}
-        </p>
-        <p className="planning-private-alpha-notice">
-          {t('planning.privateAlphaNotice', {
-            defaultValue:
-              'Private alpha: fixed places and times guide your plan, but travel legs are not route-verified. Check live journeys before leaving.',
-          })}
-        </p>
+        <h2>{t('planning.title', { defaultValue: 'Plan a day' })}</h2>
 
-        <ResolvedPlaceSelect
-          id="planning-start-place"
-          label={t('planning.startPlace', {
-            defaultValue: 'Where does your day start?',
-          })}
-          selection={draft.startSelection}
-          onChange={selection =>
-            setDraft(current => setStartSelection(current, selection))
-          }
-          currentPlace={currentPlace}
-          availablePlaces={availablePlaces}
-          t={t}
-        />
-
-        <div className="time-selector">
-          <label htmlFor="planning-start-time">
-            {t('planning.startTime', {
-              defaultValue: 'What time does your day start?',
+        {startPlaceControl ?? (
+          <ResolvedPlaceSelect
+            id="planning-start-place"
+            label={t('planning.startPlace', {
+              defaultValue: 'Where does your day start?',
             })}
-          </label>
-          <input
-            id="planning-start-time"
-            type="time"
-            value={minutesToTimeInput(draft.departureTimeMinutes)}
-            onChange={event => updateStartTime(event.target.value)}
-            className="time-input"
+            selection={draft.startSelection}
+            onChange={selection =>
+              updateDraft(current => setStartSelection(current, selection))
+            }
+            currentPlace={currentPlace}
+            availablePlaces={availablePlaces}
+            t={t}
           />
-        </div>
+        )}
 
-        <div className="time-selector">
-          <label htmlFor="planning-add-destination">
-            <input
-              id="planning-add-destination"
-              type="checkbox"
-              checked={draft.destination.enabled}
-              onChange={event =>
-                setDraft(current =>
-                  setDestinationEnabled(current, event.target.checked),
-                )
-              }
-            />
-            {t('planning.addDestination', {
-              defaultValue: 'Add an end destination',
+        <section className="later-plans-panel">
+          <button
+            type="button"
+            className="later-plans-toggle"
+            aria-expanded={laterPlansOpen}
+            onClick={() => setLaterPlansOpen(current => !current)}
+          >
+            {t('planning.laterPlansPrompt', {
+              defaultValue: 'Need to be somewhere later?',
             })}
-          </label>
-        </div>
+          </button>
 
-        {draft.destination.enabled && (
-          <>
+          {laterPlansOpen && (
+            <>
+          {destinationPlaceControl ?? (
             <ResolvedPlaceSelect
               id="planning-end-place"
               label={t('planning.destinationPlace', {
@@ -194,7 +173,7 @@ export default function PlanningInputStage({
               })}
               selection={draft.destination.selection}
               onChange={selection =>
-                setDraft(current =>
+                updateDraft(current =>
                   setDestinationSelection(current, selection),
                 )
               }
@@ -202,81 +181,61 @@ export default function PlanningInputStage({
               availablePlaces={availablePlaces}
               t={t}
             />
-
-            <div className="time-selector">
-              <label htmlFor="planning-end-deadline">
-                {t('planning.destinationDeadline', {
-                  defaultValue: 'Optional arrival deadline',
-                })}
-              </label>
-              <input
-                id="planning-end-deadline"
-                type="time"
-                value={destinationDeadline}
-                onChange={event =>
-                  updateDestinationDeadline(event.target.value)
-                }
-                className="time-input"
-              />
-            </div>
-
-            {destinationDeadline && (
-              <div className="time-selector">
-                <label htmlFor="planning-end-buffer">
-                  {t('planning.destinationBuffer', {
-                    defaultValue:
-                      'Arrive this many minutes before the deadline',
-                  })}
-                </label>
-                <input
-                  id="planning-end-buffer"
-                  type="number"
-                  min="0"
-                  step="5"
-                  value={draft.destination.arrivalBufferMinutes}
-                  onChange={event =>
-                    setDraft(current =>
-                      setDestinationTiming(current, {
-                        arrivalDeadlineMinutes:
-                          current.destination.arrivalDeadlineMinutes,
-                        arrivalBufferMinutes: Number(event.target.value),
-                      }),
-                    )
-                  }
-                  className="time-input"
-                />
-              </div>
-            )}
-          </>
-        )}
-
-        <section aria-labelledby="hard-anchors-title">
-          <h3 id="hard-anchors-title">
-            {t('planning.anchorsTitle', {
-              defaultValue: 'Fixed anchors',
-            })}
-          </h3>
-          <p className="start-order-hint">
-            {t('planning.anchorsHint', {
-              defaultValue:
-                'These commitments are locked against automatic replanning.',
-            })}
-          </p>
-
-          {draft.anchors.length === 0 && (
-            <p>
-              {t('planning.noAnchors', {
-                defaultValue: 'No fixed anchors added.',
-              })}
-            </p>
           )}
-          {draft.anchors.map(anchor => (
-            <article key={anchor.id} className="swipe-item">
-              <p className="card-type-label">
-                {t('planning.lockedAnchor', {
-                  defaultValue: 'Locked anchor',
+
+          {destinationNeedsPlace && (
+            <div className="destination-choice-notice" role="status">
+              <p>
+                {t('planning.destinationSelectionNeeded', {
+                  defaultValue:
+                    'Choose a verified finish, or remove the destination.',
                 })}
               </p>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  updateDraft(current => setDestinationEnabled(current, false));
+                  setErrors([]);
+                }}
+              >
+                {t('planning.removeDestination', {
+                  defaultValue: 'Remove end destination',
+                })}
+              </button>
+            </div>
+          )}
+
+          {isResolvedPlaceSelection(draft.destination.selection) && (
+            <div className="later-plan-timing">
+            <DirectTimeInput
+              id="planning-end-deadline"
+              value={destinationDeadline}
+              label={t('planning.destinationDeadline', {
+                defaultValue: 'What time do you need to be there?',
+              })}
+              onChange={updateDestinationDeadline}
+              allowEmpty
+            />
+
+            <button
+              type="button"
+              className="later-plan-option"
+              aria-pressed={!destinationDeadline}
+              onClick={() => updateDestinationDeadline('')}
+            >
+              {t('planning.noDeadline', { defaultValue: 'No fixed time' })}
+            </button>
+            </div>
+          )}
+
+          <section
+            aria-label={t('planning.addAnchor', {
+              defaultValue: 'Need to be somewhere later?',
+            })}
+          >
+          {draft.anchors.map(anchor => (
+            <article key={anchor.id} className="later-plan-card">
               <h4>{anchor.title}</h4>
               <p>{anchor.place.name}</p>
               <p>
@@ -304,7 +263,7 @@ export default function PlanningInputStage({
                   type="button"
                   className="btn-secondary"
                   onClick={() =>
-                    setDraft(current =>
+                    updateDraft(current =>
                       removeHardAnchor(current, anchor.id),
                     )
                   }
@@ -329,10 +288,13 @@ export default function PlanningInputStage({
                 })
               }
             >
-              {t('planning.addAnchor', {
-                defaultValue: 'Add fixed anchor',
+              {t('planning.addAnchorAction', {
+                defaultValue: 'Add a time',
               })}
             </button>
+          )}
+          </section>
+            </>
           )}
         </section>
 
@@ -343,6 +305,7 @@ export default function PlanningInputStage({
             initialAnchor={editor.anchor}
             currentPlace={currentPlace}
             availablePlaces={availablePlaces}
+            searchPlaces={anchorSearchPlaces}
             onSave={saveAnchor}
             onCancel={() => setEditor(null)}
             t={t}
@@ -361,7 +324,7 @@ export default function PlanningInputStage({
           <button type="button" onClick={onCancel} className="btn-secondary">
             {t('planning.back', { defaultValue: 'Back' })}
           </button>
-          {onSkip && (
+          {onSkip && !hasNamedStartingPlace && (
             <button
               type="button"
               onClick={onSkip}
@@ -372,18 +335,17 @@ export default function PlanningInputStage({
               })}
             </button>
           )}
-          <button type="button" onClick={complete} className="btn-primary">
+          <button
+            type="button"
+            onClick={complete}
+            className="btn-primary"
+            disabled={!hasSelectedStart}
+          >
             {t('planning.continue', {
               defaultValue: 'Continue with these fixed details',
             })}
           </button>
         </div>
-        <p className="planning-storage-notice">
-          {t('planning.storageNotice', {
-            defaultValue:
-              'If you save this plan, its selected place names and coordinates stay only in this browser until the plan expires or you press Start Over. They are not included in the share QR code.',
-          })}
-        </p>
       </div>
     </div>
   );

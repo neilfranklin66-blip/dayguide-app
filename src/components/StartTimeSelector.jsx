@@ -1,14 +1,21 @@
 import React from 'react';
+import DirectTimeInput from './DirectTimeInput';
 
 export default function StartTimeSelector({ startTime, onChange, t }) {
+  const totalMinutes = Math.round(startTime * 60);
+  const value = `${String(Math.floor(totalMinutes / 60)).padStart(2, '0')}:${String(totalMinutes % 60).padStart(2, '0')}`;
+
   return (
-    <div className="time-selector">
-      <label>{t('interests.startTimeLabel')}</label>
-      <input type="time" value={`${String(Math.floor(startTime)).padStart(2, '0')}:${String(Math.round((startTime % 1) * 60)).padStart(2, '0')}`}
-        onChange={e => {
-          const [hours, minutes] = e.target.value.split(':').map(Number);
+    <div className="start-time-selector">
+      <DirectTimeInput
+        id="interests-start-time"
+        label={t('interests.startTimeLabel')}
+        value={value}
+        onChange={time => {
+          const [hours, minutes] = time.split(':').map(Number);
           onChange(hours + minutes / 60);
-        }} className="time-input" />
+        }}
+      />
     </div>
   );
 }

@@ -44,7 +44,7 @@ const planningInput = {
   },
 };
 
-test('shows locked fixed details and an honest unverified-route warning', () => {
+test('shows later plans and an honest unverified-route warning', () => {
   const assessment = assessGeographicalPlanningInput({
     planningInput,
     routeEvidence: null,
@@ -56,9 +56,9 @@ test('shows locked fixed details and an honest unverified-route warning', () => 
     />,
   );
 
-  expect(screen.getByText('Your fixed route details')).toBeInTheDocument();
+  expect(screen.getByText('Your later plans')).toBeInTheDocument();
   expect(screen.getByText('Evening performance')).toBeInTheDocument();
-  expect(screen.getByText('Locked anchor')).toBeInTheDocument();
+  expect(screen.getByText('Planned time')).toBeInTheDocument();
   expect(
     screen.getByText(/travel times are not route-verified/i),
   ).toBeInTheDocument();

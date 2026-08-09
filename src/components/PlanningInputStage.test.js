@@ -42,7 +42,7 @@ const hotel = createPlaceRef({
 
 const availablePlaces = [euston, theatre, hotel];
 
-test('planning input stage requires a verified start place', () => {
+test('planning input stage disables fixed-details continuation until a verified start is selected', () => {
   const onComplete = jest.fn();
   render(
     <PlanningInputStage
@@ -52,16 +52,52 @@ test('planning input stage requires a verified start place', () => {
     />,
   );
 
-  fireEvent.click(
+  expect(
     screen.getByRole('button', {
       name: 'Continue with these fixed details',
     }),
+  ).toBeDisabled();
+  expect(onComplete).not.toHaveBeenCalled();
+});
+
+test('keeps optional later plans together and closed until wanted', () => {
+  render(
+    <PlanningInputStage
+      availablePlaces={availablePlaces}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+    />,
   );
 
-  expect(onComplete).not.toHaveBeenCalled();
-  expect(screen.getByRole('alert')).toHaveTextContent(
-    'Choose a verified starting place.',
+  expect(
+    screen.getByRole('button', { name: 'Need to be somewhere later?' }),
+  ).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByLabelText('Where should your day finish?')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
+});
+
+test('a selected start keeps the recovery route and hides the no-details escape', () => {
+  const draft = setStartSelection(
+    createPlanningInputDraft(),
+    createPlaceSelection({
+      mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
+      place: euston,
+    }),
   );
+
+  render(
+    <PlanningInputStage
+      availablePlaces={availablePlaces}
+      initialDraft={draft}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+      onSkip={jest.fn()}
+    />,
+  );
+
+  expect(screen.queryByText('Continue without fixed route details')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Continue with these fixed details' })).toBeEnabled();
 });
 
 test('planning input stage distinguishes current GPS from another start place', () => {
@@ -111,19 +147,14 @@ test('planning input stage collects a destination and optional deadline', () => 
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByLabelText('Add an end destination'));
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   fireEvent.change(screen.getByLabelText('Where should your day finish?'), {
     target: { value: 'resolved:hotel' },
   });
-  fireEvent.change(screen.getByLabelText('Optional arrival deadline'), {
+  fireEvent.change(screen.getByLabelText('What time do you need to be there?'), {
     target: { value: '22:30' },
   });
-  fireEvent.change(
-    screen.getByLabelText(
-      'Arrive this many minutes before the deadline',
-    ),
-    { target: { value: '10' } },
-  );
+  fireEvent.blur(screen.getByLabelText('What time do you need to be there?'));
   fireEvent.click(
     screen.getByRole('button', {
       name: 'Continue with these fixed details',
@@ -136,17 +167,16 @@ test('planning input stage collects a destination and optional deadline', () => 
       end: expect.objectContaining({
         place: hotel,
         arrivalDeadlineMinutes: 1350,
-        arrivalBufferMinutes: 10,
+        arrivalBufferMinutes: 0,
       }),
     }),
   );
 });
 
-test('planning input stage adds and completes with a planner-locked anchor', () => {
+test('a later-plan section can be opened and left unused', () => {
   const onComplete = jest.fn();
   render(
     <PlanningInputStage
-      currentPlace={currentPlace}
       availablePlaces={availablePlaces}
       onComplete={onComplete}
       onCancel={jest.fn()}
@@ -156,19 +186,50 @@ test('planning input stage adds and completes with a planner-locked anchor', () 
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add fixed anchor' }));
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Continue with these fixed details' }));
+  expect(onComplete).toHaveBeenCalledWith(
+    expect.objectContaining({ end: null }),
+  );
+});
+
+test('planning input stage adds and completes with a planner-locked anchor', async () => {
+  const onComplete = jest.fn();
+  const anchorSearchPlaces = jest.fn().mockResolvedValue([theatre]);
+  render(
+    <PlanningInputStage
+      currentPlace={currentPlace}
+      availablePlaces={availablePlaces}
+      onComplete={onComplete}
+      onCancel={jest.fn()}
+      anchorSearchPlaces={anchorSearchPlaces}
+    />,
+  );
+
+  fireEvent.change(screen.getByLabelText('Where does your day start?'), {
+    target: { value: 'resolved:euston' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Evening theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed place'), {
-    target: { value: 'resolved:theatre' },
+  fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
+    target: { value: 'Theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed start time'), {
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  fireEvent.click(
+    await screen.findByRole('button', {
+      name: 'Use Theatre for this commitment',
+    }),
+  );
+  fireEvent.change(screen.getByLabelText('What time do you need to be there?'), {
     target: { value: '18:30' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
+  fireEvent.blur(screen.getByLabelText('What time do you need to be there?'));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
 
-  expect(screen.getByText('Locked anchor')).toBeInTheDocument();
   expect(screen.getByText('Evening theatre')).toBeInTheDocument();
 
   fireEvent.click(
@@ -190,30 +251,39 @@ test('planning input stage adds and completes with a planner-locked anchor', () 
   );
 });
 
-test('planning input stage edits and removes a fixed anchor deliberately', () => {
+test('planning input stage edits and removes a fixed anchor deliberately', async () => {
+  const anchorSearchPlaces = jest.fn().mockResolvedValue([theatre]);
   render(
     <PlanningInputStage
       currentPlace={currentPlace}
       availablePlaces={availablePlaces}
       onComplete={jest.fn()}
       onCancel={jest.fn()}
+      anchorSearchPlaces={anchorSearchPlaces}
     />,
   );
 
-  fireEvent.click(screen.getByRole('button', { name: 'Add fixed anchor' }));
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed place'), {
-    target: { value: 'resolved:theatre' },
+  fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
+    target: { value: 'Theatre' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  fireEvent.click(
+    await screen.findByRole('button', {
+      name: 'Use Theatre for this commitment',
+    }),
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
 
   fireEvent.click(screen.getByRole('button', { name: 'Edit Theatre' }));
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Updated theatre' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Save anchor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Save time' }));
 
   expect(screen.getByText('Updated theatre')).toBeInTheDocument();
 
@@ -222,7 +292,7 @@ test('planning input stage edits and removes a fixed anchor deliberately', () =>
   );
 
   expect(screen.queryByText('Updated theatre')).not.toBeInTheDocument();
-  expect(screen.getByText('No fixed anchors added.')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Add a time' })).toBeInTheDocument();
 });
 
 test('planning input stage can begin from a preselected draft', () => {
@@ -246,7 +316,5 @@ test('planning input stage can begin from a preselected draft', () => {
   expect(screen.getByLabelText('Where does your day start?')).toHaveValue(
     'resolved:euston',
   );
-  expect(screen.getByLabelText('What time does your day start?')).toHaveValue(
-    '10:00',
-  );
+  expect(screen.queryByLabelText('What time does your day start?')).not.toBeInTheDocument();
 });

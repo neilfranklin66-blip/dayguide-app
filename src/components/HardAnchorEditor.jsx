@@ -6,7 +6,9 @@ import {
   minutesToTimeInput,
   timeInputToMinutes,
 } from '../utils/planningInputWorkflow';
-import ResolvedPlaceSelect from './ResolvedPlaceSelect';
+import DirectPlaceSearch from './DirectPlaceSearch';
+import DirectTimeInput from './DirectTimeInput';
+import { resolvePlaceQuery } from '../api/placeResolutionApi';
 
 const fallbackT = (_key, options) => options?.defaultValue ?? _key;
 
@@ -29,9 +31,9 @@ export default function HardAnchorEditor({
   anchorId,
   initialAnchor = null,
   currentPlace = null,
-  availablePlaces = [],
   onSave,
   onCancel,
+  searchPlaces = resolvePlaceQuery,
   t = fallbackT,
 }) {
   const [title, setTitle] = useState(initialAnchor?.title ?? '');
@@ -48,6 +50,27 @@ export default function HardAnchorEditor({
     initialAnchor?.arrivalBufferMinutes ?? 15,
   );
   const [error, setError] = useState(null);
+
+  const selectAnchorPlace = place => {
+    setSelection(
+      createPlaceSelection({
+        mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
+        place,
+      }),
+    );
+    setError(null);
+  };
+
+  const useCurrentLocation = () => {
+    if (currentPlace?.source !== 'current_gps') return;
+    setSelection(
+      createPlaceSelection({
+        mode: PLACE_SELECTION_MODE.CURRENT_LOCATION,
+        place: currentPlace,
+      }),
+    );
+    setError(null);
+  };
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -88,20 +111,16 @@ export default function HardAnchorEditor({
     <form onSubmit={handleSubmit} className="card hard-anchor-editor">
       <h3>
         {initialAnchor
-          ? t('planning.editAnchor', { defaultValue: 'Edit fixed anchor' })
-          : t('planning.addAnchor', { defaultValue: 'Add fixed anchor' })}
+          ? t('planning.editAnchor', { defaultValue: 'Edit a planned time' })
+          : t('planning.addAnchor', {
+              defaultValue: 'Add a time you need to keep',
+            })}
       </h3>
-      <p className="start-order-hint">
-        {t('planning.anchorLockExplanation', {
-          defaultValue:
-            'DayGuide may plan around this commitment but may never move it.',
-        })}
-      </p>
 
       <div className="time-selector">
         <label htmlFor={`${anchorId}-title`}>
           {t('planning.commitmentName', {
-            defaultValue: 'Commitment name',
+            defaultValue: 'What is it?',
           })}
         </label>
         <input
@@ -112,35 +131,50 @@ export default function HardAnchorEditor({
         />
       </div>
 
-      <ResolvedPlaceSelect
+      <DirectPlaceSearch
         id={`${anchorId}-place`}
-        label={t('planning.fixedPlace', { defaultValue: 'Fixed place' })}
-        selection={selection}
-        onChange={setSelection}
-        currentPlace={currentPlace}
-        availablePlaces={availablePlaces}
+        titleKey="planning.anchorSearchTitle"
+        titleDefault="Where do you need to be?"
+        hintKey="planning.anchorSearchHint"
+        hintDefault="Search for a place, address, postcode or ZIP code."
+        labelKey="planning.anchorSearchLabel"
+        labelDefault="Place, address, postcode or ZIP code"
+        placeholderKey="planning.anchorSearchPlaceholder"
+        placeholderDefault="For example: Northampton Museum or NN1 1DP"
+        selectedPlace={selection?.place ?? null}
+        selectedKey="planning.anchorPlaceSelected"
+        selectedDefault="This commitment is at {{name}}."
+        selectKey="planning.selectAnchorPlace"
+        selectDefault="Use {{name}} for this commitment"
+        onSelect={selectAnchorPlace}
+        secondaryAction={
+          currentPlace?.source === 'current_gps'
+            ? {
+                key: 'planning.useCurrentAnchor',
+                name: currentPlace.name,
+                defaultValue: `Use my current location — ${currentPlace.name}`,
+                onClick: useCurrentLocation,
+              }
+            : null
+        }
+        embedded
+        searchPlaces={searchPlaces}
         t={t}
       />
 
-      <div className="time-selector">
-        <label htmlFor={`${anchorId}-time`}>
-          {t('planning.fixedStartTime', {
-            defaultValue: 'Fixed start time',
-          })}
-        </label>
-        <input
-          id={`${anchorId}-time`}
-          type="time"
+      <DirectTimeInput
+        id={`${anchorId}-time`}
+        label={t('planning.fixedStartTime', {
+          defaultValue: 'What time do you need to be there?',
+        })}
           value={startTime}
-          onChange={event => setStartTime(event.target.value)}
-          className="time-input"
-        />
-      </div>
+        onChange={setStartTime}
+      />
 
       <div className="time-selector">
         <label htmlFor={`${anchorId}-duration`}>
           {t('planning.durationMinutes', {
-            defaultValue: 'Duration in minutes',
+            defaultValue: 'How long will it take?',
           })}
         </label>
         <input
@@ -157,7 +191,7 @@ export default function HardAnchorEditor({
       <div className="time-selector">
         <label htmlFor={`${anchorId}-buffer`}>
           {t('planning.arriveMinutesEarly', {
-            defaultValue: 'Arrive this many minutes early',
+            defaultValue: 'Allow extra time before',
           })}
         </label>
         <input
@@ -179,8 +213,8 @@ export default function HardAnchorEditor({
         </button>
         <button type="submit" className="btn-primary">
           {initialAnchor
-            ? t('planning.saveAnchor', { defaultValue: 'Save anchor' })
-            : t('planning.addAnchorAction', { defaultValue: 'Add anchor' })}
+            ? t('planning.saveAnchor', { defaultValue: 'Save time' })
+            : t('planning.addAnchorAction', { defaultValue: 'Add a time' })}
         </button>
       </div>
     </form>

@@ -221,6 +221,7 @@ export function setDestinationSelection(draft, selection) {
     ...draft,
     destination: {
       ...draft.destination,
+      enabled: selection != null,
       selection: copySelection(selection),
     },
   };
