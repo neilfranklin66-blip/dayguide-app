@@ -147,7 +147,14 @@ export default function PlanningInputStage({
           />
         )}
 
-        <div className="time-selector">
+        <details className="planning-more-options">
+          <summary>
+            {t('planning.addAnchor', {
+              defaultValue: 'Add a time you need to keep',
+            })}
+          </summary>
+
+          <div className="time-selector">
           <label htmlFor="planning-add-destination">
             <input
               id="planning-add-destination"
@@ -164,7 +171,7 @@ export default function PlanningInputStage({
               defaultValue: 'Add an end destination',
             })}
           </label>
-        </div>
+          </div>
 
         {draft.destination.enabled && (
           <>
@@ -256,39 +263,13 @@ export default function PlanningInputStage({
           </>
         )}
 
-        <details className="planning-more-options">
-          <summary>
-            {t('planning.addAnchor', {
+          <section
+            aria-label={t('planning.addAnchor', {
               defaultValue: 'Add a time you need to keep',
             })}
-          </summary>
-          <section aria-labelledby="hard-anchors-title">
-          <h3 id="hard-anchors-title">
-            {t('planning.anchorsTitle', {
-              defaultValue: 'Fixed anchors',
-            })}
-          </h3>
-          <p className="start-order-hint">
-            {t('planning.anchorsHint', {
-              defaultValue:
-                'These commitments are locked against automatic replanning.',
-            })}
-          </p>
-
-          {draft.anchors.length === 0 && (
-            <p>
-              {t('planning.noAnchors', {
-                defaultValue: 'No fixed anchors added.',
-              })}
-            </p>
-          )}
+          >
           {draft.anchors.map(anchor => (
             <article key={anchor.id} className="swipe-item">
-              <p className="card-type-label">
-                {t('planning.lockedAnchor', {
-                  defaultValue: 'Locked anchor',
-                })}
-              </p>
               <h4>{anchor.title}</h4>
               <p>{anchor.place.name}</p>
               <p>
@@ -342,7 +323,7 @@ export default function PlanningInputStage({
               }
             >
               {t('planning.addAnchorAction', {
-                defaultValue: 'Add fixed anchor',
+                defaultValue: 'Add a time',
               })}
             </button>
           )}

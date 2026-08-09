@@ -60,6 +60,25 @@ test('planning input stage disables fixed-details continuation until a verified 
   expect(onComplete).not.toHaveBeenCalled();
 });
 
+test('keeps optional later plans together and closed until wanted', () => {
+  render(
+    <PlanningInputStage
+      availablePlaces={availablePlaces}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  const laterPlans = screen
+    .getByText('Add a time you need to keep')
+    .closest('details');
+
+  expect(laterPlans).not.toHaveAttribute('open');
+  expect(laterPlans).toContainElement(
+    screen.getByLabelText('Add an end destination'),
+  );
+});
+
 test('a selected start keeps the recovery route and hides the no-details escape', () => {
   const draft = setStartSelection(
     createPlanningInputDraft(),
@@ -207,7 +226,7 @@ test('planning input stage adds and completes with a planner-locked anchor', asy
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add fixed anchor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
   fireEvent.change(screen.getByLabelText('Commitment name'), {
     target: { value: 'Evening theatre' },
   });
@@ -225,7 +244,6 @@ test('planning input stage adds and completes with a planner-locked anchor', asy
   });
   fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
 
-  expect(screen.getByText('Locked anchor')).toBeInTheDocument();
   expect(screen.getByText('Evening theatre')).toBeInTheDocument();
 
   fireEvent.click(
@@ -259,7 +277,7 @@ test('planning input stage edits and removes a fixed anchor deliberately', async
     />,
   );
 
-  fireEvent.click(screen.getByRole('button', { name: 'Add fixed anchor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
   fireEvent.change(screen.getByLabelText('Commitment name'), {
     target: { value: 'Theatre' },
   });
@@ -287,7 +305,7 @@ test('planning input stage edits and removes a fixed anchor deliberately', async
   );
 
   expect(screen.queryByText('Updated theatre')).not.toBeInTheDocument();
-  expect(screen.getByText('No fixed anchors added.')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Add a time' })).toBeInTheDocument();
 });
 
 test('planning input stage can begin from a preselected draft', () => {
