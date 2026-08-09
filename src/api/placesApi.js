@@ -70,6 +70,17 @@ function buildPhotoUrl(photoReference) {
   return `${PHOTO_URL}?ref=${encodeURIComponent(photoReference)}&maxwidth=400`;
 }
 
+function normalizePhotoAttributions(attributions) {
+  if (!Array.isArray(attributions)) return [];
+  return attributions
+    .filter(attribution => typeof attribution?.name === 'string' && attribution.name.trim())
+    .map(attribution => ({
+      name: attribution.name.trim(),
+      uri: typeof attribution.uri === 'string' ? attribution.uri : null,
+      photoUri: typeof attribution.photo_uri === 'string' ? attribution.photo_uri : null,
+    }));
+}
+
 // A record without numeric coordinates can't be distance-filtered or routed;
 // skip it rather than letting one malformed result throw away the whole batch.
 function hasUsableGeometry(p) {
@@ -120,8 +131,14 @@ function parsePlaces(results, lat, lng) {
       const dist = parseFloat(
         haversineKm(lat, lng, p.geometry.location.lat, p.geometry.location.lng).toFixed(1),
       );
-      const imgSrc = p.photos?.[0]?.photo_reference
-        ? buildPhotoUrl(p.photos[0].photo_reference)
+      // A displayed Google photo must retain the supplied direct source link.
+      // If a malformed/intermediate response lacks it, omit that image rather
+      // than presenting a photo the user cannot open in Google Maps.
+      const photo = p.photos?.find(candidate =>
+        candidate?.photo_reference && typeof candidate.google_maps_uri === 'string',
+      );
+      const imgSrc = photo?.photo_reference
+        ? buildPhotoUrl(photo.photo_reference)
         : null;
 
       return {
@@ -140,6 +157,10 @@ function parsePlaces(results, lat, lng) {
           lng: p.geometry.location.lng,
         },
         image: imgSrc,
+        photoAttributions: normalizePhotoAttributions(photo?.author_attributions),
+        photoMapsUrl: typeof photo?.google_maps_uri === 'string'
+          ? photo.google_maps_uri
+          : null,
       };
     });
 }

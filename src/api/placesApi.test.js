@@ -271,12 +271,22 @@ describe('searchRestaurants incomplete result normalisation', () => {
     expect(results[0].coordinates).not.toBe(venueCoordinates);
   });
 
-  it('omits the image when photos are empty or lack a photo_reference', async () => {
+  it('omits the image when photos are empty or lack a photo_reference, and retains safe photo credits', async () => {
     mockFetchByKeyword({
       '': () => Promise.resolve(okResponse([
         makePlace('empty-photos', 'Empty Photos', { photos: [] }),
         makePlace('no-ref', 'No Reference', { photos: [{ width: 400 }] }),
-        makePlace('with-ref', 'With Reference', { photos: [{ photo_reference: 'ref-1' }] }),
+        makePlace('with-ref', 'With Reference', {
+          photos: [{
+            photo_reference: 'ref-1',
+            author_attributions: [{
+              name: 'A contributor',
+              uri: 'https://www.google.com/maps/contrib/a-contributor',
+              photo_uri: 'https://lh3.googleusercontent.com/avatar',
+            }],
+            google_maps_uri: 'https://www.google.com/maps/photo/source',
+          }],
+        }),
       ])),
     });
 
@@ -286,6 +296,12 @@ describe('searchRestaurants incomplete result normalisation', () => {
     expect(byId['empty-photos'].image).toBeNull();
     expect(byId['no-ref'].image).toBeNull();
     expect(byId['with-ref'].image).toContain('/.netlify/functions/places-photo?ref=ref-1');
+    expect(byId['with-ref'].photoAttributions).toEqual([{
+      name: 'A contributor',
+      uri: 'https://www.google.com/maps/contrib/a-contributor',
+      photoUri: 'https://lh3.googleusercontent.com/avatar',
+    }]);
+    expect(byId['with-ref'].photoMapsUrl).toBe('https://www.google.com/maps/photo/source');
   });
 
   it('maps the valid-but-falsy price_level 0 to $ rather than the missing-value default', async () => {
@@ -533,7 +549,12 @@ describe('API-key safety (launch blocker guard, Packet 118)', () => {
   it('produces no request or image URL containing a key parameter', async () => {
     mockFetchByKeyword({
       'Italian restaurant': () => Promise.resolve(okResponse([
-        makePlace('photo', 'Pizza Roma', { photos: [{ photo_reference: 'ref-9' }] }),
+        makePlace('photo', 'Pizza Roma', {
+          photos: [{
+            photo_reference: 'ref-9',
+            google_maps_uri: 'https://www.google.com/maps/photo/source',
+          }],
+        }),
       ])),
     });
 

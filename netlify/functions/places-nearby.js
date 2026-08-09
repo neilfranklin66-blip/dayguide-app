@@ -65,6 +65,34 @@ const validCoordinates = (lat, lng) =>
   Number.isFinite(lat) && Number.isFinite(lng) &&
   lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
 
+const safeHttpsUrl = value =>
+  typeof value === 'string' && /^https:\/\//i.test(value) ? value : null;
+
+const toPhotoAttribution = attribution => {
+  const name = typeof attribution?.displayName === 'string'
+    ? attribution.displayName.trim()
+    : '';
+  if (!name) return null;
+
+  return {
+    name,
+    uri: safeHttpsUrl(attribution.uri),
+    photo_uri: safeHttpsUrl(attribution.photoUri),
+  };
+};
+
+const toLegacyPhoto = photo => {
+  if (typeof photo?.name !== 'string' || photo.name.length === 0) return null;
+
+  return {
+    photo_reference: photo.name,
+    author_attributions: Array.isArray(photo.authorAttributions)
+      ? photo.authorAttributions.map(toPhotoAttribution).filter(Boolean)
+      : [],
+    google_maps_uri: safeHttpsUrl(photo.googleMapsUri),
+  };
+};
+
 const toLegacyPlace = place => ({
   place_id: place.id,
   name: place.displayName?.text || '',
@@ -83,20 +111,11 @@ const toLegacyPlace = place => ({
   business_status: place.businessStatus,
   rating: place.rating,
   price_level: LEGACY_PRICE_LEVELS[place.priceLevel],
+  // Keep the author and source details alongside the short-lived reference.
+  // The browser only renders a photo when it can show the accompanying credit
+  // and a direct Google Maps source link where Google supplies them.
   photos: Array.isArray(place.photos)
-    ? place.photos
-        // A photo with an author attribution needs presentation work in the
-        // browser before it can be shown.  Do not proxy it until that work is
-        // in place; an unattributed photo or the normal card fallback remains
-        // safe to use now.
-        .filter(
-          photo =>
-            typeof photo?.name === 'string' &&
-            photo.name.length > 0 &&
-            (!Array.isArray(photo.authorAttributions) ||
-              photo.authorAttributions.length === 0),
-        )
-        .map(photo => ({ photo_reference: photo.name }))
+    ? place.photos.map(toLegacyPhoto).filter(Boolean)
     : [],
 });
 

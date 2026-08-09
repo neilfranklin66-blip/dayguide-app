@@ -17,6 +17,9 @@ export default function RestaurantSwipeCard({
   const typeLabel = [currentRestaurant.venueType, ...cuisineLabels]
     .filter(Boolean)
     .join(' / ');
+  const photoAttributions = Array.isArray(currentRestaurant.photoAttributions)
+    ? currentRestaurant.photoAttributions
+    : [];
 
   return (
     <div className="dayguide-container">
@@ -30,14 +33,50 @@ export default function RestaurantSwipeCard({
         )}
         <div className="swipe-item">
           {currentRestaurant.image && (
-            <div className="restaurant-img-wrapper">
-              <img
-                src={currentRestaurant.image}
-                alt={currentRestaurant.name}
-                className="restaurant-img"
-                onError={event => { event.currentTarget.parentElement.style.display = 'none'; }}
-              />
-            </div>
+            <figure className="restaurant-photo-figure">
+              <div className="restaurant-img-wrapper">
+                <img
+                  src={currentRestaurant.image}
+                  alt={currentRestaurant.name}
+                  className="restaurant-img"
+                  onError={event => {
+                    event.currentTarget.closest('figure')?.classList.add('restaurant-photo--unavailable');
+                  }}
+                />
+              </div>
+              {(photoAttributions.length > 0 || currentRestaurant.photoMapsUrl) && (
+                <figcaption className="restaurant-photo-credit">
+                  {photoAttributions.length > 0 && (
+                    <span className="restaurant-photo-authors">
+                      {t('restaurants.photoBy')}{' '}
+                      {photoAttributions.map((attribution, index) => (
+                        <React.Fragment key={`${attribution.name}-${index}`}>
+                          {index > 0 && ', '}
+                          {attribution.uri ? (
+                            <a href={attribution.uri} target="_blank" rel="noopener noreferrer">
+                              {attribution.photoUri && (
+                                <img src={attribution.photoUri} alt="" className="restaurant-photo-author-avatar" />
+                              )}
+                              {attribution.name}
+                            </a>
+                          ) : attribution.name}
+                        </React.Fragment>
+                      ))}
+                    </span>
+                  )}
+                  {currentRestaurant.photoMapsUrl && (
+                    <a
+                      className="restaurant-photo-source"
+                      href={currentRestaurant.photoMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t('restaurants.viewPhotoOnMaps')}
+                    </a>
+                  )}
+                </figcaption>
+              )}
+            </figure>
           )}
           {typeLabel && <p className="card-type-label">{typeLabel}</p>}
           <h3 className="place-name" title={currentRestaurant.name}>

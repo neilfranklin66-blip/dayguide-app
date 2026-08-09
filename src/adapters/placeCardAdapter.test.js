@@ -112,6 +112,23 @@ test('places adapter preserves a provider venue type for the live card label', (
   expect(card.subCategory).toBe('Italian restaurant');
 });
 
+test('places adapter keeps photo attribution and its direct Google Maps source', () => {
+  const attribution = {
+    name: 'A contributor',
+    uri: 'https://www.google.com/maps/contrib/a-contributor',
+    photoUri: 'https://lh3.googleusercontent.com/avatar',
+  };
+  const card = fromPlacesParsed({
+    ...mockPlacesItem,
+    photoAttributions: [attribution],
+    photoMapsUrl: 'https://www.google.com/maps/photo/source',
+  });
+
+  expect(card.photoAttributions).toEqual([attribution]);
+  expect(card.photoAttributions[0]).not.toBe(attribution);
+  expect(card.photoMapsUrl).toBe('https://www.google.com/maps/photo/source');
+});
+
 test('places adapter normalises a sparse parsed result (id and name only) without crashing', () => {
   const card = fromPlacesParsed({ id: 'sparse-1', name: 'Sparse Bistro' });
 

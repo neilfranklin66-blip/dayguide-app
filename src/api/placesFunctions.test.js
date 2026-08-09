@@ -127,6 +127,48 @@ describe('places-nearby function', () => {
     expect(res.body).not.toContain(TEST_KEY);
   });
 
+  it('keeps a credited Places photo with only the browser-safe attribution fields', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        places: [{
+          id: 'p-photo',
+          displayName: { text: "Sophia's Italian Restaurant" },
+          formattedAddress: 'Northampton',
+          location: { latitude: 52.237, longitude: -0.894 },
+          types: ['restaurant'],
+          photos: [{
+            name: 'places/p-photo/photos/live-photo',
+            authorAttributions: [{
+              displayName: 'DayGuide photographer',
+              uri: 'https://www.google.com/maps/contrib/author',
+              photoUri: 'https://lh3.googleusercontent.com/avatar',
+              ignored: 'not sent to the browser',
+            }],
+            googleMapsUri: 'https://www.google.com/maps/photo/source',
+          }],
+        }],
+      }),
+    });
+
+    const res = await nearby.handler(event);
+    const [place] = JSON.parse(res.body).results;
+
+    expect(place.photos).toEqual([{
+      photo_reference: 'places/p-photo/photos/live-photo',
+      author_attributions: [{
+        name: 'DayGuide photographer',
+        uri: 'https://www.google.com/maps/contrib/author',
+        photo_uri: 'https://lh3.googleusercontent.com/avatar',
+      }],
+      google_maps_uri: 'https://www.google.com/maps/photo/source',
+    }]);
+    expect(JSON.stringify(place.photos)).not.toContain('ignored');
+    expect(JSON.stringify(place.photos)).not.toContain(TEST_KEY);
+  });
+
   it('uses the Text Search page field only for Text Search, never Nearby Search', async () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockResolvedValue({
