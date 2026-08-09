@@ -102,6 +102,33 @@ test('places adapter keeps metadata.isFamilyFriendly null (live data carries no 
   expect(card.metadata.isFamilyFriendly).toBeNull();
 });
 
+test('places adapter preserves a provider venue type for the live card label', () => {
+  const card = fromPlacesParsed({
+    ...mockPlacesItem,
+    venueType: 'Italian restaurant',
+  });
+
+  expect(card.venueType).toBe('Italian restaurant');
+  expect(card.subCategory).toBe('Italian restaurant');
+});
+
+test('places adapter keeps photo attribution and its direct Google Maps source', () => {
+  const attribution = {
+    name: 'A contributor',
+    uri: 'https://www.google.com/maps/contrib/a-contributor',
+    photoUri: 'https://lh3.googleusercontent.com/avatar',
+  };
+  const card = fromPlacesParsed({
+    ...mockPlacesItem,
+    photoAttributions: [attribution],
+    photoMapsUrl: 'https://www.google.com/maps/photo/source',
+  });
+
+  expect(card.photoAttributions).toEqual([attribution]);
+  expect(card.photoAttributions[0]).not.toBe(attribution);
+  expect(card.photoMapsUrl).toBe('https://www.google.com/maps/photo/source');
+});
+
 test('places adapter normalises a sparse parsed result (id and name only) without crashing', () => {
   const card = fromPlacesParsed({ id: 'sparse-1', name: 'Sparse Bistro' });
 

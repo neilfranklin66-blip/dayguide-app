@@ -580,23 +580,27 @@ These are current scope or product limitations, not duplicated as working
 defects. No entry is marked Deferred because no separate Product Owner deferral
 decision was evidenced during this review.
 
-### AL-001 — Activity suggestions are sample data
+### AL-001 — Activity suggestions were sample data
 
 - **ID:** AL-001
 - **Category:** Accepted product/data limitation
 - **Severity:** High
-- **Status:** Accepted limitation
-- **Launch blocking:** No
-- **Verification status:** Verified in tracked source and disclosure components.
-- **Factual evidence:** `src/DayGuide.jsx` imports
-  `src/mockActivityData.json` and marks activities `isSample: true`.
-  `ActivitySwipeCard.jsx` and `TimelineItemRow.jsx` disclose the sample state.
-- **Impact:** Activity suggestions are not verified live local recommendations.
-- **Likely dependency:** A future approved live activity-data requirement and
-  provider, if product scope changes.
-- **Recommended next action:** Preserve honest sample disclosure unless the
-  Product Owner separately approves live activity integration.
-- **Verification date:** 13 July 2026
+- **Status:** Superseded by accepted Packet 173 unpublished-preview evidence.
+- **Launch blocking:** The live-only candidate has passed its Packet 173
+  preview gate; separate review, merge and Production-promotion authority are
+  still required.
+- **Verification status:** The former limitation is historical evidence. Packet
+  173 removes `mockActivityData.json` from the current Plan-a-Day activity path,
+  uses the existing Google Places activity search, and adds an activity-flow
+  mock-import guard. Existing saved plans retain their `isSample` disclosure.
+- **Impact:** Current activity suggestions are intended to be live local
+  recommendations; a provider or location failure now produces an honest
+  unavailable card instead of a sample substitute.
+- **Likely dependency:** Existing Places availability. Production remains a
+  separate promotion decision.
+- **Recommended next action:** Preserve the accepted live-discovery base while
+  the later interface-refinement and release/promotion packets are scoped.
+- **Verification date:** 9 August 2026
 
 ### AL-002 — Transport estimates are approximate
 

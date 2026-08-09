@@ -163,6 +163,7 @@ test('buildTimelineEntries combines activities before restaurants without render
 
   expect(entries.map(entry => entry.activity)).toEqual(['Museum', 'Cafe']);
   expect(entries[1].icon).toBe('food-icon');
+  expect(entries.map(entry => entry.selectionType)).toEqual(['activity', 'food']);
 });
 
 test('buildTimelineEntries creates timeline fields and times', () => {
@@ -205,6 +206,7 @@ test('buildTimelineEntries creates timeline fields and times', () => {
       duration: 1,
       distance: 0.4,
       category: 'museums',
+      selectionType: 'activity',
       icon: 'museum-icon',
       address: '1 Museum Street',
       rating: 4.7,
@@ -216,6 +218,7 @@ test('buildTimelineEntries creates timeline fields and times', () => {
       duration: 0.5,
       distance: 0.2,
       category: 'Food and Drinks',
+      selectionType: 'food',
       icon: 'food-icon',
       address: '2 Cafe Street',
       rating: 4.4,
