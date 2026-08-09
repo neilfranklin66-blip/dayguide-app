@@ -219,6 +219,20 @@
     "yes": "Có, thêm nhà hàng",
     "no": "Không, chỉ hoạt động thôi"
   },
+  "geography": {
+    "eyebrow": "Lên kế hoạch quanh điểm đến sau đó",
+    "title": "Giữ cho ngày của bạn trôi chảy",
+    "anchorIntro": "Bạn có {{name}} vào lúc sau. Hãy chọn nơi bạn muốn xem các gợi ý tiếp theo.",
+    "finishIntro": "Bạn sẽ kết thúc gần {{name}}. Hãy chọn nơi bạn muốn xem các gợi ý tiếp theo.",
+    "fromStart": "Cách điểm xuất phát khoảng {{distance}} km",
+    "toLater": "cách {{name}} khoảng {{distance}} km",
+    "remainingTime": "Bạn còn khoảng {{count}} phút trong thời gian đã dành cho một điểm dừng khác.",
+    "question": "Bạn muốn tìm ở đâu?",
+    "nearStart": "Gần nơi tôi bắt đầu",
+    "nearLater": "Gần {{name}}",
+    "between": "Ở khoảng giữa hai nơi",
+    "note": "Đây là gợi ý lập kế hoạch, không phải tuyến đường trực tiếp. Hãy kiểm tra thời gian hành trình trực tiếp khi giờ đến là quan trọng."
+  },
   "restaurants": {
     "title": "Nhà hàng & Ẩm thực",
     "noMore": "Không còn nhà hàng nào",

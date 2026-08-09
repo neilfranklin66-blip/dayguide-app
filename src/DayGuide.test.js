@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import DayGuide from './DayGuide';
 import useGeolocation from './useGeolocation';
 import { searchActivities, searchRestaurants, searchRestaurantPage } from './api/placesApi';
@@ -328,6 +328,53 @@ test('a searched start location enables live activities when location is denied'
     euston.coordinates.lng,
     [INTEREST_CATEGORY_OPTIONS[0].id],
   );
+});
+
+test('a later destination offers a user-led next search area after a live pick', async () => {
+  const euston = {
+    id: 'euston', name: 'London Euston', address: 'Euston Road, London',
+    coordinates: { lat: 51.5282, lng: -0.1337 }, source: 'google_places',
+    accuracyMeters: null, locality: 'London', countryCode: 'GB', timezone: null,
+  };
+  const theatre = {
+    id: 'theatre', name: 'Royal Theatre', address: 'Guildhall Road, Northampton',
+    coordinates: { lat: 52.237, lng: -0.895 }, source: 'google_places',
+    accuracyMeters: null, locality: 'Northampton', countryCode: 'GB', timezone: null,
+  };
+  mockResolvePlaceQueryImpl = query =>
+    Promise.resolve(query === 'London Euston' ? [euston] : [theatre]);
+  useGeolocation.mockReturnValue(erroredGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.startPlanning'));
+  fireEvent.click(screen.getByText(`interests.${INTEREST_CATEGORY_OPTIONS[0].id}`));
+  fireEvent.click(screen.getByRole('button', { name: 'interests.childrenNo' }));
+  fireEvent.click(screen.getByText('interests.next'));
+  fireEvent.change(screen.getByLabelText('planning.startSearchLabel'), {
+    target: { value: 'London Euston' },
+  });
+  fireEvent.click(screen.getByText('planning.searchAction'));
+  fireEvent.click(await screen.findByText('London Euston'));
+  fireEvent.click(screen.getByText('planning.selectStartPlace'));
+  fireEvent.click(screen.getByLabelText('planning.addDestination'));
+  fireEvent.change(screen.getByLabelText('planning.destinationSearchLabel'), {
+    target: { value: 'Royal Theatre' },
+  });
+  fireEvent.click(screen.getAllByRole('button', { name: 'planning.searchAction' }).at(-1));
+  fireEvent.click(await screen.findByText('Royal Theatre'));
+  fireEvent.click(screen.getByText('planning.selectDestinationPlace'));
+  fireEvent.click(screen.getByText('planning.continue'));
+  await screen.findByText('Live Test Museum');
+
+  fireEvent.click(screen.getByText('activities.yes'));
+  expect(screen.getByText('geography.title')).toBeInTheDocument();
+  fireEvent.click(screen.getByText('geography.nearLater'));
+
+  await waitFor(() => expect(searchActivities).toHaveBeenLastCalledWith(
+    theatre.coordinates.lat,
+    theatre.coordinates.lng,
+    [INTEREST_CATEGORY_OPTIONS[0].id],
+  ));
 });
 
 // --- Header logout (Packet 124) ---

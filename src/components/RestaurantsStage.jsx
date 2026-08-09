@@ -46,11 +46,13 @@ export default function RestaurantsStage({
         <RestaurantsUnavailableCard
           restaurantSource={restaurantSource}
           onRetry={() =>
-            goToRestaurants(
-              selectedCuisines,
-              selectedPriceRange,
-              planningOverride,
-            )
+            planningOverride
+              ? goToRestaurants(
+                  selectedCuisines,
+                  selectedPriceRange,
+                  planningOverride,
+                )
+              : goToRestaurants(selectedCuisines, selectedPriceRange)
           }
           onSetStart={onSetStart}
           onSkip={() => continueAfterRestaurants([])}

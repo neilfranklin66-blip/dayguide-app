@@ -64,6 +64,20 @@ const REQUIRED_KEYS = [
   'activities.skipAndContinue',
   'activities.tryAgain',
   'activities.setStartingPlace',
+  // The optional geographic-choice step must never fall back to raw English
+  // while a person is making a location choice in the planning flow.
+  'geography.eyebrow',
+  'geography.title',
+  'geography.anchorIntro',
+  'geography.finishIntro',
+  'geography.fromStart',
+  'geography.toLater',
+  'geography.remainingTime',
+  'geography.question',
+  'geography.nearStart',
+  'geography.nearLater',
+  'geography.between',
+  'geography.note',
   // Honest sample-data copy shown on activity cards and timeline rows.
   'activities.sampleBadge',
   'activities.sampleNote',

@@ -8,6 +8,10 @@ import { resolveRestaurantSearchOutcome } from './engines/restaurantEngine';
 import { getLiveSearchSourceFromError } from './engines/liveSearchOutcome';
 import { createSwipeSelection, toggleIdSelection } from './engines/selectionEngine';
 import {
+  getGeographicChoiceGuidance,
+  getGeographicSearchAreas,
+} from './engines/geographicChoiceEngine';
+import {
   getInitialSelectionRoute,
   getRouteAfterActivities,
   getRouteAfterRestaurants,
@@ -33,6 +37,7 @@ import MealPromptStage from './components/MealPromptStage';
 import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
 import PlanningInputWithPlaceResolution from './components/PlanningInputWithPlaceResolution';
+import GeographicChoiceCard from './components/GeographicChoiceCard';
 import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
 import { getRestaurantSearchRequestOutcome } from './utils/restaurantSearchRequest';
 import {
@@ -67,8 +72,8 @@ const hasUsableCoordinates = (place) =>
 // A named planning start is the user's deliberate location for the day. It
 // takes precedence over the device position, so planning can work without GPS
 // and results stay where the user chose to begin.
-const getSearchOrigin = (planningOverride, fallbackPosition) =>
-  planningOverride?.start?.place?.coordinates ?? fallbackPosition;
+const getSearchOrigin = (planningOverride, fallbackPosition, areaOverride = null) =>
+  areaOverride?.coordinates ?? planningOverride?.start?.place?.coordinates ?? fallbackPosition;
 
 const DayGuide = () => {
   const { currentUser, logout } = useAuth();
@@ -98,6 +103,8 @@ const DayGuide = () => {
   const [timeline, setTimeline] = useState([]);
   const [geographicalPlanning, setGeographicalPlanning] = useState(null);
   const [geographicalAssessment, setGeographicalAssessment] = useState(null);
+  const [geographicChoice, setGeographicChoice] = useState(null);
+  const [geographicSearchArea, setGeographicSearchArea] = useState(null);
   const [savedPlanSummary, setSavedPlanSummary] = useState(() => summarizeSavedPlan(loadPlan()));
   const [logoutError, setLogoutError] = useState(null);
   const [logoutPending, setLogoutPending] = useState(false);
@@ -109,6 +116,7 @@ const DayGuide = () => {
   const activePopupRef = useRef(null);
   const popupActivityReturnRef = useRef(false);
   const nearbyDiscoveryPendingRef = useRef(false);
+  const geographicChoiceShownRef = useRef(false);
 
   // Mirror of selectedRestaurants in a ref so goToRestaurants always reads
   // the current list regardless of closure capture timing.
@@ -243,6 +251,9 @@ const DayGuide = () => {
     setStartWith('activities');
     setGeographicalPlanning(null);
     setGeographicalAssessment(null);
+    setGeographicChoice(null);
+    setGeographicSearchArea(null);
+    geographicChoiceShownRef.current = false;
 
     setNearbyDiscoveryMode(null);
     setRestaurantNextPageToken(null);
@@ -276,6 +287,9 @@ const DayGuide = () => {
     setTimeline([]);
     setGeographicalPlanning(null);
     setGeographicalAssessment(null);
+    setGeographicChoice(null);
+    setGeographicSearchArea(null);
+    geographicChoiceShownRef.current = false;
     setActivePopup(null);
     activePopupRef.current = null;
     popupActivityReturnRef.current = false;
@@ -331,6 +345,9 @@ const DayGuide = () => {
     });
     setGeographicalPlanning(planningInput);
     setGeographicalAssessment(assessment);
+    setGeographicChoice(null);
+    setGeographicSearchArea(null);
+    geographicChoiceShownRef.current = false;
     setStartTime(planningInput.start.departureTimeMinutes / 60);
     continueToSelectionRoute(planningInput);
   };
@@ -338,6 +355,9 @@ const DayGuide = () => {
   const skipGeographicalPlanning = () => {
     setGeographicalPlanning(null);
     setGeographicalAssessment(null);
+    setGeographicChoice(null);
+    setGeographicSearchArea(null);
+    geographicChoiceShownRef.current = false;
     continueToSelectionRoute(null);
   };
 
@@ -385,6 +405,7 @@ const DayGuide = () => {
   const goToActivities = async (
     interestsOverride = selectedInterests,
     planningOverride = geographicalPlanning,
+    areaOverride = geographicSearchArea,
   ) => {
     setIsActivitiesLoading(true);
     setActivitySource(null);
@@ -392,7 +413,7 @@ const DayGuide = () => {
     setCurrentActivityIndex(0);
     setStage('activities');
 
-    const searchOrigin = getSearchOrigin(planningOverride, position);
+    const searchOrigin = getSearchOrigin(planningOverride, position, areaOverride);
     if (!hasUsableCoordinates(searchOrigin)) {
       setActivitySource(
         !planningOverride?.start && locationError === 'location.denied'
@@ -439,6 +460,7 @@ const DayGuide = () => {
     cuisineOverride = selectedCuisines,
     priceOverride = selectedPriceRange,
     planningOverride = geographicalPlanning,
+    areaOverride = geographicSearchArea,
   ) => {
     setIsRestaurantsLoading(true);
     setRestaurantSource(null);
@@ -465,7 +487,11 @@ const DayGuide = () => {
 
     // locationError lets the request layer tell a denied browser permission
     // (which the user can fix) apart from a location we simply never got.
-    const planningPosition = getSearchOrigin(planningOverride, position);
+    const planningPosition = getSearchOrigin(
+      planningOverride,
+      position,
+      areaOverride,
+    );
     let nextPageToken = null;
     const discoverySearch = async (lat, lng, cuisines, price) => {
       const page = await searchRestaurantPage(lat, lng, cuisines, price);
@@ -489,15 +515,20 @@ const DayGuide = () => {
   };
 
   const showMoreRestaurants = async () => {
-    if (!restaurantNextPageToken || !position) return;
+    const searchOrigin = getSearchOrigin(
+      geographicalPlanning,
+      position,
+      geographicSearchArea,
+    );
+    if (!restaurantNextPageToken || !searchOrigin) return;
     setIsRestaurantsLoading(true);
     setRestaurantQueue(null);
     setCurrentRestaurantIndex(0);
     setStage('restaurants');
     try {
       const page = await searchRestaurantPage(
-        position.lat,
-        position.lng,
+        searchOrigin.lat,
+        searchOrigin.lng,
         selectedCuisines,
         selectedPriceRange,
         restaurantNextPageToken,
@@ -533,6 +564,9 @@ const DayGuide = () => {
 
     if (liked && currentActivity) {
       setSelectedActivities(newSelected);
+      if (offerGeographicChoice(currentActivity, newSelected, 'activities')) {
+        return;
+      }
     }
 
     if (currentActivityIndex < activityQueue.length - 1) {
@@ -565,6 +599,9 @@ const DayGuide = () => {
       popupCooldowns.current.nearbyRestaurant = Date.now();
       selectedRestaurantsRef.current = newSelected;
       setSelectedRestaurants(newSelected);
+      if (offerGeographicChoice(currentRestaurant, newSelected, 'restaurants')) {
+        return;
+      }
     }
 
     if (currentRestaurantIndex < restaurantQueue.length - 1) {
@@ -582,6 +619,51 @@ const DayGuide = () => {
         return;
       }
       continueAfterRestaurants(newSelected);
+    }
+  };
+
+  const offerGeographicChoice = (selectedPlace, selectedItems, selectionType) => {
+    if (
+      geographicChoiceShownRef.current ||
+      nearbyDiscoveryMode ||
+      !geographicalPlanning
+    ) {
+      return false;
+    }
+
+    const guidance = getGeographicChoiceGuidance({
+      planning: geographicalPlanning,
+      selectedPlace,
+      selectedItems,
+      availableTimeHours: availableTime,
+    });
+    if (!guidance) return false;
+
+    setGeographicChoice({ ...guidance, selectionType });
+    setStage('geographic-choice');
+    return true;
+  };
+
+  const chooseGeographicSearchArea = areaId => {
+    const choice = geographicChoice;
+    const area = getGeographicSearchAreas(choice).find(
+      candidate => candidate.id === areaId,
+    );
+    if (!choice || !area) return;
+
+    geographicChoiceShownRef.current = true;
+    setGeographicChoice(null);
+    setGeographicSearchArea(area);
+
+    if (choice.selectionType === 'activities') {
+      goToActivities(selectedInterests, geographicalPlanning, area);
+    } else {
+      goToRestaurants(
+        selectedCuisines,
+        selectedPriceRange,
+        geographicalPlanning,
+        area,
+      );
     }
   };
 
@@ -799,6 +881,16 @@ const DayGuide = () => {
           onComplete={completeGeographicalPlanning}
           onCancel={() => setStage('interests')}
           onSkip={skipGeographicalPlanning}
+          t={t}
+        />
+      );
+    }
+
+    if (stage === 'geographic-choice' && geographicChoice) {
+      return (
+        <GeographicChoiceCard
+          guidance={geographicChoice}
+          onChoose={chooseGeographicSearchArea}
           t={t}
         />
       );

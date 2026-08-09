@@ -219,6 +219,20 @@
     "yes": "Oui, ajouter un restaurant",
     "no": "Non merci, juste les activités"
   },
+  "geography": {
+    "eyebrow": "Prévoir autour de votre arrêt ultérieur",
+    "title": "Faites avancer votre journée",
+    "anchorIntro": "Vous avez {{name}} plus tard. Choisissez où voir les prochaines idées.",
+    "finishIntro": "Vous terminerez près de {{name}}. Choisissez où voir les prochaines idées.",
+    "fromStart": "À environ {{distance}} km de votre départ",
+    "toLater": "à environ {{distance}} km de {{name}}",
+    "remainingTime": "Il vous reste environ {{count}} minutes du temps prévu pour un autre arrêt.",
+    "question": "Où souhaitez-vous chercher ?",
+    "nearStart": "Près de mon point de départ",
+    "nearLater": "Près de {{name}}",
+    "between": "Quelque part entre les deux",
+    "note": "Ce sont des suggestions de planification, pas un itinéraire en direct. Consultez les temps de trajet en direct si l'heure d'arrivée est importante."
+  },
   "restaurants": {
     "title": "Restaurants et nourriture",
     "noMore": "Plus de restaurants",

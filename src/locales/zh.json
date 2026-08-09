@@ -219,6 +219,20 @@
     "yes": "是的，添加餐厅",
     "no": "不，只要活动"
   },
+  "geography": {
+    "eyebrow": "围绕稍后的地点安排",
+    "title": "让一天顺畅推进",
+    "anchorIntro": "你稍后要去 {{name}}。请选择下一批建议想在哪个区域查看。",
+    "finishIntro": "你将在 {{name}} 附近结束行程。请选择下一批建议想在哪个区域查看。",
+    "fromStart": "距起点约 {{distance}} 公里",
+    "toLater": "距 {{name}} 约 {{distance}} 公里",
+    "remainingTime": "你预留的时间里大约还有 {{count}} 分钟可安排下一站。",
+    "question": "你想在哪里找？",
+    "nearStart": "在起点附近",
+    "nearLater": "在 {{name}} 附近",
+    "between": "在两地之间",
+    "note": "这些是规划建议，不是实时路线。若抵达时间重要，请查看实时行程时间。"
+  },
   "restaurants": {
     "title": "餐厅与美食",
     "noMore": "没有更多餐厅",

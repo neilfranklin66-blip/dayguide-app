@@ -240,6 +240,20 @@
     "yes": "Yes, add a restaurant",
     "no": "No thanks, just activities"
   },
+  "geography": {
+    "eyebrow": "Plan around your later stop",
+    "title": "Keep your day flowing",
+    "anchorIntro": "You have {{name}} later. Choose where you would like to see the next ideas.",
+    "finishIntro": "You are finishing near {{name}}. Choose where you would like to see the next ideas.",
+    "fromStart": "About {{distance}} km from your start",
+    "toLater": "about {{distance}} km from {{name}}",
+    "remainingTime": "You have around {{count}} minutes of the time you set aside for another stop.",
+    "question": "Where would you like to look?",
+    "nearStart": "Near where I started",
+    "nearLater": "Near {{name}}",
+    "between": "Somewhere in between",
+    "note": "These are planning suggestions, not a live route. Check live journey times when arrival matters."
+  },
   "restaurants": {
     "title": "Restaurants & Food",
     "noMore": "No more restaurants",

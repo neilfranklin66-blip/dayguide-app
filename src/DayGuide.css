@@ -1443,6 +1443,69 @@ select:focus-visible {
   border: 1px solid #fde68a;
 }
 
+/* A short, optional junction in the planning flow. It keeps the three area
+   choices easy to compare without turning a geographical suggestion into a
+   dense route explanation. */
+.geographic-choice-card {
+  text-align: center;
+}
+
+.geographic-choice-eyebrow {
+  color: #4f46e5;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+.geographic-choice-intro {
+  color: #374151;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  margin: 14px auto 10px;
+  max-width: 360px;
+}
+
+.geographic-choice-distance,
+.geographic-choice-time {
+  color: #4b5563;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  margin: 8px auto;
+}
+
+.geographic-choice-time {
+  background: #eef2ff;
+  border-radius: 10px;
+  color: #3730a3;
+  font-weight: 650;
+  padding: 10px 12px;
+}
+
+.geographic-choice-card h3 {
+  color: #1f2937;
+  font-size: 1.05rem;
+  margin: 22px 0 12px;
+}
+
+.geographic-choice-options {
+  display: grid;
+  gap: 10px;
+}
+
+.geographic-choice-options button {
+  min-height: 52px;
+  width: 100%;
+}
+
+.geographic-choice-note {
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 18px auto 0;
+  max-width: 360px;
+}
+
 @media (max-width: 600px) {
   .dayguide-container {
     padding: 10px;
