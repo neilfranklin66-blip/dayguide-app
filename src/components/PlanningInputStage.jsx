@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import HardAnchorEditor from './HardAnchorEditor';
+import DirectTimeInput from './DirectTimeInput';
 import ResolvedPlaceSelect from './ResolvedPlaceSelect';
 import {
   PLANNING_INPUT_ERROR,
@@ -88,6 +89,9 @@ export default function PlanningInputStage({
   const updateDraft = onDraftChange ?? setInternalDraft;
   const [editor, setEditor] = useState(null);
   const [errors, setErrors] = useState([]);
+  const [laterPlansOpen, setLaterPlansOpen] = useState(
+    () => draft.destination.enabled || draft.anchors.length > 0,
+  );
 
   const updateDestinationDeadline = value => {
     const minutes = value === '' ? null : timeInputToMinutes(value);
@@ -147,129 +151,91 @@ export default function PlanningInputStage({
           />
         )}
 
-        <details className="planning-more-options">
-          <summary>
-            {t('planning.addAnchor', {
-              defaultValue: 'Add a time you need to keep',
+        <section className="later-plans-panel">
+          <button
+            type="button"
+            className="later-plans-toggle"
+            aria-expanded={laterPlansOpen}
+            onClick={() => setLaterPlansOpen(current => !current)}
+          >
+            {t('planning.laterPlansPrompt', {
+              defaultValue: 'Need to be somewhere later?',
             })}
-          </summary>
+          </button>
 
-          <div className="time-selector">
-          <label htmlFor="planning-add-destination">
-            <input
-              id="planning-add-destination"
-              type="checkbox"
-              checked={draft.destination.enabled}
-              onChange={event => {
+          {laterPlansOpen && (
+            <>
+          {destinationPlaceControl ?? (
+            <ResolvedPlaceSelect
+              id="planning-end-place"
+              label={t('planning.destinationPlace', {
+                defaultValue: 'Where should your day finish?',
+              })}
+              selection={draft.destination.selection}
+              onChange={selection =>
                 updateDraft(current =>
-                  setDestinationEnabled(current, event.target.checked),
-                );
-                setErrors([]);
-              }}
+                  setDestinationSelection(current, selection),
+                )
+              }
+              currentPlace={currentPlace}
+              availablePlaces={availablePlaces}
+              t={t}
             />
-            {t('planning.addDestination', {
-              defaultValue: 'Add an end destination',
-            })}
-          </label>
-          </div>
+          )}
 
-        {draft.destination.enabled && (
-          <>
-            {destinationPlaceControl ?? (
-              <ResolvedPlaceSelect
-                id="planning-end-place"
-                label={t('planning.destinationPlace', {
-                  defaultValue: 'Where should your day finish?',
+          {destinationNeedsPlace && (
+            <div className="destination-choice-notice" role="status">
+              <p>
+                {t('planning.destinationSelectionNeeded', {
+                  defaultValue:
+                    'Choose a verified finish, or remove the destination.',
                 })}
-                selection={draft.destination.selection}
-                onChange={selection =>
-                  updateDraft(current =>
-                    setDestinationSelection(current, selection),
-                  )
-                }
-                currentPlace={currentPlace}
-                availablePlaces={availablePlaces}
-                t={t}
-              />
-            )}
-
-            {destinationNeedsPlace && (
-              <div className="destination-choice-notice" role="status">
-                <p>
-                  {t('planning.destinationSelectionNeeded', {
-                    defaultValue:
-                      'Choose a verified finish, or remove this optional destination.',
-                  })}
-                </p>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => {
-                    updateDraft(current => setDestinationEnabled(current, false));
-                    setErrors([]);
-                  }}
-                >
-                  {t('planning.removeDestination', {
-                    defaultValue: 'Remove end destination',
-                  })}
-                </button>
-              </div>
-            )}
-
-            <div className="time-selector">
-              <label htmlFor="planning-end-deadline">
-                {t('planning.destinationDeadline', {
-                  defaultValue: 'Optional arrival deadline',
+              </p>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  updateDraft(current => setDestinationEnabled(current, false));
+                  setErrors([]);
+                }}
+              >
+                {t('planning.removeDestination', {
+                  defaultValue: 'Remove end destination',
                 })}
-              </label>
-              <input
-                id="planning-end-deadline"
-                type="time"
-                value={destinationDeadline}
-                onChange={event =>
-                  updateDestinationDeadline(event.target.value)
-                }
-                className="time-input"
-              />
+              </button>
             </div>
+          )}
 
-            {destinationDeadline && (
-              <div className="time-selector">
-                <label htmlFor="planning-end-buffer">
-                  {t('planning.destinationBuffer', {
-                    defaultValue:
-                      'Arrive this many minutes before the deadline',
-                  })}
-                </label>
-                <input
-                  id="planning-end-buffer"
-                  type="number"
-                  min="0"
-                  step="5"
-                  value={draft.destination.arrivalBufferMinutes}
-                  onChange={event =>
-                    updateDraft(current =>
-                      setDestinationTiming(current, {
-                        arrivalDeadlineMinutes:
-                          current.destination.arrivalDeadlineMinutes,
-                        arrivalBufferMinutes: Number(event.target.value),
-                      }),
-                    )
-                  }
-                  className="time-input"
-                />
-              </div>
-            )}
-          </>
-        )}
+          {isResolvedPlaceSelection(draft.destination.selection) && (
+            <div className="later-plan-timing">
+            <DirectTimeInput
+              id="planning-end-deadline"
+              value={destinationDeadline}
+              label={t('planning.destinationDeadline', {
+                defaultValue: 'What time do you need to be there?',
+              })}
+              onChange={updateDestinationDeadline}
+              allowEmpty
+            />
+
+            <button
+              type="button"
+              className="later-plan-option"
+              aria-pressed={!destinationDeadline}
+              onClick={() => updateDestinationDeadline('')}
+            >
+              {t('planning.noDeadline', { defaultValue: 'No fixed time' })}
+            </button>
+            </div>
+          )}
 
           <section
             aria-label={t('planning.addAnchor', {
-              defaultValue: 'Add a time you need to keep',
+              defaultValue: 'Need to be somewhere later?',
             })}
           >
           {draft.anchors.map(anchor => (
-            <article key={anchor.id} className="swipe-item">
+            <article key={anchor.id} className="later-plan-card">
               <h4>{anchor.title}</h4>
               <p>{anchor.place.name}</p>
               <p>
@@ -328,7 +294,9 @@ export default function PlanningInputStage({
             </button>
           )}
           </section>
-        </details>
+            </>
+          )}
+        </section>
 
         {editor && (
           <HardAnchorEditor

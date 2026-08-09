@@ -7,6 +7,7 @@ import {
   timeInputToMinutes,
 } from '../utils/planningInputWorkflow';
 import DirectPlaceSearch from './DirectPlaceSearch';
+import DirectTimeInput from './DirectTimeInput';
 import { resolvePlaceQuery } from '../api/placeResolutionApi';
 
 const fallbackT = (_key, options) => options?.defaultValue ?? _key;
@@ -110,20 +111,16 @@ export default function HardAnchorEditor({
     <form onSubmit={handleSubmit} className="card hard-anchor-editor">
       <h3>
         {initialAnchor
-          ? t('planning.editAnchor', { defaultValue: 'Edit fixed anchor' })
-          : t('planning.addAnchor', { defaultValue: 'Add fixed anchor' })}
+          ? t('planning.editAnchor', { defaultValue: 'Edit a planned time' })
+          : t('planning.addAnchor', {
+              defaultValue: 'Add a time you need to keep',
+            })}
       </h3>
-      <p className="start-order-hint">
-        {t('planning.anchorLockExplanation', {
-          defaultValue:
-            'DayGuide may plan around this commitment but may never move it.',
-        })}
-      </p>
 
       <div className="time-selector">
         <label htmlFor={`${anchorId}-title`}>
           {t('planning.commitmentName', {
-            defaultValue: 'Commitment name',
+            defaultValue: 'What is it?',
           })}
         </label>
         <input
@@ -165,25 +162,19 @@ export default function HardAnchorEditor({
         t={t}
       />
 
-      <div className="time-selector">
-        <label htmlFor={`${anchorId}-time`}>
-          {t('planning.fixedStartTime', {
-            defaultValue: 'Fixed start time',
-          })}
-        </label>
-        <input
-          id={`${anchorId}-time`}
-          type="time"
+      <DirectTimeInput
+        id={`${anchorId}-time`}
+        label={t('planning.fixedStartTime', {
+          defaultValue: 'What time do you need to be there?',
+        })}
           value={startTime}
-          onChange={event => setStartTime(event.target.value)}
-          className="time-input"
-        />
-      </div>
+        onChange={setStartTime}
+      />
 
       <div className="time-selector">
         <label htmlFor={`${anchorId}-duration`}>
           {t('planning.durationMinutes', {
-            defaultValue: 'Duration in minutes',
+            defaultValue: 'How long will it take?',
           })}
         </label>
         <input
@@ -200,7 +191,7 @@ export default function HardAnchorEditor({
       <div className="time-selector">
         <label htmlFor={`${anchorId}-buffer`}>
           {t('planning.arriveMinutesEarly', {
-            defaultValue: 'Arrive this many minutes early',
+            defaultValue: 'Allow extra time before',
           })}
         </label>
         <input
@@ -222,8 +213,8 @@ export default function HardAnchorEditor({
         </button>
         <button type="submit" className="btn-primary">
           {initialAnchor
-            ? t('planning.saveAnchor', { defaultValue: 'Save anchor' })
-            : t('planning.addAnchorAction', { defaultValue: 'Add anchor' })}
+            ? t('planning.saveAnchor', { defaultValue: 'Save time' })
+            : t('planning.addAnchorAction', { defaultValue: 'Add a time' })}
         </button>
       </div>
     </form>

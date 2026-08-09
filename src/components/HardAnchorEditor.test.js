@@ -21,7 +21,7 @@ test('hard anchor editor creates a planner-locked fixed commitment', () => {
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Evening theatre' },
   });
   fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
@@ -30,17 +30,18 @@ test('hard anchor editor creates a planner-locked fixed commitment', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Search' }));
   return screen.findByRole('button', { name: 'Use Theatre for this commitment' }).then(selectButton => {
     fireEvent.click(selectButton);
-    fireEvent.change(screen.getByLabelText('Fixed start time'), {
+    fireEvent.change(screen.getByLabelText('What time do you need to be there?'), {
     target: { value: '18:30' },
     });
-    fireEvent.change(screen.getByLabelText('Duration in minutes'), {
+    fireEvent.blur(screen.getByLabelText('What time do you need to be there?'));
+    fireEvent.change(screen.getByLabelText('How long will it take?'), {
       target: { value: '150' },
     });
     fireEvent.change(
-      screen.getByLabelText('Arrive this many minutes early'),
+      screen.getByLabelText('Allow extra time before'),
       { target: { value: '20' } },
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
 
     expect(onSave).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -66,10 +67,10 @@ test('hard anchor editor reports unresolved place instead of saving free text', 
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Theatre' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
 
   expect(onSave).not.toHaveBeenCalled();
   expect(screen.getByRole('alert')).toHaveTextContent(
@@ -97,10 +98,10 @@ test('hard anchor editor updates an existing anchor without changing its id', ()
     />,
   );
 
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Updated theatre' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Save anchor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Save time' }));
 
   expect(onSave).toHaveBeenCalledWith(
     expect.objectContaining({

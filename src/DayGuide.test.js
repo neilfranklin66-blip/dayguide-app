@@ -336,7 +336,7 @@ test('a searched start location enables live activities when location is denied'
   fireEvent.click(screen.getByText('planning.searchAction'));
   expect(await screen.findByText('London Euston')).toBeInTheDocument();
   fireEvent.click(screen.getByText('planning.selectStartPlace'));
-  fireEvent.click(screen.getByLabelText('planning.addDestination'));
+  fireEvent.click(screen.getByText('planning.laterPlansPrompt'));
   fireEvent.change(screen.getByLabelText('planning.destinationSearchLabel'), {
     target: { value: 'Royal Theatre' },
   });
@@ -381,7 +381,7 @@ test('a later destination offers a user-led next search area after a live pick',
   fireEvent.click(screen.getByText('planning.searchAction'));
   fireEvent.click(await screen.findByText('London Euston'));
   fireEvent.click(screen.getByText('planning.selectStartPlace'));
-  fireEvent.click(screen.getByLabelText('planning.addDestination'));
+  fireEvent.click(screen.getByText('planning.laterPlansPrompt'));
   fireEvent.change(screen.getByLabelText('planning.destinationSearchLabel'), {
     target: { value: 'Royal Theatre' },
   });

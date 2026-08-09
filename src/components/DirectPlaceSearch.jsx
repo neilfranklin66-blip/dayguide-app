@@ -71,6 +71,7 @@ export default function DirectPlaceSearch({
   selectDefault,
   onSelect,
   secondaryAction = null,
+  selectedAction = null,
   embedded = false,
   searchPlaces = resolvePlaceQuery,
   t = fallbackT,
@@ -143,12 +144,25 @@ export default function DirectPlaceSearch({
       </p>
 
       {selectedPlace && (
-        <p role="status" className="start-order-hint">
-          {t(selectedKey, {
-            name: selectedPlace.name,
-            defaultValue: selectedDefault.replace('{{name}}', selectedPlace.name),
-          })}
-        </p>
+        <div className="selected-place-summary" role="status">
+          <p>
+            {t(selectedKey, {
+              name: selectedPlace.name,
+              defaultValue: selectedDefault.replace('{{name}}', selectedPlace.name),
+            })}
+          </p>
+          {selectedAction && (
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={selectedAction.onClick}
+            >
+              {t(selectedAction.key, {
+                defaultValue: selectedAction.defaultValue,
+              })}
+            </button>
+          )}
+        </div>
       )}
 
       {secondaryAction && (

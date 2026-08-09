@@ -69,14 +69,12 @@ test('keeps optional later plans together and closed until wanted', () => {
     />,
   );
 
-  const laterPlans = screen
-    .getByText('Add a time you need to keep')
-    .closest('details');
-
-  expect(laterPlans).not.toHaveAttribute('open');
-  expect(laterPlans).toContainElement(
-    screen.getByLabelText('Add an end destination'),
-  );
+  expect(
+    screen.getByRole('button', { name: 'Need to be somewhere later?' }),
+  ).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByLabelText('Where should your day finish?')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
 });
 
 test('a selected start keeps the recovery route and hides the no-details escape', () => {
@@ -149,19 +147,14 @@ test('planning input stage collects a destination and optional deadline', () => 
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByLabelText('Add an end destination'));
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   fireEvent.change(screen.getByLabelText('Where should your day finish?'), {
     target: { value: 'resolved:hotel' },
   });
-  fireEvent.change(screen.getByLabelText('Optional arrival deadline'), {
+  fireEvent.change(screen.getByLabelText('What time do you need to be there?'), {
     target: { value: '22:30' },
   });
-  fireEvent.change(
-    screen.getByLabelText(
-      'Arrive this many minutes before the deadline',
-    ),
-    { target: { value: '10' } },
-  );
+  fireEvent.blur(screen.getByLabelText('What time do you need to be there?'));
   fireEvent.click(
     screen.getByRole('button', {
       name: 'Continue with these fixed details',
@@ -174,13 +167,13 @@ test('planning input stage collects a destination and optional deadline', () => 
       end: expect.objectContaining({
         place: hotel,
         arrivalDeadlineMinutes: 1350,
-        arrivalBufferMinutes: 10,
+        arrivalBufferMinutes: 0,
       }),
     }),
   );
 });
 
-test('an unselected optional destination is explained and can be deliberately removed', () => {
+test('a later-plan section can be opened and left unused', () => {
   const onComplete = jest.fn();
   render(
     <PlanningInputStage
@@ -193,17 +186,8 @@ test('an unselected optional destination is explained and can be deliberately re
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByLabelText('Add an end destination'));
-
-  expect(
-    screen.getByText('Choose a verified finish, or remove this optional destination.'),
-  ).toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'Remove end destination' }));
-
-  expect(
-    screen.queryByText('Choose a verified finish, or remove this optional destination.'),
-  ).not.toBeInTheDocument();
-  expect(screen.getByLabelText('Add an end destination')).not.toBeChecked();
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Continue with these fixed details' }));
   expect(onComplete).toHaveBeenCalledWith(
     expect.objectContaining({ end: null }),
@@ -226,8 +210,9 @@ test('planning input stage adds and completes with a planner-locked anchor', asy
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Evening theatre' },
   });
   fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
@@ -239,10 +224,11 @@ test('planning input stage adds and completes with a planner-locked anchor', asy
       name: 'Use Theatre for this commitment',
     }),
   );
-  fireEvent.change(screen.getByLabelText('Fixed start time'), {
+  fireEvent.change(screen.getByLabelText('What time do you need to be there?'), {
     target: { value: '18:30' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
+  fireEvent.blur(screen.getByLabelText('What time do you need to be there?'));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
 
   expect(screen.getByText('Evening theatre')).toBeInTheDocument();
 
@@ -277,8 +263,9 @@ test('planning input stage edits and removes a fixed anchor deliberately', async
     />,
   );
 
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Theatre' },
   });
   fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
@@ -290,13 +277,13 @@ test('planning input stage edits and removes a fixed anchor deliberately', async
       name: 'Use Theatre for this commitment',
     }),
   );
-  fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
 
   fireEvent.click(screen.getByRole('button', { name: 'Edit Theatre' }));
-  fireEvent.change(screen.getByLabelText('Commitment name'), {
+  fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Updated theatre' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Save anchor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Save time' }));
 
   expect(screen.getByText('Updated theatre')).toBeInTheDocument();
 

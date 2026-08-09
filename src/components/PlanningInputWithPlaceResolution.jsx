@@ -6,6 +6,7 @@ import {
   PLACE_SELECTION_MODE,
   createPlaceSelection,
   createPlanningInputDraft,
+  setDestinationEnabled,
   setDestinationSelection,
   setStartSelection,
 } from '../utils/planningInputWorkflow';
@@ -82,6 +83,10 @@ export default function PlanningInputWithPlaceResolution({
     );
   };
 
+  const removeDestination = () => {
+    setDraft(current => setDestinationEnabled(current, false));
+  };
+
   const startPlaceControl = (
     <DirectPlaceSearch
       id="planning-start-place"
@@ -131,6 +136,15 @@ export default function PlanningInputWithPlaceResolution({
       selectKey="planning.selectDestinationPlace"
       selectDefault="Finish at {{name}}"
       onSelect={selectDestinationPlace}
+      selectedAction={
+        draft.destination.selection
+          ? {
+              key: 'planning.removeDestination',
+              defaultValue: 'Remove end destination',
+              onClick: removeDestination,
+            }
+          : null
+      }
       searchPlaces={searchPlaces}
       t={t}
     />

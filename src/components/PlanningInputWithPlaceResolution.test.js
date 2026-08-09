@@ -241,7 +241,7 @@ test('selects a different searched destination without replacing the start', asy
     await screen.findByRole('button', { name: 'Start at London Euston' }),
   );
 
-  fireEvent.click(screen.getByLabelText('Add an end destination'));
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   fireEvent.change(
     screen.getByLabelText(
       'Place, address, postcode or ZIP code for your destination',
