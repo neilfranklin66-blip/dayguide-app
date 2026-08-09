@@ -42,7 +42,7 @@ const hotel = createPlaceRef({
 
 const availablePlaces = [euston, theatre, hotel];
 
-test('planning input stage requires a verified start place', () => {
+test('planning input stage disables fixed-details continuation until a verified start is selected', () => {
   const onComplete = jest.fn();
   render(
     <PlanningInputStage
@@ -52,16 +52,35 @@ test('planning input stage requires a verified start place', () => {
     />,
   );
 
-  fireEvent.click(
+  expect(
     screen.getByRole('button', {
       name: 'Continue with these fixed details',
     }),
+  ).toBeDisabled();
+  expect(onComplete).not.toHaveBeenCalled();
+});
+
+test('a selected start keeps the recovery route and hides the no-details escape', () => {
+  const draft = setStartSelection(
+    createPlanningInputDraft(),
+    createPlaceSelection({
+      mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
+      place: euston,
+    }),
   );
 
-  expect(onComplete).not.toHaveBeenCalled();
-  expect(screen.getByRole('alert')).toHaveTextContent(
-    'Choose a verified starting place.',
+  render(
+    <PlanningInputStage
+      availablePlaces={availablePlaces}
+      initialDraft={draft}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+      onSkip={jest.fn()}
+    />,
   );
+
+  expect(screen.queryByText('Continue without fixed route details')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Continue with these fixed details' })).toBeEnabled();
 });
 
 test('planning input stage distinguishes current GPS from another start place', () => {
@@ -142,14 +161,46 @@ test('planning input stage collects a destination and optional deadline', () => 
   );
 });
 
-test('planning input stage adds and completes with a planner-locked anchor', () => {
+test('an unselected optional destination is explained and can be deliberately removed', () => {
   const onComplete = jest.fn();
+  render(
+    <PlanningInputStage
+      availablePlaces={availablePlaces}
+      onComplete={onComplete}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  fireEvent.change(screen.getByLabelText('Where does your day start?'), {
+    target: { value: 'resolved:euston' },
+  });
+  fireEvent.click(screen.getByLabelText('Add an end destination'));
+
+  expect(
+    screen.getByText('Choose a verified finish, or remove this optional destination.'),
+  ).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Remove end destination' }));
+
+  expect(
+    screen.queryByText('Choose a verified finish, or remove this optional destination.'),
+  ).not.toBeInTheDocument();
+  expect(screen.getByLabelText('Add an end destination')).not.toBeChecked();
+  fireEvent.click(screen.getByRole('button', { name: 'Continue with these fixed details' }));
+  expect(onComplete).toHaveBeenCalledWith(
+    expect.objectContaining({ end: null }),
+  );
+});
+
+test('planning input stage adds and completes with a planner-locked anchor', async () => {
+  const onComplete = jest.fn();
+  const anchorSearchPlaces = jest.fn().mockResolvedValue([theatre]);
   render(
     <PlanningInputStage
       currentPlace={currentPlace}
       availablePlaces={availablePlaces}
       onComplete={onComplete}
       onCancel={jest.fn()}
+      anchorSearchPlaces={anchorSearchPlaces}
     />,
   );
 
@@ -160,9 +211,15 @@ test('planning input stage adds and completes with a planner-locked anchor', () 
   fireEvent.change(screen.getByLabelText('Commitment name'), {
     target: { value: 'Evening theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed place'), {
-    target: { value: 'resolved:theatre' },
+  fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
+    target: { value: 'Theatre' },
   });
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  fireEvent.click(
+    await screen.findByRole('button', {
+      name: 'Use Theatre for this commitment',
+    }),
+  );
   fireEvent.change(screen.getByLabelText('Fixed start time'), {
     target: { value: '18:30' },
   });
@@ -190,13 +247,15 @@ test('planning input stage adds and completes with a planner-locked anchor', () 
   );
 });
 
-test('planning input stage edits and removes a fixed anchor deliberately', () => {
+test('planning input stage edits and removes a fixed anchor deliberately', async () => {
+  const anchorSearchPlaces = jest.fn().mockResolvedValue([theatre]);
   render(
     <PlanningInputStage
       currentPlace={currentPlace}
       availablePlaces={availablePlaces}
       onComplete={jest.fn()}
       onCancel={jest.fn()}
+      anchorSearchPlaces={anchorSearchPlaces}
     />,
   );
 
@@ -204,9 +263,15 @@ test('planning input stage edits and removes a fixed anchor deliberately', () =>
   fireEvent.change(screen.getByLabelText('Commitment name'), {
     target: { value: 'Theatre' },
   });
-  fireEvent.change(screen.getByLabelText('Fixed place'), {
-    target: { value: 'resolved:theatre' },
+  fireEvent.change(screen.getByLabelText('Place, address, postcode or ZIP code'), {
+    target: { value: 'Theatre' },
   });
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  fireEvent.click(
+    await screen.findByRole('button', {
+      name: 'Use Theatre for this commitment',
+    }),
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Add anchor' }));
 
   fireEvent.click(screen.getByRole('button', { name: 'Edit Theatre' }));

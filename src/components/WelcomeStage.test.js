@@ -10,6 +10,7 @@ const baseProps = {
   position: { lat: 51.50722, lng: -0.1275, accuracy: 12 },
   refreshLocation: jest.fn(),
   onStartPlanning: jest.fn(),
+  onFindNearby: jest.fn(),
 };
 
 test('renders welcome copy and detected location', () => {
@@ -40,6 +41,15 @@ test('clicking start planning calls onStartPlanning', () => {
   fireEvent.click(screen.getByText('welcome.startPlanning'));
 
   expect(onStartPlanning).toHaveBeenCalledTimes(1);
+});
+
+test('clicking find nearby calls onFindNearby without starting the planning form', () => {
+  const onFindNearby = jest.fn();
+  render(<WelcomeStage {...baseProps} onFindNearby={onFindNearby} />);
+
+  fireEvent.click(screen.getByText('welcome.findNearby'));
+
+  expect(onFindNearby).toHaveBeenCalledTimes(1);
 });
 
 test('resume button is hidden without a saved plan', () => {

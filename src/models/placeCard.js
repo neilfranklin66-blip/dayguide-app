@@ -21,6 +21,8 @@ export const PLACE_CARD_DEFAULT = {
   address: null,
   coordinates: null, // route-capable latitude/longitude when supplied by a trusted source
   photoUrl: null,
+  photoAttributions: [], // Google-supplied author credit(s) for photoUrl when required
+  photoMapsUrl: null, // Google-supplied direct source link for photoUrl
   mapsUrl: null,
   reason: null,
   source: null,
