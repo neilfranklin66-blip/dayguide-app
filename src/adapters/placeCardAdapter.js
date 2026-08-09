@@ -179,13 +179,17 @@ export function fromPlacesParsed(p) {
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}&query_place_id=${encodeURIComponent(placeId)}`
     : buildMapsSearchUrl(p.name, p.address);
   const cuisineArray = p.cuisine ?? [];
+  const venueType = typeof p.venueType === 'string' && p.venueType.trim()
+    ? p.venueType.trim()
+    : null;
 
   const base = {
     id: normalizePlaceId(p.id),
     name: p.name || null,
     type: 'food_drink',
     category: 'Food and Drinks',
-    subCategory: FOOD_DRINK_SUBCATEGORIES.RESTAURANT,
+    subCategory: venueType || FOOD_DRINK_SUBCATEGORIES.RESTAURANT,
+    venueType,
     cuisine: cuisineArray,
     rating: typeof p.rating === 'number' ? p.rating : null,
     priceRange: p.priceRange ?? null,

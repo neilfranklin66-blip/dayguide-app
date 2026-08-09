@@ -244,6 +244,7 @@ body {
 .btn-secondary,
 .btn-reject,
 .btn-accept {
+  min-height: 52px;
   padding: 15px 30px;
   border: none;
   border-radius: 12px;
@@ -342,6 +343,7 @@ p {
 }
 
 .interest-btn {
+  min-height: 102px;
   padding: 20px;
   border: 2px solid #e0e0e0;
   border-radius: 15px;
@@ -351,6 +353,7 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   font-size: 1em;
   font-weight: 600;
@@ -385,6 +388,16 @@ p {
   margin-bottom: 15px;
   font-weight: 600;
   color: #333;
+}
+
+/* A bright, non-colour-only focus treatment keeps the next control visible
+   in dim rooms and outdoor glare without replacing the established palette. */
+button:focus-visible,
+input:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
 }
 
 .slider {
@@ -423,24 +436,30 @@ p {
   font-weight: 600;
   color: #667eea;
   font-size: 1.1em;
-}.time-input {
+}
+
+.time-input,
+.date-input {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  font-size: 1em;
+  min-height: 56px;
+  padding: 13px 14px;
+  border: 2px solid #6b7280;
+  border-radius: 12px;
+  font-size: 1.1em;
   font-weight: 600;
-  color: #333;
+  color: #172033;
   background: white;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: monospace;
 }
 
-.time-input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+.time-input:focus,
+.date-input:focus {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+  border-color: #3949ab;
+  box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.18);
 }
 
 .welcome-actions {
@@ -452,6 +471,84 @@ p {
 .welcome-actions .btn-secondary {
   width: 100%;
   margin: 0;
+}
+
+.welcome-actions .btn-discovery {
+  width: 100%;
+  min-height: 60px;
+  margin: 0;
+  padding: 16px 24px;
+  border: 2px solid #667eea;
+  border-radius: 14px;
+  background: #fff;
+  color: #3949ab;
+  font-size: 1.05em;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.welcome-actions .btn-discovery:hover {
+  background: #f4f6ff;
+}
+
+.welcome-discovery-hint {
+  margin: -2px 8px 4px;
+  color: #606775;
+  font-size: 0.86em;
+  line-height: 1.35;
+}
+
+.discovery-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.discovery-option {
+  min-height: 120px;
+  padding: 16px;
+  border: 2px solid #d7dcff;
+  border-radius: 16px;
+  background: #fff;
+  color: #333;
+  font-size: 1.05em;
+  font-weight: 700;
+  cursor: pointer;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  line-height: 1.25;
+}
+
+.discovery-option span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.4em;
+}
+
+.discovery-option:hover {
+  border-color: #667eea;
+  background: #f6f7ff;
+}
+
+.discovery-all {
+  width: 100%;
+  margin: 8px 0 12px;
+}
+
+.discovery-build {
+  width: 100%;
+  margin: 12px 0 0;
+}
+
+.timeline-remove {
+  border: 0;
+  background: transparent;
+  color: #b42318;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
 }
 
 .welcome-resume-summary .subtitle {
@@ -467,6 +564,28 @@ p {
 .planning-place-resolution form {
   display: grid;
   gap: 10px;
+}
+
+.planning-place-search {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #d0d8f8;
+  border-radius: 14px;
+  background: #f8f9ff;
+}
+
+.planning-place-search h3 {
+  margin-top: 0;
+}
+
+.planning-place-search form,
+.planning-place-search .place-search-form {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-place-search .btn-secondary {
+  width: 100%;
 }
 
 .planning-place-results {
@@ -561,6 +680,7 @@ p {
 
 .price-btn {
   flex: 1;
+  min-height: 52px;
   padding: 10px 8px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
@@ -652,6 +772,16 @@ p {
   margin-bottom: 10px;
 }
 
+/* Google Places names can be long. Let the card grow naturally and wrap the
+   real name rather than clipping it or abbreviating a live venue. */
+.place-name {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+  line-height: 1.22;
+}
+
 .rating {
   font-size: 1.2em;
   margin-bottom: 15px;
@@ -666,13 +796,13 @@ p {
 
 .details {
   font-size: 0.95em;
-  color: #666;
+  color: #475569;
   margin: 5px 0;
 }
 
 .address {
   font-size: 0.85em;
-  color: #999;
+  color: #526071;
   font-style: italic;
   margin-top: 15px;
   overflow-wrap: anywhere;
@@ -717,7 +847,7 @@ p {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #999;
+  color: #526071;
   margin-bottom: 2px;
 }
 
@@ -1117,18 +1247,21 @@ p {
   margin-bottom: 16px;
 }
 
-/* Activities grid: 3-column compact layout for 12 categories */
-.activities-grid {
+/* Activity and food choices share the same compact three-column treatment. */
+.activities-grid,
+.cuisine-grid {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.activities-grid .interest-btn {
+.activities-grid .interest-btn,
+.cuisine-grid .interest-btn {
   padding: 14px 6px;
   font-size: 0.82em;
   gap: 6px;
 }
 
-.activities-grid .interest-btn .icon {
+.activities-grid .interest-btn .icon,
+.cuisine-grid .interest-btn .icon {
   font-size: 1.6em;
 }
 
@@ -1333,7 +1466,15 @@ p {
   }
 
   .interest-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .discovery-options {
     grid-template-columns: 1fr;
+  }
+
+  .discovery-option {
+    min-height: 104px;
   }
 
   .btn-primary,
@@ -1369,7 +1510,7 @@ p {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .activities-grid .interest-btn {
+  .interest-grid .interest-btn {
     padding: 16px 8px;
     font-size: 0.88em;
   }
