@@ -19,6 +19,13 @@ const theatre = createPlaceRef({
   source: 'google_places',
 });
 
+const currentPlace = createPlaceRef({
+  id: 'current-location',
+  name: 'Current location',
+  coordinates: { lat: 52.237, lng: -0.895 },
+  source: 'current_gps',
+});
+
 test('does not search while the user is typing', () => {
   const searchPlaces = jest.fn();
   render(
@@ -171,6 +178,21 @@ test('selects a searched start place directly and completes with it', async () =
       end: null,
     }),
   );
+});
+
+test('uses the available current location only after the user explicitly chooses it', () => {
+  render(
+    <PlanningInputWithPlaceResolution
+      currentPlace={currentPlace}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  expect(screen.queryByText('Your day will start at Current location.')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Use my current location — Current location' }));
+
+  expect(screen.getByText('Your day will start at Current location.')).toBeInTheDocument();
 });
 
 test('sends a postcode unchanged to the place search', async () => {

@@ -50,7 +50,6 @@ import {
   createCurrentLocationSelection,
   createPlanningInputDraft,
   createPlanningInputDraftFromValue,
-  setStartSelection,
 } from './utils/planningInputWorkflow';
 import { assessGeographicalPlanningInput } from './engines/geographicalPlanningEngine';
 import {
@@ -865,12 +864,6 @@ const DayGuide = () => {
             Math.min(24 * 60 - 1, Math.round(startTime * 60)),
           ),
         });
-        if (currentPlace) {
-          initialDraft = setStartSelection(
-            initialDraft,
-            createCurrentLocationSelection({ position }),
-          );
-        }
       }
 
       return (

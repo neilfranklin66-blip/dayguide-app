@@ -223,7 +223,7 @@ test('mounts the private-alpha geographical planning stage before selections', (
   expect(screen.getByText('planning.title')).toBeInTheDocument();
   expect(screen.getByText('planning.privateAlphaNotice')).toBeInTheDocument();
   expect(screen.getByText('planning.storageNotice')).toBeInTheDocument();
-  expect(screen.getByText('planning.startPlaceSelected')).toBeInTheDocument();
+  expect(screen.queryByText('planning.startPlaceSelected')).not.toBeInTheDocument();
   expect(screen.getByText('planning.useCurrentStart')).toBeInTheDocument();
 });
 
@@ -239,6 +239,9 @@ test('accepting the current start passes the geographical plan into the selectio
     screen.getByRole('button', { name: 'interests.childrenNo' }),
   );
   fireEvent.click(screen.getByText('interests.next'));
+  expect(screen.queryByText('planning.startPlaceSelected')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText('planning.useCurrentStart'));
+  expect(screen.getByText('planning.startPlaceSelected')).toBeInTheDocument();
   fireEvent.click(screen.getByText('planning.continue'));
 
   expect(await screen.findByText('Live Test Museum')).toBeInTheDocument();
@@ -799,6 +802,7 @@ test('saved-plan v2 keeps the selected start locally without transient GPS metad
     screen.getByRole('button', { name: 'interests.childrenNo' }),
   );
   fireEvent.click(screen.getByText('interests.next'));
+  fireEvent.click(screen.getByText('planning.useCurrentStart'));
   fireEvent.click(screen.getByText('planning.continue'));
 
   await screen.findByText('Live Test Museum');
