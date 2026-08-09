@@ -585,10 +585,10 @@ decision was evidenced during this review.
 - **ID:** AL-001
 - **Category:** Accepted product/data limitation
 - **Severity:** High
-- **Status:** Superseded by local Packet 173 implementation; unpublished-preview
-  verification pending.
-- **Launch blocking:** Yes until the live-only path is accepted on an
-  unpublished preview.
+- **Status:** Superseded by accepted Packet 173 unpublished-preview evidence.
+- **Launch blocking:** The live-only candidate has passed its Packet 173
+  preview gate; separate review, merge and Production-promotion authority are
+  still required.
 - **Verification status:** The former limitation is historical evidence. Packet
   173 removes `mockActivityData.json` from the current Plan-a-Day activity path,
   uses the existing Google Places activity search, and adds an activity-flow
@@ -596,11 +596,10 @@ decision was evidenced during this review.
 - **Impact:** Current activity suggestions are intended to be live local
   recommendations; a provider or location failure now produces an honest
   unavailable card instead of a sample substitute.
-- **Likely dependency:** Existing Places availability and the required Packet
-  173 unpublished-preview checks.
-- **Recommended next action:** Verify live activity cards, named-start origin,
-  denied-location wording, child safeguard, and legacy saved-plan rendering on
-  an unpublished preview before accepting the replacement.
+- **Likely dependency:** Existing Places availability. Production remains a
+  separate promotion decision.
+- **Recommended next action:** Preserve the accepted live-discovery base while
+  the later interface-refinement and release/promotion packets are scoped.
 - **Verification date:** 9 August 2026
 
 ### AL-002 — Transport estimates are approximate

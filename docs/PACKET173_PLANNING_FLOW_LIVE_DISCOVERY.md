@@ -2,14 +2,14 @@
 
 ## Status
 
-**Unpublished-preview candidate in review. The named-start correction has
-passed its focused hosted checks; remaining Packet 173 checks still require
-Product Owner review before closure.**
+**Complete and accepted on the unpublished preview. This remains a draft PR
+candidate; it has not been merged or promoted to Production.**
 
 This packet is based on `692fe59` from the unmerged Packet 170/172 release
 candidate source. The Packet 173 candidate was pushed for an unpublished
-preview; this correction does not merge, alter Production, change credentials,
-or call a provider. Google Routes and Ticketmaster remain out of scope.
+preview; bounded Google Places calls were made only to verify the approved
+preview flows. This packet does not merge, alter Production or change
+credentials. Google Routes and Ticketmaster remain out of scope.
 
 ## Delivered behaviour
 
@@ -62,6 +62,10 @@ or call a provider. Google Routes and Ticketmaster remain out of scope.
   Google Maps result. This confirms that a postcode reaches and is resolved by
   the same direct start control. ZIP-code resolution remains the same provider
   query path but has not been manually checked in this packet.
+- A hosted destination check selected **Euston** as start and **Trafalgar
+  Square** as finish through separate direct searches. The activity search
+  returned the real National Gallery from the Euston start area, and the final
+  itinerary retained both distinct places with a Google Maps link between them.
 
 ## Legacy-record boundary
 
@@ -85,27 +89,17 @@ nearby-distance claim. The current selection flow cannot import
 - Full-suite and production-build validation are still required before review
   closure.
 
-## Required unpublished-preview checks
+## Acceptance coverage and boundary
 
-1. Plan a day, activities first: confirm a genuine local activity card, Maps
-   link, no sample badge, then complete a day.
-2. Set a named start that differs from the phone location: search by a named
-   place, address or postcode, select a result directly, then confirm activity
-   cards move with the named start.
-3. Add an optional, different named end destination with its own direct search.
-   Confirm the start and finish remain distinct, and that activity cards still
-   use the start area.
-4. In a separate private browser window, deny location, set a named start using
-   the direct control, and confirm real activity cards appear around that start.
-   Also deny location without setting a start: confirm the brief unavailable
-   card and no sample card.
-5. Confirm an explicit activity choice keeps the current selection flow. The
-   adult-only guard is automated coverage for any future broad activity search
-   made with children in the party; the present Plan-a-Day screen requires an
-   activity choice before continuing.
-6. Resume an older saved plan, if available: confirm any legacy sample row keeps
-   its sample note.
-7. Repeat the core route in one non-English locale and on a phone.
+The accepted core route covers normal live activities, named start, denied
+location with a named start, direct postcode resolution, an independent end
+destination, and persistence of both places into the itinerary. French and
+phone-width core use were previously manually confirmed.
+
+Legacy saved-plan sample rendering remains deliberately preserved and was not
+retested in this closure; its automated structural guard remains in place. A
+no-start denied-location unavailable card is also retained as a separately
+automated honesty boundary.
 
 ## Deliberate deferrals
 
