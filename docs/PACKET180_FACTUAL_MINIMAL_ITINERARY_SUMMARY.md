@@ -39,6 +39,8 @@ and made time-fit claims that did not describe the selected cards.
   from journey flow state.
 - The compact wording is supplied in English, Spanish, French, Vietnamese, and
   Chinese.
+- The welcome-screen hint now makes the same factual promise: **Real nearby
+  places, chosen by you.** It does not imply that Nearby is restaurants-only.
 
 ## Exclusions
 

@@ -36,7 +36,7 @@
     "refreshLocation": "刷新位置",
     "startPlanning": "规划我的一天",
     "findNearby": "查找附近的去处",
-    "findNearbyHint": "附近的真实餐厅，由您自己选择。",
+    "findNearbyHint": "附近的真实地点，由您自己选择。",
     "resumePlan": "继续您的计划",
     "resumePlanDetails": "已规划 {{count}} 个地点",
     "findingLocation": "📍 正在定位...",

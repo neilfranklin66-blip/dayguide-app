@@ -36,7 +36,7 @@
     "refreshLocation": "Refresh Location",
     "startPlanning": "Plan a day",
     "findNearby": "Find something nearby",
-    "findNearbyHint": "Real nearby restaurants, chosen by you.",
+    "findNearbyHint": "Real nearby places, chosen by you.",
     "resumePlan": "Resume your plan",
     "resumePlanDetails": "{{count}} planned stops",
     "findingLocation": "📍 Finding your location...",
