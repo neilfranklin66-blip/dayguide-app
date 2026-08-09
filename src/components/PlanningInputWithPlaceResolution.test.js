@@ -11,6 +11,14 @@ const euston = createPlaceRef({
   source: 'google_places',
 });
 
+const theatre = createPlaceRef({
+  id: 'theatre-id',
+  name: 'Royal Theatre',
+  address: 'Guildhall Road, Northampton',
+  coordinates: { lat: 52.237, lng: -0.895 },
+  source: 'google_places',
+});
+
 test('does not search while the user is typing', () => {
   const searchPlaces = jest.fn();
   render(
@@ -186,6 +194,56 @@ test('sends a postcode unchanged to the place search', async () => {
   );
   await screen.findByText(
     'No verified matches were found. Try a station name, venue, hotel or fuller address.',
+  );
+});
+
+test('selects a different searched destination without replacing the start', async () => {
+  const onComplete = jest.fn();
+  const searchPlaces = jest.fn(query =>
+    Promise.resolve(query === 'London Euston' ? [euston] : [theatre]),
+  );
+  render(
+    <PlanningInputWithPlaceResolution
+      searchPlaces={searchPlaces}
+      onComplete={onComplete}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  fireEvent.change(
+    screen.getByLabelText('Place, address, postcode or ZIP code'),
+    { target: { value: 'London Euston' } },
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+  fireEvent.click(
+    await screen.findByRole('button', { name: 'Start at London Euston' }),
+  );
+
+  fireEvent.click(screen.getByLabelText('Add an end destination'));
+  fireEvent.change(
+    screen.getByLabelText(
+      'Place, address, postcode or ZIP code for your destination',
+    ),
+    { target: { value: 'Royal Theatre' } },
+  );
+  fireEvent.click(screen.getAllByRole('button', { name: 'Search' }).at(-1));
+  fireEvent.click(
+    await screen.findByRole('button', { name: 'Finish at Royal Theatre' }),
+  );
+
+  expect(screen.getByText('Your day will start at London Euston.')).toBeInTheDocument();
+  expect(screen.getByText('Your day will finish at Royal Theatre.')).toBeInTheDocument();
+  fireEvent.click(
+    screen.getByRole('button', {
+      name: 'Continue with these fixed details',
+    }),
+  );
+
+  expect(onComplete).toHaveBeenCalledWith(
+    expect.objectContaining({
+      start: expect.objectContaining({ place: euston }),
+      end: expect.objectContaining({ place: theatre }),
+    }),
   );
 });
 

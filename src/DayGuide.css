@@ -542,7 +542,7 @@ p {
   gap: 10px;
 }
 
-.planning-start-place-search {
+.planning-place-search {
   margin: 20px 0;
   padding: 16px;
   border: 1px solid #d0d8f8;
@@ -550,16 +550,16 @@ p {
   background: #f8f9ff;
 }
 
-.planning-start-place-search h3 {
+.planning-place-search h3 {
   margin-top: 0;
 }
 
-.planning-start-place-search form {
+.planning-place-search form {
   display: grid;
   gap: 10px;
 }
 
-.planning-start-place-search .btn-secondary {
+.planning-place-search .btn-secondary {
   width: 100%;
 }
 

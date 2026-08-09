@@ -73,6 +73,7 @@ export default function PlanningInputStage({
   draft: controlledDraft = null,
   onDraftChange = null,
   startPlaceControl = null,
+  destinationPlaceControl = null,
   onComplete,
   onCancel,
   onSkip,
@@ -194,21 +195,23 @@ export default function PlanningInputStage({
 
         {draft.destination.enabled && (
           <>
-            <ResolvedPlaceSelect
-              id="planning-end-place"
-              label={t('planning.destinationPlace', {
-                defaultValue: 'Where should your day finish?',
-              })}
-              selection={draft.destination.selection}
-              onChange={selection =>
-                updateDraft(current =>
-                  setDestinationSelection(current, selection),
-                )
-              }
-              currentPlace={currentPlace}
-              availablePlaces={availablePlaces}
-              t={t}
-            />
+            {destinationPlaceControl ?? (
+              <ResolvedPlaceSelect
+                id="planning-end-place"
+                label={t('planning.destinationPlace', {
+                  defaultValue: 'Where should your day finish?',
+                })}
+                selection={draft.destination.selection}
+                onChange={selection =>
+                  updateDraft(current =>
+                    setDestinationSelection(current, selection),
+                  )
+                }
+                currentPlace={currentPlace}
+                availablePlaces={availablePlaces}
+                t={t}
+              />
+            )}
 
             <div className="time-selector">
               <label htmlFor="planning-end-deadline">

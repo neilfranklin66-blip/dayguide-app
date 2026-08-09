@@ -280,7 +280,19 @@ test('a searched start location enables live activities when location is denied'
     countryCode: 'GB',
     timezone: null,
   };
-  mockResolvePlaceQueryImpl = () => Promise.resolve([euston]);
+  const theatre = {
+    id: 'theatre',
+    name: 'Royal Theatre',
+    address: 'Guildhall Road, Northampton',
+    coordinates: { lat: 52.237, lng: -0.895 },
+    source: 'google_places',
+    accuracyMeters: null,
+    locality: 'Northampton',
+    countryCode: 'GB',
+    timezone: null,
+  };
+  mockResolvePlaceQueryImpl = query =>
+    Promise.resolve(query === 'London Euston' ? [euston] : [theatre]);
   useGeolocation.mockReturnValue(erroredGeo);
   render(<DayGuide />);
 
@@ -299,6 +311,15 @@ test('a searched start location enables live activities when location is denied'
   fireEvent.click(screen.getByText('planning.searchAction'));
   expect(await screen.findByText('London Euston')).toBeInTheDocument();
   fireEvent.click(screen.getByText('planning.selectStartPlace'));
+  fireEvent.click(screen.getByLabelText('planning.addDestination'));
+  fireEvent.change(screen.getByLabelText('planning.destinationSearchLabel'), {
+    target: { value: 'Royal Theatre' },
+  });
+  fireEvent.click(
+    screen.getAllByRole('button', { name: 'planning.searchAction' }).at(-1),
+  );
+  expect(await screen.findByText('Royal Theatre')).toBeInTheDocument();
+  fireEvent.click(screen.getByText('planning.selectDestinationPlace'));
   fireEvent.click(screen.getByText('planning.continue'));
 
   expect(await screen.findByText('Live Test Museum')).toBeInTheDocument();

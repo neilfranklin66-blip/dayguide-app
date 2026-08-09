@@ -35,6 +35,9 @@ or call a provider. Google Routes and Ticketmaster remain out of scope.
   A user can search for a place, address, postcode or ZIP code and select a
   result directly. Selecting it immediately makes it the planning start; there
   is no separate Add action or empty technical dropdown.
+- The optional end destination now uses the matching direct pattern: **Where
+  will you finish?** It has its own place, address, postcode and ZIP-code
+  search; selecting a result cannot replace the chosen start.
 
 ## Unpublished-preview evidence so far
 
@@ -74,6 +77,9 @@ nearby-distance claim. The current selection flow cannot import
 - The named-start correction's focused suite passed: 5 suites, 1,359 tests.
 - The selected-start hand-off correction's broader focused suite passed: 6
   suites, 1,414 tests, including a denied-location named-start activity test.
+- The independent-destination correction's broader focused suite passed: 6
+  suites, 1,475 tests. It verifies distinct selected start/end places and that
+  live activities still use the start coordinates.
 - `src/DayGuide.test.js`: 54 tests passed after the asynchronous live-search
   conversion.
 - Full-suite and production-build validation are still required before review
@@ -86,17 +92,20 @@ nearby-distance claim. The current selection flow cannot import
 2. Set a named start that differs from the phone location: search by a named
    place, address or postcode, select a result directly, then confirm activity
    cards move with the named start.
-3. In a separate private browser window, deny location, set a named start using
+3. Add an optional, different named end destination with its own direct search.
+   Confirm the start and finish remain distinct, and that activity cards still
+   use the start area.
+4. In a separate private browser window, deny location, set a named start using
    the direct control, and confirm real activity cards appear around that start.
    Also deny location without setting a start: confirm the brief unavailable
    card and no sample card.
-4. Confirm an explicit activity choice keeps the current selection flow. The
+5. Confirm an explicit activity choice keeps the current selection flow. The
    adult-only guard is automated coverage for any future broad activity search
    made with children in the party; the present Plan-a-Day screen requires an
    activity choice before continuing.
-5. Resume an older saved plan, if available: confirm any legacy sample row keeps
+6. Resume an older saved plan, if available: confirm any legacy sample row keeps
    its sample note.
-6. Repeat the core route in one non-English locale and on a phone.
+7. Repeat the core route in one non-English locale and on a phone.
 
 ## Deliberate deferrals
 
