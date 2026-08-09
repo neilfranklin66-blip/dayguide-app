@@ -2,7 +2,8 @@
 
 ## Status
 
-**Local candidate. Not pushed, previewed, accepted, merged, or Production-live.**
+**Draft PR 16 candidate. An unpublished-preview visual check is requested;
+it is not accepted, merged, or Production-live.**
 
 ## Purpose
 
