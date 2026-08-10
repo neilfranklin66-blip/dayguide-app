@@ -1,0 +1,39 @@
+:root {
+  /* DayGuide v1 visual foundation. These tokens preserve the existing blue
+     identity while giving future screens one consistent visual language. */
+  --dg-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
+
+  --dg-color-brand: #667eea;
+  --dg-color-brand-strong: #4f46e5;
+  --dg-color-brand-deep: #312e81;
+  --dg-color-brand-accent: #764ba2;
+  --dg-color-focus: #b45309;
+  --dg-color-text: #172033;
+  --dg-color-text-secondary: #4b5563;
+  --dg-color-text-muted: #667085;
+  --dg-color-surface: #ffffff;
+  --dg-color-surface-muted: #f8f9ff;
+  --dg-color-surface-selected: #eef2ff;
+  --dg-color-border: #b6c2d5;
+  --dg-color-border-soft: #d7dcff;
+
+  --dg-space-1: 4px;
+  --dg-space-2: 8px;
+  --dg-space-3: 12px;
+  --dg-space-4: 16px;
+  --dg-space-5: 20px;
+  --dg-space-6: 24px;
+  --dg-space-8: 32px;
+
+  --dg-radius-sm: 8px;
+  --dg-radius-md: 12px;
+  --dg-radius-lg: 16px;
+  --dg-radius-xl: 20px;
+  --dg-shadow-card: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+  --dg-control-height: 52px;
+  --dg-field-height: 64px;
+  --dg-touch-target: 44px;
+}
