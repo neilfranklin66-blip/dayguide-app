@@ -13,11 +13,12 @@ const baseProps = {
   onFindNearby: jest.fn(),
 };
 
-test('renders welcome copy and detected location', () => {
+test('renders welcome copy and a quiet ready status without exact coordinates', () => {
   render(<WelcomeStage {...baseProps} />);
 
   expect(screen.getByText('welcome.tagline')).toBeInTheDocument();
-  expect(screen.getByText(/51\.50722, -0\.12750/)).toBeInTheDocument();
+  expect(screen.getByText('welcome.locationReady')).toBeInTheDocument();
+  expect(screen.queryByText(/51\.50722, -0\.12750/)).not.toBeInTheDocument();
 });
 
 test('keeps a location error as naturally wrapping text', () => {

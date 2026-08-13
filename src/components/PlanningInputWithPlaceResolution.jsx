@@ -32,6 +32,8 @@ export default function PlanningInputWithPlaceResolution({
   onComplete,
   onCancel,
   onSkip,
+  selectedDate,
+  onSelectedDateChange,
   searchPlaces = resolvePlaceQuery,
   t = fallbackT,
 }) {
@@ -161,6 +163,8 @@ export default function PlanningInputWithPlaceResolution({
       onComplete={onComplete}
       onCancel={onCancel}
       onSkip={onSkip}
+      selectedDate={selectedDate}
+      onSelectedDateChange={onSelectedDateChange}
       t={t}
     />
   );

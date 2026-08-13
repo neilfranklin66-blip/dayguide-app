@@ -1,13 +1,18 @@
 import React from 'react';
 
-export default function DateSelector({ selectedDate, onChange, t }) {
+export default function DateSelector({
+  selectedDate,
+  onChange,
+  t,
+  id = 'interests-date',
+}) {
   return (
     <div className="time-selector">
-      <label htmlFor="interests-date">
+      <label htmlFor={id}>
         {t('interests.dateLabel') || 'What date do you want to plan?'}
       </label>
       <input
-        id="interests-date"
+        id={id}
         type="date"
         value={selectedDate}
         onChange={e => onChange(e.target.value)}

@@ -603,6 +603,17 @@ select:focus-visible {
   background: #f4f6ff;
 }
 
+.welcome-location-status {
+  min-height: 28px;
+  margin-top: 16px;
+  color: var(--dg-color-text-muted);
+  font-size: 0.9rem;
+}
+
+.welcome-location-status p {
+  margin: 0;
+}
+
 .welcome-discovery-hint {
   margin: -2px 8px 4px;
   color: #606775;
@@ -642,6 +653,104 @@ select:focus-visible {
 .discovery-option:hover {
   border-color: #667eea;
   background: #f6f7ff;
+}
+
+.planning-stage-intro {
+  margin-top: -8px;
+  margin-bottom: 20px;
+}
+
+.commitment-type-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.commitment-type-options .btn-secondary {
+  min-height: 44px;
+  margin: 0;
+  padding: 8px;
+  font-size: 0.85rem;
+}
+
+.plan-mood-stage {
+  text-align: left;
+}
+
+.stage-eyebrow {
+  margin: 0 0 6px;
+  color: var(--dg-color-brand-strong);
+  font-size: 0.9rem;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.plan-mood-options {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.plan-mood-option {
+  min-height: 108px;
+  padding: 18px;
+  border: 2px solid var(--dg-color-border-soft);
+  border-radius: var(--dg-radius-lg);
+  background: var(--dg-color-surface);
+  color: var(--dg-color-text);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 4px 12px;
+  text-align: left;
+}
+
+.plan-mood-option > span {
+  grid-row: span 2;
+  align-self: center;
+  font-size: 1.7rem;
+}
+
+.plan-mood-option strong {
+  font-size: 1.05rem;
+}
+
+.plan-mood-option small {
+  color: var(--dg-color-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.plan-mood-option:hover {
+  border-color: var(--dg-color-brand);
+  background: var(--dg-color-surface-muted);
+}
+
+.nearby-result-stage {
+  text-align: left;
+}
+
+.nearby-result-type {
+  color: var(--dg-color-brand-deep);
+  font-weight: 700;
+}
+
+.nearby-result-maps {
+  display: inline-flex;
+  margin: 10px 0 20px;
+}
+
+.nearby-result-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.nearby-result-actions .btn-primary,
+.nearby-result-actions .btn-secondary {
+  width: 100%;
+  margin: 0;
 }
 
 .discovery-all {

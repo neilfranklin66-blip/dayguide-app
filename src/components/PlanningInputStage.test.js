@@ -70,14 +70,14 @@ test('keeps optional later plans together and closed until wanted', () => {
   );
 
   expect(
-    screen.getByRole('button', { name: 'Need to be somewhere later?' }),
+    screen.getByRole('button', { name: 'Add a finish or one important time' }),
   ).toHaveAttribute('aria-expanded', 'false');
   expect(screen.queryByLabelText('Where should your day finish?')).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
   expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
 });
 
-test('a selected start keeps the recovery route and hides the no-details escape', () => {
+test('a selected start enables continuation without an old no-details escape', () => {
   const draft = setStartSelection(
     createPlanningInputDraft(),
     createPlaceSelection({
@@ -92,7 +92,6 @@ test('a selected start keeps the recovery route and hides the no-details escape'
       initialDraft={draft}
       onComplete={jest.fn()}
       onCancel={jest.fn()}
-      onSkip={jest.fn()}
     />,
   );
 
@@ -147,7 +146,7 @@ test('planning input stage collects a destination and optional deadline', () => 
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
   fireEvent.change(screen.getByLabelText('Where should your day finish?'), {
     target: { value: 'resolved:hotel' },
   });
@@ -186,7 +185,7 @@ test('a later-plan section can be opened and left unused', () => {
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
   expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Continue with these fixed details' }));
   expect(onComplete).toHaveBeenCalledWith(
@@ -210,8 +209,8 @@ test('planning input stage adds and completes with a planner-locked anchor', asy
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add one important time' }));
   fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Evening theatre' },
   });
@@ -263,8 +262,8 @@ test('planning input stage edits and removes a fixed anchor deliberately', async
     />,
   );
 
-  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Add a time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Add one important time' }));
   fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Theatre' },
   });
@@ -283,7 +282,7 @@ test('planning input stage edits and removes a fixed anchor deliberately', async
   fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Updated theatre' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Save time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Save important time' }));
 
   expect(screen.getByText('Updated theatre')).toBeInTheDocument();
 
@@ -292,7 +291,7 @@ test('planning input stage edits and removes a fixed anchor deliberately', async
   );
 
   expect(screen.queryByText('Updated theatre')).not.toBeInTheDocument();
-  expect(screen.getByRole('button', { name: 'Add a time' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Add one important time' })).toBeInTheDocument();
 });
 
 test('planning input stage can begin from a preselected draft', () => {
@@ -316,5 +315,5 @@ test('planning input stage can begin from a preselected draft', () => {
   expect(screen.getByLabelText('Where does your day start?')).toHaveValue(
     'resolved:euston',
   );
-  expect(screen.queryByLabelText('What time does your day start?')).not.toBeInTheDocument();
+  expect(screen.getByLabelText('What time would you like to start?')).toHaveValue('10:00');
 });

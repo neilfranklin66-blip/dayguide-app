@@ -101,7 +101,7 @@ test('hard anchor editor updates an existing anchor without changing its id', ()
   fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Updated theatre' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Save time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Save important time' }));
 
   expect(onSave).toHaveBeenCalledWith(
     expect.objectContaining({

@@ -143,6 +143,19 @@ export default function DirectPlaceSearch({
         {t(hintKey, { defaultValue: hintDefault })}
       </p>
 
+      {secondaryAction && (
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={secondaryAction.onClick}
+        >
+          {t(secondaryAction.key, {
+            name: secondaryAction.name,
+            defaultValue: secondaryAction.defaultValue,
+          })}
+        </button>
+      )}
+
       {selectedPlace && (
         <div className="selected-place-summary" role="status">
           <p>
@@ -163,19 +176,6 @@ export default function DirectPlaceSearch({
             </button>
           )}
         </div>
-      )}
-
-      {secondaryAction && (
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={secondaryAction.onClick}
-        >
-          {t(secondaryAction.key, {
-            name: secondaryAction.name,
-            defaultValue: secondaryAction.defaultValue,
-          })}
-        </button>
       )}
 
       <SearchContainer

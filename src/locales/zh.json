@@ -40,7 +40,8 @@
     "resumePlan": "继续您的计划",
     "resumePlanDetails": "已规划 {{count}} 个地点",
     "findingLocation": "📍 正在定位...",
-    "gettingCoordinates": "正在获取 GPS 坐标..."
+    "gettingCoordinates": "正在获取 GPS 坐标...",
+    "locationReady": "需要时位置已准备好。"
   },
   "discovery": {
     "title": "您想找什么？", "subtitle": "选择一项即可查看附近的真实地点。",
@@ -162,7 +163,11 @@
     "arriveMinutesEarly": "提前预留一些时间",
     "cancel": "取消",
     "saveAnchor": "保存时间",
-    "addAnchorAction": "添加时间",
+    "addAnchorAction": "添加一个重要时间",
+    "simpleIntro": "先填写基本信息。之后可以添加一个重要安排。",
+    "commitmentTypeTheatre": "剧院或电影院",
+    "commitmentTypeMeeting": "约会",
+    "commitmentTypeOther": "其他",
     "summaryTitle": "您之后的计划",
     "summaryStart": "开始：{{name}}，{{time}}",
     "summaryDestinationWithoutDeadline": "结束：{{name}}",
@@ -179,6 +184,24 @@
       "anchorIdDuplicate": "两个固定锚点使用了相同标识符。",
       "general": "请检查地理规划信息。"
     }
+  },
+  "planMood": {
+    "eyebrow": "你的一天正在成形",
+    "title": "你想做什么？",
+    "subtitle": "选择一项。您可以保持简单，也可以稍后添加另一站。",
+    "foodTitle": "餐饮",
+    "foodDetail": "找个好地方吃饭或喝咖啡。",
+    "activitiesTitle": "可做的事",
+    "activitiesDetail": "找一个值得参观、体验或探索的地方。",
+    "bothTitle": "两种都看看",
+    "bothDetail": "先选择一件事做，如果愿意再加一顿饭。",
+    "back": "返回当天详情"
+  },
+  "nearbyResult": {
+    "eyebrow": "您附近的选择",
+    "liveSource": "来自 Google Places 的实时信息",
+    "distance": "距离 {{distance}} 公里",
+    "findAnother": "再找一个"
   },
   "activities": {
     "title": "活动",

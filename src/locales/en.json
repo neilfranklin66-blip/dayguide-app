@@ -40,7 +40,8 @@
     "resumePlan": "Resume your plan",
     "resumePlanDetails": "{{count}} planned stops",
     "findingLocation": "📍 Finding your location...",
-    "gettingCoordinates": "Getting your GPS coordinates..."
+    "gettingCoordinates": "Getting your GPS coordinates...",
+    "locationReady": "Location ready when you need it."
   },
   "discovery": {
     "title": "What would you like to find?",
@@ -185,7 +186,11 @@
     "arriveMinutesEarly": "Allow extra time before",
     "cancel": "Cancel",
     "saveAnchor": "Save time",
-    "addAnchorAction": "Add a time",
+    "addAnchorAction": "Add one important time",
+    "simpleIntro": "Start with the essentials. You can add one important stop later.",
+    "commitmentTypeTheatre": "Theatre or cinema",
+    "commitmentTypeMeeting": "Meeting",
+    "commitmentTypeOther": "Other",
     "summaryTitle": "Your later plans",
     "summaryStart": "Start: {{name}} at {{time}}",
     "summaryDestinationWithoutDeadline": "Finish: {{name}}",
@@ -202,6 +207,24 @@
       "anchorIdDuplicate": "Two fixed anchors have the same identifier.",
       "general": "Check the geographical planning details."
     }
+  },
+  "planMood": {
+    "eyebrow": "Your day takes shape",
+    "title": "What are you in the mood for?",
+    "subtitle": "Choose one. You can keep it simple or add another stop later.",
+    "foodTitle": "Food & drink",
+    "foodDetail": "Find somewhere good to eat or have a coffee.",
+    "activitiesTitle": "Things to do",
+    "activitiesDetail": "Find a place worth seeing, doing or exploring.",
+    "bothTitle": "Show me both",
+    "bothDetail": "Start with something to do, then add food if you want it.",
+    "back": "Back to your day details"
+  },
+  "nearbyResult": {
+    "eyebrow": "Your nearby pick",
+    "liveSource": "Live from Google Places",
+    "distance": "{{distance}} km away",
+    "findAnother": "Find another"
   },
   "activities": {
     "title": "Activities",

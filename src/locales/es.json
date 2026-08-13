@@ -40,7 +40,8 @@
     "resumePlan": "Reanudar tu plan",
     "resumePlanDetails": "{{count}} paradas planificadas",
     "findingLocation": "📍 Encontrando tu ubicación...",
-    "gettingCoordinates": "Obteniendo tus coordenadas GPS..."
+    "gettingCoordinates": "Obteniendo tus coordenadas GPS...",
+    "locationReady": "Tu ubicación estará lista cuando la necesites."
   },
   "discovery": {
     "title": "¿Qué te gustaría encontrar?", "subtitle": "Elige una opción para ver lugares reales cerca de ti.",
@@ -162,7 +163,11 @@
     "arriveMinutesEarly": "Deja tiempo extra antes",
     "cancel": "Cancelar",
     "saveAnchor": "Guardar hora",
-    "addAnchorAction": "Añadir una hora",
+    "addAnchorAction": "Añadir una hora importante",
+    "simpleIntro": "Empieza con lo esencial. Después podrás añadir una parada importante.",
+    "commitmentTypeTheatre": "Teatro o cine",
+    "commitmentTypeMeeting": "Reunión",
+    "commitmentTypeOther": "Otro",
     "summaryTitle": "Tus planes posteriores",
     "summaryStart": "Inicio: {{name}} a las {{time}}",
     "summaryDestinationWithoutDeadline": "Final: {{name}}",
@@ -179,6 +184,24 @@
       "anchorIdDuplicate": "Dos anclas fijas tienen el mismo identificador.",
       "general": "Comprueba los datos de planificación geográfica."
     }
+  },
+  "planMood": {
+    "eyebrow": "Tu día va tomando forma",
+    "title": "¿Qué te apetece?",
+    "subtitle": "Elige una opción. Puedes mantenerlo sencillo o añadir otra parada después.",
+    "foodTitle": "Comida y bebida",
+    "foodDetail": "Encuentra un buen lugar para comer o tomar un café.",
+    "activitiesTitle": "Cosas que hacer",
+    "activitiesDetail": "Encuentra un lugar que merezca la pena ver, hacer o explorar.",
+    "bothTitle": "Muéstrame ambos",
+    "bothDetail": "Empieza con algo que hacer y añade comida si te apetece.",
+    "back": "Volver a los detalles de tu día"
+  },
+  "nearbyResult": {
+    "eyebrow": "Tu elección cercana",
+    "liveSource": "En directo desde Google Places",
+    "distance": "A {{distance}} km",
+    "findAnother": "Buscar otro"
   },
   "activities": {
     "title": "Actividades",

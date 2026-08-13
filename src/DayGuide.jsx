@@ -12,7 +12,6 @@ import {
   getGeographicSearchAreas,
 } from './engines/geographicChoiceEngine';
 import {
-  getInitialSelectionRoute,
   getRouteAfterActivities,
   getRouteAfterRestaurants,
 } from './engines/itineraryRouteEngine';
@@ -38,6 +37,8 @@ import RestaurantsStage from './components/RestaurantsStage';
 import TimelineStage from './components/TimelineStage';
 import PlanningInputWithPlaceResolution from './components/PlanningInputWithPlaceResolution';
 import GeographicChoiceCard from './components/GeographicChoiceCard';
+import PlanMoodStage from './components/PlanMoodStage';
+import NearbyResultStage from './components/NearbyResultStage';
 import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
 import { getRestaurantSearchRequestOutcome } from './utils/restaurantSearchRequest';
 import {
@@ -135,6 +136,7 @@ const DayGuide = () => {
   const [restaurantSource, setRestaurantSource] = useState(null);
   const [restaurantNextPageToken, setRestaurantNextPageToken] = useState(null);
   const [nearbyDiscoveryMode, setNearbyDiscoveryMode] = useState(null);
+  const [nearbyResult, setNearbyResult] = useState(null);
   const [travelPreferences, setTravelPreferences] = useState(
     loadTravelPreferences,
   );
@@ -233,7 +235,7 @@ const DayGuide = () => {
   }, [stage, locationLoading]);
 
   const handleStartPlanning = () => {
-    setStage(locationLoading ? 'location' : 'interests');
+    setStage('planning');
   };
 
   // Discovery starts with one clear fork. Food and activities then use the
@@ -255,6 +257,7 @@ const DayGuide = () => {
     geographicChoiceShownRef.current = false;
 
     setNearbyDiscoveryMode(null);
+    setNearbyResult(null);
     setRestaurantNextPageToken(null);
     setStage('discovery');
   };
@@ -298,6 +301,7 @@ const DayGuide = () => {
     setIsRestaurantsLoading(false);
     setRestaurantSource(null);
     setNearbyDiscoveryMode(null);
+    setNearbyResult(null);
     setSelectedDate(new Date().toISOString().split('T')[0]);
     isResumedPlanRef.current = false;
     clearPlan();
@@ -319,24 +323,6 @@ const DayGuide = () => {
     );
   };
 
-  const continueToSelectionRoute = (planningOverride = geographicalPlanning) => {
-    const route = getInitialSelectionRoute({ startWith });
-
-    if (route === 'restaurants') {
-      goToRestaurants(
-        selectedCuisines,
-        selectedPriceRange,
-        planningOverride,
-      );
-    } else {
-      goToActivities(undefined, planningOverride);
-    }
-  };
-
-  const goToNextSelectionStage = () => {
-    setStage('planning');
-  };
-
   const completeGeographicalPlanning = planningInput => {
     const assessment = assessGeographicalPlanningInput({
       planningInput,
@@ -348,16 +334,22 @@ const DayGuide = () => {
     setGeographicSearchArea(null);
     geographicChoiceShownRef.current = false;
     setStartTime(planningInput.start.departureTimeMinutes / 60);
-    continueToSelectionRoute(planningInput);
+    setStage('plan-mood');
   };
 
-  const skipGeographicalPlanning = () => {
-    setGeographicalPlanning(null);
-    setGeographicalAssessment(null);
-    setGeographicChoice(null);
-    setGeographicSearchArea(null);
-    geographicChoiceShownRef.current = false;
-    continueToSelectionRoute(null);
+  const choosePlanMood = choice => {
+    if (choice === 'food') {
+      setStartWith('activities');
+      goToRestaurants([], null, geographicalPlanning);
+      return;
+    }
+    if (choice === 'activities') {
+      setStartWith('food_drinks');
+      goToActivities([], geographicalPlanning);
+      return;
+    }
+    setStartWith('activities');
+    goToActivities([], geographicalPlanning);
   };
 
   const continueAfterRestaurants = (restaurants = selectedRestaurantsRef.current) => {
@@ -563,6 +555,11 @@ const DayGuide = () => {
 
     if (liked && currentActivity) {
       setSelectedActivities(newSelected);
+      if (nearbyDiscoveryMode === 'activities') {
+        setNearbyResult({ type: 'activities', place: currentActivity });
+        setStage('nearby-result');
+        return;
+      }
       if (offerGeographicChoice(currentActivity, newSelected, 'activities')) {
         return;
       }
@@ -598,6 +595,11 @@ const DayGuide = () => {
       popupCooldowns.current.nearbyRestaurant = Date.now();
       selectedRestaurantsRef.current = newSelected;
       setSelectedRestaurants(newSelected);
+      if (nearbyDiscoveryMode === 'food') {
+        setNearbyResult({ type: 'food', place: currentRestaurant });
+        setStage('nearby-result');
+        return;
+      }
       if (offerGeographicChoice(currentRestaurant, newSelected, 'restaurants')) {
         return;
       }
@@ -837,7 +839,7 @@ const DayGuide = () => {
           setStartWith={setStartWith}
           travelPreferences={travelPreferences}
           onTravelPreferencesChange={updateTravelPreferences}
-          goToNextSelectionStage={goToNextSelectionStage}
+          goToNextSelectionStage={() => setStage('planning')}
           t={t}
         />
       );
@@ -872,8 +874,34 @@ const DayGuide = () => {
           initialPlaces={collectPlanningPlaces(geographicalPlanning)}
           initialDraft={initialDraft}
           onComplete={completeGeographicalPlanning}
-          onCancel={() => setStage('interests')}
-          onSkip={skipGeographicalPlanning}
+          onCancel={() => setStage('welcome')}
+          selectedDate={selectedDate}
+          onSelectedDateChange={setSelectedDate}
+          t={t}
+        />
+      );
+    }
+
+    if (stage === 'plan-mood') {
+      return (
+        <PlanMoodStage
+          onChoose={choosePlanMood}
+          onBack={() => setStage('planning')}
+          t={t}
+        />
+      );
+    }
+
+    if (stage === 'nearby-result') {
+      return (
+        <NearbyResultStage
+          result={nearbyResult}
+          onStartOver={resetState}
+          onFindAnother={() => {
+            setNearbyResult(null);
+            if (nearbyDiscoveryMode === 'food') goToRestaurants([], null, null);
+            else goToActivities([], null);
+          }}
           t={t}
         />
       );

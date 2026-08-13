@@ -40,7 +40,8 @@
     "resumePlan": "Reprendre votre plan",
     "resumePlanDetails": "{{count}} étapes prévues",
     "findingLocation": "📍 Localisation en cours...",
-    "gettingCoordinates": "Récupération de vos coordonnées GPS..."
+    "gettingCoordinates": "Récupération de vos coordonnées GPS...",
+    "locationReady": "Votre position sera prête quand vous en aurez besoin."
   },
   "discovery": {
     "title": "Qu’aimeriez-vous trouver ?", "subtitle": "Choisissez une option pour voir de vrais lieux à proximité.",
@@ -162,7 +163,11 @@
     "arriveMinutesEarly": "Prévoyez un peu de temps avant",
     "cancel": "Annuler",
     "saveAnchor": "Enregistrer l'heure",
-    "addAnchorAction": "Ajouter une heure",
+    "addAnchorAction": "Ajouter une heure importante",
+    "simpleIntro": "Commencez par l’essentiel. Vous pourrez ajouter un arrêt important plus tard.",
+    "commitmentTypeTheatre": "Théâtre ou cinéma",
+    "commitmentTypeMeeting": "Rendez-vous",
+    "commitmentTypeOther": "Autre",
     "summaryTitle": "Vos projets plus tard",
     "summaryStart": "Départ : {{name}} à {{time}}",
     "summaryDestinationWithoutDeadline": "Arrivée : {{name}}",
@@ -179,6 +184,24 @@
       "anchorIdDuplicate": "Deux points fixes possèdent le même identifiant.",
       "general": "Vérifiez les détails de planification géographique."
     }
+  },
+  "planMood": {
+    "eyebrow": "Votre journée prend forme",
+    "title": "Qu’avez-vous envie de faire ?",
+    "subtitle": "Choisissez une option. Vous pourrez ajouter un autre arrêt plus tard.",
+    "foodTitle": "Manger et boire",
+    "foodDetail": "Trouvez un bon endroit pour manger ou prendre un café.",
+    "activitiesTitle": "À faire",
+    "activitiesDetail": "Trouvez un lieu à voir, à faire ou à explorer.",
+    "bothTitle": "Montrez-moi les deux",
+    "bothDetail": "Commencez par quelque chose à faire, puis ajoutez un repas si vous le souhaitez.",
+    "back": "Retour aux détails de votre journée"
+  },
+  "nearbyResult": {
+    "eyebrow": "Votre choix à proximité",
+    "liveSource": "En direct de Google Places",
+    "distance": "À {{distance}} km",
+    "findAnother": "En trouver un autre"
   },
   "activities": {
     "title": "Activités",

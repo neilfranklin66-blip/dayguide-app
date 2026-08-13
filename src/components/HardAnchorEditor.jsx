@@ -51,6 +51,10 @@ export default function HardAnchorEditor({
   );
   const [error, setError] = useState(null);
 
+  const setSuggestedTitle = value => {
+    setTitle(value);
+  };
+
   const selectAnchorPlace = place => {
     setSelection(
       createPlaceSelection({
@@ -129,6 +133,24 @@ export default function HardAnchorEditor({
           onChange={event => setTitle(event.target.value)}
           className="time-input"
         />
+        {!initialAnchor && (
+          <div className="commitment-type-options" aria-label="Common important times">
+            {[
+              ['planning.commitmentTypeTheatre', 'Theatre or cinema'],
+              ['planning.commitmentTypeMeeting', 'Meeting'],
+              ['planning.commitmentTypeOther', 'Other'],
+            ].map(([key, defaultValue]) => (
+              <button
+                key={key}
+                type="button"
+                className="btn-secondary"
+                onClick={() => setSuggestedTitle(t(key, { defaultValue }))}
+              >
+                {t(key, { defaultValue })}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <DirectPlaceSearch
@@ -213,7 +235,7 @@ export default function HardAnchorEditor({
         </button>
         <button type="submit" className="btn-primary">
           {initialAnchor
-            ? t('planning.saveAnchor', { defaultValue: 'Save time' })
+            ? t('planning.saveAnchor', { defaultValue: 'Save important time' })
             : t('planning.addAnchorAction', { defaultValue: 'Add a time' })}
         </button>
       </div>

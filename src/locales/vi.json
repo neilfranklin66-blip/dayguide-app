@@ -40,7 +40,8 @@
     "resumePlan": "Tiếp tục kế hoạch của bạn",
     "resumePlanDetails": "{{count}} điểm dừng đã lên kế hoạch",
     "findingLocation": "📍 Đang tìm vị trí của bạn...",
-    "gettingCoordinates": "Đang lấy tọa độ GPS của bạn..."
+    "gettingCoordinates": "Đang lấy tọa độ GPS của bạn...",
+    "locationReady": "Vị trí sẽ sẵn sàng khi bạn cần."
   },
   "discovery": {
     "title": "Bạn muốn tìm gì?", "subtitle": "Chọn một mục để xem các địa điểm thật ở gần bạn.",
@@ -162,7 +163,11 @@
     "arriveMinutesEarly": "Dành thêm thời gian trước",
     "cancel": "Hủy",
     "saveAnchor": "Lưu thời gian",
-    "addAnchorAction": "Thêm một giờ",
+    "addAnchorAction": "Thêm một thời điểm quan trọng",
+    "simpleIntro": "Bắt đầu với những điều cơ bản. Bạn có thể thêm một điểm dừng quan trọng sau.",
+    "commitmentTypeTheatre": "Nhà hát hoặc rạp chiếu phim",
+    "commitmentTypeMeeting": "Cuộc hẹn",
+    "commitmentTypeOther": "Khác",
     "summaryTitle": "Kế hoạch sau đó của bạn",
     "summaryStart": "Bắt đầu: {{name}} lúc {{time}}",
     "summaryDestinationWithoutDeadline": "Kết thúc: {{name}}",
@@ -179,6 +184,24 @@
       "anchorIdDuplicate": "Hai mốc cố định có cùng mã nhận dạng.",
       "general": "Kiểm tra chi tiết lập kế hoạch địa lý."
     }
+  },
+  "planMood": {
+    "eyebrow": "Ngày của bạn đang thành hình",
+    "title": "Bạn đang muốn làm gì?",
+    "subtitle": "Chọn một. Bạn có thể giữ đơn giản hoặc thêm một điểm dừng sau.",
+    "foodTitle": "Ăn uống",
+    "foodDetail": "Tìm một nơi ngon để ăn hoặc uống cà phê.",
+    "activitiesTitle": "Việc để làm",
+    "activitiesDetail": "Tìm một nơi đáng để xem, trải nghiệm hoặc khám phá.",
+    "bothTitle": "Cho tôi xem cả hai",
+    "bothDetail": "Bắt đầu với một việc để làm, rồi thêm đồ ăn nếu bạn muốn.",
+    "back": "Quay lại chi tiết ngày của bạn"
+  },
+  "nearbyResult": {
+    "eyebrow": "Lựa chọn gần bạn",
+    "liveSource": "Trực tiếp từ Google Places",
+    "distance": "Cách {{distance}} km",
+    "findAnother": "Tìm địa điểm khác"
   },
   "activities": {
     "title": "Hoạt động",

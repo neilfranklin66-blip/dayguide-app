@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import HardAnchorEditor from './HardAnchorEditor';
+import DateSelector from './DateSelector';
 import DirectTimeInput from './DirectTimeInput';
 import ResolvedPlaceSelect from './ResolvedPlaceSelect';
 import {
   PLANNING_INPUT_ERROR,
-  PLACE_SELECTION_MODE,
   createPlanningInputDraft,
   finalizePlanningInput,
   isResolvedPlaceSelection,
@@ -13,6 +13,7 @@ import {
   setDestinationEnabled,
   setDestinationSelection,
   setDestinationTiming,
+  setDepartureTime,
   setStartSelection,
   timeInputToMinutes,
   upsertHardAnchor,
@@ -79,7 +80,8 @@ export default function PlanningInputStage({
   anchorSearchPlaces = undefined,
   onComplete,
   onCancel,
-  onSkip,
+  selectedDate,
+  onSelectedDateChange,
   t = fallbackT,
 }) {
   const [internalDraft, setInternalDraft] = useState(
@@ -104,6 +106,12 @@ export default function PlanningInputStage({
     );
   };
 
+  const updateDepartureTime = value => {
+    const minutes = timeInputToMinutes(value);
+    if (minutes == null) return;
+    updateDraft(current => setDepartureTime(current, minutes));
+  };
+
   const saveAnchor = anchor => {
     updateDraft(current => upsertHardAnchor(current, anchor));
     setEditor(null);
@@ -123,9 +131,8 @@ export default function PlanningInputStage({
   const destinationDeadline = minutesToTimeInput(
     draft.destination.arrivalDeadlineMinutes,
   );
+  const departureTime = minutesToTimeInput(draft.departureTimeMinutes);
   const hasSelectedStart = isResolvedPlaceSelection(draft.startSelection);
-  const hasNamedStartingPlace =
-    draft.startSelection?.mode === PLACE_SELECTION_MODE.RESOLVED_PLACE;
   const destinationNeedsPlace =
     draft.destination.enabled &&
     !isResolvedPlaceSelection(draft.destination.selection);
@@ -134,6 +141,29 @@ export default function PlanningInputStage({
     <div className="dayguide-container">
       <div className="card planning-input-stage">
         <h2>{t('planning.title', { defaultValue: 'Plan a day' })}</h2>
+        <p className="planning-stage-intro">
+          {t('planning.simpleIntro', {
+            defaultValue: 'Start with the essentials. You can add one important stop later.',
+          })}
+        </p>
+
+        {selectedDate && onSelectedDateChange && (
+          <DateSelector
+            selectedDate={selectedDate}
+            onChange={onSelectedDateChange}
+            t={t}
+            id="planning-date"
+          />
+        )}
+
+        <DirectTimeInput
+          id="planning-start-time"
+          label={t('planning.startTime', {
+            defaultValue: 'What time would you like to start?',
+          })}
+          value={departureTime}
+          onChange={updateDepartureTime}
+        />
 
         {startPlaceControl ?? (
           <ResolvedPlaceSelect
@@ -159,7 +189,7 @@ export default function PlanningInputStage({
             onClick={() => setLaterPlansOpen(current => !current)}
           >
             {t('planning.laterPlansPrompt', {
-              defaultValue: 'Need to be somewhere later?',
+              defaultValue: 'Add a finish or one important time',
             })}
           </button>
 
@@ -229,11 +259,9 @@ export default function PlanningInputStage({
             </div>
           )}
 
-          <section
-            aria-label={t('planning.addAnchor', {
-              defaultValue: 'Need to be somewhere later?',
-            })}
-          >
+          <section aria-label={t('planning.addAnchor', {
+            defaultValue: 'Add one important time',
+          })}>
           {draft.anchors.map(anchor => (
             <article key={anchor.id} className="later-plan-card">
               <h4>{anchor.title}</h4>
@@ -277,7 +305,7 @@ export default function PlanningInputStage({
             </article>
           ))}
 
-          {!editor && (
+          {!editor && draft.anchors.length === 0 && (
             <button
               type="button"
               className="btn-secondary"
@@ -289,7 +317,7 @@ export default function PlanningInputStage({
               }
             >
               {t('planning.addAnchorAction', {
-                defaultValue: 'Add a time',
+                defaultValue: 'Add one important time',
               })}
             </button>
           )}
@@ -324,17 +352,6 @@ export default function PlanningInputStage({
           <button type="button" onClick={onCancel} className="btn-secondary">
             {t('planning.back', { defaultValue: 'Back' })}
           </button>
-          {onSkip && !hasNamedStartingPlace && (
-            <button
-              type="button"
-              onClick={onSkip}
-              className="btn-secondary"
-            >
-              {t('planning.skip', {
-                defaultValue: 'Continue without fixed route details',
-              })}
-            </button>
-          )}
           <button
             type="button"
             onClick={complete}
