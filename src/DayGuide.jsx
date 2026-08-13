@@ -773,10 +773,6 @@ const DayGuide = () => {
       return (
         <WelcomeStage
           t={t}
-          locationLoading={locationLoading}
-          locationError={locationError}
-          position={position}
-          refreshLocation={refreshLocation}
           onStartPlanning={handleStartPlanning}
           onFindNearby={handleFindNearby}
           savedPlanSummary={savedPlanSummary}

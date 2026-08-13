@@ -2,10 +2,6 @@ import React from 'react';
 
 function WelcomeStage({
   t,
-  locationLoading,
-  locationError,
-  position,
-  refreshLocation,
   onStartPlanning,
   onFindNearby,
   savedPlanSummary,
@@ -27,23 +23,6 @@ function WelcomeStage({
           <button onClick={onStartPlanning} className="btn-primary">{t('welcome.startPlanning')}</button>
           {savedPlanSummary && (
             <button onClick={onResume} className="btn-secondary">{t('welcome.resumePlan')}</button>
-          )}
-        </div>
-        <div className="welcome-location-status" aria-live="polite">
-          {locationLoading && <p>{t('welcome.detectingLocation')}</p>}
-          {!locationLoading && locationError && (
-            <>
-              <p role="alert" className="location-status-error">
-                <span aria-hidden="true">!</span>
-                <span>{t(locationError)}</span>
-              </p>
-              <button onClick={refreshLocation} className="btn-refresh">
-                {t('welcome.refreshLocation')}
-              </button>
-            </>
-          )}
-          {!locationLoading && position && (
-            <p>{t('welcome.locationReady', { defaultValue: 'Location ready when you need it.' })}</p>
           )}
         </div>
         {savedPlanSummary && (

@@ -5,34 +5,17 @@ const t = (key) => key;
 
 const baseProps = {
   t,
-  locationLoading: false,
-  locationError: null,
-  position: { lat: 51.50722, lng: -0.1275, accuracy: 12 },
-  refreshLocation: jest.fn(),
   onStartPlanning: jest.fn(),
   onFindNearby: jest.fn(),
 };
 
-test('renders welcome copy and a quiet ready status without exact coordinates', () => {
+test('renders the two welcome choices without a location prompt', () => {
   render(<WelcomeStage {...baseProps} />);
 
   expect(screen.getByText('welcome.tagline')).toBeInTheDocument();
-  expect(screen.getByText('welcome.locationReady')).toBeInTheDocument();
-  expect(screen.queryByText(/51\.50722, -0\.12750/)).not.toBeInTheDocument();
-});
-
-test('keeps a location error as naturally wrapping text', () => {
-  render(
-    <WelcomeStage
-      {...baseProps}
-      position={null}
-      locationError="location.unavailable"
-    />,
-  );
-
-  const alert = screen.getByRole('alert');
-  expect(alert).toHaveTextContent('location.unavailable');
-  expect(alert.querySelectorAll('span')).toHaveLength(2);
+  expect(screen.getByText('welcome.findNearby')).toBeInTheDocument();
+  expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
 
 test('clicking start planning calls onStartPlanning', () => {
