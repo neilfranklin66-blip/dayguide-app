@@ -723,6 +723,11 @@ select:focus-visible {
   margin-top: 24px;
 }
 
+.discovery-options--nearby {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
 .discovery-option {
   min-height: 120px;
   padding: 16px;
@@ -743,6 +748,36 @@ select:focus-visible {
   display: block;
   margin-bottom: 6px;
   font-size: 1.4em;
+}
+
+.discovery-option strong,
+.discovery-option small {
+  display: block;
+}
+
+.discovery-option small {
+  margin-top: 4px;
+  color: #526070;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.discovery-option--food {
+  border-color: #f3c1ae;
+}
+
+.discovery-option--activities {
+  border-color: #b7d3da;
+}
+
+.discovery-option--both {
+  border-color: #d9d0eb;
+}
+
+.nearby-mixed-next-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
 }
 
 .discovery-option:hover {

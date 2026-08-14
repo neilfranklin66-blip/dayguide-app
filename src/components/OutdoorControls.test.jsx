@@ -17,16 +17,18 @@ test('date and time controls remain labelled, amendable inputs', () => {
   expect(screen.getByLabelText('interests.startTimeLabel')).toHaveClass('time-input');
 });
 
-test('nearby food and activity choices use the same large-choice component', () => {
+test('nearby mood choices use the same large-choice component', () => {
   render(
     <NearbyDiscoveryStage
       mode={null}
       onChooseFood={jest.fn()}
       onChooseActivities={jest.fn()}
+      onChooseBoth={jest.fn()}
       t={t}
     />,
   );
 
   expect(screen.getByRole('button', { name: 'discovery.food' })).toHaveClass('discovery-option');
   expect(screen.getByRole('button', { name: 'discovery.activities' })).toHaveClass('discovery-option');
+  expect(screen.getByRole('button', { name: 'discovery.both' })).toHaveClass('discovery-option');
 });

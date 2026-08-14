@@ -39,6 +39,7 @@ import PlanningInputWithPlaceResolution from './components/PlanningInputWithPlac
 import GeographicChoiceCard from './components/GeographicChoiceCard';
 import PlanMoodStage from './components/PlanMoodStage';
 import NearbyResultStage from './components/NearbyResultStage';
+import NearbyMixedStage from './components/NearbyMixedStage';
 import { savePlan, loadPlan, clearPlan } from './utils/planStorage';
 import { getRestaurantSearchRequestOutcome } from './utils/restaurantSearchRequest';
 import {
@@ -137,6 +138,10 @@ const DayGuide = () => {
   const [restaurantNextPageToken, setRestaurantNextPageToken] = useState(null);
   const [nearbyDiscoveryMode, setNearbyDiscoveryMode] = useState(null);
   const [nearbyResult, setNearbyResult] = useState(null);
+  const [nearbyMixedQueue, setNearbyMixedQueue] = useState([]);
+  const [nearbyMixedIndex, setNearbyMixedIndex] = useState(0);
+  const [isNearbyMixedLoading, setIsNearbyMixedLoading] = useState(false);
+  const [nearbyMixedSource, setNearbyMixedSource] = useState(null);
   const [travelPreferences, setTravelPreferences] = useState(
     loadTravelPreferences,
   );
@@ -258,6 +263,10 @@ const DayGuide = () => {
 
     setNearbyDiscoveryMode(null);
     setNearbyResult(null);
+    setNearbyMixedQueue([]);
+    setNearbyMixedIndex(0);
+    setIsNearbyMixedLoading(false);
+    setNearbyMixedSource(null);
     setRestaurantNextPageToken(null);
     setStage('discovery');
   };
@@ -302,6 +311,10 @@ const DayGuide = () => {
     setRestaurantSource(null);
     setNearbyDiscoveryMode(null);
     setNearbyResult(null);
+    setNearbyMixedQueue([]);
+    setNearbyMixedIndex(0);
+    setIsNearbyMixedLoading(false);
+    setNearbyMixedSource(null);
     setSelectedDate(new Date().toISOString().split('T')[0]);
     isResumedPlanRef.current = false;
     clearPlan();
@@ -445,6 +458,54 @@ const DayGuide = () => {
       setActivitySource(getLiveSearchSourceFromError(error));
     }
     setIsActivitiesLoading(false);
+  };
+
+  const goToNearbyBoth = async () => {
+    setNearbyDiscoveryMode('both');
+    setNearbyMixedQueue([]);
+    setNearbyMixedIndex(0);
+    setNearbyMixedSource(null);
+    setIsNearbyMixedLoading(true);
+    setStage('nearby-both');
+
+    if (!hasUsableCoordinates(position)) {
+      setNearbyMixedSource(locationError === 'location.denied' ? 'location_denied' : 'no_location');
+      setIsNearbyMixedLoading(false);
+      return;
+    }
+
+    const [foodResult, activityResult] = await Promise.allSettled([
+      searchRestaurantPage(position.lat, position.lng),
+      searchActivities(position.lat, position.lng),
+    ]);
+    const food = foodResult.status === 'fulfilled' ? foodResult.value.results : [];
+    const activities = activityResult.status === 'fulfilled' ? activityResult.value : [];
+    const mixed = [];
+    const maxLength = Math.max(food.length, activities.length);
+    for (let index = 0; index < maxLength; index += 1) {
+      if (food[index]) mixed.push({ ...food[index], kind: 'food' });
+      if (activities[index]) mixed.push({ ...activities[index], kind: 'activities' });
+    }
+
+    setNearbyMixedQueue(mixed);
+    setNearbyMixedSource(
+      mixed.length > 0
+        ? 'live'
+        : foodResult.status === 'rejected' && activityResult.status === 'rejected'
+          ? getLiveSearchSourceFromError(foodResult.reason)
+          : 'no_results',
+    );
+    setIsNearbyMixedLoading(false);
+  };
+
+  const swipeNearbyMixed = (liked) => {
+    const current = nearbyMixedQueue[nearbyMixedIndex];
+    if (liked && current) {
+      setNearbyResult({ type: current.kind, place: current });
+      setStage('nearby-result');
+      return;
+    }
+    setNearbyMixedIndex(index => index + 1);
   };
 
   const goToRestaurants = async (
@@ -797,6 +858,7 @@ const DayGuide = () => {
           onToggleInterest={toggleInterest}
           onChooseFood={() => setNearbyDiscoveryMode('food')}
           onChooseActivities={() => setNearbyDiscoveryMode('activities')}
+          onChooseBoth={goToNearbyBoth}
           onFindFood={cuisines => {
             setSelectedCuisines(cuisines);
             setStartWith('activities');
@@ -896,7 +958,29 @@ const DayGuide = () => {
           onFindAnother={() => {
             setNearbyResult(null);
             if (nearbyDiscoveryMode === 'food') goToRestaurants([], null, null);
-            else goToActivities([], null);
+            else if (nearbyDiscoveryMode === 'activities') goToActivities([], null);
+            else goToNearbyBoth();
+          }}
+          t={t}
+        />
+      );
+    }
+
+    if (stage === 'nearby-both') {
+      return (
+        <NearbyMixedStage
+          places={nearbyMixedQueue}
+          currentIndex={nearbyMixedIndex}
+          isLoading={isNearbyMixedLoading}
+          source={nearbyMixedSource}
+          onSwipe={swipeNearbyMixed}
+          onChooseFood={() => {
+            setNearbyDiscoveryMode('food');
+            setStage('discovery');
+          }}
+          onChooseActivities={() => {
+            setNearbyDiscoveryMode('activities');
+            setStage('discovery');
           }}
           t={t}
         />

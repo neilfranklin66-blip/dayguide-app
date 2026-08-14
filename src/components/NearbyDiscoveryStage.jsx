@@ -12,6 +12,7 @@ export default function NearbyDiscoveryStage({
   onToggleInterest,
   onChooseFood,
   onChooseActivities,
+  onChooseBoth,
   onFindFood,
   onFindActivities,
   t,
@@ -22,14 +23,21 @@ export default function NearbyDiscoveryStage({
         <div className="card discovery-card">
           <h2>{t('discovery.title')}</h2>
           <p>{t('discovery.subtitle')}</p>
-          <div className="discovery-options">
-            <button onClick={onChooseFood} className="discovery-option">
-              <span aria-hidden="true">🍽️</span>
-              {t('discovery.food')}
+          <div className="discovery-options discovery-options--nearby">
+            <button type="button" onClick={onChooseFood} className="discovery-option discovery-option--food" aria-label={t('discovery.food')}>
+              <span aria-hidden="true">{'\u{1F37D}\uFE0F'}</span>
+              <strong>{t('discovery.food')}</strong>
+              <small>{t('discovery.foodOptionHint')}</small>
             </button>
-            <button onClick={onChooseActivities} className="discovery-option">
-              <span aria-hidden="true">✨</span>
-              {t('discovery.activities')}
+            <button type="button" onClick={onChooseActivities} className="discovery-option discovery-option--activities" aria-label={t('discovery.activities')}>
+              <span aria-hidden="true">{'\u2728'}</span>
+              <strong>{t('discovery.activities')}</strong>
+              <small>{t('discovery.activitiesOptionHint')}</small>
+            </button>
+            <button type="button" onClick={onChooseBoth} className="discovery-option discovery-option--both" aria-label={t('discovery.both')}>
+              <span aria-hidden="true">{'\u2726'}</span>
+              <strong>{t('discovery.both')}</strong>
+              <small>{t('discovery.bothOptionHint')}</small>
             </button>
           </div>
         </div>
