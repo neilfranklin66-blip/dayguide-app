@@ -78,7 +78,7 @@ const getSearchOrigin = (planningOverride, fallbackPosition, areaOverride = null
 const DayGuide = () => {
   const { currentUser, logout } = useAuth();
   const { t, i18n } = useTranslation();
-  const { position, error: locationError, isLoading: locationLoading, refresh: refreshLocation } = useGeolocation();
+  const { position, error: locationError, isLoading: locationLoading } = useGeolocation();
 
   const [stage, setStage] = useState('welcome');
   const [selectedInterests, setSelectedInterests] = useState([]);
