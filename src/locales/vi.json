@@ -30,13 +30,13 @@
     "unavailable": "Không thể lấy vị trí của bạn. Vui lòng thử lại."
   },
   "welcome": {
-    "tagline": "Lên kế hoạch cho ngày hoàn hảo, dù bạn ở đâu",
-    "subtitle": "Vuốt qua các hoạt động và nhà hàng. Chúng tôi sẽ xây dựng lịch trình cho bạn.",
+    "tagline": "Ngày của bạn, lựa chọn của bạn",
+    "subtitle": "Những địa điểm địa phương được yêu thích, những viên ngọc ẩn và điều gì đó mới mẻ.",
     "detectingLocation": "📍 Đang phát hiện vị trí...",
     "refreshLocation": "Làm mới vị trí",
     "startPlanning": "Lên kế hoạch cho ngày của tôi",
     "findNearby": "Tìm điều gì đó ở gần đây",
-    "findNearbyHint": "Những địa điểm thật ở gần bạn, do bạn lựa chọn.",
+    "findNearbyHint": "Những địa điểm địa phương được yêu thích, những viên ngọc ẩn và điều gì đó mới mẻ.",
     "resumePlan": "Tiếp tục kế hoạch của bạn",
     "resumePlanDetails": "{{count}} điểm dừng đã lên kế hoạch",
     "findingLocation": "📍 Đang tìm vị trí của bạn...",

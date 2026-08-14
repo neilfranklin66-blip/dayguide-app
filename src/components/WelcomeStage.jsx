@@ -1,4 +1,5 @@
 import React from 'react';
+import welcomeHero from '../assets/welcome-seaside-restaurant.jpg';
 
 function WelcomeStage({
   t,
@@ -9,31 +10,30 @@ function WelcomeStage({
 }) {
   return (
     <div className="dayguide-container welcome">
-      <div className="welcome-card card">
-        <div className="welcome-intro">
-          <h1>DayGuide</h1>
-          <p className="welcome-tagline">{t('welcome.tagline')}</p>
-          <p className="subtitle">{t('welcome.subtitle')}</p>
-        </div>
-        <div className="welcome-actions">
-          <button onClick={onFindNearby} className="btn-discovery">
-            {t('welcome.findNearby')}
-          </button>
-          <p className="welcome-discovery-hint">{t('welcome.findNearbyHint')}</p>
-          <button onClick={onStartPlanning} className="btn-primary">{t('welcome.startPlanning')}</button>
-          {savedPlanSummary && (
-            <button onClick={onResume} className="btn-secondary">{t('welcome.resumePlan')}</button>
-          )}
-        </div>
-        {savedPlanSummary && (
-          <div className="welcome-resume-summary">
-            <p className="subtitle">
-              {savedPlanSummary.selectedDate ? `📅 ${savedPlanSummary.selectedDate} · ` : ''}
-              {t('welcome.resumePlanDetails', { count: savedPlanSummary.itemCount })}
-            </p>
+      <main className="welcome-hero">
+        <img className="welcome-hero-image" src={welcomeHero} alt="" />
+        <div className="welcome-hero-shade" aria-hidden="true" />
+        <div className="welcome-hero-content">
+          <div className="welcome-intro">
+            <h1>DayGuide</h1>
+            <p className="welcome-tagline">{t('welcome.tagline')}</p>
+            <p className="welcome-subtitle">{t('welcome.subtitle')}</p>
           </div>
-        )}
-      </div>
+          <div className="welcome-actions">
+            <button onClick={onFindNearby} className="btn-discovery welcome-nearby-action">
+              {t('welcome.findNearby')}
+            </button>
+            <button onClick={onStartPlanning} className="btn-primary welcome-plan-action">
+              {t('welcome.startPlanning')}
+            </button>
+            {savedPlanSummary && (
+              <button onClick={onResume} className="welcome-resume-link">
+                {t('welcome.resumePlan')}
+              </button>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

@@ -655,8 +655,8 @@ test('resuming a seeded saved plan lands on the timeline with its content', () =
   useGeolocation.mockReturnValue(resolvedGeo);
   render(<DayGuide />);
 
-  expect(screen.getByText(/📅 2026-07-05/)).toBeInTheDocument();
-  expect(screen.getByText(/welcome\.resumePlanDetails/)).toBeInTheDocument();
+  expect(screen.getByText('welcome.resumePlan')).toBeInTheDocument();
+  expect(screen.queryByText(/welcome\.resumePlanDetails/)).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByText('welcome.resumePlan'));
 

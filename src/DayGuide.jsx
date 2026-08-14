@@ -1034,7 +1034,7 @@ const DayGuide = () => {
 
   return (
     <>
-      <div className="app-header">
+      <div className={`app-header ${stage === 'welcome' ? 'app-header--welcome' : ''}`}>
         <span className="user-email-display">👤 {currentUser?.email}</span>
         <div className="header-controls">
           <select

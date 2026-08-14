@@ -30,13 +30,13 @@
     "unavailable": "Impossible de récupérer votre localisation. Veuillez réessayer."
   },
   "welcome": {
-    "tagline": "Planifiez votre journée parfaite, où que vous soyez",
-    "subtitle": "Faites glisser les activités et restaurants. Nous construirons votre itinéraire.",
+    "tagline": "Votre journée, vos choix",
+    "subtitle": "Des adresses locales appréciées, des perles cachées et de nouvelles découvertes.",
     "detectingLocation": "📍 Détection de l'emplacement...",
     "refreshLocation": "Actualiser la position",
     "startPlanning": "Planifier ma journée",
     "findNearby": "Trouver quelque chose à proximité",
-    "findNearbyHint": "De vrais lieux à proximité, choisis par vous.",
+    "findNearbyHint": "Des adresses locales appréciées, des perles cachées et de nouvelles découvertes.",
     "resumePlan": "Reprendre votre plan",
     "resumePlanDetails": "{{count}} étapes prévues",
     "findingLocation": "📍 Localisation en cours...",

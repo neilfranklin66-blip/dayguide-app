@@ -13,11 +13,12 @@ test('renders the two welcome choices without a location prompt', () => {
   render(<WelcomeStage {...baseProps} />);
 
   expect(screen.getByText('welcome.tagline')).toBeInTheDocument();
+  expect(screen.getByText('welcome.subtitle')).toBeInTheDocument();
   expect(screen.getByText('welcome.findNearby')).toBeInTheDocument();
   expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  expect(screen.queryByText('welcome.findNearbyHint')).not.toBeInTheDocument();
 });
-
 test('clicking start planning calls onStartPlanning', () => {
   const onStartPlanning = jest.fn();
   render(<WelcomeStage {...baseProps} onStartPlanning={onStartPlanning} />);
@@ -26,7 +27,6 @@ test('clicking start planning calls onStartPlanning', () => {
 
   expect(onStartPlanning).toHaveBeenCalledTimes(1);
 });
-
 test('clicking find nearby calls onFindNearby without starting the planning form', () => {
   const onFindNearby = jest.fn();
   render(<WelcomeStage {...baseProps} onFindNearby={onFindNearby} />);
@@ -56,34 +56,4 @@ test('clicking resume calls onResume when a saved plan exists', () => {
   fireEvent.click(screen.getByText('welcome.resumePlan'));
 
   expect(onResume).toHaveBeenCalledTimes(1);
-});
-
-test('resume details line shows the plan date and stop count', () => {
-  const paramAwareT = (key, params) => (params ? `${key} count=${params.count}` : key);
-  render(
-    <WelcomeStage
-      {...baseProps}
-      t={paramAwareT}
-      savedPlanSummary={{ selectedDate: '2026-07-05', itemCount: 3 }}
-      onResume={jest.fn()}
-    />,
-  );
-
-  expect(screen.getByText(/📅 2026-07-05/)).toBeInTheDocument();
-  expect(screen.getByText(/welcome\.resumePlanDetails count=3/)).toBeInTheDocument();
-});
-
-test('resume details line omits the date when selectedDate is absent', () => {
-  const paramAwareT = (key, params) => (params ? `${key} count=${params.count}` : key);
-  render(
-    <WelcomeStage
-      {...baseProps}
-      t={paramAwareT}
-      savedPlanSummary={{ itemCount: 2 }}
-      onResume={jest.fn()}
-    />,
-  );
-
-  expect(screen.getByText(/welcome\.resumePlanDetails count=2/)).toBeInTheDocument();
-  expect(screen.queryByText(/📅/)).not.toBeInTheDocument();
 });
