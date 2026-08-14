@@ -209,16 +209,16 @@ body {
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: space-between;
-  padding: clamp(92px, 15vh, 136px) var(--dg-space-6) var(--dg-space-6);
+  padding: clamp(52px, 9vh, 84px) var(--dg-space-6) var(--dg-space-6);
   color: #fff;
 }
 
-.welcome-intro {
-  max-width: 330px;
+.welcome-brand {
+  align-self: flex-end;
+  text-align: right;
 }
 
-.welcome-intro h1 {
+.welcome-brand h1 {
   color: #fff;
   font-size: clamp(3rem, 13vw, 4.5rem);
   font-weight: 750;
@@ -228,21 +228,28 @@ body {
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.26);
 }
 
+.welcome-message {
+  margin-top: auto;
+  margin-bottom: var(--dg-space-5);
+}
+
 .welcome-tagline {
   color: #fff;
-  font-size: 1.28rem;
+  font-size: clamp(1rem, 4.5vw, 1.28rem);
   font-weight: 700;
   line-height: 1.25;
   margin: 0 0 12px;
+  white-space: nowrap;
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
 }
 
 .welcome-subtitle {
   color: rgba(255, 255, 255, 0.96);
-  font-size: 1rem;
+  font-size: clamp(0.78rem, 3.5vw, 1rem);
   font-weight: 550;
-  line-height: 1.45;
+  line-height: 1.25;
   margin: 0;
+  white-space: nowrap;
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
 }
 

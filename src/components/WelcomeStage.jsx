@@ -14,8 +14,10 @@ function WelcomeStage({
         <img className="welcome-hero-image" src={welcomeHero} alt="" />
         <div className="welcome-hero-shade" aria-hidden="true" />
         <div className="welcome-hero-content">
-          <div className="welcome-intro">
+          <div className="welcome-brand">
             <h1>DayGuide</h1>
+          </div>
+          <div className="welcome-message">
             <p className="welcome-tagline">{t('welcome.tagline')}</p>
             <p className="welcome-subtitle">{t('welcome.subtitle')}</p>
           </div>
