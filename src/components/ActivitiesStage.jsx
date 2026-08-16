@@ -89,10 +89,9 @@ export default function ActivitiesStage({
     <ActivitySwipeCard
       currentActivity={currentActivity}
       currentActivityIndex={currentActivityIndex}
+      activitySource={activitySource}
       activityQueueLength={activityQueue.length}
       onSwipe={swipeActivity}
-      selectedCount={selectedActivities.length}
-      onBuild={onBuild}
       t={t}
     />
   );

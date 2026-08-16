@@ -39,14 +39,14 @@ test('renders the current restaurant card', () => {
   render(<RestaurantsStage {...baseProps} />);
 
   expect(screen.getByText('Trattoria Roma')).toBeInTheDocument();
-  expect(screen.getByText('1 / 1')).toBeInTheDocument();
+  expect(screen.getByText('discovery.cardProgress')).toBeInTheDocument();
 });
 
 test('accepting a restaurant calls swipeRestaurant(true)', () => {
   const swipeRestaurant = jest.fn();
   render(<RestaurantsStage {...baseProps} swipeRestaurant={swipeRestaurant} />);
 
-  fireEvent.click(screen.getByText('restaurants.yes'));
+  fireEvent.click(screen.getByText('discovery.choose'));
 
   expect(swipeRestaurant).toHaveBeenCalledWith(true);
 });
@@ -94,7 +94,7 @@ test('an empty live search shows the no-results card, never a mock restaurant ca
   render(<RestaurantsStage {...baseProps} restaurantQueue={[]} restaurantSource="no_results" />);
 
   expect(screen.getByText('restaurants.noResultsTitle')).toBeInTheDocument();
-  expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
+  expect(screen.queryByText('discovery.choose')).not.toBeInTheDocument();
   expect(screen.queryByText('Trattoria Roma')).not.toBeInTheDocument();
 });
 
@@ -113,7 +113,7 @@ test.each([
 
   expect(screen.getByText('restaurants.unavailableTitle')).toBeInTheDocument();
   expect(screen.getByText(reasonKey)).toBeInTheDocument();
-  expect(screen.queryByText('restaurants.yes')).not.toBeInTheDocument();
+  expect(screen.queryByText('discovery.choose')).not.toBeInTheDocument();
   expect(screen.queryByText('restaurants.noResultsTitle')).not.toBeInTheDocument();
   expect(screen.queryByText('Trattoria Roma')).not.toBeInTheDocument();
 });
@@ -273,7 +273,7 @@ test('the swipe card renders the maps URL as an open-in-maps link', () => {
 
   render(<RestaurantsStage {...baseProps} restaurantQueue={[liveCard]} selectedCuisines={[]} selectedPriceRange={null} />);
 
-  const link = screen.getByRole('link', { name: 'restaurants.openInMaps' });
+  const link = screen.getByRole('link', { name: 'discovery.openInMaps' });
   expect(link).toHaveAttribute(
     'href',
     'https://www.google.com/maps/search/?api=1&query=Live%20Cafe&query_place_id=ChIJlive123'

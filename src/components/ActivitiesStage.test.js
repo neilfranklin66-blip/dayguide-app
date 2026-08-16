@@ -31,7 +31,7 @@ test('renders the current activity card', () => {
   render(<ActivitiesStage {...baseProps} />);
 
   expect(screen.getByText('City Museum')).toBeInTheDocument();
-  expect(screen.getByText('1 / 1')).toBeInTheDocument();
+  expect(screen.getByText('discovery.cardProgress')).toBeInTheDocument();
 });
 
 test('sample activity card shows an honest sample indication and hides the km-away proximity claim', () => {
@@ -47,7 +47,7 @@ test('a non-sample activity keeps its real distance and shows no sample badge', 
   const liveActivity = { ...activity, isSample: false };
   render(<ActivitiesStage {...baseProps} activityQueue={[liveActivity]} />);
 
-  expect(screen.getByText('activities.kmAway')).toBeInTheDocument();
+  expect(screen.getByText('nearbyResult.distance')).toBeInTheDocument();
   expect(screen.queryByText('activities.sampleBadge')).not.toBeInTheDocument();
   expect(screen.queryByText('activities.sampleNote')).not.toBeInTheDocument();
 });
@@ -56,7 +56,7 @@ test('accepting an activity calls swipeActivity(true)', () => {
   const swipeActivity = jest.fn();
   render(<ActivitiesStage {...baseProps} swipeActivity={swipeActivity} />);
 
-  fireEvent.click(screen.getByText('activities.yes'));
+  fireEvent.click(screen.getByText('discovery.choose'));
 
   expect(swipeActivity).toHaveBeenCalledWith(true);
 });

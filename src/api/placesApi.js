@@ -376,6 +376,11 @@ export async function searchActivities(lat, lng, categories = []) {
       const distance = parseFloat(haversineKm(
         lat, lng, place.geometry.location.lat, place.geometry.location.lng,
       ).toFixed(1));
+      // Activity cards follow the same Google photo boundary as food cards:
+      // only render a supplied photo when its required Maps source link exists.
+      const photo = place.photos?.find(candidate =>
+        candidate?.photo_reference && typeof candidate.google_maps_uri === 'string',
+      );
       return {
         id: place.place_id,
         name: place.name || '',
@@ -387,6 +392,11 @@ export async function searchActivities(lat, lng, categories = []) {
           ? place.primary_type_display_name || null
           : null,
         image: ACTIVITY_ICONS[category],
+        photoUrl: photo?.photo_reference ? buildPhotoUrl(photo.photo_reference) : null,
+        photoAttributions: normalizePhotoAttributions(photo?.author_attributions),
+        photoMapsUrl: typeof photo?.google_maps_uri === 'string'
+          ? photo.google_maps_uri
+          : null,
         rating: parseFloat((place.rating || 4.0).toFixed(1)),
         duration: 1.5,
         distance,

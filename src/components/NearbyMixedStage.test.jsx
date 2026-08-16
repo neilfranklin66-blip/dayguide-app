@@ -29,10 +29,10 @@ test('mixed nearby cards expose two clear choices and retain a Maps action', () 
     />,
   );
 
-  expect(screen.getByText('Live from Google Places')).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Open in Maps' })).toHaveAttribute('href', nearbyFood.mapsUrl);
-  fireEvent.click(screen.getByRole('button', { name: 'discovery.notForMe' }));
-  fireEvent.click(screen.getByRole('button', { name: 'discovery.chooseThis' }));
+  expect(screen.getByText('nearbyResult.liveSource')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'discovery.openInMaps' })).toHaveAttribute('href', nearbyFood.mapsUrl);
+  fireEvent.click(screen.getByRole('button', { name: 'discovery.skip' }));
+  fireEvent.click(screen.getByRole('button', { name: 'discovery.choose' }));
   expect(onSwipe).toHaveBeenNthCalledWith(1, false);
   expect(onSwipe).toHaveBeenNthCalledWith(2, true);
 });

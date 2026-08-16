@@ -4,7 +4,6 @@ import RestaurantsNoResultsCard from './RestaurantsNoResultsCard';
 import RestaurantsUnavailableCard from './RestaurantsUnavailableCard';
 import NoMoreRestaurantsCard from './NoMoreRestaurantsCard';
 import RestaurantSwipeCard from './RestaurantSwipeCard';
-import { buildRecommendationReason } from '../utils/recommendationReason';
 import { getRouteAfterRestaurants } from '../engines/itineraryRouteEngine';
 import { LIVE_SEARCH_FAILURE_SOURCES } from '../config/dayGuideOptions';
 
@@ -114,22 +113,13 @@ export default function RestaurantsStage({
     );
   }
 
-  const recommendationReason = buildRecommendationReason(currentRestaurant, {
-    selectedCuisines,
-    selectedPriceRange,
-    hasChildren,
-  });
-
   return (
-      <RestaurantSwipeCard
+    <RestaurantSwipeCard
       currentRestaurant={currentRestaurant}
       currentRestaurantIndex={currentRestaurantIndex}
       restaurantQueueLength={restaurantQueue.length}
       restaurantSource={restaurantSource}
-      recommendationReason={recommendationReason}
-        onSwipe={swipeRestaurant}
-        selectedCount={selectedRestaurants.length}
-        onBuild={onBuild}
+      onSwipe={swipeRestaurant}
       t={t}
     />
   );

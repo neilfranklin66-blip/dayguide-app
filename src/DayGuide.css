@@ -2076,3 +2076,229 @@ select:focus-visible {
     padding: 26px 20px 22px;
   }
 }
+
+/* Packet 189: one calm, phone-first visual language for every live card.
+   Provider photos are shown only when supplied by Google; the no-photo state
+   remains a neutral surface rather than inventing a substitute image. */
+.live-place-page {
+  min-height: 100vh;
+  padding: 24px 16px 36px;
+  background: #ffffff;
+  color: #07345e;
+}
+
+.live-place-card {
+  width: min(100%, 520px);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(7, 52, 94, 0.16);
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 14px 36px rgba(7, 52, 94, 0.13);
+}
+
+.live-place-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px 12px;
+}
+
+.live-place-card-section,
+.live-place-card-progress,
+.live-place-card-source,
+.live-place-card-type,
+.live-place-card-facts,
+.live-place-card-address,
+.live-place-card-sample-note {
+  margin: 0;
+}
+
+.live-place-card-section {
+  color: #07345e;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.live-place-card-progress {
+  color: #52708d;
+  font-size: 0.84rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.live-place-card-source {
+  margin: 0 20px 12px;
+  color: #52708d;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.live-place-card-source--sample {
+  color: #7b5569;
+}
+
+.live-place-card-photo {
+  margin: 0;
+  background: #eef4f7;
+}
+
+.live-place-card-photo > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.live-place-card-photo--unavailable {
+  display: none;
+}
+
+.live-place-card-photo-credit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  padding: 9px 16px;
+  color: #52708d;
+  background: #f7fafb;
+  border-top: 1px solid rgba(7, 52, 94, 0.08);
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+.live-place-card-photo-credit a,
+.live-place-card-maps {
+  color: #07345e;
+  font-weight: 800;
+}
+
+.live-place-card-photo-authors a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.live-place-card-photo-author-avatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.live-place-card-photo-fallback {
+  display: grid;
+  min-height: 190px;
+  place-items: end start;
+  padding: 22px;
+  background: #07345e;
+  color: #ffffff;
+}
+
+.live-place-card-photo-fallback span {
+  max-width: 26ch;
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.live-place-card-content {
+  padding: 20px;
+}
+
+.live-place-card-type {
+  color: #52708d;
+  font-size: 0.86rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.live-place-card-name {
+  margin: 6px 0 12px;
+  color: #07345e;
+  font-size: clamp(1.55rem, 6vw, 2.1rem);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.live-place-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 14px;
+  color: #294f71;
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.live-place-card-facts span + span::before {
+  margin-right: 14px;
+  color: #f25f43;
+  content: "•";
+}
+
+.live-place-card-address,
+.live-place-card-sample-note {
+  margin-top: 12px;
+  color: #52708d;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.live-place-card-maps {
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  margin-top: 18px;
+  padding: 0 16px;
+  border: 1px solid #07345e;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.live-place-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 20px 20px;
+}
+
+.live-place-card-actions button {
+  min-height: 56px;
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.live-place-card-skip {
+  border: 1px solid #07345e;
+  background: #ffffff;
+  color: #07345e;
+}
+
+.live-place-card-choose {
+  border: 1px solid #07345e;
+  background: #07345e;
+  color: #ffffff;
+}
+
+.live-place-card-maps:focus-visible,
+.live-place-card-actions button:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
+@media (max-width: 380px) {
+  .live-place-page {
+    padding-inline: 10px;
+  }
+
+  .live-place-card-header,
+  .live-place-card-content,
+  .live-place-card-actions {
+    padding-inline: 16px;
+  }
+}

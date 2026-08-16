@@ -190,6 +190,39 @@ describe('searchActivities', () => {
     });
     expect(activities.map(activity => activity.name)).not.toContain('Tuck In Turkish Restaurant');
   });
+
+  it('keeps a Google activity photo only when its Maps source link is supplied', async () => {
+    global.fetch.mockResolvedValue(okResponse([
+      makePlace('museum-photo', 'Northampton Museum', {
+        primary_type: 'museum',
+        primary_type_display_name: 'Museum',
+        types: ['museum', 'tourist_attraction'],
+        photos: [{
+          photo_reference: 'museum-photo-reference',
+          google_maps_uri: 'https://maps.google.com/photo/museum-photo',
+          author_attributions: [{ name: 'Museum photographer', uri: 'https://example.com/author' }],
+        }],
+      }),
+      makePlace('museum-uncredited-photo', 'Uncredited Museum', {
+        primary_type: 'museum',
+        primary_type_display_name: 'Museum',
+        types: ['museum', 'tourist_attraction'],
+        photos: [{ photo_reference: 'uncredited-photo-reference' }],
+      }),
+    ]));
+
+    const activities = await searchActivities(LAT, LNG, ['museums']);
+    const credited = activities.find(activity => activity.id === 'museum-photo');
+    const uncredited = activities.find(activity => activity.id === 'museum-uncredited-photo');
+
+    expect(credited.photoUrl).toContain('museum-photo-reference');
+    expect(credited.photoMapsUrl).toBe('https://maps.google.com/photo/museum-photo');
+    expect(credited.photoAttributions).toEqual([expect.objectContaining({
+      name: 'Museum photographer', uri: 'https://example.com/author',
+    })]);
+    expect(uncredited.photoUrl).toBeNull();
+    expect(uncredited.photoMapsUrl).toBeNull();
+  });
 });
 
 describe('searchRestaurants malformed record handling', () => {
