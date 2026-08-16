@@ -1,5 +1,4 @@
 import React from 'react';
-import ActivityInterestGrid from './ActivityInterestGrid';
 import nearbyFoodImage from '../assets/nearby-food-restaurant.jpg';
 import nearbyThingsImage from '../assets/nearby-things-tower-bridge.jpg';
 
@@ -72,23 +71,33 @@ export default function NearbyDiscoveryStage({
   }
 
   return (
-    <div className="dayguide-container">
-      <div className="card discovery-card">
-        <h2>{t('discovery.activitiesTitle')}</h2>
-        <p>{t('discovery.activitiesHint')}</p>
-        <button className="btn-secondary discovery-all" onClick={() => onFindActivities([])}>
-          {t('discovery.allActivities')}
-        </button>
-        <ActivityInterestGrid
-          interestCategories={interestCategories}
-          selectedInterests={selectedInterests}
-          onToggle={onToggleInterest}
-          t={t}
-        />
-        <button className="btn-primary" onClick={() => onFindActivities(selectedInterests)}>
+    <main className="nearby-category-page">
+      <section className="nearby-category-content" aria-labelledby="nearby-category-title">
+        <h2 id="nearby-category-title">{t('discovery.activitiesTitle')}</h2>
+        <div className="nearby-category-grid" aria-label={t('discovery.activitiesTitle')}>
+          {interestCategories.map(interest => {
+            const selected = selectedInterests.includes(interest.id);
+            return (
+              <button
+                type="button"
+                key={interest.id}
+                aria-pressed={selected}
+                className={`nearby-category-tile${selected ? ' selected' : ''}`}
+                onClick={() => onToggleInterest(interest.id)}
+              >
+                {interest.label || t(`interests.${interest.id}`)}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          type="button"
+          className="nearby-category-cta"
+          onClick={() => onFindActivities(selectedInterests)}
+        >
           {t('discovery.showActivities')}
         </button>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

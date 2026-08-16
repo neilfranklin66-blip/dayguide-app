@@ -77,3 +77,34 @@ test('Food & Drinks keeps all cuisine choices in a tap-first picker', () => {
   expect(onToggleCuisine).toHaveBeenCalledWith('italian');
   expect(onFindFood).toHaveBeenCalledWith(['italian']);
 });
+
+test('Things to do keeps all activity choices in the same tap-first picker', () => {
+  const onToggleInterest = jest.fn();
+  const onFindActivities = jest.fn();
+  const interestCategories = [
+    { id: 'museums', label: 'Museums' },
+    { id: 'galleries', label: 'Galleries' },
+    { id: 'parks', label: 'Parks' },
+  ];
+
+  render(
+    <NearbyDiscoveryStage
+      mode="activities"
+      interestCategories={interestCategories}
+      selectedInterests={['museums']}
+      onToggleInterest={onToggleInterest}
+      onFindActivities={onFindActivities}
+      t={t}
+    />,
+  );
+
+  const museums = screen.getByRole('button', { name: 'Museums' });
+  expect(museums).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getAllByRole('button', { name: /Museums|Galleries|Parks/ })).toHaveLength(3);
+
+  fireEvent.click(museums);
+  fireEvent.click(screen.getByRole('button', { name: 'discovery.showActivities' }));
+
+  expect(onToggleInterest).toHaveBeenCalledWith('museums');
+  expect(onFindActivities).toHaveBeenCalledWith(['museums']);
+});
