@@ -1116,9 +1116,11 @@ const DayGuide = () => {
     }
   };
 
+  const shouldShowAppHeader = stage !== 'welcome' && stage !== 'discovery';
+
   return (
     <>
-      <div className={`app-header ${stage === 'welcome' ? 'app-header--welcome' : ''}`}>
+      {shouldShowAppHeader && <div className="app-header">
         <span className="user-email-display">👤 {currentUser?.email}</span>
         <div className="header-controls">
           <select
@@ -1141,7 +1143,7 @@ const DayGuide = () => {
           </button>
         </div>
         {logoutError && <p className="logout-error" role="alert">⚠️ {logoutError}</p>}
-      </div>
+      </div>}
       {renderStage()}
       <PopupModal
         activePopup={activePopup}

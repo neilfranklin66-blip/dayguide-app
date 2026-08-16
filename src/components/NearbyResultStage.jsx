@@ -13,7 +13,7 @@ export default function NearbyResultStage({
 
   const fallbackType =
     result.type === 'food'
-      ? t('planMood.foodTitle', { defaultValue: 'Food & drink' })
+      ? t('planMood.foodTitle', { defaultValue: 'Food & Drinks' })
       : t('planMood.activitiesTitle', { defaultValue: 'Things to do' });
 
   return (

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import DateSelector from './DateSelector';
 import NearbyDiscoveryStage from './NearbyDiscoveryStage';
 import StartTimeSelector from './StartTimeSelector';
@@ -17,18 +17,63 @@ test('date and time controls remain labelled, amendable inputs', () => {
   expect(screen.getByLabelText('interests.startTimeLabel')).toHaveClass('time-input');
 });
 
-test('nearby mood choices use the same large-choice component', () => {
+test('nearby mood choices use the approved photo-card controls', () => {
+  const onChooseFood = jest.fn();
+  const onChooseActivities = jest.fn();
+  const onChooseBoth = jest.fn();
+
   render(
     <NearbyDiscoveryStage
       mode={null}
-      onChooseFood={jest.fn()}
-      onChooseActivities={jest.fn()}
-      onChooseBoth={jest.fn()}
+      onChooseFood={onChooseFood}
+      onChooseActivities={onChooseActivities}
+      onChooseBoth={onChooseBoth}
       t={t}
     />,
   );
 
-  expect(screen.getByRole('button', { name: 'discovery.food' })).toHaveClass('discovery-option');
-  expect(screen.getByRole('button', { name: 'discovery.activities' })).toHaveClass('discovery-option');
-  expect(screen.getByRole('button', { name: 'discovery.both' })).toHaveClass('discovery-option');
+  const food = screen.getByRole('button', { name: 'discovery.food' });
+  const activities = screen.getByRole('button', { name: 'discovery.activities' });
+  const both = screen.getByRole('button', { name: 'discovery.both' });
+
+  expect(food).toHaveClass('nearby-mood-card');
+  expect(activities).toHaveClass('nearby-mood-card');
+  expect(both).toHaveClass('nearby-mood-both');
+
+  fireEvent.click(food);
+  fireEvent.click(activities);
+  fireEvent.click(both);
+
+  expect(onChooseFood).toHaveBeenCalledTimes(1);
+  expect(onChooseActivities).toHaveBeenCalledTimes(1);
+  expect(onChooseBoth).toHaveBeenCalledTimes(1);
+});
+
+test('Food & Drinks keeps all cuisine choices in a tap-first picker', () => {
+  const onToggleCuisine = jest.fn();
+  const onFindFood = jest.fn();
+  const cuisineCategories = [
+    { id: 'italian' }, { id: 'indian' }, { id: 'british' },
+  ];
+
+  render(
+    <NearbyDiscoveryStage
+      mode="food"
+      cuisineCategories={cuisineCategories}
+      selectedCuisines={['italian']}
+      onToggleCuisine={onToggleCuisine}
+      onFindFood={onFindFood}
+      t={t}
+    />,
+  );
+
+  const italian = screen.getByRole('button', { name: 'cuisine.italian' });
+  expect(italian).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getAllByRole('button', { name: /cuisine\./ })).toHaveLength(3);
+
+  fireEvent.click(italian);
+  fireEvent.click(screen.getByRole('button', { name: 'discovery.showFood' }));
+
+  expect(onToggleCuisine).toHaveBeenCalledWith('italian');
+  expect(onFindFood).toHaveBeenCalledWith(['italian']);
 });

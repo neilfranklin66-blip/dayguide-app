@@ -87,34 +87,6 @@
   cursor: progress;
 }
 
-/* The welcome screen is deliberately a calm two-choice entry point. Keep
-   account controls available, but out of the visual conversation. */
-.app-header--welcome {
-  position: fixed;
-  top: 18px;
-  left: 50%;
-  z-index: 110;
-  width: min(calc(100% - 40px), 460px);
-  transform: translateX(-50%);
-  justify-content: flex-end;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.app-header--welcome .user-email-display {
-  display: none;
-}
-
-.app-header--welcome .language-selector,
-.app-header--welcome .btn-logout {
-  background: rgba(5, 35, 64, 0.5);
-  border-color: rgba(255, 255, 255, 0.54);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
-}
-
 /* Full-width row below the header controls, which wrap above it. */
 .logout-error {
   flex-basis: 100%;
@@ -132,6 +104,14 @@ body {
   background: linear-gradient(135deg, var(--dg-color-brand) 0%, var(--dg-color-brand-accent) 100%);
   min-height: 100vh;
   padding: 10px;
+}
+
+/* The nearby mood page is a full-bleed continuation of the welcome screen,
+   rather than a legacy stage inside the app's framed background. */
+body:has(.nearby-mood-page),
+body:has(.nearby-category-page) {
+  background: #fff;
+  padding: 0;
 }
 
 .dayguide-container {
@@ -716,73 +696,189 @@ select:focus-visible {
   cursor: pointer;
 }
 
-.discovery-options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 24px;
+.nearby-mood-page {
+  min-height: 100vh;
+  padding: 28px 20px 40px;
+  background: #fff;
+  color: #07345e;
 }
 
-.discovery-options--nearby {
-  grid-template-columns: 1fr;
+.nearby-mood-content {
+  width: min(100%, 500px);
+  margin: 0 auto;
+}
+
+.nearby-mood-content h2 {
+  margin: 4px 0 24px;
+  color: #07345e;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 7vw, 2.55rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.nearby-mood-cards {
+  display: grid;
+  gap: 18px;
+}
+
+.nearby-mood-card {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid rgba(7, 52, 94, 0.16);
+  border-radius: 22px;
+  background: #fff;
+  color: #07345e;
+  box-shadow: 0 8px 24px rgba(7, 52, 94, 0.1);
+  text-align: left;
+  cursor: pointer;
+}
+
+.nearby-mood-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+}
+
+.nearby-mood-card:first-child img {
+  object-position: center 58%;
+}
+
+.nearby-mood-card:last-child img {
+  /* Keep both Tower Bridge towers and the river visible while moving the
+     foreground railings out of the shallow card crop. */
+  object-position: center 30%;
+}
+
+.nearby-mood-card strong {
+  display: block;
+  padding: 17px 20px 18px;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.nearby-mood-card:hover {
+  border-color: #07345e;
+  box-shadow: 0 12px 28px rgba(7, 52, 94, 0.16);
+  transform: translateY(-1px);
+}
+
+.nearby-mood-card:focus-visible,
+.nearby-mood-both:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
+.nearby-mood-both {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  margin-top: 18px;
+  border: 1px solid rgba(7, 52, 94, 0.42);
+  border-radius: 16px;
+  background: #fff;
+  color: #07345e;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* The Food & Drinks filter is a continuation of the nearby choice flow, not
+   the old framed planning form.  It deliberately uses the same three colours
+   as the welcome and mood pages: navy, white and the single coral action. */
+.nearby-category-page {
+  min-height: 100vh;
+  padding: 28px 20px 40px;
+  background: #fff;
+  color: #07345e;
+}
+
+.nearby-category-content {
+  width: min(100%, 500px);
+  margin: 0 auto;
+}
+
+.nearby-category-content h2 {
+  margin: 4px 0 24px;
+  color: #07345e;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 9vw, 2.65rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+.nearby-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
-.discovery-option {
-  min-height: 120px;
-  padding: 16px;
-  border: 2px solid #d7dcff;
+.nearby-category-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 68px;
+  padding: 12px;
+  border: 1px solid #c9d6e2;
   border-radius: 16px;
   background: #fff;
-  color: var(--dg-color-text);
-  font-size: 1.05em;
+  color: #07345e;
+  font: inherit;
+  font-size: 1rem;
   font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
   cursor: pointer;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  line-height: 1.25;
 }
 
-.discovery-option span {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 1.4em;
+.nearby-category-tile:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  width: calc((100% - 12px) / 2);
+  justify-self: center;
 }
 
-.discovery-option strong,
-.discovery-option small {
-  display: block;
+.nearby-category-tile:hover {
+  border-color: #07345e;
+  box-shadow: 0 8px 18px rgba(7, 52, 94, 0.12);
 }
 
-.discovery-option small {
-  margin-top: 4px;
-  color: #526070;
-  font-size: 0.82rem;
-  font-weight: 500;
+.nearby-category-tile.selected {
+  border-color: #07345e;
+  background: #07345e;
+  color: #fff;
 }
 
-.discovery-option--food {
-  border-color: #f3c1ae;
+.nearby-category-tile:focus-visible,
+.nearby-category-cta:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
 }
 
-.discovery-option--activities {
-  border-color: #b7d3da;
+.nearby-category-cta {
+  width: 100%;
+  min-height: 58px;
+  margin-top: 24px;
+  border: 0;
+  border-radius: 18px;
+  background: #f25f43;
+  color: #fff;
+  font: inherit;
+  font-size: 1.06rem;
+  font-weight: 800;
+  cursor: pointer;
 }
 
-.discovery-option--both {
-  border-color: #d9d0eb;
+.nearby-category-cta:hover {
+  background: #d94c33;
 }
 
 .nearby-mixed-next-actions {
   display: grid;
   gap: 10px;
   margin-top: 22px;
-}
-
-.discovery-option:hover {
-  border-color: #667eea;
-  background: #f6f7ff;
 }
 
 .planning-stage-intro {
@@ -1936,14 +2032,6 @@ select:focus-visible {
 
   .interest-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .discovery-options {
-    grid-template-columns: 1fr;
-  }
-
-  .discovery-option {
-    min-height: 104px;
   }
 
   .btn-primary,

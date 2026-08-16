@@ -7,7 +7,7 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
     {
       id: 'food',
       icon: 'Food',
-      title: t('planMood.foodTitle', { defaultValue: 'Food & drink' }),
+      title: t('planMood.foodTitle', { defaultValue: 'Food & Drinks' }),
       detail: t('planMood.foodDetail', {
         defaultValue: 'Find somewhere good to eat or have a coffee.',
       }),
