@@ -14,7 +14,8 @@ test('date and time controls remain labelled, amendable inputs', () => {
   );
 
   expect(screen.getByLabelText('interests.dateLabel')).toHaveClass('date-input');
-  expect(screen.getByLabelText('interests.startTimeLabel')).toHaveClass('time-input');
+  expect(screen.getByRole('heading', { name: 'interests.startTimeLabel' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'interests.timeNow' })).toHaveClass('start-time-option');
 });
 
 test('nearby mood choices use the approved photo-card controls', () => {

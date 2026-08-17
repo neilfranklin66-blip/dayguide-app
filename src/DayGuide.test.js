@@ -174,10 +174,10 @@ test('find nearby opens a live restaurant card without the preference questionna
 
   fireEvent.click(screen.getByText('welcome.findNearby'));
   fireEvent.click(screen.getByText('discovery.food'));
-  fireEvent.click(screen.getByText('discovery.allFood'));
+  fireEvent.click(screen.getByText('discovery.showFood'));
 
   expect(await screen.findByText('Live Restaurant')).toBeInTheDocument();
-  expect(screen.getByText('restaurants.liveResults')).toBeInTheDocument();
+  expect(screen.getByText('nearbyResult.liveSource')).toBeInTheDocument();
   expect(screen.queryByText('interests.title')).not.toBeInTheDocument();
   expect(searchRestaurantPage).toHaveBeenCalledWith(
     resolvedGeo.position.lat,
@@ -187,13 +187,30 @@ test('find nearby opens a live restaurant card without the preference questionna
   );
 });
 
+test('find nearby opens a live activity card after an activity category is chosen', async () => {
+  useGeolocation.mockReturnValue(resolvedGeo);
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.findNearby'));
+  fireEvent.click(screen.getByText('discovery.activities'));
+  fireEvent.click(screen.getByText('interests.museums'));
+  fireEvent.click(screen.getByText('discovery.showActivities'));
+
+  expect(await screen.findByText('Live Test Museum')).toBeInTheDocument();
+  expect(searchActivities).toHaveBeenCalledWith(
+    resolvedGeo.position.lat,
+    resolvedGeo.position.lng,
+    ['museums'],
+  );
+});
+
 test('a location-denied nearby activity search offers a clear return and fresh start', async () => {
   useGeolocation.mockReturnValue(erroredGeo);
   render(<DayGuide />);
 
   fireEvent.click(screen.getByText('welcome.findNearby'));
   fireEvent.click(screen.getByText('discovery.activities'));
-  fireEvent.click(screen.getByText('discovery.allActivities'));
+  fireEvent.click(screen.getByText('discovery.showActivities'));
 
   expect(await screen.findByText('activities.nearbyLocationNeeded')).toBeInTheDocument();
   expect(screen.queryByText('activities.setStartingPlace')).not.toBeInTheDocument();
@@ -203,7 +220,7 @@ test('a location-denied nearby activity search offers a clear return and fresh s
   expect(screen.getByText('discovery.title')).toBeInTheDocument();
 
   fireEvent.click(screen.getByText('discovery.activities'));
-  fireEvent.click(screen.getByText('discovery.allActivities'));
+  fireEvent.click(screen.getByText('discovery.showActivities'));
   expect(await screen.findByText('discovery.startOver')).toBeInTheDocument();
   fireEvent.click(screen.getByText('discovery.startOver'));
   expect(screen.getByText('welcome.startPlanning')).toBeInTheDocument();

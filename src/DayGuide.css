@@ -629,6 +629,122 @@ select:focus-visible {
   box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.18);
 }
 
+/* A tap-first alternative to wheels and typed times. It uses the approved
+   navy, white and coral visual system rather than adding a new palette. */
+.start-time-selector {
+  margin: 18px 0 24px;
+  padding: 18px;
+  border: 1px solid #c9d6e2;
+  border-radius: 20px;
+  background: #f7fafc;
+  color: #07345e;
+}
+
+.start-time-selector h3 {
+  margin: 0 0 18px;
+  color: #07345e;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.45rem;
+}
+
+.start-time-section + .start-time-section {
+  margin-top: 18px;
+}
+
+.start-time-label {
+  margin: 0 0 9px;
+  color: #405469;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.start-time-quick-actions,
+.start-time-periods,
+.start-time-hours,
+.start-time-minutes {
+  display: grid;
+  gap: 9px;
+}
+
+.start-time-quick-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.start-time-periods {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.start-time-hours {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.start-time-minutes {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.start-time-option {
+  min-height: 52px;
+  padding: 8px;
+  border: 1px solid #c9d6e2;
+  border-radius: 13px;
+  background: #fff;
+  color: #07345e;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.start-time-option[aria-pressed='true'] {
+  border-color: #07345e;
+  background: #07345e;
+  color: #fff;
+}
+
+.start-time-option:hover {
+  border-color: #07345e;
+  box-shadow: 0 4px 12px rgba(7, 52, 94, 0.12);
+}
+
+.start-time-option:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
+.start-time-summary {
+  display: grid;
+  gap: 4px;
+  margin-top: 22px;
+  padding: 16px;
+  border: 1px solid #dbe5ed;
+  border-radius: 14px;
+  background: #fff;
+  text-align: center;
+}
+
+.start-time-summary strong {
+  color: #07345e;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.start-time-summary span {
+  color: #405469;
+}
+
+@media (max-width: 380px) {
+  .start-time-selector {
+    padding: 14px;
+  }
+
+  .start-time-quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .start-time-option {
+    min-height: 48px;
+  }
+}
+
 .welcome-actions {
   display: grid;
   gap: 12px;
