@@ -1,0 +1,168 @@
+# DayGuide Design Baseline
+
+- **Status:** Active design authority for the experience reset
+- **Version:** 1.0
+- **Effective:** 18 August 2026
+**Scope:** The welcome screen, nearby-discovery choice screens, and the next single-card discovery screen. It also records the agreed direction that later planning screens must follow.
+
+## Authority and history
+
+This baseline is the active reference for the current reconstruction. It **supersedes Packet 185 where the two differ**. In particular, the current experience leads with **Find something nearby**, uses the approved full-screen welcome treatment, and separates quick nearby discovery from longer day planning.
+
+[Packet 185 - Design Foundation](PACKET185_DESIGN_FOUNDATION.md) remains unchanged as the historical record of the earlier foundation. It must not be rewritten to make history appear different. Later documents and implementation should cite this baseline when they need the current decision.
+
+This document distinguishes deliberately between:
+
+| Label | Meaning |
+| --- | --- |
+| **Implemented** | Present in tracked source on the experience-reset branch. |
+| **Approved next** | Agreed product direction that must guide the next implementation, but is not yet evidence of shipped behaviour. |
+| **Future decision** | Valuable direction, but not authorised as current behaviour. |
+
+## Product promise
+
+DayGuide is a location-aware companion that helps people find enjoyable things to do and shape a day around their own choices.
+
+It is not a lengthy questionnaire, a travel-policy explanation, or an app that tells people how to spend their time. The first useful option should arrive quickly; the user chooses, skips, or stops whenever they wish.
+
+The governing design principles are:
+
+1. Less typing and less clutter.
+2. More obvious tapping and clear, outdoor-friendly controls.
+3. A premium, calm, visually led feel.
+4. One understandable step at a time, with no duplicated questions.
+5. Total consistency of language, fonts, spacing, layouts, colours, and action behaviour.
+6. Real nearby venue information must never be represented by a pretend venue.
+
+## Shared visual and language system
+
+- **Phone first:** screens must work comfortably at phone width before desktop refinements. Tap targets must be generous and visible in glare or low light.
+- **One visual language:** the Page 1/2 system is the reference. Do not introduce an unrelated blue legacy layout, extra decorative labels, or a new category palette without a recorded decision.
+- **Action roles:** deep DayGuide blue is the primary nearby-discovery action; coral is the primary planning/build action. Neither colour becomes a competing category code.
+- **Plain labels:** use **Food & Drinks** exactly. Do not substitute “Food and Drinks”, “Food & Drink”, “Food”, or a new variation.
+- **No decorative false affordances:** a label, badge, arrow, or button may appear only if it accurately describes something the user can act on. Editorial imagery must not be labelled “Nearby” or presented as a live venue.
+- **No persistent clutter:** language, account, or log-out controls do not belong as prominent controls on every step. Technical language, internal labels, and repetitive explanations stay out of the main flow.
+- **Accessible detail:** long venue names wrap rather than disappear; text never overlays a control; colour is never the only way to understand a choice; keyboard focus remains visible for desktop and assistive use.
+
+## The two journeys
+
+| Journey | User need | Intended outcome |
+| --- | --- | --- |
+| **Find something nearby** | “Give me a good option now.” | A quick mood choice, relevant real place cards, then one calm selected result with Maps. It does not force an itinerary. |
+| **Plan a day** | “Help me shape a day around my own plans.” | Day, departure time, start area, then only the optional commitments needed for a useful plan. It can later lead to places and an itinerary. |
+
+The journeys share the same visual system and place-card truthfulness, but they must not be forced through the same number of screens.
+
+## Page 1 - Welcome
+
+**Status:** Implemented and visually approved.
+
+### Required content and hierarchy
+
+1. A single uplifting editorial hero image, filling most of the phone screen.
+2. **DayGuide** positioned high and to the right where it does not cover the venue or people in the image.
+3. **Your day, your choices** lower in the image, in open visual space.
+4. **Local favourites, hidden gems and somewhere new.** directly below it, also in open visual space.
+5. **Find something nearby** as the first, visually primary action.
+6. **Plan a day** as the second action.
+
+The approved Page 1 treatment uses the seaside restaurant editorial image. It is a mood-setting image, not a claim that the pictured restaurant is nearby or available through DayGuide. It must remain a single image: no overlapping editorial cards, no inactive “Nearby” pill, and no inactive arrow.
+
+Before another editorial image is added or replaced, its source, licence, crop, and placement require Product Owner confirmation.
+
+## Page 2 - What are you in the mood for?
+
+**Status:** Implemented as the approved direction; visual polish and text must remain governed by this section.
+
+### Required first choice
+
+The page presents exactly these three equal, clear choices:
+
+- **Food & Drinks**
+- **Things to do**
+- **Show me both**
+
+Each choice is a direct route into the matching discovery path. The page must not add overlay words such as “Food”, “Explore”, or “Both” over those controls. It must not make an itinerary promise before a user has selected a place.
+
+The visual composition uses editorial photography only as durable part of the app design, not as temporary filler. Food imagery should communicate eating or drinking at the available crop. The Things to do editorial direction is the approved Tower Bridge crop: preserve both bridge towers and the river, retain useful sky, and minimise distracting foreground railings. If the final crop or source asset changes, it must be shown for approval before insertion.
+
+### Food & Drinks drill-down
+
+After **Food & Drinks**, the page heading is **What sounds good?** and retains the established 13 tappable categories:
+
+Italian, Indian, British, Japanese, Mexican, Mediterranean, Spanish, French, Chinese, Asian, American, Middle Eastern, and Cafe.
+
+The user can choose one or more categories, or see all matching Food & Drinks. The action label is:
+
+> **Show Food & Drinks places**
+
+It is intentionally explicit: “places” alone is too vague at this point in the flow. This action discovers Food & Drinks venues; it is not a duplicate of the coral **Plan a day** action.
+
+### Things to do drill-down
+
+After **Things to do**, present the established activity choices in the same card, spacing, type, and action pattern as Food & Drinks. The action label is:
+
+> **Show things to do**
+
+Do not replace the established activity categories or create a separate visual language without a Product Owner decision.
+
+### Show me both
+
+**Show me both** is a user choice to browse both types of place. It should remain simple and must not introduce a hidden planning form. Its precise live ordering remains a Page 3 implementation decision, but it must never pretend the user has committed to an itinerary.
+
+### Discovery breadth
+
+**Approved next behaviour:** discovery should continue with further matching batches until the available result set is exhausted, rather than ending after one arbitrary short set. A zero-result state must honestly invite a filter or area change; it must never show an empty-itinerary message.
+
+The current radius and any wider rural/driving option are not changed by this baseline. Locale-appropriate miles/kilometres and progressive, non-cluttering distance controls are a **future decision**.
+
+## Page 3 - Single-card discovery
+
+**Status:** Approved next implementation. This is the next Page to build from this baseline.
+
+Page 3 is the premium discovery view reached after a Page 2 choice and its optional filter. It should feel like a useful option, not another form.
+
+### Required card contents
+
+1. One real matching venue at a time.
+2. A large venue photo only when the live place source supplies one.
+3. Accurate venue name, relevant type/cuisine where available, rating/distance/address details where supplied, and an accurate source marker such as **Live from Google Places**.
+4. Required provider photo attribution whenever a Google-supplied photo is displayed.
+5. A clear Maps action that remains available after selection.
+6. Two simple actions: **Skip** and **Choose**.
+
+The card must accommodate long venue names without clipping. It must not use an editorial photo as the image of a live venue, invent a photo, make a generic recommendation claim, or imply that a place is open, suitable, or reachable unless the supporting data actually says so.
+
+### Continuation and completion
+
+- **Skip** moves to the next matching live card.
+- Matching cards continue in further batches until there are no more matching results.
+- **Choose** keeps the user’s choice visible and gives access to Maps. In the nearby journey, one choice is a complete, calm outcome; it does not force a timetable or itinerary.
+- A later refinement may offer a reversible “second thought” or remove action. It must not silently discard the choice.
+- If live discovery is unavailable, state the practical recovery action plainly: allow location, set a named area, change filters, or return to nearby choices. Do not claim a search was successful and do not substitute sample venues.
+
+## Planning foundations that follow this baseline
+
+These rules guide later planning-screen reconstruction; they do not authorise a broad planning rewrite in the Page 3 packet.
+
+- Start with the essentials: day, departure time, and start area.
+- Departure time is tap-first, not a wheel or a keyboard-first input. The approved pattern uses quick choices such as **Now**, **In 1 hour**, **In 2 hours**, day-part choices, hour buttons, quarter-hour buttons, and a clear selected-time readout.
+- **Use my current location** is a genuine choice, never an automatic assumption. Its success confirmation appears directly below the interaction the user has just made.
+- A named place, address, postcode, or ZIP code remains an alternative start method.
+- Keep the optional commitments bounded: one finish destination and one important event. Ask for an arrival time only after its associated destination/event has been chosen; do not invent a default deadline.
+- The first planned venue cannot start at the same time as departure unless it is at the start location. Later plan work must allow travel time to the first venue.
+- A provider-free relative-position diagram may later help show start, finish, and essential event. It is not a live map and must not be represented as one. A real interactive map remains a separate future/premium decision.
+
+## Implementation guardrails
+
+1. Build the next screen from this baseline, not from stale UI tests or pre-reset copy.
+2. Update tests only to express the approved flow and live-data truthfulness; tests do not decide product wording or layout.
+3. Keep provider credentials, configuration, billing, and deployment decisions outside this design baseline.
+4. Preserve Packet 185 and all prior packet records as evidence of how the product evolved.
+5. Any change to Page 1 imagery, Page 2 editorial imagery/crop, action colour roles, or Page 3 card hierarchy requires visual review before it becomes the new baseline.
+
+## Version history
+
+| Version | Date | Change |
+| --- | --- | --- |
+| 1.0 | 18 August 2026 | Established the active authority for the approved Page 1 welcome, Page 2 discovery choices and category routes, Page 3 single-card direction, shared visual rules, and the narrow planning foundations. Explicitly supersedes Packet 185 where they differ while retaining Packet 185 as history. |
