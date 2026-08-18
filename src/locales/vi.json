@@ -143,6 +143,8 @@
     "destinationPlace": "Ngày của bạn nên kết thúc ở đâu?",
     "destinationDeadline": "Bạn cần có mặt ở đó lúc mấy giờ?",
     "noDeadline": "Không có giờ cố định",
+    "arriveByThisTime": "Đến trước giờ này",
+    "timePickerHint": "Chọn buổi sáng hoặc chiều, giờ và phút.",
     "destinationBuffer": "Đến sớm hơn hạn giờ bao nhiêu phút",
     "anchorsTitle": "Mốc cố định",
     "anchorsHint": "Các cam kết này bị khóa, không thể tự động lập kế hoạch lại.",

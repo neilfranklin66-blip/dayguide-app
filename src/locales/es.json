@@ -143,6 +143,8 @@
     "destinationPlace": "¿Dónde debe terminar tu día?",
     "destinationDeadline": "¿A qué hora necesitas estar allí?",
     "noDeadline": "Sin hora fija",
+    "arriveByThisTime": "Llega antes de esta hora",
+    "timePickerHint": "Elige mañana o tarde, una hora y los minutos.",
     "destinationBuffer": "Llegar estos minutos antes de la hora límite",
     "anchorsTitle": "Anclas fijas",
     "anchorsHint": "Estos compromisos están bloqueados frente a la replanificación automática.",

@@ -184,6 +184,8 @@
     "destinationPlace": "Where should your day finish?",
     "destinationDeadline": "What time do you need to be there?",
     "noDeadline": "No fixed time",
+    "arriveByThisTime": "Arrive by this time",
+    "timePickerHint": "Choose morning or afternoon, an hour and minutes.",
     "destinationBuffer": "Arrive this many minutes before the deadline",
     "anchorsTitle": "Fixed anchors",
     "anchorsHint": "These commitments are locked against automatic replanning.",

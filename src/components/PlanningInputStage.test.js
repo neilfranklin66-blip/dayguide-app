@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import PlanningInputStage from './PlanningInputStage';
 import { createPlaceRef } from '../models/geographicalPlan';
 import {
@@ -70,10 +70,10 @@ test('keeps optional later plans together and closed until wanted', () => {
   );
 
   expect(
-    screen.getByRole('button', { name: 'Add a finish or one important time' }),
+    screen.getByRole('button', { name: 'Need to be somewhere later?' }),
   ).toHaveAttribute('aria-expanded', 'false');
   expect(screen.queryByLabelText('Where should your day finish?')).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
 });
 
@@ -146,14 +146,20 @@ test('planning input stage collects a destination and optional deadline', () => 
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   fireEvent.change(screen.getByLabelText('Where should your day finish?'), {
     target: { value: 'resolved:hotel' },
   });
-  fireEvent.change(screen.getByLabelText('What time do you need to be there?'), {
-    target: { value: '22:30' },
-  });
-  fireEvent.blur(screen.getByLabelText('What time do you need to be there?'));
+  const deadlinePicker = screen
+    .getByRole('heading', { name: 'What time do you need to be there?' })
+    .closest('section');
+  fireEvent.click(
+    within(deadlinePicker).getByRole('button', {
+      name: 'Afternoon / evening',
+    }),
+  );
+  fireEvent.click(within(deadlinePicker).getByRole('button', { name: '10' }));
+  fireEvent.click(within(deadlinePicker).getByRole('button', { name: ':30' }));
   fireEvent.click(
     screen.getByRole('button', {
       name: 'Continue with these fixed details',
@@ -185,7 +191,7 @@ test('a later-plan section can be opened and left unused', () => {
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Continue with these fixed details' }));
   expect(onComplete).toHaveBeenCalledWith(
@@ -209,7 +215,7 @@ test('planning input stage adds and completes with a planner-locked anchor', asy
   fireEvent.change(screen.getByLabelText('Where does your day start?'), {
     target: { value: 'resolved:euston' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   fireEvent.click(screen.getByRole('button', { name: 'Add one important time' }));
   fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Evening theatre' },
@@ -262,7 +268,7 @@ test('planning input stage edits and removes a fixed anchor deliberately', async
     />,
   );
 
-  fireEvent.click(screen.getByRole('button', { name: 'Add a finish or one important time' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Need to be somewhere later?' }));
   fireEvent.click(screen.getByRole('button', { name: 'Add one important time' }));
   fireEvent.change(screen.getByLabelText('What is it?'), {
     target: { value: 'Theatre' },

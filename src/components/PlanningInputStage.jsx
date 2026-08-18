@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import HardAnchorEditor from './HardAnchorEditor';
 import DateSelector from './DateSelector';
-import DirectTimeInput from './DirectTimeInput';
 import ResolvedPlaceSelect from './ResolvedPlaceSelect';
 import StartTimeSelector from './StartTimeSelector';
+import TapTimePicker from './TapTimePicker';
 import {
   PLANNING_INPUT_ERROR,
   createPlanningInputDraft,
@@ -16,7 +16,6 @@ import {
   setDestinationTiming,
   setDepartureTime,
   setStartSelection,
-  timeInputToMinutes,
   upsertHardAnchor,
 } from '../utils/planningInputWorkflow';
 
@@ -96,8 +95,7 @@ export default function PlanningInputStage({
     () => draft.destination.enabled || draft.anchors.length > 0,
   );
 
-  const updateDestinationDeadline = value => {
-    const minutes = value === '' ? null : timeInputToMinutes(value);
+  const updateDestinationDeadline = minutes => {
     updateDraft(current =>
       setDestinationTiming(current, {
         arrivalDeadlineMinutes: minutes,
@@ -123,9 +121,6 @@ export default function PlanningInputStage({
     onComplete(result.value);
   };
 
-  const destinationDeadline = minutesToTimeInput(
-    draft.destination.arrivalDeadlineMinutes,
-  );
   const hasSelectedStart = isResolvedPlaceSelection(draft.startSelection);
   const destinationNeedsPlace =
     draft.destination.enabled &&
@@ -187,7 +182,7 @@ export default function PlanningInputStage({
             onClick={() => setLaterPlansOpen(current => !current)}
           >
             {t('planning.laterPlansPrompt', {
-              defaultValue: 'Add a finish or one important time',
+              defaultValue: 'Need to be somewhere later?',
             })}
           </button>
 
@@ -236,24 +231,18 @@ export default function PlanningInputStage({
 
           {isResolvedPlaceSelection(draft.destination.selection) && (
             <div className="later-plan-timing">
-            <DirectTimeInput
-              id="planning-end-deadline"
-              value={destinationDeadline}
-              label={t('planning.destinationDeadline', {
+            <TapTimePicker
+              value={draft.destination.arrivalDeadlineMinutes}
+              onChange={updateDestinationDeadline}
+              onClear={() => updateDestinationDeadline(null)}
+              heading={t('planning.destinationDeadline', {
                 defaultValue: 'What time do you need to be there?',
               })}
-              onChange={updateDestinationDeadline}
-              allowEmpty
+              summaryLabel={t('planning.arriveByThisTime', {
+                defaultValue: 'Arrive by this time',
+              })}
+              t={t}
             />
-
-            <button
-              type="button"
-              className="later-plan-option"
-              aria-pressed={!destinationDeadline}
-              onClick={() => updateDestinationDeadline('')}
-            >
-              {t('planning.noDeadline', { defaultValue: 'No fixed time' })}
-            </button>
             </div>
           )}
 

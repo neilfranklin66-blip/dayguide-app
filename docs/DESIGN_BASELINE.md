@@ -1,7 +1,7 @@
 # DayGuide Design Baseline
 
 - **Status:** Active design authority for the experience reset
-- **Version:** 1.1
+- **Version:** 1.2
 - **Effective:** 18 August 2026
 **Scope:** The welcome screen, nearby-discovery choice screens, and the next single-card discovery screen. It also records the agreed direction that later planning screens must follow.
 
@@ -118,7 +118,7 @@ The current radius and any wider rural/driving option are not changed by this ba
 
 ## Page 3 - Single-card discovery
 
-**Status:** Approved next implementation. This is the next Page to build from this baseline.
+**Status:** Implemented for the nearby journey and visually approved.
 
 Page 3 is the premium discovery view reached after a Page 2 choice and its optional filter. It should feel like a useful option, not another form.
 
@@ -153,6 +153,10 @@ These rules guide later planning-screen reconstruction; they do not authorise a 
 - The first planned venue cannot start at the same time as departure unless it is at the start location. Later plan work must allow travel time to the first venue.
 - A provider-free relative-position diagram may later help show start, finish, and essential event. It is not a live map and must not be represented as one. A real interactive map remains a separate future/premium decision.
 
+### Implemented planning control: optional finish time
+
+Once a verified finish has been chosen, its optional arrival time uses the same tap-first control language as the departure time: day-part buttons, hour buttons, and quarter-hour buttons. It does not expose a wheel or typed-time field, and it begins with **No fixed time** rather than inventing a deadline. This is a narrow control replacement only; the one-finish/one-important-event structure and later planning work remain governed by the rules above.
+
 ## Implementation guardrails
 
 1. Build the next screen from this baseline, not from stale UI tests or pre-reset copy.
@@ -165,5 +169,6 @@ These rules guide later planning-screen reconstruction; they do not authorise a 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.2 | 18 August 2026 | Recorded the implemented tap-first optional finish-time control: no wheel, no keyboard-first entry and no pre-filled deadline. Also records Page 3 as implemented for Nearby. |
 | 1.1 | 18 August 2026 | Clarified that Nearby ends after one **Choose** action: the selected live venue remains with Maps only. No post-choice “find another” or “start over” decision is shown, and Nearby must not add its choice to a multi-stop plan. |
 | 1.0 | 18 August 2026 | Established the active authority for the approved Page 1 welcome, Page 2 discovery choices and category routes, Page 3 single-card direction, shared visual rules, and the narrow planning foundations. Explicitly supersedes Packet 185 where they differ while retaining Packet 185 as history. |

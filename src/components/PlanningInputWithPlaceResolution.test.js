@@ -242,7 +242,7 @@ test('selects a different searched destination without replacing the start', asy
   );
 
   fireEvent.click(
-    screen.getByRole('button', { name: 'Add a finish or one important time' }),
+    screen.getByRole('button', { name: 'Need to be somewhere later?' }),
   );
   fireEvent.change(
     screen.getByLabelText(

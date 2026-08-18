@@ -631,7 +631,8 @@ select:focus-visible {
 
 /* A tap-first alternative to wheels and typed times. It uses the approved
    navy, white and coral visual system rather than adding a new palette. */
-.start-time-selector {
+.start-time-selector,
+.tap-time-picker {
   margin: 18px 0 24px;
   padding: 18px;
   border: 1px solid #c9d6e2;
@@ -640,7 +641,8 @@ select:focus-visible {
   color: #07345e;
 }
 
-.start-time-selector h3 {
+.start-time-selector h3,
+.tap-time-picker h3 {
   margin: 0 0 18px;
   color: #07345e;
   font-family: Georgia, 'Times New Roman', serif;
@@ -732,7 +734,8 @@ select:focus-visible {
 }
 
 @media (max-width: 380px) {
-  .start-time-selector {
+  .start-time-selector,
+  .tap-time-picker {
     padding: 14px;
   }
 

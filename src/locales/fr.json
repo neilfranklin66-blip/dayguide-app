@@ -143,6 +143,8 @@
     "destinationPlace": "Où votre journée doit-elle se terminer ?",
     "destinationDeadline": "À quelle heure devez-vous y être ?",
     "noDeadline": "Pas d'heure fixe",
+    "arriveByThisTime": "Arrivez avant cette heure",
+    "timePickerHint": "Choisissez matin ou après-midi, une heure et les minutes.",
     "destinationBuffer": "Arriver ce nombre de minutes avant l’heure limite",
     "anchorsTitle": "Points fixes",
     "anchorsHint": "Ces engagements sont verrouillés contre toute replanification automatique.",
