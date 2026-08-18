@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import NearbyResultStage from './NearbyResultStage';
 
 const result = {
@@ -17,7 +17,7 @@ const result = {
 };
 
 test('shows one chosen nearby live place with its Maps action, not an itinerary', () => {
-  render(<NearbyResultStage result={result} onStartOver={jest.fn()} onFindAnother={jest.fn()} />);
+  render(<NearbyResultStage result={result} />);
 
   expect(screen.getByRole('heading', { name: 'Live Test Bistro' })).toBeInTheDocument();
   expect(screen.getByText('Live from Google Places')).toBeInTheDocument();
@@ -38,22 +38,6 @@ test('shows one chosen nearby live place with its Maps action, not an itinerary'
   expect(screen.queryByText(/Itinerary/i)).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Skip' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Choose' })).not.toBeInTheDocument();
-});
-
-test('lets the user find another result or start again', () => {
-  const onFindAnother = jest.fn();
-  const onStartOver = jest.fn();
-  render(
-    <NearbyResultStage
-      result={result}
-      onFindAnother={onFindAnother}
-      onStartOver={onStartOver}
-    />,
-  );
-
-  fireEvent.click(screen.getByRole('button', { name: 'Find another' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Start over' }));
-
-  expect(onFindAnother).toHaveBeenCalledTimes(1);
-  expect(onStartOver).toHaveBeenCalledTimes(1);
+  expect(screen.queryByRole('button', { name: 'Find another' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Start over' })).not.toBeInTheDocument();
 });

@@ -182,6 +182,9 @@ test('choosing a nearby card gives a calm result with a Maps action', async () =
   expect(screen.getByRole('link', { name: 'discovery.openInMaps' }).getAttribute('href')).toContain(
     'query=Live%20Restaurant',
   );
+  expect(screen.queryByText('discovery.skip')).not.toBeInTheDocument();
+  expect(screen.queryByText('discovery.choose')).not.toBeInTheDocument();
+  expect(screen.queryByText('nearbyResult.findAnother')).not.toBeInTheDocument();
 });
 
 test('a denied-location nearby activity search has recovery actions and never shows sample cards', async () => {

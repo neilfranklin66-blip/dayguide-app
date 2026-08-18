@@ -1,7 +1,7 @@
 # DayGuide Design Baseline
 
 - **Status:** Active design authority for the experience reset
-- **Version:** 1.0
+- **Version:** 1.1
 - **Effective:** 18 August 2026
 **Scope:** The welcome screen, nearby-discovery choice screens, and the next single-card discovery screen. It also records the agreed direction that later planning screens must follow.
 
@@ -137,8 +137,8 @@ The card must accommodate long venue names without clipping. It must not use an 
 
 - **Skip** moves to the next matching live card.
 - Matching cards continue in further batches until there are no more matching results.
-- **Choose** keeps the user’s choice visible and gives access to Maps. In the nearby journey, one choice is a complete, calm outcome; it does not force a timetable or itinerary.
-- A later refinement may offer a reversible “second thought” or remove action. It must not silently discard the choice.
+- **Choose** keeps the user’s choice visible and gives access to Maps. In the nearby journey, one choice is a complete, calm outcome; it does not force a timetable or itinerary, add another venue, or ask another decision after selection. The user can keep browsing with **Skip** before choosing.
+- A later refinement may offer a reversible “second thought” or remove action. It must not silently discard the choice or turn Nearby into multi-stop planning.
 - If live discovery is unavailable, state the practical recovery action plainly: allow location, set a named area, change filters, or return to nearby choices. Do not claim a search was successful and do not substitute sample venues.
 
 ## Planning foundations that follow this baseline
@@ -165,4 +165,5 @@ These rules guide later planning-screen reconstruction; they do not authorise a 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.1 | 18 August 2026 | Clarified that Nearby ends after one **Choose** action: the selected live venue remains with Maps only. No post-choice “find another” or “start over” decision is shown, and Nearby must not add its choice to a multi-stop plan. |
 | 1.0 | 18 August 2026 | Established the active authority for the approved Page 1 welcome, Page 2 discovery choices and category routes, Page 3 single-card direction, shared visual rules, and the narrow planning foundations. Explicitly supersedes Packet 185 where they differ while retaining Packet 185 as history. |

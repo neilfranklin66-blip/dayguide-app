@@ -4,10 +4,8 @@ import LivePlaceCard from './LivePlaceCard';
 const fallbackTranslations = {
   'discovery.activities': 'Things to do',
   'discovery.openInMaps': 'Open in Maps',
-  'discovery.startOver': 'Start over',
   'nearbyResult.eyebrow': 'Your nearby pick',
   'nearbyResult.liveSource': 'Live from Google Places',
-  'nearbyResult.findAnother': 'Find another',
   'restaurants.photoBy': 'Photo by',
   'restaurants.viewPhotoOnMaps': 'View photo',
 };
@@ -16,8 +14,6 @@ const fallbackT = (key, options) => options?.defaultValue ?? fallbackTranslation
 
 export default function NearbyResultStage({
   result,
-  onStartOver,
-  onFindAnother,
   t = fallbackT,
 }) {
   const place = result?.place;
@@ -32,8 +28,6 @@ export default function NearbyResultStage({
       queueLength={1}
       source="live"
       selected
-      onFindAnother={onFindAnother}
-      onStartOver={onStartOver}
       t={t}
     />
   );

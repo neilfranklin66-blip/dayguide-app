@@ -615,12 +615,12 @@ const DayGuide = () => {
     });
 
     if (liked && currentActivity) {
-      setSelectedActivities(newSelected);
       if (nearbyDiscoveryMode === 'activities') {
         setNearbyResult({ type: 'activities', place: currentActivity });
         setStage('nearby-result');
         return;
       }
+      setSelectedActivities(newSelected);
       if (offerGeographicChoice(currentActivity, newSelected, 'activities')) {
         return;
       }
@@ -653,14 +653,14 @@ const DayGuide = () => {
     }
 
     if (liked && currentRestaurant) {
-      popupCooldowns.current.nearbyRestaurant = Date.now();
-      selectedRestaurantsRef.current = newSelected;
-      setSelectedRestaurants(newSelected);
       if (nearbyDiscoveryMode === 'food') {
         setNearbyResult({ type: 'food', place: currentRestaurant });
         setStage('nearby-result');
         return;
       }
+      popupCooldowns.current.nearbyRestaurant = Date.now();
+      selectedRestaurantsRef.current = newSelected;
+      setSelectedRestaurants(newSelected);
       if (offerGeographicChoice(currentRestaurant, newSelected, 'restaurants')) {
         return;
       }
@@ -954,13 +954,6 @@ const DayGuide = () => {
       return (
         <NearbyResultStage
           result={nearbyResult}
-          onStartOver={resetState}
-          onFindAnother={() => {
-            setNearbyResult(null);
-            if (nearbyDiscoveryMode === 'food') goToRestaurants(selectedCuisines, selectedPriceRange, null);
-            else if (nearbyDiscoveryMode === 'activities') goToActivities(selectedInterests, null);
-            else goToNearbyBoth();
-          }}
           t={t}
         />
       );

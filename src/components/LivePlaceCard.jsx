@@ -41,8 +41,6 @@ export default function LivePlaceCard({
   source,
   onSwipe,
   selected = false,
-  onFindAnother,
-  onStartOver,
   t,
 }) {
   const isFood = kind === 'food';
@@ -118,27 +116,16 @@ export default function LivePlaceCard({
           )}
         </div>
 
-        <footer className="live-place-card-actions">
-          {selected ? (
-            <>
-              <button type="button" className="live-place-card-skip" onClick={onFindAnother}>
-                {t('nearbyResult.findAnother', { defaultValue: 'Find another' })}
-              </button>
-              <button type="button" className="live-place-card-choose" onClick={onStartOver}>
-                {t('discovery.startOver', { defaultValue: 'Start over' })}
-              </button>
-            </>
-          ) : (
-            <>
-              <button type="button" className="live-place-card-skip" onClick={() => onSwipe(false)}>
-                {t('discovery.skip')}
-              </button>
-              <button type="button" className="live-place-card-choose" onClick={() => onSwipe(true)}>
-                {t('discovery.choose')}
-              </button>
-            </>
-          )}
-        </footer>
+        {!selected && (
+          <footer className="live-place-card-actions">
+            <button type="button" className="live-place-card-skip" onClick={() => onSwipe(false)}>
+              {t('discovery.skip')}
+            </button>
+            <button type="button" className="live-place-card-choose" onClick={() => onSwipe(true)}>
+              {t('discovery.choose')}
+            </button>
+          </footer>
+        )}
       </section>
     </main>
   );
