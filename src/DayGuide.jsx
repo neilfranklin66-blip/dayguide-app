@@ -957,8 +957,8 @@ const DayGuide = () => {
           onStartOver={resetState}
           onFindAnother={() => {
             setNearbyResult(null);
-            if (nearbyDiscoveryMode === 'food') goToRestaurants([], null, null);
-            else if (nearbyDiscoveryMode === 'activities') goToActivities([], null);
+            if (nearbyDiscoveryMode === 'food') goToRestaurants(selectedCuisines, selectedPriceRange, null);
+            else if (nearbyDiscoveryMode === 'activities') goToActivities(selectedInterests, null);
             else goToNearbyBoth();
           }}
           t={t}

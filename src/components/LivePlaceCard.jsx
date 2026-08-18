@@ -40,6 +40,9 @@ export default function LivePlaceCard({
   queueLength,
   source,
   onSwipe,
+  selected = false,
+  onFindAnother,
+  onStartOver,
   t,
 }) {
   const isFood = kind === 'food';
@@ -64,9 +67,11 @@ export default function LivePlaceCard({
       <section className="live-place-card" aria-labelledby="live-place-name">
         <header className="live-place-card-header">
           <p className="live-place-card-section">{sectionTitle}</p>
-          <p className="live-place-card-progress">
-            {t('discovery.cardProgress', { current: currentIndex + 1, total: queueLength })}
-          </p>
+          {!selected && (
+            <p className="live-place-card-progress">
+              {t('discovery.cardProgress', { current: currentIndex + 1, total: queueLength })}
+            </p>
+          )}
         </header>
 
         {place.isSample ? (
@@ -114,12 +119,25 @@ export default function LivePlaceCard({
         </div>
 
         <footer className="live-place-card-actions">
-          <button type="button" className="live-place-card-skip" onClick={() => onSwipe(false)}>
-            {t('discovery.skip')}
-          </button>
-          <button type="button" className="live-place-card-choose" onClick={() => onSwipe(true)}>
-            {t('discovery.choose')}
-          </button>
+          {selected ? (
+            <>
+              <button type="button" className="live-place-card-skip" onClick={onFindAnother}>
+                {t('nearbyResult.findAnother', { defaultValue: 'Find another' })}
+              </button>
+              <button type="button" className="live-place-card-choose" onClick={onStartOver}>
+                {t('discovery.startOver', { defaultValue: 'Start over' })}
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className="live-place-card-skip" onClick={() => onSwipe(false)}>
+                {t('discovery.skip')}
+              </button>
+              <button type="button" className="live-place-card-choose" onClick={() => onSwipe(true)}>
+                {t('discovery.choose')}
+              </button>
+            </>
+          )}
         </footer>
       </section>
     </main>
