@@ -1077,6 +1077,26 @@ select:focus-visible {
   text-align: left;
 }
 
+.nearby-result-start-over {
+  display: block;
+  margin: 12px auto 32px;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--dg-color-text-secondary);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.nearby-result-start-over:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
 .nearby-result-type {
   color: var(--dg-color-brand-deep);
   font-weight: 700;

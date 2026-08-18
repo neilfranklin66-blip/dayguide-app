@@ -14,21 +14,29 @@ const fallbackT = (key, options) => options?.defaultValue ?? fallbackTranslation
 
 export default function NearbyResultStage({
   result,
+  onStartOver,
   t = fallbackT,
 }) {
   const place = result?.place;
   if (!place) return null;
 
   return (
-    <LivePlaceCard
-      place={place}
-      kind={result.type === 'food' ? 'food' : 'activity'}
-      sectionTitle={t('nearbyResult.eyebrow', { defaultValue: 'Your nearby pick' })}
-      currentIndex={0}
-      queueLength={1}
-      source="live"
-      selected
-      t={t}
-    />
+    <>
+      <LivePlaceCard
+        place={place}
+        kind={result.type === 'food' ? 'food' : 'activity'}
+        sectionTitle={t('nearbyResult.eyebrow', { defaultValue: 'Your nearby pick' })}
+        currentIndex={0}
+        queueLength={1}
+        source="live"
+        selected
+        t={t}
+      />
+      {typeof onStartOver === 'function' && (
+        <button type="button" className="nearby-result-start-over" onClick={onStartOver}>
+          {t('discovery.startOver', { defaultValue: 'Start over' })}
+        </button>
+      )}
+    </>
   );
 }

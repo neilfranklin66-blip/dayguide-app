@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import NearbyResultStage from './NearbyResultStage';
 
 const result = {
@@ -16,8 +16,9 @@ const result = {
   },
 };
 
-test('shows one chosen nearby live place with its Maps action, not an itinerary', () => {
-  render(<NearbyResultStage result={result} />);
+test('shows one chosen nearby live place with its Maps action and a quiet start-over action, not an itinerary', () => {
+  const onStartOver = jest.fn();
+  render(<NearbyResultStage result={result} onStartOver={onStartOver} />);
 
   expect(screen.getByRole('heading', { name: 'Live Test Bistro' })).toBeInTheDocument();
   expect(screen.getByText('Live from Google Places')).toBeInTheDocument();
@@ -39,5 +40,6 @@ test('shows one chosen nearby live place with its Maps action, not an itinerary'
   expect(screen.queryByRole('button', { name: 'Skip' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Choose' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Find another' })).not.toBeInTheDocument();
-  expect(screen.queryByRole('button', { name: 'Start over' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Start over' }));
+  expect(onStartOver).toHaveBeenCalledTimes(1);
 });

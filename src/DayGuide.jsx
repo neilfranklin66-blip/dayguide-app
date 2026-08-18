@@ -954,6 +954,7 @@ const DayGuide = () => {
       return (
         <NearbyResultStage
           result={nearbyResult}
+          onStartOver={resetState}
           t={t}
         />
       );
