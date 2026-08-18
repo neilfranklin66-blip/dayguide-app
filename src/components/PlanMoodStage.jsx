@@ -6,7 +6,6 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
   const choices = [
     {
       id: 'food',
-      icon: 'Food',
       title: t('planMood.foodTitle', { defaultValue: 'Food & Drinks' }),
       detail: t('planMood.foodDetail', {
         defaultValue: 'Find somewhere good to eat or have a coffee.',
@@ -14,7 +13,6 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
     },
     {
       id: 'activities',
-      icon: 'Explore',
       title: t('planMood.activitiesTitle', { defaultValue: 'Things to do' }),
       detail: t('planMood.activitiesDetail', {
         defaultValue: 'Find a place worth seeing, doing or exploring.',
@@ -22,7 +20,6 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
     },
     {
       id: 'both',
-      icon: 'Both',
       title: t('planMood.bothTitle', { defaultValue: 'Show me both' }),
       detail: t('planMood.bothDetail', {
         defaultValue: 'Start with something to do, then add food if you want it.',
@@ -52,9 +49,6 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
               className="plan-mood-option"
               onClick={() => onChoose(choice.id)}
             >
-              <span className="plan-mood-option-label" aria-hidden="true">
-                {choice.icon}
-              </span>
               <strong>{choice.title}</strong>
               <small>{choice.detail}</small>
             </button>

@@ -13,6 +13,9 @@ test('offers the three short planning routes without asking for more form detail
   expect(onChoose).toHaveBeenNthCalledWith(2, 'activities');
   expect(onChoose).toHaveBeenNthCalledWith(3, 'both');
   expect(screen.queryByLabelText(/postcode/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/^Food$/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/^Explore$/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/^Both$/)).not.toBeInTheDocument();
 });
 
 test('keeps a clear route back to the essential day details', () => {
