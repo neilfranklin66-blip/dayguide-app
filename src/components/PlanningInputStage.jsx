@@ -3,6 +3,7 @@ import HardAnchorEditor from './HardAnchorEditor';
 import DateSelector from './DateSelector';
 import DirectTimeInput from './DirectTimeInput';
 import ResolvedPlaceSelect from './ResolvedPlaceSelect';
+import StartTimeSelector from './StartTimeSelector';
 import {
   PLANNING_INPUT_ERROR,
   createPlanningInputDraft,
@@ -106,12 +107,6 @@ export default function PlanningInputStage({
     );
   };
 
-  const updateDepartureTime = value => {
-    const minutes = timeInputToMinutes(value);
-    if (minutes == null) return;
-    updateDraft(current => setDepartureTime(current, minutes));
-  };
-
   const saveAnchor = anchor => {
     updateDraft(current => upsertHardAnchor(current, anchor));
     setEditor(null);
@@ -131,7 +126,6 @@ export default function PlanningInputStage({
   const destinationDeadline = minutesToTimeInput(
     draft.destination.arrivalDeadlineMinutes,
   );
-  const departureTime = minutesToTimeInput(draft.departureTimeMinutes);
   const hasSelectedStart = isResolvedPlaceSelection(draft.startSelection);
   const destinationNeedsPlace =
     draft.destination.enabled &&
@@ -156,13 +150,17 @@ export default function PlanningInputStage({
           />
         )}
 
-        <DirectTimeInput
-          id="planning-start-time"
-          label={t('planning.startTime', {
+        <StartTimeSelector
+          startTime={draft.departureTimeMinutes / 60}
+          onChange={value =>
+            updateDraft(current =>
+              setDepartureTime(current, Math.round(value * 60)),
+            )
+          }
+          heading={t('planning.startTime', {
             defaultValue: 'What time would you like to start?',
           })}
-          value={departureTime}
-          onChange={updateDepartureTime}
+          t={t}
         />
 
         {startPlaceControl ?? (

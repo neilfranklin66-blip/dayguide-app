@@ -26,7 +26,7 @@ function getQuarterHourFromNow(hoursAhead) {
   return next.getHours() + next.getMinutes() / 60;
 }
 
-export default function StartTimeSelector({ startTime, onChange, t }) {
+export default function StartTimeSelector({ startTime, onChange, t, heading }) {
   const { hour24, minute } = getParts(startTime);
   const selectedHour = hour24 % 12 || 12;
   const isAfternoonEvening = hour24 >= 12;
@@ -43,7 +43,9 @@ export default function StartTimeSelector({ startTime, onChange, t }) {
 
   return (
     <section className="start-time-selector" aria-labelledby="start-time-heading">
-      <h3 id="start-time-heading">{t('interests.startTimeLabel')}</h3>
+      <h3 id="start-time-heading">
+        {heading ?? t('interests.startTimeLabel')}
+      </h3>
 
       <div className="start-time-section">
         <p className="start-time-label">{t('interests.quickTimeLabel')}</p>

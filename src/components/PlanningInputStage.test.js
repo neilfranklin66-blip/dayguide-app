@@ -315,5 +315,10 @@ test('planning input stage can begin from a preselected draft', () => {
   expect(screen.getByLabelText('Where does your day start?')).toHaveValue(
     'resolved:euston',
   );
-  expect(screen.getByLabelText('What time would you like to start?')).toHaveValue('10:00');
+  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  expect(screen.getByText('10:00 am')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: '2', pressed: false }));
+  fireEvent.click(screen.getByRole('button', { name: ':30', pressed: false }));
+
+  expect(screen.getByText('2:30 am')).toBeInTheDocument();
 });
