@@ -136,43 +136,53 @@ export default function PlanningInputStage({
           })}
         </p>
 
-        {selectedDate && onSelectedDateChange && (
-          <DateSelector
-            selectedDate={selectedDate}
-            onChange={onSelectedDateChange}
-            t={t}
-            id="planning-date"
-          />
-        )}
+        <section className="plan-essentials-block" aria-labelledby="plan-when-heading">
+          <h3 id="plan-when-heading">
+            {t('planning.when', { defaultValue: 'When would you like to go?' })}
+          </h3>
 
-        <StartTimeSelector
-          startTime={draft.departureTimeMinutes / 60}
-          onChange={value =>
-            updateDraft(current =>
-              setDepartureTime(current, Math.round(value * 60)),
-            )
-          }
-          heading={t('planning.startTime', {
-            defaultValue: 'What time would you like to start?',
-          })}
-          t={t}
-        />
+          {selectedDate && onSelectedDateChange && (
+            <DateSelector
+              selectedDate={selectedDate}
+              onChange={onSelectedDateChange}
+              t={t}
+              id="planning-date"
+            />
+          )}
 
-        {startPlaceControl ?? (
-          <ResolvedPlaceSelect
-            id="planning-start-place"
-            label={t('planning.startPlace', {
-              defaultValue: 'Where does your day start?',
-            })}
-            selection={draft.startSelection}
-            onChange={selection =>
-              updateDraft(current => setStartSelection(current, selection))
+          <StartTimeSelector
+            startTime={draft.departureTimeMinutes / 60}
+            onChange={value =>
+              updateDraft(current =>
+                setDepartureTime(current, Math.round(value * 60)),
+              )
             }
-            currentPlace={currentPlace}
-            availablePlaces={availablePlaces}
+            heading={t('planning.startTime', {
+              defaultValue: 'What time would you like to start?',
+            })}
             t={t}
           />
-        )}
+        </section>
+
+        <section className="plan-essentials-block plan-start-block" aria-label={t('planning.startSearchTitle', {
+          defaultValue: 'Where will you start?',
+        })}>
+          {startPlaceControl ?? (
+            <ResolvedPlaceSelect
+              id="planning-start-place"
+              label={t('planning.startPlace', {
+                defaultValue: 'Where does your day start?',
+              })}
+              selection={draft.startSelection}
+              onChange={selection =>
+                updateDraft(current => setStartSelection(current, selection))
+              }
+              currentPlace={currentPlace}
+              availablePlaces={availablePlaces}
+              t={t}
+            />
+          )}
+        </section>
 
         <section className="later-plans-panel">
           <button

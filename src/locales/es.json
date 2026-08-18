@@ -94,6 +94,7 @@
   },
   "planning": {
     "title": "Planifica un día",
+    "when": "¿Cuándo te gustaría ir?",
     "subtitle": "Define un punto de inicio, un destino opcional y cualquier compromiso que DayGuide nunca deba mover.",
     "privateAlphaNotice": "Alfa privada: los lugares y horarios fijos guían tu plan, pero los trayectos no están verificados. Comprueba los viajes en directo antes de salir.",
     "searchTitle": "Buscar un lugar verificado",

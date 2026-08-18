@@ -1,7 +1,7 @@
 # DayGuide Design Baseline
 
 - **Status:** Active design authority for the experience reset
-- **Version:** 1.2
+- **Version:** 1.4
 - **Effective:** 18 August 2026
 **Scope:** The welcome screen, nearby-discovery choice screens, and the next single-card discovery screen. It also records the agreed direction that later planning screens must follow.
 
@@ -153,6 +153,15 @@ These rules guide later planning-screen reconstruction; they do not authorise a 
 - The first planned venue cannot start at the same time as departure unless it is at the start location. Later plan work must allow travel time to the first venue.
 - A provider-free relative-position diagram may later help show start, finish, and essential event. It is not a live map and must not be represented as one. A real interactive map remains a separate future/premium decision.
 
+### Implemented planning opening
+
+The first Plan a day view is a short, visually separated sequence:
+
+1. **When would you like to go?** — the day and tap-first departure time.
+2. **Where will you start?** — current location or a searched place, address, postcode, or ZIP code.
+
+These use the established DayGuide neutral surface and spacing; no new colour role or separate legacy layout is introduced. The optional finish and one important time remain below this opening sequence and stay closed until the user asks for them.
+
 ### Implemented planning control: optional finish time
 
 Once a verified finish has been chosen, its optional arrival time uses the same tap-first control language as the departure time: day-part buttons, hour buttons, and quarter-hour buttons. It does not expose a wheel or typed-time field, and it begins with **No fixed time** rather than inventing a deadline. This is a narrow control replacement only; the one-finish/one-important-event structure and later planning work remain governed by the rules above.
@@ -169,6 +178,7 @@ Once a verified finish has been chosen, its optional arrival time uses the same 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.4 | 18 August 2026 | Recorded the implemented Plan a day opening: day and tap-first departure time together, followed by the explicit start-area choice; bounded optional commitments remain below. |
 | 1.3 | 18 August 2026 | Added one quiet **Start over** link below the selected Nearby card's Maps action. It returns to the opening screen without creating an itinerary or another venue choice. |
 | 1.2 | 18 August 2026 | Recorded the implemented tap-first optional finish-time control: no wheel, no keyboard-first entry and no pre-filled deadline. Also records Page 3 as implemented for Nearby. |
 | 1.1 | 18 August 2026 | Clarified that Nearby ends after one **Choose** action: the selected live venue remains with Maps only. No post-choice “find another” or “start over” decision is shown, and Nearby must not add its choice to a multi-stop plan. |

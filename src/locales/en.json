@@ -135,6 +135,7 @@
   },
   "planning": {
     "title": "Plan a day",
+    "when": "When would you like to go?",
     "subtitle": "Set a starting place, an optional destination, and any commitments that DayGuide must never move.",
     "privateAlphaNotice": "Private alpha: fixed places and times guide your plan, but travel legs are not route-verified. Check live journeys before leaving.",
     "searchTitle": "Find a verified planning place",

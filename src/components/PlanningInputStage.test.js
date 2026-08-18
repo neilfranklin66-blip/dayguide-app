@@ -77,6 +77,32 @@ test('keeps optional later plans together and closed until wanted', () => {
   expect(screen.getByLabelText('Where should your day finish?')).toBeInTheDocument();
 });
 
+test('presents day and departure time together before the start-area choice', () => {
+  const { container } = render(
+    <PlanningInputStage
+      availablePlaces={availablePlaces}
+      onComplete={jest.fn()}
+      onCancel={jest.fn()}
+    />,
+  );
+
+  const essentials = container.querySelectorAll('.plan-essentials-block');
+  expect(essentials).toHaveLength(2);
+  expect(
+    within(essentials[0]).getByRole('heading', {
+      name: 'When would you like to go?',
+    }),
+  ).toBeInTheDocument();
+  expect(
+    within(essentials[0]).getByRole('heading', {
+      name: 'What time would you like to start?',
+    }),
+  ).toBeInTheDocument();
+  expect(
+    within(essentials[1]).getByLabelText('Where does your day start?'),
+  ).toBeInTheDocument();
+});
+
 test('a selected start enables continuation without an old no-details escape', () => {
   const draft = setStartSelection(
     createPlanningInputDraft(),

@@ -1005,6 +1005,43 @@ select:focus-visible {
   margin-bottom: 20px;
 }
 
+/* The first Plan a day view is deliberately a short sequence: decide when,
+   then name the starting area. Optional commitments remain below it. */
+.plan-essentials-block {
+  margin: 18px 0;
+  padding: 18px;
+  border: 1px solid var(--dg-color-border-soft);
+  border-radius: var(--dg-radius-lg);
+  background: var(--dg-color-surface-muted);
+}
+
+.plan-essentials-block > h3 {
+  margin: 0 0 14px;
+  color: var(--dg-color-brand-deep);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.35rem;
+}
+
+.plan-essentials-block .time-selector {
+  margin: 0;
+}
+
+.plan-essentials-block .start-time-selector {
+  margin-bottom: 0;
+}
+
+.plan-start-block {
+  padding: 0;
+  background: var(--dg-color-surface);
+}
+
+.plan-start-block .planning-place-search {
+  margin: 0;
+  border: 0;
+  border-radius: var(--dg-radius-lg);
+  background: transparent;
+}
+
 .commitment-type-options {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

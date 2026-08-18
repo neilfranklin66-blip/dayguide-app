@@ -94,6 +94,7 @@
   },
   "planning": {
     "title": "Lên kế hoạch cho một ngày",
+    "when": "Bạn muốn đi khi nào?",
     "subtitle": "Đặt điểm bắt đầu, điểm đến tùy chọn và các cam kết mà DayGuide tuyệt đối không được di chuyển.",
     "privateAlphaNotice": "Bản alpha riêng tư: địa điểm và thời gian cố định sẽ định hướng kế hoạch, nhưng các chặng đi chưa được xác minh bằng tuyến đường. Hãy kiểm tra hành trình trực tiếp trước khi đi.",
     "searchTitle": "Tìm địa điểm lập kế hoạch đã xác minh",

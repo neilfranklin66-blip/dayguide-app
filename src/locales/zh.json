@@ -94,6 +94,7 @@
   },
   "planning": {
     "title": "规划一天",
+    "when": "您想什么时候出发？",
     "subtitle": "设置起点、可选终点，以及 DayGuide 绝不能移动的固定安排。",
     "privateAlphaNotice": "私人测试版：固定地点和时间会指导计划，但行程时间尚未经过路线验证。出发前请查看实时行程。",
     "searchTitle": "查找已验证的规划地点",

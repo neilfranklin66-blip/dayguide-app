@@ -94,6 +94,7 @@
   },
   "planning": {
     "title": "Planifier une journée",
+    "when": "Quand souhaitez-vous y aller ?",
     "subtitle": "Définissez un départ, une destination facultative et les engagements que DayGuide ne doit jamais déplacer.",
     "privateAlphaNotice": "Alpha privée : les lieux et horaires fixes guident le plan, mais les trajets ne sont pas vérifiés. Consultez les itinéraires en direct avant de partir.",
     "searchTitle": "Trouver un lieu vérifié",
