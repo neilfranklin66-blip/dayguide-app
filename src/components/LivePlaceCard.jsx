@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatNearbyDistance } from '../utils/placeDistance';
 
 function PhotoCredit({ photoAttributions, photoMapsUrl, t }) {
   if (photoAttributions.length === 0 && !photoMapsUrl) return null;
@@ -41,6 +42,7 @@ export default function LivePlaceCard({
   source,
   onSwipe,
   selected = false,
+  locale = 'en',
   t,
 }) {
   const isFood = kind === 'food';
@@ -53,10 +55,11 @@ export default function LivePlaceCard({
       .join(' / ')
     : place.venueType || t(`interests.${place.category}`);
   const fallbackLabel = typeLabel || sectionTitle;
+  const formattedDistance = formatNearbyDistance(place.distance, locale);
   const facts = [
     typeof place.rating === 'number' ? `${place.rating} / 5` : null,
-    !place.isSample && typeof place.distance === 'number'
-      ? t('nearbyResult.distance', { distance: place.distance })
+    !place.isSample && formattedDistance
+      ? t('nearbyResult.distance', { distance: formattedDistance })
       : null,
   ].filter(Boolean);
 

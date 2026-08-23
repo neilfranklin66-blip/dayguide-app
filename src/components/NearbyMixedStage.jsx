@@ -9,6 +9,7 @@ export default function NearbyMixedStage({
   onSwipe,
   onChooseFood,
   onChooseActivities,
+  locale,
   t,
 }) {
   if (isLoading) {
@@ -42,6 +43,7 @@ export default function NearbyMixedStage({
       queueLength={places.length}
       source={source}
       onSwipe={onSwipe}
+      locale={locale}
       t={t}
     />
   );

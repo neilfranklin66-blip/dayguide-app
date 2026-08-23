@@ -7,6 +7,7 @@ export default function ActivitySwipeCard({
   activityQueueLength,
   activitySource,
   onSwipe,
+  locale,
   t,
 }) {
   return (
@@ -18,6 +19,7 @@ export default function ActivitySwipeCard({
       queueLength={activityQueueLength}
       source={activitySource}
       onSwipe={onSwipe}
+      locale={locale}
       t={t}
     />
   );

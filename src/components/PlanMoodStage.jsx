@@ -7,23 +7,14 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
     {
       id: 'food',
       title: t('planMood.foodTitle', { defaultValue: 'Food & Drinks' }),
-      detail: t('planMood.foodDetail', {
-        defaultValue: 'Find somewhere good to eat or have a coffee.',
-      }),
     },
     {
       id: 'activities',
       title: t('planMood.activitiesTitle', { defaultValue: 'Things to do' }),
-      detail: t('planMood.activitiesDetail', {
-        defaultValue: 'Find a place worth seeing, doing or exploring.',
-      }),
     },
     {
       id: 'both',
       title: t('planMood.bothTitle', { defaultValue: 'Show me both' }),
-      detail: t('planMood.bothDetail', {
-        defaultValue: 'Start with something to do, then add food if you want it.',
-      }),
     },
   ];
 
@@ -50,7 +41,6 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
               onClick={() => onChoose(choice.id)}
             >
               <strong>{choice.title}</strong>
-              <small>{choice.detail}</small>
             </button>
           ))}
         </div>

@@ -136,9 +136,9 @@ export default function HardAnchorEditor({
         {!initialAnchor && (
           <div className="commitment-type-options" aria-label="Common important times">
             {[
-              ['planning.commitmentTypeTheatre', 'Theatre or cinema'],
+              ['planning.commitmentTypeTheatre', 'Theatre or Cinema'],
               ['planning.commitmentTypeMeeting', 'Meeting'],
-              ['planning.commitmentTypeOther', 'Other'],
+              ['planning.commitmentTypeOther', 'Something else'],
             ].map(([key, defaultValue]) => (
               <button
                 key={key}

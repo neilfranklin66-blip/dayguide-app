@@ -59,7 +59,7 @@
     "choose": "Choose",
     "cardProgress": "{{current}} of {{total}}",
     "placeDetails": "Place details",
-    "openInMaps": "Open in Maps",
+    "openInMaps": "Open in Google Maps",
     "mixedCompleteTitle": "That is this nearby mix",
     "mixedCompleteHint": "Try one category for more options.",
     "mixedEmptyTitle": "Nothing in this nearby mix",
@@ -220,9 +220,9 @@
     "saveAnchor": "Save time",
     "addAnchorAction": "Add one important time",
     "simpleIntro": "Start with the essentials. You can add one important stop later.",
-    "commitmentTypeTheatre": "Theatre or cinema",
+    "commitmentTypeTheatre": "Theatre or Cinema",
     "commitmentTypeMeeting": "Meeting",
-    "commitmentTypeOther": "Other",
+    "commitmentTypeOther": "Something else",
     "summaryTitle": "Your later plans",
     "summaryStart": "Start: {{name}} at {{time}}",
     "summaryDestinationWithoutDeadline": "Finish: {{name}}",
@@ -255,7 +255,7 @@
   "nearbyResult": {
     "eyebrow": "Your nearby pick",
     "liveSource": "Live from Google Places",
-    "distance": "{{distance}} km away",
+    "distance": "{{distance}} miles away",
     "findAnother": "Find another"
   },
   "activities": {
@@ -331,7 +331,7 @@
     "timeLabel": "Time to allow",
     "kmAway": "📍 {{distance}} km away",
     "duration": "⏱️ {{duration}} hours",
-    "openInMaps": "🗺️ Open in Maps",
+    "openInMaps": "Open in Google Maps",
     "photoBy": "Photo by",
     "viewPhotoOnMaps": "View photo",
     "skip": "❌ Skip",

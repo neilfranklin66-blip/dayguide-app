@@ -16,6 +16,9 @@ test('offers the three short planning routes without asking for more form detail
   expect(screen.queryByText(/^Food$/)).not.toBeInTheDocument();
   expect(screen.queryByText(/^Explore$/)).not.toBeInTheDocument();
   expect(screen.queryByText(/^Both$/)).not.toBeInTheDocument();
+  expect(screen.queryByText('Find somewhere good to eat or have a coffee.')).not.toBeInTheDocument();
+  expect(screen.queryByText('Find a place worth seeing, doing or exploring.')).not.toBeInTheDocument();
+  expect(screen.queryByText('Start with something to do, then add food if you want it.')).not.toBeInTheDocument();
 });
 
 test('keeps a clear route back to the essential day details', () => {

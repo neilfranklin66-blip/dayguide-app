@@ -1,8 +1,8 @@
 # DayGuide Design Baseline
 
 - **Status:** Active design authority for the experience reset
-- **Version:** 1.4
-- **Effective:** 18 August 2026
+- **Version:** 1.7
+- **Effective:** 22 August 2026
 **Scope:** The welcome screen, nearby-discovery choice screens, and the next single-card discovery screen. It also records the agreed direction that later planning screens must follow.
 
 ## Authority and history
@@ -49,7 +49,7 @@ The governing design principles are:
 | Journey | User need | Intended outcome |
 | --- | --- | --- |
 | **Find something nearby** | “Give me a good option now.” | A quick mood choice, relevant real place cards, then one calm selected result with Maps. It does not force an itinerary. |
-| **Plan a day** | “Help me shape a day around my own plans.” | Day, departure time, start area, then only the optional commitments needed for a useful plan. It can later lead to places and an itinerary. |
+| **Plan your day** | “Help me shape a day around my own plans.” | Day, departure time, start area, then only the optional commitments needed for a useful plan. It can later lead to places and an itinerary. |
 
 The journeys share the same visual system and place-card truthfulness, but they must not be forced through the same number of screens.
 
@@ -64,7 +64,7 @@ The journeys share the same visual system and place-card truthfulness, but they 
 3. **Your day, your choices** lower in the image, in open visual space.
 4. **Local favourites, hidden gems and somewhere new.** directly below it, also in open visual space.
 5. **Find something nearby** as the first, visually primary action.
-6. **Plan a day** as the second action.
+6. **Plan your day** as the second action.
 
 The approved Page 1 treatment uses the seaside restaurant editorial image. It is a mood-setting image, not a claim that the pictured restaurant is nearby or available through DayGuide. It must remain a single image: no overlapping editorial cards, no inactive “Nearby” pill, and no inactive arrow.
 
@@ -84,6 +84,8 @@ The page presents exactly these three equal, clear choices:
 
 Each choice is a direct route into the matching discovery path. The page must not add overlay words such as “Food”, “Explore”, or “Both” over those controls. It must not make an itinerary promise before a user has selected a place.
 
+The three choice cards carry no explanatory sentence beneath their labels. The labels are sufficient; no generic discovery hint is added unless separately approved.
+
 The visual composition uses editorial photography only as durable part of the app design, not as temporary filler. Food imagery should communicate eating or drinking at the available crop. The Things to do editorial direction is the approved Tower Bridge crop: preserve both bridge towers and the river, retain useful sky, and minimise distracting foreground railings. If the final crop or source asset changes, it must be shown for approval before insertion.
 
 ### Food & Drinks drill-down
@@ -96,7 +98,7 @@ The user can choose one or more categories, or see all matching Food & Drinks. T
 
 > **Show Food & Drinks places**
 
-It is intentionally explicit: “places” alone is too vague at this point in the flow. This action discovers Food & Drinks venues; it is not a duplicate of the coral **Plan a day** action.
+It is intentionally explicit: “places” alone is too vague at this point in the flow. This action discovers Food & Drinks venues; it is not a duplicate of the coral **Plan your day** action.
 
 ### Things to do drill-down
 
@@ -114,7 +116,9 @@ Do not replace the established activity categories or create a separate visual l
 
 **Approved next behaviour:** discovery should continue with further matching batches until the available result set is exhausted, rather than ending after one arbitrary short set. A zero-result state must honestly invite a filter or area change; it must never show an empty-itinerary message.
 
-The current radius and any wider rural/driving option are not changed by this baseline. Locale-appropriate miles/kilometres and progressive, non-cluttering distance controls are a **future decision**.
+The current radius and any wider rural/driving option are not changed by this baseline. The wider rural/driving topic remains deferred until its transport and search behaviour exists.
+
+Card distance is the straight-line distance from the active discovery search origin: the location or named place actually used for that search. It is not the distance from a preceding selected card. For future implementation, the selected app locale determines the display unit: `en` uses spelled-out miles with **away** (`0.3 miles away`, `1.2 miles away`, `12 miles away`); `es`, `fr`, `vi`, and `zh` use their locale-standard `km` abbreviation. Display one decimal place below 10 units and a whole number at 10 or more.
 
 ## Page 3 - Single-card discovery
 
@@ -128,7 +132,7 @@ Page 3 is the premium discovery view reached after a Page 2 choice and its optio
 2. A large venue photo only when the live place source supplies one.
 3. Accurate venue name, relevant type/cuisine where available, rating/distance/address details where supplied, and an accurate source marker such as **Live from Google Places**.
 4. Required provider photo attribution whenever a Google-supplied photo is displayed.
-5. A clear Maps action that remains available after selection.
+5. A clear **Open in Google Maps** action that remains available after selection. It must not be icon-only or imply an in-app map.
 6. Two simple actions: **Skip** and **Choose**.
 
 The card must accommodate long venue names without clipping. It must not use an editorial photo as the image of a live venue, invent a photo, make a generic recommendation claim, or imply that a place is open, suitable, or reachable unless the supporting data actually says so.
@@ -153,14 +157,20 @@ These rules guide later planning-screen reconstruction; they do not authorise a 
 - The first planned venue cannot start at the same time as departure unless it is at the start location. Later plan work must allow travel time to the first venue.
 - A provider-free relative-position diagram may later help show start, finish, and essential event. It is not a live map and must not be represented as one. A real interactive map remains a separate future/premium decision.
 
-### Implemented planning opening
+### Approved planning opening specification
 
-The first Plan a day view is a short, visually separated sequence:
+The first Plan your day view is a short, visually separated sequence:
 
-1. **When would you like to go?** — the day and tap-first departure time.
+1. **When would you like to start?** — the day and tap-first departure time.
 2. **Where will you start?** — current location or a searched place, address, postcode, or ZIP code.
 
-These use the established DayGuide neutral surface and spacing; no new colour role or separate legacy layout is introduced. The optional finish and one important time remain below this opening sequence and stay closed until the user asks for them.
+The exact page layout, native-date-picker rule, tap-first time mechanics,
+start-area confirmations, Continue state, and recovery copy are governed by
+[Plan a Day Opening Screen Approval Draft](PLAN_A_DAY_OPENING_SCREEN_APPROVAL_DRAFT.md).
+These use the established DayGuide neutral surface and spacing; no new colour
+role or separate legacy layout is introduced. The optional finish and one
+important time remain below this opening sequence and stay closed until the
+user asks for them.
 
 ### Implemented planning control: optional finish time
 
@@ -178,6 +188,10 @@ Once a verified finish has been chosen, its optional arrival time uses the same 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.8 | 22 August 2026 | Recorded the approved current-English important-event categories: **Theatre or Cinema**, **Meeting**, and **Something else**. The current single English locale uses British **Theatre** throughout. |
+| 1.7 | 22 August 2026 | Recorded the Page 2 simplicity decision: the three nearby mood-choice cards carry no explanatory sentence beneath their labels. Recorded **Open in Google Maps** for the action that opens the existing Google Maps deep link, and the future locale-distance rule measured from the active search origin. The wider nearby/rural-driving topic remains deferred. |
+| 1.6 | 18 August 2026 | Product Owner approved the complete opening specification: **Plan your day** replaces prior user-facing “Plan a day”; native date selection; mandatory, tap-first departure time; explicit start-area confirmation; bounded Continue state; and plain location recovery wording. The specification is documentation authority until separately implemented. |
+| 1.5 | 18 August 2026 | Product Owner approved the exact departure-time heading **When would you like to start?**. This corrects the earlier unapproved “When would you like to go?” wording; it does not itself change application source. |
 | 1.4 | 18 August 2026 | Recorded the implemented Plan a day opening: day and tap-first departure time together, followed by the explicit start-area choice; bounded optional commitments remain below. |
 | 1.3 | 18 August 2026 | Added one quiet **Start over** link below the selected Nearby card's Maps action. It returns to the opening screen without creating an itinerary or another venue choice. |
 | 1.2 | 18 August 2026 | Recorded the implemented tap-first optional finish-time control: no wheel, no keyboard-first entry and no pre-filled deadline. Also records Page 3 as implemented for Nearby. |

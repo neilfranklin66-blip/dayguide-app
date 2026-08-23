@@ -31,7 +31,7 @@ test('shows one chosen nearby live place with its Maps action and a quiet start-
     'href',
     result.place.photoMapsUrl,
   );
-  expect(screen.getByRole('link', { name: 'Open in Maps' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Open in Google Maps' })).toHaveAttribute(
     'href',
     result.place.mapsUrl,
   );

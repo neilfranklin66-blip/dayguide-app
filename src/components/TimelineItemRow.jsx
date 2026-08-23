@@ -44,7 +44,7 @@ export default function TimelineItemRow({ item, index, onDurationChange, onRemov
               target="_blank"
               rel="noopener noreferrer"
             >
-              {t('restaurants.openInMaps', 'Open in Maps')}
+              {t('restaurants.openInMaps', 'Open in Google Maps')}
             </a>
           )}
         </div>

@@ -955,6 +955,7 @@ const DayGuide = () => {
         <NearbyResultStage
           result={nearbyResult}
           onStartOver={resetState}
+          locale={i18n.language}
           t={t}
         />
       );
@@ -976,6 +977,7 @@ const DayGuide = () => {
             setNearbyDiscoveryMode('activities');
             setStage('discovery');
           }}
+          locale={i18n.language}
           t={t}
         />
       );
@@ -1015,6 +1017,7 @@ const DayGuide = () => {
           swipeActivity={swipeActivity}
           selectedActivities={selectedActivities}
           onBuild={() => buildTimeline(selectedRestaurantsRef.current, selectedActivities)}
+          locale={i18n.language}
           t={t}
         />
       );
@@ -1058,6 +1061,7 @@ const DayGuide = () => {
             setStage('discovery');
           }}
           onStartOver={resetState}
+          locale={i18n.language}
           t={t}
         />
       );

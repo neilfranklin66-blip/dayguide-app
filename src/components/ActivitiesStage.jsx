@@ -25,6 +25,7 @@ export default function ActivitiesStage({
   onStartOver,
   onRetry,
   onSetStart,
+  locale,
   t,
 }) {
   if (isActivitiesLoading) {
@@ -92,6 +93,7 @@ export default function ActivitiesStage({
       activitySource={activitySource}
       activityQueueLength={activityQueue.length}
       onSwipe={swipeActivity}
+      locale={locale}
       t={t}
     />
   );

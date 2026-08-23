@@ -7,6 +7,7 @@ export default function RestaurantSwipeCard({
   restaurantQueueLength,
   restaurantSource,
   onSwipe,
+  locale,
   t,
 }) {
   return (
@@ -18,6 +19,7 @@ export default function RestaurantSwipeCard({
       queueLength={restaurantQueueLength}
       source={restaurantSource}
       onSwipe={onSwipe}
+      locale={locale}
       t={t}
     />
   );

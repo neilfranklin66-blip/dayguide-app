@@ -30,6 +30,7 @@ export default function RestaurantsStage({
   onStartOver,
   planningOverride,
   hasMore = false,
+  locale,
   t,
 }) {
   if (isRestaurantsLoading) {
@@ -120,6 +121,7 @@ export default function RestaurantsStage({
       restaurantQueueLength={restaurantQueue.length}
       restaurantSource={restaurantSource}
       onSwipe={swipeRestaurant}
+      locale={locale}
       t={t}
     />
   );
