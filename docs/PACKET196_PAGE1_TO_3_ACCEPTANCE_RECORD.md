@@ -8,7 +8,7 @@
 
 ## Purpose
 
-This is the controlled recovery point for the first three user-facing screens. It separates what is already approved from what is visibly incomplete. It authorises **no new copy, visual language, layout, or product behaviour**.
+This is the controlled recovery point for the first three user-facing screens. It separates already-approved design decisions from implementation checks. It authorises **no new copy, visual language, layout, or product behaviour**.
 
 No later screen may be treated as a reason to change these three pages. Any proposed change must first name the affected requirement in this record and receive Product Owner approval.
 
@@ -28,7 +28,7 @@ The editorial photo is not a live nearby place, must have no inactive “Nearby�
 
 ## Page 2 — nearby choice
 
-**Acceptance status: direction approved; current visual implementation not accepted.**
+**Acceptance status: design approved; implementation verification pending.**
 
 The page must contain only these routes:
 
@@ -47,9 +47,9 @@ The Page 2 requirements already approved are:
 - no “Your day takes shape” claim before the user has selected anything;
 - the Food & Drinks card uses the approved restaurant image/crop;
 - the Things to do card uses the approved Tower Bridge crop;
-- no new category colours, font family, font size scale, background treatment, or unrelated legacy layout may be introduced without visual approval.
+- no new category colours, typography, background treatment, or unrelated legacy layout may be introduced.
 
-The present Page 2 must therefore be treated as **incomplete** until the approved images, typography, sizing, spacing, and one shared Page 1–3 visual language are shown together and accepted.
+No further Page 2 design decision is required. The remaining task is only to verify that the current PR 24 rendering matches these accepted decisions together: the two approved image cards, established typography and sizing, spacing, and the shared Page 1–3 visual language.
 
 ## Page 3 — live nearby card and selected result
 
@@ -65,10 +65,8 @@ The provider-photo attribution/link is a separate Google policy and product-boun
 
 ## Explicitly undecided — do not invent
 
-The following are not settled by prior approval and must not be guessed in code:
+The following must not be guessed in code:
 
-- exact Page 2 font family and numerical type scale;
-- exact Page 2 background/surface treatment and vertical spacing;
 - the final visual placement of the visible selected-result exit control, provided it fulfils the accepted behaviour above;
 - any change to the Google photo/link hand-off.
 
@@ -85,5 +83,4 @@ Before Page 4 or further planning-screen work:
 
 ## Implementation boundary
 
-This packet records the acceptance gate only. It makes no product-code, credential, provider, deployment, or test change. The next implementation packet is limited to reconciling Page 2 and the selected-result escape against this record after the unresolved visual items are explicitly approved.
-
+This packet records the acceptance gate only. It makes no product-code, credential, provider, deployment, or test change. The next implementation packet is limited to verifying Page 2 against its approved design and repairing the selected-result escape against this record.
