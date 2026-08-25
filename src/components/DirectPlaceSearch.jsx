@@ -71,6 +71,9 @@ export default function DirectPlaceSearch({
   selectDefault,
   onSelect,
   secondaryAction = null,
+  secondaryFeedback = '',
+  selectedSummaryText = null,
+  selectedSummaryPlacement = 'after-secondary',
   selectedAction = null,
   embedded = false,
   searchPlaces = resolvePlaceQuery,
@@ -135,6 +138,27 @@ export default function DirectPlaceSearch({
   };
 
   const SearchContainer = embedded ? 'div' : 'form';
+  const selectedSummary = selectedPlace && (
+    <div className="selected-place-summary" role="status">
+      <p>
+        {selectedSummaryText ?? t(selectedKey, {
+          name: selectedPlace.name,
+          defaultValue: selectedDefault.replace('{{name}}', selectedPlace.name),
+        })}
+      </p>
+      {selectedAction && (
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={selectedAction.onClick}
+        >
+          {t(selectedAction.key, {
+            defaultValue: selectedAction.defaultValue,
+          })}
+        </button>
+      )}
+    </div>
+  );
 
   return (
     <section className="planning-place-search" aria-labelledby={titleId}>
@@ -156,26 +180,12 @@ export default function DirectPlaceSearch({
         </button>
       )}
 
-      {selectedPlace && (
-        <div className="selected-place-summary" role="status">
-          <p>
-            {t(selectedKey, {
-              name: selectedPlace.name,
-              defaultValue: selectedDefault.replace('{{name}}', selectedPlace.name),
-            })}
-          </p>
-          {selectedAction && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={selectedAction.onClick}
-            >
-              {t(selectedAction.key, {
-                defaultValue: selectedAction.defaultValue,
-              })}
-            </button>
-          )}
-        </div>
+      {selectedSummaryPlacement === 'after-secondary' && selectedSummary}
+
+      {secondaryFeedback && (
+        <p role="status" className="start-order-hint">
+          {secondaryFeedback}
+        </p>
       )}
 
       <SearchContainer
@@ -237,12 +247,6 @@ export default function DirectPlaceSearch({
           >
             Google Maps
           </p>
-          <p className="start-order-hint">
-            {t('planning.searchOrdering', {
-              defaultValue:
-                'Matches are ordered using factors including relevance, distance and prominence.',
-            })}
-          </p>
           {results.map(place => (
             <article key={placeKey(place)} className="swipe-item">
               <h4>{place.name}</h4>
@@ -261,6 +265,8 @@ export default function DirectPlaceSearch({
           ))}
         </section>
       )}
+
+      {selectedSummaryPlacement === 'after-search' && selectedSummary}
     </section>
   );
 }

@@ -919,10 +919,7 @@ const DayGuide = () => {
           createPlanningInputDraftFromValue(geographicalPlanning);
       } else {
         initialDraft = createPlanningInputDraft({
-          departureTimeMinutes: Math.max(
-            0,
-            Math.min(24 * 60 - 1, Math.round(startTime * 60)),
-          ),
+          departureTimeMinutes: null,
         });
       }
 

@@ -264,9 +264,10 @@ test('Plan a day opens only the essential planning screen and tap-first time cho
 
   fireEvent.click(screen.getByText('welcome.startPlanning'));
 
-  expect(screen.getByText('planning.title')).toBeInTheDocument();
+  expect(screen.getByText('Plan your day')).toBeInTheDocument();
+  expect(screen.getByText('When would you like to start?')).toBeInTheDocument();
   expect(screen.getByText('planning.startSearchTitle')).toBeInTheDocument();
-  expect(screen.getByText('planning.startTime')).toBeInTheDocument();
+  expect(screen.getByText('No start time chosen yet')).toBeInTheDocument();
   expect(screen.getByText('interests.timeNow')).toBeInTheDocument();
   expect(screen.getByText('interests.timeIn1Hour')).toBeInTheDocument();
   expect(screen.getByText('interests.timeIn2Hours')).toBeInTheDocument();
@@ -278,7 +279,8 @@ test('a current starting location leads into the concise planning choice without
 
   fireEvent.click(screen.getByText('welcome.startPlanning'));
   fireEvent.click(screen.getByText('planning.useCurrentStart'));
-  fireEvent.click(screen.getByText('planning.continue'));
+  fireEvent.click(screen.getByText('interests.timeNow'));
+  fireEvent.click(screen.getByText('Continue'));
 
   expect(screen.getByText('planMood.foodTitle')).toBeInTheDocument();
   expect(screen.getByText('planMood.activitiesTitle')).toBeInTheDocument();

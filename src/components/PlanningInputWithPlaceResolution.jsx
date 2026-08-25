@@ -6,8 +6,6 @@ import {
   PLACE_SELECTION_MODE,
   createPlaceSelection,
   createPlanningInputDraft,
-  setDestinationEnabled,
-  setDestinationSelection,
   setStartSelection,
 } from '../utils/planningInputWorkflow';
 import { resolvePlaceQuery } from '../api/placeResolutionApi';
@@ -41,26 +39,15 @@ export default function PlanningInputWithPlaceResolution({
     mergePlaces(initialPlaces),
   );
   const [draft, setDraft] = useState(() =>
-    initialDraft ?? createPlanningInputDraft(),
+    initialDraft ?? createPlanningInputDraft({ departureTimeMinutes: null }),
   );
+  const [locationFeedback, setLocationFeedback] = useState('');
 
   const selectStartPlace = place => {
+    setLocationFeedback('');
     setAvailablePlaces(current => mergePlaces(current, [place]));
     setDraft(current =>
       setStartSelection(
-        current,
-        createPlaceSelection({
-          mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
-          place,
-        }),
-      ),
-    );
-  };
-
-  const selectDestinationPlace = place => {
-    setAvailablePlaces(current => mergePlaces(current, [place]));
-    setDraft(current =>
-      setDestinationSelection(
         current,
         createPlaceSelection({
           mode: PLACE_SELECTION_MODE.RESOLVED_PLACE,
@@ -72,8 +59,12 @@ export default function PlanningInputWithPlaceResolution({
 
   const useCurrentLocation = () => {
     if (!isPlaceRef(currentPlace) || currentPlace.source !== 'current_gps') {
+      setLocationFeedback(
+        "Location isn't available. Search for a place, address, postcode or ZIP code instead.",
+      );
       return;
     }
+    setLocationFeedback('');
     setDraft(current =>
       setStartSelection(
         current,
@@ -83,10 +74,6 @@ export default function PlanningInputWithPlaceResolution({
         }),
       ),
     );
-  };
-
-  const removeDestination = () => {
-    setDraft(current => setDestinationEnabled(current, false));
   };
 
   const startPlaceControl = (
@@ -99,54 +86,33 @@ export default function PlanningInputWithPlaceResolution({
       labelKey="planning.startSearchLabel"
       labelDefault="Place, address, postcode or ZIP code"
       placeholderKey="planning.startSearchPlaceholder"
-      placeholderDefault="For example: Northampton Museum or NN1 1DP"
+      placeholderDefault="Search for a place, address, postcode or ZIP code"
       selectedPlace={draft.startSelection?.place}
       selectedKey="planning.startPlaceSelected"
-      selectedDefault="Your day will start at {{name}}."
+      selectedDefault="Start area set: {{name}}"
+      selectedSummaryText={
+        draft.startSelection?.mode === PLACE_SELECTION_MODE.CURRENT_LOCATION
+          ? 'Start area set: your current location'
+          : draft.startSelection?.place
+            ? `Start area set: ${[draft.startSelection.place.name, draft.startSelection.place.address]
+                .filter(Boolean)
+                .join(', ')}`
+            : null
+      }
+      selectedSummaryPlacement={
+        draft.startSelection?.mode === PLACE_SELECTION_MODE.CURRENT_LOCATION
+          ? 'after-secondary'
+          : 'after-search'
+      }
       selectKey="planning.selectStartPlace"
       selectDefault="Start at {{name}}"
       onSelect={selectStartPlace}
-      secondaryAction={
-        isPlaceRef(currentPlace) && currentPlace.source === 'current_gps'
-          ? {
-              key: 'planning.useCurrentStart',
-              name: currentPlace.name,
-              defaultValue: `Use my current location — ${currentPlace.name}`,
-              onClick: useCurrentLocation,
-            }
-          : null
-      }
-      searchPlaces={searchPlaces}
-      t={t}
-    />
-  );
-
-  const destinationPlaceControl = (
-    <DirectPlaceSearch
-      id="planning-destination-place"
-      titleKey="planning.destinationSearchTitle"
-      titleDefault="Where will you finish?"
-      hintKey="planning.destinationSearchHint"
-      hintDefault="Search for a place, address, postcode or ZIP code."
-      labelKey="planning.destinationSearchLabel"
-      labelDefault="Place, address, postcode or ZIP code for your destination"
-      placeholderKey="planning.destinationSearchPlaceholder"
-      placeholderDefault="For example: your hotel or SW1A 1AA"
-      selectedPlace={draft.destination.selection?.place}
-      selectedKey="planning.destinationPlaceSelected"
-      selectedDefault="Your day will finish at {{name}}."
-      selectKey="planning.selectDestinationPlace"
-      selectDefault="Finish at {{name}}"
-      onSelect={selectDestinationPlace}
-      selectedAction={
-        draft.destination.selection
-          ? {
-              key: 'planning.removeDestination',
-              defaultValue: 'Remove end destination',
-              onClick: removeDestination,
-            }
-          : null
-      }
+      secondaryAction={{
+        key: 'planning.useCurrentStart',
+        defaultValue: 'Use my current location',
+        onClick: useCurrentLocation,
+      }}
+      secondaryFeedback={locationFeedback}
       searchPlaces={searchPlaces}
       t={t}
     />
@@ -159,7 +125,6 @@ export default function PlanningInputWithPlaceResolution({
       draft={draft}
       onDraftChange={setDraft}
       startPlaceControl={startPlaceControl}
-      destinationPlaceControl={destinationPlaceControl}
       onComplete={onComplete}
       onCancel={onCancel}
       onSkip={onSkip}

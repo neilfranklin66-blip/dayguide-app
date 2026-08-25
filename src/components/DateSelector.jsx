@@ -5,11 +5,13 @@ export default function DateSelector({
   onChange,
   t,
   id = 'interests-date',
+  labelKey = 'interests.dateLabel',
+  labelDefault = 'What date do you want to plan?',
 }) {
   return (
     <div className="time-selector">
       <label htmlFor={id}>
-        {t('interests.dateLabel') || 'What date do you want to plan?'}
+        {t(labelKey, { defaultValue: labelDefault })}
       </label>
       <input
         id={id}
