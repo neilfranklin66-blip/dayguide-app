@@ -44,6 +44,7 @@ export default function LivePlaceCard({
   selected = false,
   locale = 'en',
   t,
+  afterCard,
 }) {
   const isFood = kind === 'food';
   const photoUrl = place.photoUrl || (isFood ? place.image : null);
@@ -130,6 +131,7 @@ export default function LivePlaceCard({
           </footer>
         )}
       </section>
+      {afterCard}
     </main>
   );
 }

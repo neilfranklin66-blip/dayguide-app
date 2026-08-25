@@ -41,6 +41,9 @@ const liveRestaurant = {
   address: '1 Real Street',
   coordinates: { lat: 51.5075, lng: -0.1272 },
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Live%20Restaurant',
+  image: 'https://images.example.test/live-restaurant.jpg',
+  photoAttributions: [{ name: 'Test restaurant photographer' }],
+  photoMapsUrl: 'https://maps.example.test/live-restaurant-photo',
 };
 
 const liveActivity = {
@@ -54,6 +57,9 @@ const liveActivity = {
   coordinates: { lat: 51.508, lng: -0.128 },
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Live%20Test%20Museum',
   source: 'google_places',
+  photoUrl: 'https://images.example.test/live-activity.jpg',
+  photoAttributions: [{ name: 'Test activity photographer' }],
+  photoMapsUrl: 'https://maps.example.test/live-activity-photo',
 };
 
 const openNearbyFood = () => {
@@ -107,6 +113,15 @@ test('an unfiltered Food & Drinks search reaches a live card without an old ques
 
   expect(await screen.findByText('Live Restaurant')).toBeInTheDocument();
   expect(screen.getByText('nearbyResult.liveSource')).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: 'Live Restaurant' })).toHaveAttribute('src', liveRestaurant.image);
+  expect(screen.getByText('restaurants.photoBy Test restaurant photographer')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'restaurants.viewPhotoOnMaps' })).toHaveAttribute(
+    'href',
+    liveRestaurant.photoMapsUrl,
+  );
+  expect(screen.getByRole('link', { name: 'discovery.openInMaps' }).getAttribute('href')).toContain(
+    'query=Live%20Restaurant',
+  );
   expect(screen.getByText('discovery.skip')).toBeInTheDocument();
   expect(screen.getByText('discovery.choose')).toBeInTheDocument();
   expect(searchRestaurantPage).toHaveBeenCalledWith(
@@ -143,6 +158,16 @@ test('Things to do reaches a live card using the selected activity category', as
   fireEvent.click(screen.getByText('discovery.showActivities'));
 
   expect(await screen.findByText('Live Test Museum')).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: 'Live Test Museum' })).toHaveAttribute('src', liveActivity.photoUrl);
+  expect(screen.getByText('restaurants.photoBy Test activity photographer')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'restaurants.viewPhotoOnMaps' })).toHaveAttribute(
+    'href',
+    liveActivity.photoMapsUrl,
+  );
+  expect(screen.getByRole('link', { name: 'discovery.openInMaps' })).toHaveAttribute(
+    'href',
+    liveActivity.mapsUrl,
+  );
   expect(searchActivities).toHaveBeenCalledWith(
     resolvedGeo.position.lat,
     resolvedGeo.position.lng,
@@ -185,6 +210,35 @@ test('choosing a nearby card gives a calm result with a Maps action', async () =
   expect(screen.queryByText('discovery.skip')).not.toBeInTheDocument();
   expect(screen.queryByText('discovery.choose')).not.toBeInTheDocument();
   expect(screen.queryByText('nearbyResult.findAnother')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'discovery.startOver' })).toBeInTheDocument();
+  expect(screen.queryByText('itinerary.title')).not.toBeInTheDocument();
+});
+
+test('Show me both reaches one live card and choosing it leaves one calm selected result', async () => {
+  render(<DayGuide />);
+
+  fireEvent.click(screen.getByText('welcome.findNearby'));
+  fireEvent.click(screen.getByText('discovery.both'));
+
+  expect(await screen.findByText('Live Restaurant')).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: 'Live Restaurant' })).toHaveAttribute('src', liveRestaurant.image);
+  expect(screen.getByText('restaurants.photoBy Test restaurant photographer')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'restaurants.viewPhotoOnMaps' })).toHaveAttribute(
+    'href',
+    liveRestaurant.photoMapsUrl,
+  );
+  expect(screen.getByRole('link', { name: 'discovery.openInMaps' }).getAttribute('href')).toContain(
+    'query=Live%20Restaurant',
+  );
+  expect(screen.getByRole('button', { name: 'discovery.skip' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'discovery.choose' }));
+
+  expect(await screen.findByText('nearbyResult.eyebrow')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'discovery.startOver' })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'discovery.skip' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'discovery.choose' })).not.toBeInTheDocument();
+  expect(screen.queryByText('itinerary.title')).not.toBeInTheDocument();
+  expect(screen.queryByText('Live Test Museum')).not.toBeInTheDocument();
 });
 
 test('a denied-location nearby activity search has recovery actions and never shows sample cards', async () => {

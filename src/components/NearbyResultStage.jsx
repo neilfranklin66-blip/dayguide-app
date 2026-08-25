@@ -33,12 +33,12 @@ export default function NearbyResultStage({
         selected
         locale={locale}
         t={t}
+        afterCard={typeof onStartOver === 'function' && (
+          <button type="button" className="nearby-result-start-over" onClick={onStartOver}>
+            {t('discovery.startOver', { defaultValue: 'Start over' })}
+          </button>
+        )}
       />
-      {typeof onStartOver === 'function' && (
-        <button type="button" className="nearby-result-start-over" onClick={onStartOver}>
-          {t('discovery.startOver', { defaultValue: 'Start over' })}
-        </button>
-      )}
     </>
   );
 }

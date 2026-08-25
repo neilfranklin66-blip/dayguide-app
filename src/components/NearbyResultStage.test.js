@@ -40,6 +40,8 @@ test('shows one chosen nearby live place with its Maps action and a quiet start-
   expect(screen.queryByRole('button', { name: 'Skip' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Choose' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Find another' })).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'Start over' }));
+  const startOver = screen.getByRole('button', { name: 'Start over' });
+  expect(screen.getByRole('main')).toContainElement(startOver);
+  fireEvent.click(startOver);
   expect(onStartOver).toHaveBeenCalledTimes(1);
 });
