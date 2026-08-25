@@ -158,6 +158,9 @@ describe('searchRestaurantPage', () => {
 
     expect(page.results).toHaveLength(1);
     expect(page.results[0].venueType).toBe('Cafe');
+    expect(page.results[0].mapsUrl).toBe(
+      'https://www.google.com/maps/search/?api=1&query=Neighbourhood%20Cafe&query_place_id=cafe-1',
+    );
     expect(page.nextPageToken).toBe('provider-page-2');
     expect(global.fetch.mock.calls[0][0]).toContain('keyword=food+and+drink');
     expect(global.fetch.mock.calls[0][0]).toContain('unfiltered=1');

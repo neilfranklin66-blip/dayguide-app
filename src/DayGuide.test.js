@@ -234,6 +234,10 @@ test('Show me both reaches one live card and choosing it leaves one calm selecte
   fireEvent.click(screen.getByRole('button', { name: 'discovery.choose' }));
 
   expect(await screen.findByText('nearbyResult.eyebrow')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'discovery.openInMaps' })).toHaveAttribute(
+    'href',
+    liveRestaurant.mapsUrl,
+  );
   expect(screen.getByRole('button', { name: 'discovery.startOver' })).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'discovery.skip' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'discovery.choose' })).not.toBeInTheDocument();

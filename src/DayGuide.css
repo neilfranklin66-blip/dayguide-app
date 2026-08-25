@@ -1110,6 +1110,35 @@ select:focus-visible {
   background: var(--dg-color-surface-muted);
 }
 
+.plan-mood-option--food,
+.plan-mood-option--activities {
+  grid-template-columns: 116px 1fr;
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.plan-mood-option-image {
+  display: block;
+  width: 100%;
+  height: 104px;
+  object-fit: cover;
+}
+
+.plan-mood-option--food .plan-mood-option-image {
+  object-position: center 58%;
+}
+
+.plan-mood-option--activities .plan-mood-option-image {
+  object-position: center 30%;
+}
+
+.plan-mood-option--food strong,
+.plan-mood-option--activities strong {
+  align-self: center;
+  padding: 18px;
+}
+
 .nearby-result-stage {
   text-align: left;
 }

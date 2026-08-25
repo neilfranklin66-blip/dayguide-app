@@ -81,6 +81,21 @@ function normalizePhotoAttributions(attributions) {
     }));
 }
 
+function buildMapsUrl(place) {
+  const { lat, lng } = place.geometry.location;
+  const query = place.name || place.vicinity || `${lat},${lng}`;
+  const parameters = [
+    'api=1',
+    `query=${encodeURIComponent(query)}`,
+  ];
+
+  if (typeof place.place_id === 'string' && place.place_id) {
+    parameters.push(`query_place_id=${encodeURIComponent(place.place_id)}`);
+  }
+
+  return `https://www.google.com/maps/search/?${parameters.join('&')}`;
+}
+
 // A record without numeric coordinates can't be distance-filtered or routed;
 // skip it rather than letting one malformed result throw away the whole batch.
 function hasUsableGeometry(p) {
@@ -156,6 +171,7 @@ function parsePlaces(results, lat, lng) {
           lat: p.geometry.location.lat,
           lng: p.geometry.location.lng,
         },
+        mapsUrl: buildMapsUrl(p),
         image: imgSrc,
         photoAttributions: normalizePhotoAttributions(photo?.author_attributions),
         photoMapsUrl: typeof photo?.google_maps_uri === 'string'

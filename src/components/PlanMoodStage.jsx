@@ -1,4 +1,6 @@
 import React from 'react';
+import nearbyFoodImage from '../assets/nearby-food-restaurant.jpg';
+import nearbyThingsImage from '../assets/nearby-things-tower-bridge.jpg';
 
 const fallbackT = (_key, options) => options?.defaultValue ?? _key;
 
@@ -7,10 +9,12 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
     {
       id: 'food',
       title: t('planMood.foodTitle', { defaultValue: 'Food & Drinks' }),
+      image: nearbyFoodImage,
     },
     {
       id: 'activities',
       title: t('planMood.activitiesTitle', { defaultValue: 'Things to do' }),
+      image: nearbyThingsImage,
     },
     {
       id: 'both',
@@ -37,9 +41,10 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
             <button
               key={choice.id}
               type="button"
-              className="plan-mood-option"
+              className={`plan-mood-option${choice.image ? ` plan-mood-option--${choice.id}` : ''}`}
               onClick={() => onChoose(choice.id)}
             >
+              {choice.image && <img className="plan-mood-option-image" src={choice.image} alt="" />}
               <strong>{choice.title}</strong>
             </button>
           ))}
