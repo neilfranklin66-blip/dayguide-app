@@ -4,7 +4,6 @@ import LivePlaceCard from './LivePlaceCard';
 const fallbackTranslations = {
   'discovery.activities': 'Things to do',
   'discovery.openInMaps': 'Open in Google Maps',
-  'nearbyResult.eyebrow': 'Your nearby pick',
   'nearbyResult.liveSource': 'Live from Google Places',
   'restaurants.photoBy': 'Photo by',
   'restaurants.viewPhotoOnMaps': 'View photo',
@@ -26,11 +25,12 @@ export default function NearbyResultStage({
       <LivePlaceCard
         place={place}
         kind={result.type === 'food' ? 'food' : 'activity'}
-        sectionTitle={t('nearbyResult.eyebrow', { defaultValue: 'Your nearby pick' })}
         currentIndex={0}
         queueLength={1}
         source="live"
         selected
+        showHeader={false}
+        sourceAfterPhoto
         locale={locale}
         t={t}
         afterCard={typeof onStartOver === 'function' && (

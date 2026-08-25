@@ -121,6 +121,7 @@ export default function RestaurantsStage({
       restaurantQueueLength={restaurantQueue.length}
       restaurantSource={restaurantSource}
       onSwipe={swipeRestaurant}
+      isLiveDiscovery={isLiveDiscovery}
       locale={locale}
       t={t}
     />

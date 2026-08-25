@@ -130,6 +130,13 @@ test('renders the no-results card when the queue is empty', () => {
   expect(screen.getByText('activities.noResultsTitle')).toBeInTheDocument();
 });
 
+test('nearby activity discovery has no section header or card progress', () => {
+  render(<ActivitiesStage {...baseProps} isLiveDiscovery activityQueue={[{ ...activity, isSample: false }]} />);
+
+  expect(screen.queryByText('discovery.activities')).not.toBeInTheDocument();
+  expect(screen.queryByText('discovery.cardProgress')).not.toBeInTheDocument();
+});
+
 test('renders the unavailable card for a failed live activity search', () => {
   render(<ActivitiesStage {...baseProps} activityQueue={[]} activitySource="location_denied" />);
 

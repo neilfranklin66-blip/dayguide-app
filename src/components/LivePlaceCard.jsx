@@ -42,6 +42,8 @@ export default function LivePlaceCard({
   source,
   onSwipe,
   selected = false,
+  showHeader = true,
+  sourceAfterPhoto = false,
   locale = 'en',
   t,
   afterCard,
@@ -63,24 +65,27 @@ export default function LivePlaceCard({
       ? t('nearbyResult.distance', { distance: formattedDistance })
       : null,
   ].filter(Boolean);
+  const sourceLabel = place.isSample
+    ? <p className="live-place-card-source live-place-card-source--sample">{t('activities.sampleBadge')}</p>
+    : source === 'live'
+      ? <p className="live-place-card-source">{t('nearbyResult.liveSource')}</p>
+      : null;
 
   return (
     <main className="live-place-page">
       <section className="live-place-card" aria-labelledby="live-place-name">
-        <header className="live-place-card-header">
-          <p className="live-place-card-section">{sectionTitle}</p>
-          {!selected && (
-            <p className="live-place-card-progress">
-              {t('discovery.cardProgress', { current: currentIndex + 1, total: queueLength })}
-            </p>
-          )}
-        </header>
-
-        {place.isSample ? (
-          <p className="live-place-card-source live-place-card-source--sample">{t('activities.sampleBadge')}</p>
-        ) : source === 'live' && (
-          <p className="live-place-card-source">{t('nearbyResult.liveSource')}</p>
+        {showHeader && (
+          <header className="live-place-card-header">
+            <p className="live-place-card-section">{sectionTitle}</p>
+            {!selected && (
+              <p className="live-place-card-progress">
+                {t('discovery.cardProgress', { current: currentIndex + 1, total: queueLength })}
+              </p>
+            )}
+          </header>
         )}
+
+        {!sourceAfterPhoto && sourceLabel}
 
         {photoUrl && !photoFailed ? (
           <figure className="live-place-card-photo">
@@ -100,6 +105,8 @@ export default function LivePlaceCard({
             <span>{fallbackLabel}</span>
           </div>
         )}
+
+        {sourceAfterPhoto && sourceLabel}
 
         <div className="live-place-card-content">
           {typeLabel && <p className="live-place-card-type">{typeLabel}</p>}

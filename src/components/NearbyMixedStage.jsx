@@ -43,6 +43,8 @@ export default function NearbyMixedStage({
       queueLength={places.length}
       source={source}
       onSwipe={onSwipe}
+      showHeader={false}
+      sourceAfterPhoto
       locale={locale}
       t={t}
     />

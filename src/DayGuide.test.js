@@ -203,7 +203,7 @@ test('choosing a nearby card gives a calm result with a Maps action', async () =
   await screen.findByText('Live Restaurant');
   fireEvent.click(screen.getByText('discovery.choose'));
 
-  expect(await screen.findByText('nearbyResult.eyebrow')).toBeInTheDocument();
+  expect(screen.queryByText('nearbyResult.eyebrow')).not.toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'discovery.openInMaps' }).getAttribute('href')).toContain(
     'query=Live%20Restaurant',
   );
@@ -233,7 +233,7 @@ test('Show me both reaches one live card and choosing it leaves one calm selecte
   expect(screen.getByRole('button', { name: 'discovery.skip' })).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'discovery.choose' }));
 
-  expect(await screen.findByText('nearbyResult.eyebrow')).toBeInTheDocument();
+  expect(screen.queryByText('nearbyResult.eyebrow')).not.toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'discovery.openInMaps' })).toHaveAttribute(
     'href',
     liveRestaurant.mapsUrl,

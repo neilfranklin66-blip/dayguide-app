@@ -7,6 +7,7 @@ export default function RestaurantSwipeCard({
   restaurantQueueLength,
   restaurantSource,
   onSwipe,
+  isLiveDiscovery = false,
   locale,
   t,
 }) {
@@ -19,6 +20,8 @@ export default function RestaurantSwipeCard({
       queueLength={restaurantQueueLength}
       source={restaurantSource}
       onSwipe={onSwipe}
+      showHeader={!isLiveDiscovery}
+      sourceAfterPhoto={isLiveDiscovery}
       locale={locale}
       t={t}
     />

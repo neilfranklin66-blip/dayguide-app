@@ -42,6 +42,13 @@ test('renders the current restaurant card', () => {
   expect(screen.getByText('discovery.cardProgress')).toBeInTheDocument();
 });
 
+test('nearby food discovery has no section header or card progress', () => {
+  render(<RestaurantsStage {...baseProps} isLiveDiscovery />);
+
+  expect(screen.queryByText('discovery.food')).not.toBeInTheDocument();
+  expect(screen.queryByText('discovery.cardProgress')).not.toBeInTheDocument();
+});
+
 test('accepting a restaurant calls swipeRestaurant(true)', () => {
   const swipeRestaurant = jest.fn();
   render(<RestaurantsStage {...baseProps} swipeRestaurant={swipeRestaurant} />);

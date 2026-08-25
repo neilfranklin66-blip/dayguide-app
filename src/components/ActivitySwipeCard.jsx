@@ -7,6 +7,7 @@ export default function ActivitySwipeCard({
   activityQueueLength,
   activitySource,
   onSwipe,
+  isLiveDiscovery = false,
   locale,
   t,
 }) {
@@ -19,6 +20,8 @@ export default function ActivitySwipeCard({
       queueLength={activityQueueLength}
       source={activitySource}
       onSwipe={onSwipe}
+      showHeader={!isLiveDiscovery}
+      sourceAfterPhoto={isLiveDiscovery}
       locale={locale}
       t={t}
     />

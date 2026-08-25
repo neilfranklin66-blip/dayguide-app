@@ -21,11 +21,13 @@ test('shows one chosen nearby live place with its Maps action and a quiet start-
   render(<NearbyResultStage result={result} onStartOver={onStartOver} />);
 
   expect(screen.getByRole('heading', { name: 'Live Test Bistro' })).toBeInTheDocument();
-  expect(screen.getByText('Live from Google Places')).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: 'Live Test Bistro' })).toHaveAttribute(
+  const source = screen.getByText('Live from Google Places');
+  const photo = screen.getByRole('img', { name: 'Live Test Bistro' });
+  expect(photo).toHaveAttribute(
     'src',
     result.place.photoUrl,
   );
+  expect(photo.compareDocumentPosition(source) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   expect(screen.getByText('Photo by Test photographer')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'View photo' })).toHaveAttribute(
     'href',
@@ -37,6 +39,8 @@ test('shows one chosen nearby live place with its Maps action and a quiet start-
   );
   expect(screen.queryByText(/Travel-time guidance/i)).not.toBeInTheDocument();
   expect(screen.queryByText(/Itinerary/i)).not.toBeInTheDocument();
+  expect(screen.queryByText('Your nearby pick')).not.toBeInTheDocument();
+  expect(screen.queryByText(/1\s*of\s*1/i)).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Skip' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Choose' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Find another' })).not.toBeInTheDocument();

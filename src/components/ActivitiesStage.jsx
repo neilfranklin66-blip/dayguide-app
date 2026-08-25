@@ -93,6 +93,7 @@ export default function ActivitiesStage({
       activitySource={activitySource}
       activityQueueLength={activityQueue.length}
       onSwipe={swipeActivity}
+      isLiveDiscovery={isLiveDiscovery}
       locale={locale}
       t={t}
     />
