@@ -21,6 +21,7 @@ test('offers the three short planning routes without asking for more form detail
   expect(screen.queryByText('Find somewhere good to eat or have a coffee.')).not.toBeInTheDocument();
   expect(screen.queryByText('Find a place worth seeing, doing or exploring.')).not.toBeInTheDocument();
   expect(screen.queryByText('Start with something to do, then add food if you want it.')).not.toBeInTheDocument();
+  expect(screen.queryByText('Your day takes shape')).not.toBeInTheDocument();
   expect(container.querySelector('.plan-mood-option--food img')).toHaveAttribute('src', nearbyFoodImage);
   expect(container.querySelector('.plan-mood-option--activities img')).toHaveAttribute('src', nearbyThingsImage);
 });

@@ -1077,16 +1077,16 @@ select:focus-visible {
 
 .plan-mood-option {
   min-height: 108px;
-  padding: 18px;
+  padding: 0;
   border: 2px solid var(--dg-color-border-soft);
   border-radius: var(--dg-radius-lg);
   background: var(--dg-color-surface);
   color: var(--dg-color-text);
   cursor: pointer;
   display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: 4px 12px;
-  text-align: left;
+  grid-template-columns: 116px minmax(0, 1fr);
+  gap: 0;
+  overflow: hidden;
 }
 
 .plan-mood-option > span {
@@ -1096,7 +1096,13 @@ select:focus-visible {
 }
 
 .plan-mood-option strong {
+  grid-column: 2;
+  align-self: center;
+  justify-self: center;
+  padding: 18px;
   font-size: 1.05rem;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .plan-mood-option small {
@@ -1108,14 +1114,6 @@ select:focus-visible {
 .plan-mood-option:hover {
   border-color: var(--dg-color-brand);
   background: var(--dg-color-surface-muted);
-}
-
-.plan-mood-option--food,
-.plan-mood-option--activities {
-  grid-template-columns: 116px 1fr;
-  gap: 0;
-  overflow: hidden;
-  padding: 0;
 }
 
 .plan-mood-option-image {
@@ -1131,12 +1129,6 @@ select:focus-visible {
 
 .plan-mood-option--activities .plan-mood-option-image {
   object-position: center 30%;
-}
-
-.plan-mood-option--food strong,
-.plan-mood-option--activities strong {
-  align-self: center;
-  padding: 18px;
 }
 
 .nearby-result-stage {

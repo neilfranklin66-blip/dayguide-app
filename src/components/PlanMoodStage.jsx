@@ -25,9 +25,6 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
   return (
     <div className="dayguide-container">
       <section className="card plan-mood-stage" aria-labelledby="plan-mood-title">
-        <p className="stage-eyebrow">
-          {t('planMood.eyebrow', { defaultValue: 'Your day takes shape' })}
-        </p>
         <h2 id="plan-mood-title">
           {t('planMood.title', { defaultValue: 'What are you in the mood for?' })}
         </h2>
@@ -41,7 +38,7 @@ export default function PlanMoodStage({ onChoose, onBack, t = fallbackT }) {
             <button
               key={choice.id}
               type="button"
-              className={`plan-mood-option${choice.image ? ` plan-mood-option--${choice.id}` : ''}`}
+              className={`plan-mood-option plan-mood-option--${choice.id}`}
               onClick={() => onChoose(choice.id)}
             >
               {choice.image && <img className="plan-mood-option-image" src={choice.image} alt="" />}
