@@ -1,8 +1,8 @@
 # DayGuide Design Baseline
 
 - **Status:** Active design authority for the experience reset
-- **Version:** 1.7
-- **Effective:** 22 August 2026
+- **Version:** 1.9
+- **Effective:** 26 August 2026
 **Scope:** The welcome screen, nearby-discovery choice screens, and the next single-card discovery screen. It also records the agreed direction that later planning screens must follow.
 
 ## Authority and history
@@ -43,6 +43,142 @@ The governing design principles are:
 - **No decorative false affordances:** a label, badge, arrow, or button may appear only if it accurately describes something the user can act on. Editorial imagery must not be labelled “Nearby” or presented as a live venue.
 - **No persistent clutter:** language, account, or log-out controls do not belong as prominent controls on every step. Technical language, internal labels, and repetitive explanations stay out of the main flow.
 - **Accessible detail:** long venue names wrap rather than disappear; text never overlays a control; colour is never the only way to understand a choice; keyboard focus remains visible for desktop and assistive use.
+
+## Binding English copy authority
+
+This is the complete list of English user-facing phrases approved for the
+current experience-reset design. Use each phrase exactly as shown, including
+capitalisation, punctuation, and **&**. A string present in application source,
+an old test, a prior packet, or a previous screen is **not** approved merely
+because it exists.
+
+No new visible phrase may be added, shortened, rephrased, or translated from
+this list without Product Owner approval. Where the list uses a placeholder in
+braces, the surrounding words are fixed and only the placeholder is dynamic.
+
+### Page 1 — Welcome
+
+- **DayGuide**
+- **Your day, your choices**
+- **Local favourites, hidden gems and somewhere new.**
+- **Find something nearby**
+- **Plan your day**
+
+### Page 2 — Nearby choice and categories
+
+- **What are you in the mood for?**
+- **Food & Drinks**
+- **Things to do**
+- **Show me both**
+- **What sounds good?**
+- **Show Food & Drinks places**
+- **Show things to do**
+
+The approved Food & Drinks category labels are:
+
+- **Italian**, **Indian**, **British**, **Japanese**, **Mexican**,
+  **Mediterranean**, **Spanish**, **French**, **Chinese**, **Asian**,
+  **American**, **Middle Eastern**, **Cafe**
+
+There is no approved explanatory sentence beneath the three nearby-choice
+cards.
+
+### Page 3 — Nearby single-card result
+
+- **Skip**
+- **Choose**
+- **Start over**
+- **Live from Google Places** — only where this is factually true
+- **Open in Google Maps**
+
+### Plan your day opening
+
+- **Plan your day**
+- **When would you like to start?**
+- **Date**
+- **Now**
+- **In 1 hour**
+- **In 2 hours**
+- **Or pick a time**
+- **Morning**
+- **Afternoon / evening**
+- **Where will you start?**
+- **Search for a place, address, postcode or ZIP code.**
+- **Use my current location**
+- **No start time chosen yet**
+- **Starting Today at {time}**
+- **Starting {day} {date} at {time}**
+- **Start area set: your current location, {area}**
+- **Start area set: your current location**
+- **Start area set: {name}, {locality} {postcode}**
+- **Continue**
+- **Choose a start time and a start area to continue**
+- **Choose a start area to continue**
+- **Choose a start time to continue**
+- **Location isn't available. Search for a place, address, postcode or ZIP code instead.**
+- **Couldn't get your location just now. Try again, or search for a place, address, postcode or ZIP code.**
+
+The approved specific-time control labels are **1** through **12**, then
+**:00**, **:15**, **:30**, and **:45**. They are controls, not additional
+sentences. The date value is dynamically displayed in the approved form
+`Today · Tue 18 Aug`.
+
+### Later bounded planning labels
+
+- **Where will you finish?**
+- **What time do you need to be there?**
+- **No fixed time**
+- **Theatre or Cinema**
+- **Meeting**
+- **Something else**
+
+The current English locale uses British **Theatre** throughout.
+
+### Copy not yet approved
+
+The following required future areas have no approved user-facing wording yet:
+
+- a nearby-card count, including any `1 of 19` format;
+- the zero-result recovery message and controls;
+- the planned-day itinerary title, summary, empty state, and actions;
+- wider nearby-search or rural-driving controls;
+- a later relative-position diagram and its labels.
+
+Do not fill these gaps with existing source text or new wording. Obtain the
+exact phrase before implementation.
+
+### Superseded or excluded reset-flow wording
+
+The following is deliberately preserved as a do-not-reintroduce list for the
+current reset flow. Historical documents retain it as history; application
+source must not treat it as a design precedent.
+
+| Phrase or form | Current rule |
+| --- | --- |
+| **Plan a day** | Superseded by **Plan your day**. |
+| **When would you like to go?** | Superseded by **When would you like to start?**. |
+| **Your day takes shape** | Not approved; it claims progress before the user has made a choice. |
+| **Your Perfect Day** | Not approved; DayGuide must not promise a perfect plan. |
+| **Your itinerary is empty. Start over or change your selections to build your day.** | Not approved for the reset flow; it must not be shown when the available actions do not provide the stated recovery. |
+| **Pick one to see nearby options.** | Not approved. Page 2 has no explanatory sentence below the choice cards. |
+| **Somewhere to eat, or just a good coffee** | Not approved. |
+| **Places worth a wander** | Not approved. |
+| **A balanced mix nearby** | Not approved. |
+| **Find somewhere good to eat or have a coffee.** | Not approved. |
+| **Find a place worth seeing, doing or exploring.** | Not approved. |
+| **Start with something to do, then add food if you want it.** | Not approved. |
+| **Food and Drinks**, **Food & Drink**, or **Food** | Do not use in place of the exact label **Food & Drinks**. |
+| **Real places** | Do not use as a promise or explanatory copy. |
+| **Food**, **Explore**, or **Both** as overlay words | Do not place these over Page 2 choice cards. |
+| **Your nearby pick**, **Find another**, **Choose this**, or **Not for me** | Not approved for the nearby selected-card flow. |
+| **Maps** or **Open in Maps** | Use the exact action label **Open in Google Maps**. |
+| **Private Alpha**, **Fixed anchor**, or **Buffer** | Do not use in the normal reset flow. |
+| **Do you need to be somewhere later? If so we can plan options in that vicinity.** | Historical wording; do not reintroduce. |
+| Walking-preference, pace, age/weight, or routing-policy explanations | Do not use in the normal reset flow. |
+
+This table deliberately lists phrases with an explicit current decision. It
+does not approve or classify every remaining legacy string in the source file;
+anything outside the approved list is unapproved until reviewed.
 
 ## The two journeys
 
@@ -188,6 +324,7 @@ Once a verified finish has been chosen, its optional arrival time uses the same 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.9 | 26 August 2026 | Consolidated the binding English copy authority and explicit superseded/excluded reset-flow wording in this active baseline. This is a documentation-only clarification; it makes no application-source, deployment, credential, or provider change. |
 | 1.8 | 22 August 2026 | Recorded the approved current-English important-event categories: **Theatre or Cinema**, **Meeting**, and **Something else**. The current single English locale uses British **Theatre** throughout. |
 | 1.7 | 22 August 2026 | Recorded the Page 2 simplicity decision: the three nearby mood-choice cards carry no explanatory sentence beneath their labels. Recorded **Open in Google Maps** for the action that opens the existing Google Maps deep link, and the future locale-distance rule measured from the active search origin. The wider nearby/rural-driving topic remains deferred. |
 | 1.6 | 18 August 2026 | Product Owner approved the complete opening specification: **Plan your day** replaces prior user-facing “Plan a day”; native date selection; mandatory, tap-first departure time; explicit start-area confirmation; bounded Continue state; and plain location recovery wording. The specification is documentation authority until separately implemented. |
