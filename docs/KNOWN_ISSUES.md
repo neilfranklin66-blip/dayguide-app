@@ -6,10 +6,10 @@ This register records evidence-backed known issues, technical debt, architecture
 risks, operational uncertainties, security and configuration gaps, test and
 accessibility gaps, and explicitly accepted limitations for DayGuide.
 
-- **Current verification date:** 31 July 2026
+- **Current verification date:** 31 August 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packet 161 exact Deploy Preview acceptance,
-  credential rollback, and cleared-plan verification
+- **Latest targeted update:** Product Owner end-to-end testing of the Plan your
+  day journey at localhost:8888 under `netlify dev`, 31 August 2026
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository evidence, Product Owner-operated
@@ -154,9 +154,81 @@ decision must be supported by the launch rules and evidence.
   desktop and phone widths; the former isolated `again.` line was no longer
   visible.
 
-No other active working defect was established from the permitted evidence.
-Entries elsewhere in this register are classified as debt, risk, uncertainty,
-gap, or accepted limitation rather than duplicated as known issues.
+### KI-004 — No route between categories within a Plan your day session
+
+- **ID:** KI-004
+- **Category:** Active known issue
+- **Severity:** High
+- **Status:** Verified open
+- **Launch blocking:** Yes for the Plan your day journey
+- **Verification status:** Observed by the Product Owner during end-to-end testing at localhost:8888 under `netlify dev`, 31 August 2026.
+- **Factual evidence:** Multiple venues can be selected within Food & Drinks, and multiple within Things to do, and all selections reach the itinerary. Neither category offers any route to the other within a single planning session. Selecting Food & Drinks never leads to Things to do, and the reverse is also true.
+- **Impact:** A user planning a day can build only a single-category plan. The Plan your day journey is the reason Find something nearby was accepted as a single-result journey, so this gap removes the justification for that compromise.
+- **Likely dependency:** The cross-category route existed and worked in an earlier version. Changes since have removed or disconnected it.
+- **Recommended next action:** Establish which commit removed the connection, then decide whether it returns as a direct control, as a prompt, or both.
+- **Verification date:** 31 August 2026
+
+### KI-005 — Legacy pop-ups appear with unapproved wording
+
+- **ID:** KI-005
+- **Category:** Active known issue
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Observed by the Product Owner during end-to-end testing, 31 August 2026.
+- **Factual evidence:** A meal prompt appears after Show me both, rendered by `MealPromptCard.jsx`, reading "Add a restaurant?" and "Would you like to add a meal or restaurant break to your day?". A break prompt appears after multiple Things to do selections, rendered by `PopupModal.jsx`, reading "Time for a Break?". Both use "restaurant" rather than the approved **Food & Drinks**, and neither is in the binding copy authority in `DESIGN_BASELINE.md`.
+- **Impact:** Superseded wording is presented to the user on a route otherwise following the current design.
+- **Operational rule:** The pop-up mechanism is intended product direction, not legacy debris. It exists to offer a coffee, a break or a meal during a long day where none was originally selected, and is planned to extend to points of interest — a nearby museum, a highly rated restaurant, a statue or building of note — with a brief description, and potentially audio through the phone or headphones. The function is wanted. The wording and behaviour have not been agreed for this version.
+- **Recommended next action:** Approve replacement wording before any implementation packet touches these components. Do not remove the components.
+- **Verification date:** 31 August 2026
+
+### KI-006 — No travel time from start place to first venue
+
+- **ID:** KI-006
+- **Category:** Active known issue
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** Not determined
+- **Verification status:** Observed by the Product Owner during end-to-end testing, 31 August 2026.
+- **Factual evidence:** After setting a start place and building an itinerary in Plan your day, no travel time is shown between the start place and the first selected venue.
+- **Impact:** The user cannot judge when to leave for the first stop.
+- **Likely dependency:** Related to the shelved live travel-time work recorded in `PACKET156_UNIVERSAL_TRAVEL_ESTIMATE_POLICY.md`, whose results fell outside acceptable prediction levels.
+- **Recommended next action:** Decide whether the first leg receives an estimate on the same basis as later legs, or is deliberately omitted.
+- **Verification date:** 31 August 2026
+
+### KI-007 — Hour button shows no selected state
+
+- **ID:** KI-007
+- **Category:** Active known issue
+- **Severity:** Low
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Observed by the Product Owner during end-to-end testing, 31 August 2026.
+- **Factual evidence:** On the Plan your day opening screen, tapping an hour in the hour grid does not visually mark that button as selected. The minute buttons do register visually, and the chosen time displays correctly including the hour, for example 09:15.
+- **Impact:** The user receives no confirmation that the hour was accepted, and may tap repeatedly.
+- **Likely dependency:** Missing or misapplied selected-state styling on the hour control in `StartTimeSelector.jsx`.
+- **Recommended next action:** Confirm the selected-state class is applied to the hour buttons on the same basis as the minute buttons.
+- **Verification date:** 31 August 2026
+
+### KI-008 — Use my current location does not set a start area
+
+- **ID:** KI-008
+- **Category:** Active known issue
+- **Severity:** Medium
+- **Status:** Verified open, cause not established
+- **Launch blocking:** Not determined
+- **Verification status:** Observed by the Product Owner during end-to-end testing at localhost:8888, 31 August 2026. Place and postcode search on the same screen worked correctly in the same session.
+- **Factual evidence:** Selecting "Use my current location" does not result in an accepted start area. `PlanningInputWithPlaceResolution.jsx:61-66` requires a place reference with `source === 'current_gps'`, which depends on `position` from `useGeolocation`. Whether the browser returned a position was not established.
+- **Impact:** The faster of the two ways to set a start area is unavailable, leaving search as the only route.
+- **Likely dependency:** Either a browser permission state for the origin, or a code fault. Geolocation requires a secure context; localhost qualifies, a bare-IP HTTP LAN address does not.
+- **Recommended next action:** Reset the location permission for the origin and retest. If it still fails on localhost with permission granted, treat as a code fault.
+- **Verification date:** 31 August 2026
+
+KI-004 to KI-008 were established from Product Owner end-to-end testing on 31
+August 2026. No other active working defect was established from the permitted
+evidence. Entries elsewhere in this register are classified as debt, risk,
+uncertainty, gap, or accepted limitation rather than duplicated as known
+issues.
 
 ## 4. Launch blockers
 
