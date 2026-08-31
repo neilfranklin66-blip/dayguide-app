@@ -1,8 +1,8 @@
 # DayGuide Design Baseline
 
 - **Status:** Active design authority for the experience reset
-- **Version:** 1.9
-- **Effective:** 26 August 2026
+- **Version:** 1.10
+- **Effective:** 31 August 2026
 **Scope:** The welcome screen, nearby-discovery choice screens, and the next single-card discovery screen. It also records the agreed direction that later planning screens must follow.
 
 ## Authority and history
@@ -281,6 +281,21 @@ The card must accommodate long venue names without clipping. It must not use an 
 - A later refinement may offer a reversible “second thought” or remove action. It must not silently discard the choice or turn Nearby into multi-stop planning.
 - If live discovery is unavailable, state the practical recovery action plainly: allow location, set a named area, change filters, or return to nearby choices. Do not claim a search was successful and do not substitute sample venues.
 
+## Nearby result behaviour — intended direction, not yet implemented
+
+**Show me both card order.** Alternate one **Food & Drinks** result and one **Things to do** result while both categories have results remaining. When one category is exhausted, continue with the remainder of the other rather than ending the sequence.
+
+**Widening the search.** When a search returns few results, DayGuide may look further out. Treatment depends on context:
+
+- Where the user has expressed a specific intent — for example selecting **Italian** within **Food & Drinks** — DayGuide offers to search wider and the user chooses.
+- Where the user has chosen an immediate route such as **Show me both**, DayGuide widens automatically and states plainly that it has done so.
+
+Any widened search must tell the user it has happened. It must never present distant results as if they were nearby. Register for user-facing copy. Plain, conversational, unhurried. No claims the application cannot substantiate. Reference example: Not much nearby — showing results from further out.
+
+**Undecided:** the distance threshold that triggers widening; how far the widened search reaches; the exact approved wording of the notice.
+
+**Dependency:** widening interacts with transport mode, which is present in the interface but does not currently affect results. Distance judgements are not meaningful until it does.
+
 ## Planning foundations that follow this baseline
 
 These rules guide later planning-screen reconstruction; they do not authorise a broad planning rewrite in the Page 3 packet.
@@ -324,6 +339,7 @@ Once a verified finish has been chosen, its optional arrival time uses the same 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.10 | 31 August 2026 | Recorded the intended, not-yet-implemented nearby result behaviour: **Show me both** alternating card order, context-dependent search widening with a mandatory user-facing notice, and the register for that copy. The triggering distance threshold, widened reach, and exact notice wording remain undecided, and the behaviour depends on transport mode affecting results. This is a documentation-only direction; it makes no application-source, deployment, credential, or provider change. |
 | 1.9 | 26 August 2026 | Consolidated the binding English copy authority and explicit superseded/excluded reset-flow wording in this active baseline. This is a documentation-only clarification; it makes no application-source, deployment, credential, or provider change. |
 | 1.8 | 22 August 2026 | Recorded the approved current-English important-event categories: **Theatre or Cinema**, **Meeting**, and **Something else**. The current single English locale uses British **Theatre** throughout. |
 | 1.7 | 22 August 2026 | Recorded the Page 2 simplicity decision: the three nearby mood-choice cards carry no explanatory sentence beneath their labels. Recorded **Open in Google Maps** for the action that opens the existing Google Maps deep link, and the future locale-distance rule measured from the active search origin. The wider nearby/rural-driving topic remains deferred. |
