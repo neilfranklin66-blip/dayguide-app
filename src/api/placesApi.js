@@ -70,6 +70,32 @@ function buildPhotoUrl(photoReference) {
   return `${PHOTO_URL}?ref=${encodeURIComponent(photoReference)}&maxwidth=400`;
 }
 
+function normalizePhotoAttributions(attributions) {
+  if (!Array.isArray(attributions)) return [];
+  return attributions
+    .filter(attribution => typeof attribution?.name === 'string' && attribution.name.trim())
+    .map(attribution => ({
+      name: attribution.name.trim(),
+      uri: typeof attribution.uri === 'string' ? attribution.uri : null,
+      photoUri: typeof attribution.photo_uri === 'string' ? attribution.photo_uri : null,
+    }));
+}
+
+function buildMapsUrl(place) {
+  const { lat, lng } = place.geometry.location;
+  const query = place.name || place.vicinity || `${lat},${lng}`;
+  const parameters = [
+    'api=1',
+    `query=${encodeURIComponent(query)}`,
+  ];
+
+  if (typeof place.place_id === 'string' && place.place_id) {
+    parameters.push(`query_place_id=${encodeURIComponent(place.place_id)}`);
+  }
+
+  return `https://www.google.com/maps/search/?${parameters.join('&')}`;
+}
+
 // A record without numeric coordinates can't be distance-filtered or routed;
 // skip it rather than letting one malformed result throw away the whole batch.
 function hasUsableGeometry(p) {
@@ -77,24 +103,65 @@ function hasUsableGeometry(p) {
   return typeof loc?.lat === 'number' && typeof loc?.lng === 'number';
 }
 
+// Provider search constraints improve relevance but are not a substitute for
+// validating each returned record. A live result may still be a shop or other
+// non-food venue, so restaurant discovery accepts only food-and-drink types.
+const FOOD_AND_DRINK_PLACE_TYPES = new Set([
+  'restaurant',
+  'cafe',
+  'coffee_shop',
+  'bakery',
+  'bar',
+  'pub',
+  'meal_takeaway',
+  'ice_cream_shop',
+]);
+
+function isFoodAndDrinkVenue(primaryType, types) {
+  if (typeof primaryType === 'string') {
+    return FOOD_AND_DRINK_PLACE_TYPES.has(primaryType) ||
+      primaryType.endsWith('_restaurant') ||
+      primaryType.endsWith('_cafe');
+  }
+
+  return Array.isArray(types) && types.some(type =>
+    typeof type === 'string' && (
+      FOOD_AND_DRINK_PLACE_TYPES.has(type) ||
+      type.endsWith('_restaurant') ||
+      type.endsWith('_cafe')
+    ),
+  );
+}
+
 function parsePlaces(results, lat, lng) {
   return results
-    .filter(p => hasUsableGeometry(p) && p.business_status !== 'CLOSED_PERMANENTLY')
+    .filter(p =>
+      hasUsableGeometry(p) &&
+      p.business_status !== 'CLOSED_PERMANENTLY' &&
+      isFoodAndDrinkVenue(p.primary_type, p.types),
+    )
     .map(p => {
       const name = p.name || '';
       const priceSymbol = PRICE_LEVEL_TO_SYMBOL[p.price_level] ?? '$$';
       const dist = parseFloat(
         haversineKm(lat, lng, p.geometry.location.lat, p.geometry.location.lng).toFixed(1),
       );
-      const imgSrc = p.photos?.[0]?.photo_reference
-        ? buildPhotoUrl(p.photos[0].photo_reference)
-        : `https://placehold.co/400x300/667eea/ffffff?text=${encodeURIComponent(name.slice(0, 14) || 'Restaurant')}`;
+      // A displayed Google photo must retain the supplied direct source link.
+      // If a malformed/intermediate response lacks it, omit that image rather
+      // than presenting a photo the user cannot open in Google Maps.
+      const photo = p.photos?.find(candidate =>
+        candidate?.photo_reference && typeof candidate.google_maps_uri === 'string',
+      );
+      const imgSrc = photo?.photo_reference
+        ? buildPhotoUrl(photo.photo_reference)
+        : null;
 
       return {
         id: p.place_id,
         name,
         city: '',
         cuisine: detectCuisine(name, p.types),
+        venueType: p.primary_type_display_name || null,
         priceRange: priceSymbol,
         rating: parseFloat((p.rating || 4.0).toFixed(1)),
         duration: PRICE_TO_DURATION[priceSymbol] ?? 1.5,
@@ -104,18 +171,24 @@ function parsePlaces(results, lat, lng) {
           lat: p.geometry.location.lat,
           lng: p.geometry.location.lng,
         },
+        mapsUrl: buildMapsUrl(p),
         image: imgSrc,
+        photoAttributions: normalizePhotoAttributions(photo?.author_attributions),
+        photoMapsUrl: typeof photo?.google_maps_uri === 'string'
+          ? photo.google_maps_uri
+          : null,
       };
     });
 }
 
-async function nearbySearch(lat, lng, keyword, maxprice) {
+async function nearbySearch(lat, lng, keyword, maxprice, type = 'restaurant', types = null) {
   const params = new URLSearchParams({
     location: `${lat},${lng}`,
     radius: 5000,
-    type: 'restaurant',
+    type,
   });
   if (keyword) params.set('keyword', keyword);
+  if (Array.isArray(types) && types.length > 0) params.set('types', types.join(','));
   if (maxprice != null) params.set('maxprice', String(maxprice));
 
   let res;
@@ -141,6 +214,38 @@ async function nearbySearch(lat, lng, keyword, maxprice) {
   if (json.status === 'ZERO_RESULTS') return [];
   if (json.status !== 'OK') throw new Error(`STATUS_${json.status}`);
   return json.results || [];
+}
+
+// Text Search can return further pages. Keep it separate from the established
+// planning search: this is only for the first-minute nearby card flow.
+async function restaurantPageSearch(lat, lng, keyword, maxprice, pageToken = null) {
+  const params = new URLSearchParams({
+    location: `${lat},${lng}`,
+    radius: 5000,
+    unfiltered: '1',
+  });
+  if (pageToken) params.set('pageToken', pageToken);
+  else params.set('keyword', keyword);
+  if (maxprice != null) params.set('maxprice', String(maxprice));
+
+  let res;
+  try {
+    res = await fetch(`${NEARBY_URL}?${params}`);
+  } catch (_) {
+    throw new Error('NETWORK_ERROR');
+  }
+  if (res.status === 404) throw new Error('NO_API_KEY');
+  if (!res.ok) throw new Error(`HTTP_${res.status}`);
+
+  const json = await res.json();
+  if (json.status === 'REQUEST_DENIED') {
+    throw new Error(json.error_message === 'NO_API_KEY' ? 'NO_API_KEY' : 'API_DENIED');
+  }
+  if (json.status === 'OVER_QUERY_LIMIT') throw new Error('QUOTA_EXCEEDED');
+  if (json.status !== 'OK' && json.status !== 'ZERO_RESULTS') {
+    throw new Error(`STATUS_${json.status}`);
+  }
+  return { results: json.results || [], nextPageToken: json.next_page_token || null };
 }
 
 // When every cuisine batch fails, surface the most actionable failure so the
@@ -206,5 +311,121 @@ export async function searchRestaurants(lat, lng, cuisineFilters = [], priceFilt
     ? byRating
     : byRating.filter(r => r.cuisine.length === 0 || r.cuisine.some(c => cuisineFilters.includes(c)));
 
-  return cuisineFiltered.slice(0, 12);
+  return cuisineFiltered.slice(0, 20);
+}
+
+/**
+ * A paged broad-food request for nearby discovery. Google controls the
+ * maximum and order; a later page is available only with its next-page token.
+ */
+export async function searchRestaurantPage(
+  lat,
+  lng,
+  cuisineFilters = [],
+  priceFilter = null,
+  pageToken = null,
+) {
+  const maxprice = priceFilter != null ? SYMBOL_TO_MAXPRICE[priceFilter] : null;
+  const selectedCuisine = cuisineFilters.length === 1 ? cuisineFilters[0] : null;
+  const keyword = selectedCuisine
+    ? (CUISINE_KEYWORDS[selectedCuisine] || `${selectedCuisine} restaurant`)
+    : 'food and drink';
+  const { results, nextPageToken } = await restaurantPageSearch(
+    lat, lng, keyword, maxprice, pageToken,
+  );
+  const parsed = parsePlaces(results, lat, lng)
+    .filter(r => r.rating >= 3.5 && r.distance <= 5)
+    .filter(r => cuisineFilters.length === 0 || r.cuisine.length === 0 ||
+      r.cuisine.some(c => cuisineFilters.includes(c)))
+    .sort((a, b) => b.rating - a.rating);
+
+  return { results: parsed, nextPageToken };
+}
+
+const ACTIVITY_TYPES = {
+  museums: ['museum', 'art_museum', 'history_museum'],
+  galleries: ['art_gallery'],
+  parks: ['park', 'city_park', 'botanical_garden'],
+  shopping: ['shopping_mall'],
+  theater: ['performing_arts_theater', 'opera_house'],
+  liveMusic: ['live_music_venue', 'concert_hall'],
+  sportsEvents: ['stadium', 'sports_club'],
+  nightlife: ['night_club'],
+  historicalSites: ['historical_place', 'historical_landmark'],
+  foodMarkets: ['farmers_market'],
+  cinema: ['movie_theater'],
+  comedy: ['comedy_club'],
+};
+
+const ACTIVITY_ICONS = {
+  museums: '🏛️', galleries: '🎨', parks: '🌳', shopping: '🛍️',
+  theater: '🎭', liveMusic: '🎵', sportsEvents: '🏟️', nightlife: '🍸',
+  historicalSites: '🏰', foodMarkets: '🥕', cinema: '🎬', comedy: '😂',
+};
+
+const activityCategoryFor = (primaryType, types, requestedCategories) => {
+  const providerTypes = [primaryType, ...(Array.isArray(types) ? types : [])]
+    .filter(type => typeof type === 'string');
+  return requestedCategories.find(category =>
+    ACTIVITY_TYPES[category]?.some(type => providerTypes.includes(type)),
+  ) ?? null;
+};
+
+export async function searchActivities(lat, lng, categories = []) {
+  const requestedCategories = categories.length > 0 ? categories : Object.keys(ACTIVITY_TYPES);
+  const types = [...new Set(requestedCategories.flatMap(category => ACTIVITY_TYPES[category] || []))];
+  const raw = await nearbySearch(lat, lng, null, null, 'tourist_attraction', types);
+
+  return raw
+    .filter(place =>
+      hasUsableGeometry(place) &&
+      place.business_status !== 'CLOSED_PERMANENTLY' &&
+      !isFoodAndDrinkVenue(place.primary_type, place.types),
+    )
+    .map(place => {
+      const category = activityCategoryFor(
+        place.primary_type,
+        place.types,
+        requestedCategories,
+      );
+      if (!category) return null;
+      const distance = parseFloat(haversineKm(
+        lat, lng, place.geometry.location.lat, place.geometry.location.lng,
+      ).toFixed(1));
+      // Activity cards follow the same Google photo boundary as food cards:
+      // only render a supplied photo when its required Maps source link exists.
+      const photo = place.photos?.find(candidate =>
+        candidate?.photo_reference && typeof candidate.google_maps_uri === 'string',
+      );
+      return {
+        id: place.place_id,
+        name: place.name || '',
+        category,
+        // If Google uses a broad primary type (for example, Tourist
+        // attraction) but its verified type list says museum, prefer the
+        // clearer matching activity label shown by ActivitySwipeCard.
+        venueType: ACTIVITY_TYPES[category]?.includes(place.primary_type)
+          ? place.primary_type_display_name || null
+          : null,
+        image: ACTIVITY_ICONS[category],
+        photoUrl: photo?.photo_reference ? buildPhotoUrl(photo.photo_reference) : null,
+        photoAttributions: normalizePhotoAttributions(photo?.author_attributions),
+        photoMapsUrl: typeof photo?.google_maps_uri === 'string'
+          ? photo.google_maps_uri
+          : null,
+        rating: parseFloat((place.rating || 4.0).toFixed(1)),
+        duration: 1.5,
+        distance,
+        address: place.vicinity,
+        coordinates: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
+        mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          `${place.name || 'place'},${place.geometry.location.lat},${place.geometry.location.lng}`,
+        )}`,
+        source: 'google_places',
+      };
+    })
+    .filter(Boolean)
+    .filter(place => place.rating >= 3.5 && place.distance <= 5)
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 20);
 }

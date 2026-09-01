@@ -1,107 +1,66 @@
 import React, { useState } from 'react';
-import HardAnchorEditor from './HardAnchorEditor';
+import DateSelector from './DateSelector';
 import ResolvedPlaceSelect from './ResolvedPlaceSelect';
+import StartTimeSelector from './StartTimeSelector';
 import {
-  PLANNING_INPUT_ERROR,
   createPlanningInputDraft,
   finalizePlanningInput,
-  minutesToTimeInput,
-  removeHardAnchor,
+  isResolvedPlaceSelection,
   setDepartureTime,
-  setDestinationEnabled,
-  setDestinationSelection,
-  setDestinationTiming,
   setStartSelection,
-  timeInputToMinutes,
-  upsertHardAnchor,
 } from '../utils/planningInputWorkflow';
 
 const fallbackT = (_key, options) => options?.defaultValue ?? _key;
+const isMinuteOfDay = value => Number.isInteger(value) && value >= 0 && value < 24 * 60;
 
-const errorMessage = (error, t) =>
-  ({
-    [PLANNING_INPUT_ERROR.START_PLACE_REQUIRED]: t(
-      'planning.errors.startPlaceRequired',
-      { defaultValue: 'Choose a verified starting place.' },
-    ),
-    [PLANNING_INPUT_ERROR.START_TIME_INVALID]: t(
-      'planning.errors.startTimeInvalid',
-      { defaultValue: 'Choose a valid start time.' },
-    ),
-    [PLANNING_INPUT_ERROR.DESTINATION_PLACE_REQUIRED]: t(
-      'planning.errors.destinationPlaceRequired',
-      {
-        defaultValue:
-          'Choose a verified destination or remove the destination.',
-      },
-    ),
-    [PLANNING_INPUT_ERROR.DESTINATION_DEADLINE_INVALID]: t(
-      'planning.errors.destinationDeadlineInvalid',
-      {
-        defaultValue:
-          'Check the destination deadline and arrival buffer.',
-      },
-    ),
-    [PLANNING_INPUT_ERROR.ANCHOR_INVALID]: t(
-      'planning.errors.anchorInvalid',
-      { defaultValue: 'One or more fixed anchors is invalid.' },
-    ),
-    [PLANNING_INPUT_ERROR.ANCHOR_ID_RESERVED]: t(
-      'planning.errors.anchorIdReserved',
-      { defaultValue: 'A fixed anchor has an invalid identifier.' },
-    ),
-    [PLANNING_INPUT_ERROR.ANCHOR_ID_DUPLICATE]: t(
-      'planning.errors.anchorIdDuplicate',
-      { defaultValue: 'Two fixed anchors have the same identifier.' },
-    ),
-  }[error] ??
-  t('planning.errors.general', {
-    defaultValue: 'Check the geographical planning details.',
-  }));
+function formatMinutes(totalMinutes) {
+  const hour = Math.floor(totalMinutes / 60);
+  const minute = totalMinutes % 60;
+  return `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${hour >= 12 ? 'pm' : 'am'}`;
+}
 
-const nextAnchorId = anchors => {
-  let ordinal = 1;
-  const ids = new Set(anchors.map(anchor => anchor.id));
-  while (ids.has(`anchor-${ordinal}`)) ordinal += 1;
-  return `anchor-${ordinal}`;
-};
+function formatStartDate(dateValue) {
+  const [year, month, day] = String(dateValue).split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  }).format(date).replace(',', '');
+}
 
 export default function PlanningInputStage({
   currentPlace = null,
   availablePlaces = [],
   initialDraft = null,
+  draft: controlledDraft = null,
+  onDraftChange = null,
+  startPlaceControl = null,
   onComplete,
   onCancel,
-  onSkip,
+  selectedDate,
+  onSelectedDateChange,
   t = fallbackT,
 }) {
-  const [draft, setDraft] = useState(
-    initialDraft ?? createPlanningInputDraft(),
+  const effectiveDate = selectedDate ?? new Date().toISOString().slice(0, 10);
+  const [internalDraft, setInternalDraft] = useState(
+    initialDraft ?? createPlanningInputDraft({ departureTimeMinutes: null }),
   );
-  const [editor, setEditor] = useState(null);
+  const draft = controlledDraft ?? internalDraft;
+  const updateDraft = onDraftChange ?? setInternalDraft;
   const [errors, setErrors] = useState([]);
-
-  const updateStartTime = value => {
-    const minutes = timeInputToMinutes(value);
-    setDraft(current => setDepartureTime(current, minutes));
-  };
-
-  const updateDestinationDeadline = value => {
-    const minutes = value === '' ? null : timeInputToMinutes(value);
-    setDraft(current =>
-      setDestinationTiming(current, {
-        arrivalDeadlineMinutes: minutes,
-        arrivalBufferMinutes:
-          minutes == null ? 0 : current.destination.arrivalBufferMinutes,
-      }),
-    );
-  };
-
-  const saveAnchor = anchor => {
-    setDraft(current => upsertHardAnchor(current, anchor));
-    setEditor(null);
-    setErrors([]);
-  };
+  const hasSelectedStart = isResolvedPlaceSelection(draft.startSelection);
+  const hasSelectedTime = isMinuteOfDay(draft.departureTimeMinutes);
+  const helper = !hasSelectedTime && !hasSelectedStart
+    ? 'Choose a start time and a start area to continue'
+    : !hasSelectedStart
+      ? 'Choose a start area to continue'
+      : !hasSelectedTime
+        ? 'Choose a start time to continue'
+        : '';
+  const timeSummary = hasSelectedTime
+    ? `Starting ${effectiveDate === new Date().toISOString().slice(0, 10) ? 'Today' : formatStartDate(effectiveDate)} at ${formatMinutes(draft.departureTimeMinutes)}`
+    : 'No start time chosen yet';
 
   const complete = () => {
     const result = finalizePlanningInput(draft);
@@ -113,278 +72,55 @@ export default function PlanningInputStage({
     onComplete(result.value);
   };
 
-  const destinationDeadline = minutesToTimeInput(
-    draft.destination.arrivalDeadlineMinutes,
-  );
-
   return (
     <div className="dayguide-container">
-      <div className="card planning-input-stage">
-        <h2>
-          {t('planning.title', {
-            defaultValue: 'Where should your day flow?',
-          })}
-        </h2>
-        <p>
-          {t('planning.subtitle', {
-            defaultValue:
-              'Set a starting place, an optional destination, and any commitments that DayGuide must never move.',
-          })}
-        </p>
-        <p className="planning-private-alpha-notice">
-          {t('planning.privateAlphaNotice', {
-            defaultValue:
-              'Private alpha: fixed places and times guide your plan, but travel legs are not route-verified. Check live journeys before leaving.',
-          })}
-        </p>
+      <main className="card planning-input-stage" aria-label="Plan your day">
+        <header className="planning-page-header">
+          <button type="button" className="plan-back-control" aria-label="Back" onClick={onCancel}>‹</button>
+          <h2>Plan your day</h2>
+        </header>
 
-        <ResolvedPlaceSelect
-          id="planning-start-place"
-          label={t('planning.startPlace', {
-            defaultValue: 'Where does your day start?',
-          })}
-          selection={draft.startSelection}
-          onChange={selection =>
-            setDraft(current => setStartSelection(current, selection))
-          }
-          currentPlace={currentPlace}
-          availablePlaces={availablePlaces}
-          t={t}
-        />
-
-        <div className="time-selector">
-          <label htmlFor="planning-start-time">
-            {t('planning.startTime', {
-              defaultValue: 'What time does your day start?',
-            })}
-          </label>
-          <input
-            id="planning-start-time"
-            type="time"
-            value={minutesToTimeInput(draft.departureTimeMinutes)}
-            onChange={event => updateStartTime(event.target.value)}
-            className="time-input"
+        <section className="plan-essentials-block" aria-labelledby="plan-when-heading">
+          <h3 id="plan-when-heading">When would you like to start?</h3>
+          <DateSelector
+            selectedDate={effectiveDate}
+            onChange={onSelectedDateChange ?? (() => {})}
+            t={t}
+            id="planning-date"
+            labelKey="planning.date"
+            labelDefault="Date"
           />
-        </div>
+          <StartTimeSelector
+            startTime={hasSelectedTime ? draft.departureTimeMinutes / 60 : null}
+            onChange={value => updateDraft(current => setDepartureTime(current, Math.round(value * 60)))}
+            summary={timeSummary}
+            hideHeading
+            showQuickLabel={false}
+            t={t}
+          />
+        </section>
 
-        <div className="time-selector">
-          <label htmlFor="planning-add-destination">
-            <input
-              id="planning-add-destination"
-              type="checkbox"
-              checked={draft.destination.enabled}
-              onChange={event =>
-                setDraft(current =>
-                  setDestinationEnabled(current, event.target.checked),
-                )
-              }
-            />
-            {t('planning.addDestination', {
-              defaultValue: 'Add an end destination',
-            })}
-          </label>
-        </div>
-
-        {draft.destination.enabled && (
-          <>
-            <ResolvedPlaceSelect
-              id="planning-end-place"
-              label={t('planning.destinationPlace', {
-                defaultValue: 'Where should your day finish?',
-              })}
-              selection={draft.destination.selection}
-              onChange={selection =>
-                setDraft(current =>
-                  setDestinationSelection(current, selection),
-                )
-              }
-              currentPlace={currentPlace}
-              availablePlaces={availablePlaces}
-              t={t}
-            />
-
-            <div className="time-selector">
-              <label htmlFor="planning-end-deadline">
-                {t('planning.destinationDeadline', {
-                  defaultValue: 'Optional arrival deadline',
-                })}
-              </label>
-              <input
-                id="planning-end-deadline"
-                type="time"
-                value={destinationDeadline}
-                onChange={event =>
-                  updateDestinationDeadline(event.target.value)
-                }
-                className="time-input"
+        <section className="plan-start-block" aria-label="Where will you start?">
+          {startPlaceControl ?? (
+            <>
+              <h3>Where will you start?</h3>
+              <ResolvedPlaceSelect
+                id="planning-start-place"
+                label="Where will you start?"
+                selection={draft.startSelection}
+                onChange={selection => updateDraft(current => setStartSelection(current, selection))}
+                currentPlace={currentPlace}
+                availablePlaces={availablePlaces}
+                t={t}
               />
-            </div>
-
-            {destinationDeadline && (
-              <div className="time-selector">
-                <label htmlFor="planning-end-buffer">
-                  {t('planning.destinationBuffer', {
-                    defaultValue:
-                      'Arrive this many minutes before the deadline',
-                  })}
-                </label>
-                <input
-                  id="planning-end-buffer"
-                  type="number"
-                  min="0"
-                  step="5"
-                  value={draft.destination.arrivalBufferMinutes}
-                  onChange={event =>
-                    setDraft(current =>
-                      setDestinationTiming(current, {
-                        arrivalDeadlineMinutes:
-                          current.destination.arrivalDeadlineMinutes,
-                        arrivalBufferMinutes: Number(event.target.value),
-                      }),
-                    )
-                  }
-                  className="time-input"
-                />
-              </div>
-            )}
-          </>
-        )}
-
-        <section aria-labelledby="hard-anchors-title">
-          <h3 id="hard-anchors-title">
-            {t('planning.anchorsTitle', {
-              defaultValue: 'Fixed anchors',
-            })}
-          </h3>
-          <p className="start-order-hint">
-            {t('planning.anchorsHint', {
-              defaultValue:
-                'These commitments are locked against automatic replanning.',
-            })}
-          </p>
-
-          {draft.anchors.length === 0 && (
-            <p>
-              {t('planning.noAnchors', {
-                defaultValue: 'No fixed anchors added.',
-              })}
-            </p>
-          )}
-          {draft.anchors.map(anchor => (
-            <article key={anchor.id} className="swipe-item">
-              <p className="card-type-label">
-                {t('planning.lockedAnchor', {
-                  defaultValue: 'Locked anchor',
-                })}
-              </p>
-              <h4>{anchor.title}</h4>
-              <p>{anchor.place.name}</p>
-              <p>
-                {t('planning.summaryAnchorTiming', {
-                  time: minutesToTimeInput(anchor.startTimeMinutes),
-                  duration: anchor.durationMinutes,
-                  buffer: anchor.arrivalBufferMinutes,
-                  defaultValue: `${minutesToTimeInput(
-                    anchor.startTimeMinutes,
-                  )} · ${anchor.durationMinutes} minutes · arrive ${anchor.arrivalBufferMinutes} minutes early`,
-                })}
-              </p>
-              <div className="swipe-buttons">
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setEditor({ anchor })}
-                >
-                  {t('planning.editNamedAnchor', {
-                    title: anchor.title,
-                    defaultValue: `Edit ${anchor.title}`,
-                  })}
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() =>
-                    setDraft(current =>
-                      removeHardAnchor(current, anchor.id),
-                    )
-                  }
-                >
-                  {t('planning.removeNamedAnchor', {
-                    title: anchor.title,
-                    defaultValue: `Remove ${anchor.title}`,
-                  })}
-                </button>
-              </div>
-            </article>
-          ))}
-
-          {!editor && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() =>
-                setEditor({
-                  anchor: null,
-                  anchorId: nextAnchorId(draft.anchors),
-                })
-              }
-            >
-              {t('planning.addAnchor', {
-                defaultValue: 'Add fixed anchor',
-              })}
-            </button>
+            </>
           )}
         </section>
 
-        {editor && (
-          <HardAnchorEditor
-            key={editor.anchor?.id ?? editor.anchorId}
-            anchorId={editor.anchor?.id ?? editor.anchorId}
-            initialAnchor={editor.anchor}
-            currentPlace={currentPlace}
-            availablePlaces={availablePlaces}
-            onSave={saveAnchor}
-            onCancel={() => setEditor(null)}
-            t={t}
-          />
-        )}
-
-        {errors.length > 0 && (
-          <div role="alert">
-            {errors.map(error => (
-              <p key={error}>{errorMessage(error, t)}</p>
-            ))}
-          </div>
-        )}
-
-        <div className="swipe-buttons">
-          <button type="button" onClick={onCancel} className="btn-secondary">
-            {t('planning.back', { defaultValue: 'Back' })}
-          </button>
-          {onSkip && (
-            <button
-              type="button"
-              onClick={onSkip}
-              className="btn-secondary"
-            >
-              {t('planning.skip', {
-                defaultValue: 'Continue without fixed route details',
-              })}
-            </button>
-          )}
-          <button type="button" onClick={complete} className="btn-primary">
-            {t('planning.continue', {
-              defaultValue: 'Continue with these fixed details',
-            })}
-          </button>
-        </div>
-        <p className="planning-storage-notice">
-          {t('planning.storageNotice', {
-            defaultValue:
-              'If you save this plan, its selected place names and coordinates stay only in this browser until the plan expires or you press Start Over. They are not included in the share QR code.',
-          })}
-        </p>
-      </div>
+        {errors.length > 0 && <div role="alert"><p>Choose a start time and a start area to continue</p></div>}
+        <p className="planning-continue-helper" aria-live="polite">{helper}</p>
+        <button type="button" onClick={complete} className="btn-primary planning-continue" disabled={!hasSelectedTime || !hasSelectedStart}>Continue</button>
+      </main>
     </div>
   );
 }

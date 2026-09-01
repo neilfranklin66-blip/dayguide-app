@@ -16,10 +16,12 @@ const ORIGINAL_KEY = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
 const ORIGINAL_FETCH = global.fetch;
 
 let searchRestaurants;
+let searchRestaurantPage;
+let searchActivities;
 
 const loadModule = () => {
   jest.resetModules();
-  ({ searchRestaurants } = require('./placesApi'));
+  ({ searchRestaurants, searchRestaurantPage, searchActivities } = require('./placesApi'));
 };
 
 const okResponse = (results) => ({
@@ -128,6 +130,104 @@ describe('searchRestaurants multi-cuisine resilience', () => {
   });
 });
 
+describe('searchRestaurantPage', () => {
+  it('keeps Google\'s next-page token separate from the live cards', async () => {
+    global.fetch.mockResolvedValue(okResponse([
+      makePlace('cafe-1', 'Neighbourhood Cafe', {
+        primary_type: 'cafe',
+        primary_type_display_name: 'Cafe',
+        types: ['cafe', 'food'],
+      }),
+    ]));
+    // The proxy is responsible for returning this opaque value; the browser
+    // only sends it back on an explicit user request for more places.
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: 'OK',
+        results: [makePlace('cafe-1', 'Neighbourhood Cafe', {
+          primary_type: 'cafe',
+          primary_type_display_name: 'Cafe',
+          types: ['cafe', 'food'],
+        })],
+        next_page_token: 'provider-page-2',
+      }),
+    });
+
+    const page = await searchRestaurantPage(LAT, LNG, []);
+
+    expect(page.results).toHaveLength(1);
+    expect(page.results[0].venueType).toBe('Cafe');
+    expect(page.results[0].mapsUrl).toBe(
+      'https://www.google.com/maps/search/?api=1&query=Neighbourhood%20Cafe&query_place_id=cafe-1',
+    );
+    expect(page.nextPageToken).toBe('provider-page-2');
+    expect(global.fetch.mock.calls[0][0]).toContain('keyword=food+and+drink');
+    expect(global.fetch.mock.calls[0][0]).toContain('unfiltered=1');
+  });
+});
+
+describe('searchActivities', () => {
+  it('keeps a museum when Google assigns a broader primary type', async () => {
+    global.fetch.mockResolvedValue(okResponse([
+      makePlace('museum-1', 'Northampton Museum', {
+        primary_type: 'tourist_attraction',
+        primary_type_display_name: 'Tourist attraction',
+        types: ['tourist_attraction', 'museum'],
+      }),
+      makePlace('sports-food-1', 'Tuck In Turkish Restaurant', {
+        primary_type: 'restaurant',
+        primary_type_display_name: 'Restaurant',
+        types: ['restaurant', 'sports_club', 'food'],
+      }),
+    ]));
+
+    const activities = await searchActivities(LAT, LNG, ['museums']);
+
+    expect(activities).toHaveLength(1);
+    expect(activities[0]).toMatchObject({
+      name: 'Northampton Museum',
+      category: 'museums',
+      venueType: null,
+      source: 'google_places',
+    });
+    expect(activities.map(activity => activity.name)).not.toContain('Tuck In Turkish Restaurant');
+  });
+
+  it('keeps a Google activity photo only when its Maps source link is supplied', async () => {
+    global.fetch.mockResolvedValue(okResponse([
+      makePlace('museum-photo', 'Northampton Museum', {
+        primary_type: 'museum',
+        primary_type_display_name: 'Museum',
+        types: ['museum', 'tourist_attraction'],
+        photos: [{
+          photo_reference: 'museum-photo-reference',
+          google_maps_uri: 'https://maps.google.com/photo/museum-photo',
+          author_attributions: [{ name: 'Museum photographer', uri: 'https://example.com/author' }],
+        }],
+      }),
+      makePlace('museum-uncredited-photo', 'Uncredited Museum', {
+        primary_type: 'museum',
+        primary_type_display_name: 'Museum',
+        types: ['museum', 'tourist_attraction'],
+        photos: [{ photo_reference: 'uncredited-photo-reference' }],
+      }),
+    ]));
+
+    const activities = await searchActivities(LAT, LNG, ['museums']);
+    const credited = activities.find(activity => activity.id === 'museum-photo');
+    const uncredited = activities.find(activity => activity.id === 'museum-uncredited-photo');
+
+    expect(credited.photoUrl).toContain('museum-photo-reference');
+    expect(credited.photoMapsUrl).toBe('https://maps.google.com/photo/museum-photo');
+    expect(credited.photoAttributions).toEqual([expect.objectContaining({
+      name: 'Museum photographer', uri: 'https://example.com/author',
+    })]);
+    expect(uncredited.photoUrl).toBeNull();
+    expect(uncredited.photoMapsUrl).toBeNull();
+  });
+});
+
 describe('searchRestaurants malformed record handling', () => {
   it('skips records without usable numeric geometry but keeps valid ones', async () => {
     mockFetchByKeyword({
@@ -169,6 +269,7 @@ describe('searchRestaurants incomplete result normalisation', () => {
         {
           place_id: 'bare',
           name: 'Bare Minimum',
+          types: ['restaurant'],
           geometry: { location: { lat: LAT, lng: LNG } },
         },
       ])),
@@ -187,8 +288,7 @@ describe('searchRestaurants incomplete result normalisation', () => {
     expect(bare.address).toBeUndefined();
     expect(bare.coordinates).toEqual({ lat: LAT, lng: LNG });
     expect(bare.cuisine).toEqual([]);
-    expect(bare.image).toContain('placehold.co');
-    expect(bare.image).toContain(encodeURIComponent('Bare Minimum'));
+    expect(bare.image).toBeNull();
   });
 
   it('retains each live place coordinate for future leg-to-leg planning', async () => {
@@ -207,21 +307,37 @@ describe('searchRestaurants incomplete result normalisation', () => {
     expect(results[0].coordinates).not.toBe(venueCoordinates);
   });
 
-  it('falls back to the placeholder image when photos are empty or lack a photo_reference', async () => {
+  it('omits the image when photos are empty or lack a photo_reference, and retains safe photo credits', async () => {
     mockFetchByKeyword({
       '': () => Promise.resolve(okResponse([
         makePlace('empty-photos', 'Empty Photos', { photos: [] }),
         makePlace('no-ref', 'No Reference', { photos: [{ width: 400 }] }),
-        makePlace('with-ref', 'With Reference', { photos: [{ photo_reference: 'ref-1' }] }),
+        makePlace('with-ref', 'With Reference', {
+          photos: [{
+            photo_reference: 'ref-1',
+            author_attributions: [{
+              name: 'A contributor',
+              uri: 'https://www.google.com/maps/contrib/a-contributor',
+              photo_uri: 'https://lh3.googleusercontent.com/avatar',
+            }],
+            google_maps_uri: 'https://www.google.com/maps/photo/source',
+          }],
+        }),
       ])),
     });
 
     const results = await searchRestaurants(LAT, LNG, []);
     const byId = Object.fromEntries(results.map(r => [r.id, r]));
 
-    expect(byId['empty-photos'].image).toContain('placehold.co');
-    expect(byId['no-ref'].image).toContain('placehold.co');
+    expect(byId['empty-photos'].image).toBeNull();
+    expect(byId['no-ref'].image).toBeNull();
     expect(byId['with-ref'].image).toContain('/.netlify/functions/places-photo?ref=ref-1');
+    expect(byId['with-ref'].photoAttributions).toEqual([{
+      name: 'A contributor',
+      uri: 'https://www.google.com/maps/contrib/a-contributor',
+      photoUri: 'https://lh3.googleusercontent.com/avatar',
+    }]);
+    expect(byId['with-ref'].photoMapsUrl).toBe('https://www.google.com/maps/photo/source');
   });
 
   it('maps the valid-but-falsy price_level 0 to $ rather than the missing-value default', async () => {
@@ -399,13 +515,69 @@ describe('searchRestaurants existing behaviour', () => {
     expect(results.map(r => r.id).sort()).toEqual(['match', 'unknown']);
   });
 
-  it('caps results at 12', async () => {
+  it('excludes a live non-food shop even when the provider returned it', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('restaurant', 'The Corner Spot'),
+        makePlace('home-bargains', 'Home Bargains', {
+          types: ['discount_store', 'store', 'point_of_interest'],
+          primary_type: 'discount_store',
+        }),
+      ])),
+    });
+
+    const results = await searchRestaurants(LAT, LNG, []);
+
+    expect(results.map(r => r.id)).toEqual(['restaurant']);
+    expect(results.map(r => r.name)).not.toContain('Home Bargains');
+  });
+
+  it('uses the provider primary type over broad secondary restaurant types', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('shop-with-food', 'Home Bargains', {
+          primary_type: 'discount_store',
+          types: ['discount_store', 'restaurant', 'food'],
+        }),
+      ])),
+    });
+
+    await expect(searchRestaurants(LAT, LNG, [])).resolves.toEqual([]);
+  });
+
+  it('keeps the provider display label for an accurately described food venue', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('italian', 'Trattoria Uno', {
+          primary_type: 'italian_restaurant',
+          primary_type_display_name: 'Italian restaurant',
+          types: ['italian_restaurant', 'restaurant', 'food'],
+        }),
+      ])),
+    });
+
+    const [restaurant] = await searchRestaurants(LAT, LNG, []);
+
+    expect(restaurant.venueType).toBe('Italian restaurant');
+  });
+
+  it('excludes a record with no food venue type rather than guessing from its name', async () => {
+    mockFetchByKeyword({
+      '': () => Promise.resolve(okResponse([
+        makePlace('unknown-type', 'Possibly Food', { types: [] }),
+      ])),
+    });
+
+    await expect(searchRestaurants(LAT, LNG, [])).resolves.toEqual([]);
+  });
+
+  it('keeps up to the provider page size for the user to continue browsing', async () => {
     const many = Array.from({ length: 15 }, (_, i) => makePlace(`p${i}`, `Venue ${i}`));
     mockFetchByKeyword({ '': () => Promise.resolve(okResponse(many)) });
 
     const results = await searchRestaurants(LAT, LNG, []);
 
-    expect(results).toHaveLength(12);
+    expect(results).toHaveLength(15);
   });
 });
 
@@ -413,7 +585,12 @@ describe('API-key safety (launch blocker guard, Packet 118)', () => {
   it('produces no request or image URL containing a key parameter', async () => {
     mockFetchByKeyword({
       'Italian restaurant': () => Promise.resolve(okResponse([
-        makePlace('photo', 'Pizza Roma', { photos: [{ photo_reference: 'ref-9' }] }),
+        makePlace('photo', 'Pizza Roma', {
+          photos: [{
+            photo_reference: 'ref-9',
+            google_maps_uri: 'https://www.google.com/maps/photo/source',
+          }],
+        }),
       ])),
     });
 

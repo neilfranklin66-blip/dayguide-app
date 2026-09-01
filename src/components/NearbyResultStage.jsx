@@ -1,0 +1,44 @@
+import React from 'react';
+import LivePlaceCard from './LivePlaceCard';
+
+const fallbackTranslations = {
+  'discovery.activities': 'Things to do',
+  'discovery.openInMaps': 'Open in Google Maps',
+  'nearbyResult.liveSource': 'Live from Google Places',
+  'restaurants.photoBy': 'Photo by',
+  'restaurants.viewPhotoOnMaps': 'View photo',
+};
+
+const fallbackT = (key, options) => options?.defaultValue ?? fallbackTranslations[key] ?? key;
+
+export default function NearbyResultStage({
+  result,
+  onStartOver,
+  locale,
+  t = fallbackT,
+}) {
+  const place = result?.place;
+  if (!place) return null;
+
+  return (
+    <>
+      <LivePlaceCard
+        place={place}
+        kind={result.type === 'food' ? 'food' : 'activity'}
+        currentIndex={0}
+        queueLength={1}
+        source="live"
+        selected
+        showHeader={false}
+        sourceAfterPhoto
+        locale={locale}
+        t={t}
+        afterCard={typeof onStartOver === 'function' && (
+          <button type="button" className="nearby-result-start-over" onClick={onStartOver}>
+            {t('discovery.startOver', { defaultValue: 'Start over' })}
+          </button>
+        )}
+      />
+    </>
+  );
+}

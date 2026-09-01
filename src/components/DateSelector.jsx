@@ -1,10 +1,20 @@
 import React from 'react';
 
-export default function DateSelector({ selectedDate, onChange, t }) {
+export default function DateSelector({
+  selectedDate,
+  onChange,
+  t,
+  id = 'interests-date',
+  labelKey = 'interests.dateLabel',
+  labelDefault = 'What date do you want to plan?',
+}) {
   return (
     <div className="time-selector">
-      <label>{t('interests.dateLabel') || 'What date do you want to plan?'}</label>
+      <label htmlFor={id}>
+        {t(labelKey, { defaultValue: labelDefault })}
+      </label>
       <input
+        id={id}
         type="date"
         value={selectedDate}
         onChange={e => onChange(e.target.value)}

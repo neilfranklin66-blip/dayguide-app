@@ -4,7 +4,6 @@ import RestaurantsNoResultsCard from './RestaurantsNoResultsCard';
 import RestaurantsUnavailableCard from './RestaurantsUnavailableCard';
 import NoMoreRestaurantsCard from './NoMoreRestaurantsCard';
 import RestaurantSwipeCard from './RestaurantSwipeCard';
-import { buildRecommendationReason } from '../utils/recommendationReason';
 import { getRouteAfterRestaurants } from '../engines/itineraryRouteEngine';
 import { LIVE_SEARCH_FAILURE_SOURCES } from '../config/dayGuideOptions';
 
@@ -23,6 +22,15 @@ export default function RestaurantsStage({
   hasChildren,
   startWith,
   swipeRestaurant,
+  onBuild,
+  onShowMore,
+  onSetStart,
+  isLiveDiscovery = false,
+  onBackToDiscovery,
+  onStartOver,
+  planningOverride,
+  hasMore = false,
+  locale,
   t,
 }) {
   if (isRestaurantsLoading) {
@@ -40,8 +48,20 @@ export default function RestaurantsStage({
       return (
         <RestaurantsUnavailableCard
           restaurantSource={restaurantSource}
-          onRetry={() => goToRestaurants(selectedCuisines, selectedPriceRange)}
+          onRetry={() =>
+            planningOverride
+              ? goToRestaurants(
+                  selectedCuisines,
+                  selectedPriceRange,
+                  planningOverride,
+                )
+              : goToRestaurants(selectedCuisines, selectedPriceRange)
+          }
+          onSetStart={onSetStart}
           onSkip={() => continueAfterRestaurants([])}
+          isLiveDiscovery={isLiveDiscovery}
+          onBackToDiscovery={onBackToDiscovery}
+          onStartOver={onStartOver}
           t={t}
         />
       );
@@ -74,6 +94,7 @@ export default function RestaurantsStage({
           goToRestaurants(selectedCuisines, null);
         }}
         onSkip={() => continueAfterRestaurants([])}
+        onStartOver={onStartOver}
         t={t}
       />
     );
@@ -85,17 +106,13 @@ export default function RestaurantsStage({
     return (
       <NoMoreRestaurantsCard
         onContinue={() => continueAfterRestaurants(selectedRestaurants)}
+        onShowMore={onShowMore}
+        hasMore={hasMore}
         nextRoute={getRouteAfterRestaurants({ startWith })}
         t={t}
       />
     );
   }
-
-  const recommendationReason = buildRecommendationReason(currentRestaurant, {
-    selectedCuisines,
-    selectedPriceRange,
-    hasChildren,
-  });
 
   return (
     <RestaurantSwipeCard
@@ -103,8 +120,9 @@ export default function RestaurantsStage({
       currentRestaurantIndex={currentRestaurantIndex}
       restaurantQueueLength={restaurantQueue.length}
       restaurantSource={restaurantSource}
-      recommendationReason={recommendationReason}
       onSwipe={swipeRestaurant}
+      isLiveDiscovery={isLiveDiscovery}
+      locale={locale}
       t={t}
     />
   );

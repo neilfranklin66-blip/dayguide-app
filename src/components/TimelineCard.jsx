@@ -12,6 +12,7 @@ export default function TimelineCard({
   selectedDate,
   timeline,
   onDurationChange,
+  onRemoveItem,
   onStartOver,
   onShare,
   travelPreferences,
@@ -30,7 +31,7 @@ export default function TimelineCard({
           selectedDate={selectedDate}
           t={t}
         />
-        {hasTimelineItems && (
+        {timeline.length > 1 && (
           <TravelEstimateNotice
             hasHardAnchor={hasHardAnchor}
             travelPreferences={travelPreferences}
@@ -45,6 +46,7 @@ export default function TimelineCard({
         <TimelineList
           timeline={timeline}
           onDurationChange={onDurationChange}
+          onRemoveItem={onRemoveItem}
           travelPreferences={travelPreferences}
           t={t}
         />

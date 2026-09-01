@@ -38,6 +38,56 @@ test('renders the timeline with its items', () => {
   expect(screen.getByText('10:00')).toBeInTheDocument();
 });
 
+test('does not render a day-guide summary for a one-stop itinerary', () => {
+  render(<TimelineStage {...baseProps} />);
+
+  expect(screen.queryByText('timeline.dayGuideLabel')).not.toBeInTheDocument();
+});
+
+test('keeps one-stop results calm by omitting generic travel guidance', () => {
+  render(<TimelineStage {...baseProps} />);
+
+  expect(screen.queryByText('timeline.travelGuidance.title')).not.toBeInTheDocument();
+  expect(screen.queryByText('timeline.travelGuidance.general')).not.toBeInTheDocument();
+});
+
+test('keeps travel guidance for a multi-stop itinerary', () => {
+  render(
+    <TimelineStage
+      {...baseProps}
+      timeline={[timelineItem, { ...timelineItem, id: 2, activity: 'City Gallery' }]}
+    />,
+  );
+
+  expect(screen.getByText('timeline.travelGuidance.title')).toBeInTheDocument();
+});
+
+test('renders a factual day-guide summary for multiple selected cards', () => {
+  const tWithNarrative = (key) => ({
+    'timeline.dayNarrative.foodStop': 'food',
+    'timeline.dayNarrative.activityStop': 'activity',
+    'timeline.dayNarrative.otherStop': 'stop',
+    'timeline.dayNarrative.template': '{count}-stop plan: {sequence}.',
+    'timeline.dayNarrative.listTwoSeparator': ', then ',
+    'timeline.dayNarrative.listMiddleSeparator': ', ',
+    'timeline.dayNarrative.listFinalSeparator': ', then ',
+  }[key] ?? key);
+
+  render(
+    <TimelineStage
+      {...baseProps}
+      timeline={[
+        { ...timelineItem, selectionType: 'food' },
+        { ...timelineItem, id: 2, activity: 'City Gallery', selectionType: 'activity' },
+      ]}
+      t={tWithNarrative}
+    />,
+  );
+
+  expect(screen.getByText('2-stop plan: food, then activity.')).toBeInTheDocument();
+  expect(screen.queryByText(/available time|preferences kept/i)).not.toBeInTheDocument();
+});
+
 test('a sample activity row shows an honest sample note and hides the fabricated km distance', () => {
   render(<TimelineStage {...baseProps} timeline={[{ ...timelineItem, isSample: true }]} />);
 

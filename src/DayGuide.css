@@ -98,14 +98,20 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--dg-font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--dg-color-brand) 0%, var(--dg-color-brand-accent) 100%);
   min-height: 100vh;
   padding: 10px;
+}
+
+/* The nearby mood page is a full-bleed continuation of the welcome screen,
+   rather than a legacy stage inside the app's framed background. */
+body:has(.nearby-mood-page),
+body:has(.nearby-category-page) {
+  background: #fff;
+  padding: 0;
 }
 
 .dayguide-container {
@@ -120,14 +126,16 @@ body {
 }
 
 .dayguide-container.welcome {
-  justify-content: center;
+  max-width: 500px;
+  padding: 0;
+  min-height: calc(100vh - 20px);
 }
 
 .card {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: var(--dg-color-surface);
+  border-radius: var(--dg-radius-xl);
+  padding: var(--dg-space-8);
+  box-shadow: var(--dg-shadow-card);
   animation: slideUp 0.4s ease-out;
   width: 100%;
   max-width: 450px;
@@ -144,44 +152,89 @@ body {
   }
 }
 
-.welcome-card {
-  text-align: center;
-  padding: 36px;
+.welcome-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 20px);
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--dg-radius-xl);
+  box-shadow: var(--dg-shadow-card);
+  isolation: isolate;
 }
 
-.welcome-intro {
-  max-width: 360px;
-  margin: 0 auto 24px;
+.welcome-hero-image,
+.welcome-hero-shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.welcome-mark {
-  display: block;
-  font-size: 3rem;
-  line-height: 1;
-  margin-bottom: 10px;
+.welcome-hero-image {
+  z-index: -2;
+  object-fit: cover;
+  object-position: 55% center;
 }
 
-.welcome-card h1 {
-  font-size: clamp(2.4rem, 10vw, 3rem);
-  line-height: 1.05;
-  margin-bottom: 12px;
-  color: #667eea;
+.welcome-hero-shade {
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(5, 35, 64, 0.62) 0%, rgba(5, 35, 64, 0.18) 42%, rgba(5, 35, 64, 0.78) 100%),
+    linear-gradient(90deg, rgba(5, 35, 64, 0.22), transparent 70%);
 }
 
-.welcome-card .welcome-tagline {
-  font-size: 1.25rem;
-  font-weight: 650;
-  line-height: 1.35;
-  color: #333;
-  margin-bottom: 8px;
+.welcome-hero-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: clamp(52px, 9vh, 84px) var(--dg-space-6) var(--dg-space-6);
+  color: #fff;
 }
 
-.welcome-card .subtitle {
-  line-height: 1.45;
+.welcome-brand {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.welcome-brand h1 {
+  color: #fff;
+  font-size: clamp(3rem, 13vw, 4.5rem);
+  font-weight: 750;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+  margin: 0 0 16px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.26);
+}
+
+.welcome-message {
+  margin-top: auto;
+  margin-bottom: var(--dg-space-5);
+}
+
+.welcome-tagline {
+  color: #fff;
+  font-size: clamp(1rem, 4.5vw, 1.28rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 12px;
+  white-space: nowrap;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
+}
+
+.welcome-subtitle {
+  color: rgba(255, 255, 255, 0.96);
+  font-size: clamp(0.78rem, 3.5vw, 1rem);
+  font-weight: 550;
+  line-height: 1.25;
+  margin: 0;
+  white-space: nowrap;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
 }
 
 .subtitle {
-  color: #666;
+  color: var(--dg-color-text-secondary);
   font-size: 1em;
   margin-bottom: 20px;
 }
@@ -244,9 +297,10 @@ body {
 .btn-secondary,
 .btn-reject,
 .btn-accept {
+  min-height: var(--dg-control-height);
   padding: 15px 30px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--dg-radius-md);
   font-size: 1em;
   font-weight: 600;
   cursor: pointer;
@@ -255,8 +309,8 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--dg-color-brand) 0%, var(--dg-color-brand-accent) 100%);
+  color: var(--dg-color-surface);
   width: 100%;
   margin-top: 20px;
 }
@@ -272,8 +326,8 @@ body {
 }
 
 .btn-secondary {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--dg-color-surface-muted);
+  color: var(--dg-color-text);
   flex: 1;
 }
 
@@ -312,24 +366,24 @@ body {
 }
 
 h2 {
-  color: #333;
+  color: var(--dg-color-text);
   margin-bottom: 20px;
   font-size: 1.8em;
 }
 
 h3 {
-  color: #333;
+  color: var(--dg-color-text);
   margin-bottom: 10px;
   font-size: 1.4em;
 }
 
 h4 {
-  color: #333;
+  color: var(--dg-color-text);
   font-size: 1.1em;
 }
 
 p {
-  color: #666;
+  color: var(--dg-color-text-secondary);
   line-height: 1.6;
   margin-bottom: 10px;
 }
@@ -342,15 +396,17 @@ p {
 }
 
 .interest-btn {
+  min-height: 102px;
   padding: 20px;
-  border: 2px solid #e0e0e0;
-  border-radius: 15px;
-  background: white;
+  border: 2px solid var(--dg-color-border);
+  border-radius: var(--dg-radius-lg);
+  background: var(--dg-color-surface);
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   font-size: 1em;
   font-weight: 600;
@@ -358,14 +414,14 @@ p {
 }
 
 .interest-btn:hover {
-  border-color: #667eea;
-  background: #f8f9ff;
+  border-color: var(--dg-color-brand);
+  background: var(--dg-color-surface-muted);
 }
 
 .interest-btn.selected {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
-  color: white;
+  background: linear-gradient(135deg, var(--dg-color-brand) 0%, var(--dg-color-brand-accent) 100%);
+  border-color: var(--dg-color-brand);
+  color: var(--dg-color-surface);
   transform: scale(1.05);
 }
 
@@ -376,15 +432,40 @@ p {
 .time-selector {
   margin-bottom: 30px;
   padding: 20px;
-  background: #f8f9ff;
-  border-radius: 15px;
+  background: var(--dg-color-surface-muted);
+  border-radius: var(--dg-radius-lg);
 }
 
 .time-selector label {
   display: block;
   margin-bottom: 15px;
   font-weight: 600;
-  color: #333;
+  color: var(--dg-color-text);
+}
+
+.destination-choice-notice {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 10px;
+  color: #312e81;
+  margin: 10px 0 16px;
+  padding: 12px;
+}
+
+.destination-choice-notice p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+/* A bright, non-colour-only focus treatment keeps the next control visible
+   in dim rooms and outdoor glare without replacing the established palette. */
+button:focus-visible,
+input:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--dg-color-focus);
+  outline-offset: 3px;
 }
 
 .slider {
@@ -423,35 +504,695 @@ p {
   font-weight: 600;
   color: #667eea;
   font-size: 1.1em;
-}.time-input {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  font-size: 1em;
-  font-weight: 600;
-  color: #333;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: monospace;
 }
 
-.time-input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+.time-input,
+.date-input {
+  width: 100%;
+  min-height: 64px;
+  padding: 15px 16px;
+  border: 2px solid var(--dg-color-border);
+  border-radius: var(--dg-radius-md);
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--dg-color-text);
+  background: var(--dg-color-surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.planning-more-options {
+  margin: 8px 0 24px;
+  border-top: 1px solid #d7dcff;
+}
+
+.planning-more-options summary {
+  padding: 16px 0;
+  color: #3949ab;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.later-plans-panel {
+  margin: 8px 0 24px;
+  border: 1px solid var(--dg-color-border-soft);
+  border-radius: var(--dg-radius-lg);
+  background: var(--dg-color-surface-muted);
+  overflow: hidden;
+}
+
+.later-plans-toggle {
+  width: 100%;
+  min-height: 64px;
+  padding: 16px;
+  border: 0;
+  background: transparent;
+  color: var(--dg-color-brand-deep);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.later-plans-toggle::after {
+  content: '+';
+  float: right;
+  font-size: 1.4rem;
+}
+
+.later-plans-toggle[aria-expanded='true']::after {
+  content: '−';
+}
+
+.later-plans-panel > .planning-place-search,
+.later-plans-panel > section,
+.later-plans-panel > .later-plan-timing {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.later-plans-panel .planning-place-search {
+  margin-top: 0;
+  margin-bottom: 16px;
+  background: #fff;
+}
+
+.selected-place-summary,
+.later-plan-card {
+  margin: 0 16px 16px;
+  padding: 16px;
+  border: 1px solid var(--dg-color-border-soft);
+  border-radius: var(--dg-radius-md);
+  background: var(--dg-color-surface);
+}
+
+.selected-place-summary p,
+.later-plan-card p {
+  margin: 0 0 8px;
+}
+
+.selected-place-summary .btn-secondary,
+.later-plan-card .btn-secondary {
+  min-height: 44px;
+  margin: 4px 4px 0 0;
+  padding: 10px 14px;
+}
+
+.later-plan-option {
+  min-height: 48px;
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 2px solid #6b7280;
+  border-radius: 10px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  font-weight: 700;
+}
+
+.later-plan-option[aria-pressed='true'] {
+  border-color: #3949ab;
+  background: #e8ebff;
+}
+
+.hard-anchor-editor input[type='number'] {
+  max-width: 9rem;
+}
+
+.time-input:focus,
+.date-input:focus {
+  outline: 3px solid var(--dg-color-focus);
+  outline-offset: 3px;
+  border-color: #3949ab;
+  box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.18);
+}
+
+/* A tap-first alternative to wheels and typed times. It uses the approved
+   navy, white and coral visual system rather than adding a new palette. */
+.start-time-selector,
+.tap-time-picker {
+  margin: 18px 0 24px;
+  padding: 18px;
+  border: 1px solid #c9d6e2;
+  border-radius: 20px;
+  background: #f7fafc;
+  color: #07345e;
+}
+
+.start-time-selector h3,
+.tap-time-picker h3 {
+  margin: 0 0 18px;
+  color: #07345e;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.45rem;
+}
+
+.start-time-section + .start-time-section {
+  margin-top: 18px;
+}
+
+.start-time-label {
+  margin: 0 0 9px;
+  color: #405469;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.start-time-quick-actions,
+.start-time-periods,
+.start-time-hours,
+.start-time-minutes {
+  display: grid;
+  gap: 9px;
+}
+
+.start-time-quick-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.start-time-periods {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.start-time-hours {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.start-time-minutes {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.start-time-option {
+  min-height: 52px;
+  padding: 8px;
+  border: 1px solid #c9d6e2;
+  border-radius: 13px;
+  background: #fff;
+  color: #07345e;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.start-time-option[aria-pressed='true'] {
+  border-color: #07345e;
+  background: #07345e;
+  color: #fff;
+}
+
+.start-time-option:hover {
+  border-color: #07345e;
+  box-shadow: 0 4px 12px rgba(7, 52, 94, 0.12);
+}
+
+.start-time-option:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
+.start-time-summary {
+  display: grid;
+  gap: 4px;
+  margin-top: 22px;
+  padding: 16px;
+  border: 1px solid #dbe5ed;
+  border-radius: 14px;
+  background: #fff;
+  text-align: center;
+}
+
+.start-time-summary strong {
+  color: #07345e;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.start-time-summary span {
+  color: #405469;
+}
+
+@media (max-width: 380px) {
+  .start-time-selector,
+  .tap-time-picker {
+    padding: 14px;
+  }
+
+  .start-time-quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .start-time-option {
+    min-height: 48px;
+  }
 }
 
 .welcome-actions {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .welcome-actions .btn-primary,
-.welcome-actions .btn-secondary {
+.welcome-actions .btn-secondary,
+.welcome-actions .btn-discovery {
+  width: 100%;
+  min-height: 68px;
+  margin: 0;
+  border: 0;
+  border-radius: 18px;
+  padding: 16px 22px;
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.welcome-actions .welcome-nearby-action {
+  background: #07345e;
+}
+
+.welcome-actions .welcome-nearby-action:hover {
+  background: #0a477c;
+}
+
+.welcome-actions .welcome-plan-action {
+  background: #f25f43;
+}
+
+.welcome-actions .welcome-plan-action:hover {
+  background: #df4d31;
+}
+
+.welcome-actions .btn-primary:hover,
+.welcome-actions .btn-secondary:hover,
+.welcome-actions .btn-discovery:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+}
+
+.welcome-actions .btn-primary:focus-visible,
+.welcome-actions .btn-secondary:focus-visible,
+.welcome-actions .btn-discovery:focus-visible,
+.welcome-resume-link:focus-visible {
+  outline: 3px solid #ffb45d;
+  outline-offset: 4px;
+}
+
+.welcome-resume-link {
+  justify-self: center;
+  padding: 6px 12px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.nearby-mood-page {
+  min-height: 100vh;
+  padding: 28px 20px 40px;
+  background: #fff;
+  color: #07345e;
+}
+
+.nearby-mood-content {
+  width: min(100%, 500px);
+  margin: 0 auto;
+}
+
+.nearby-mood-content h2 {
+  margin: 4px 0 24px;
+  color: #07345e;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 7vw, 2.55rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.nearby-mood-cards {
+  display: grid;
+  gap: 18px;
+}
+
+.nearby-mood-card {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid rgba(7, 52, 94, 0.16);
+  border-radius: 22px;
+  background: #fff;
+  color: #07345e;
+  box-shadow: 0 8px 24px rgba(7, 52, 94, 0.1);
+  text-align: left;
+  cursor: pointer;
+}
+
+.nearby-mood-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+}
+
+.nearby-mood-card:first-child img {
+  object-position: center 58%;
+}
+
+.nearby-mood-card:last-child img {
+  /* Keep both Tower Bridge towers and the river visible while moving the
+     foreground railings out of the shallow card crop. */
+  object-position: center 30%;
+}
+
+.nearby-mood-card strong {
+  display: block;
+  padding: 17px 20px 18px;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.nearby-mood-card:hover {
+  border-color: #07345e;
+  box-shadow: 0 12px 28px rgba(7, 52, 94, 0.16);
+  transform: translateY(-1px);
+}
+
+.nearby-mood-card:focus-visible,
+.nearby-mood-both:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
+.nearby-mood-both {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  margin-top: 18px;
+  border: 1px solid rgba(7, 52, 94, 0.42);
+  border-radius: 16px;
+  background: #fff;
+  color: #07345e;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* The Food & Drinks filter is a continuation of the nearby choice flow, not
+   the old framed planning form.  It deliberately uses the same three colours
+   as the welcome and mood pages: navy, white and the single coral action. */
+.nearby-category-page {
+  min-height: 100vh;
+  padding: 28px 20px 40px;
+  background: #fff;
+  color: #07345e;
+}
+
+.nearby-category-content {
+  width: min(100%, 500px);
+  margin: 0 auto;
+}
+
+.nearby-category-content h2 {
+  margin: 4px 0 24px;
+  color: #07345e;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 9vw, 2.65rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+.nearby-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.nearby-category-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 68px;
+  padding: 12px;
+  border: 1px solid #c9d6e2;
+  border-radius: 16px;
+  background: #fff;
+  color: #07345e;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+}
+
+.nearby-category-tile:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  width: calc((100% - 12px) / 2);
+  justify-self: center;
+}
+
+.nearby-category-tile:hover {
+  border-color: #07345e;
+  box-shadow: 0 8px 18px rgba(7, 52, 94, 0.12);
+}
+
+.nearby-category-tile.selected {
+  border-color: #07345e;
+  background: #07345e;
+  color: #fff;
+}
+
+.nearby-category-tile:focus-visible,
+.nearby-category-cta:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
+.nearby-category-cta {
+  width: 100%;
+  min-height: 58px;
+  margin-top: 24px;
+  border: 0;
+  border-radius: 18px;
+  background: #f25f43;
+  color: #fff;
+  font: inherit;
+  font-size: 1.06rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.nearby-category-cta:hover {
+  background: #d94c33;
+}
+
+.nearby-mixed-next-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.planning-stage-intro {
+  margin-top: -8px;
+  margin-bottom: 20px;
+}
+
+/* The first Plan a day view is deliberately a short sequence: decide when,
+   then name the starting area. Optional commitments remain below it. */
+.plan-essentials-block {
+  margin: 18px 0;
+  padding: 18px;
+  border: 1px solid var(--dg-color-border-soft);
+  border-radius: var(--dg-radius-lg);
+  background: var(--dg-color-surface-muted);
+}
+
+.plan-essentials-block > h3 {
+  margin: 0 0 14px;
+  color: var(--dg-color-brand-deep);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.35rem;
+}
+
+.plan-essentials-block .time-selector {
+  margin: 0;
+}
+
+.plan-essentials-block .start-time-selector {
+  margin-bottom: 0;
+}
+
+.plan-start-block {
+  padding: 0;
+  background: var(--dg-color-surface);
+}
+
+.plan-start-block .planning-place-search {
+  margin: 0;
+  border: 0;
+  border-radius: var(--dg-radius-lg);
+  background: transparent;
+}
+
+.commitment-type-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.commitment-type-options .btn-secondary {
+  min-height: 44px;
+  margin: 0;
+  padding: 8px;
+  font-size: 0.85rem;
+}
+
+.plan-mood-stage {
+  text-align: left;
+}
+
+.stage-eyebrow {
+  margin: 0 0 6px;
+  color: var(--dg-color-brand-strong);
+  font-size: 0.9rem;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.plan-mood-options {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.plan-mood-option {
+  min-height: 108px;
+  padding: 0;
+  border: 2px solid var(--dg-color-border-soft);
+  border-radius: var(--dg-radius-lg);
+  background: var(--dg-color-surface);
+  color: var(--dg-color-text);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 116px minmax(0, 1fr);
+  gap: 0;
+  overflow: hidden;
+}
+
+.plan-mood-option > span {
+  grid-row: span 2;
+  align-self: center;
+  font-size: 1.7rem;
+}
+
+.plan-mood-option strong {
+  grid-column: 2;
+  align-self: center;
+  justify-self: center;
+  padding: 18px;
+  font-size: 1.05rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.plan-mood-option small {
+  color: var(--dg-color-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.plan-mood-option:hover {
+  border-color: var(--dg-color-brand);
+  background: var(--dg-color-surface-muted);
+}
+
+.plan-mood-option-image {
+  display: block;
+  width: 100%;
+  height: 104px;
+  object-fit: cover;
+}
+
+.plan-mood-option--food .plan-mood-option-image {
+  object-position: center 58%;
+}
+
+.plan-mood-option--activities .plan-mood-option-image {
+  object-position: center 30%;
+}
+
+.nearby-result-stage {
+  text-align: left;
+}
+
+.nearby-result-start-over {
+  display: block;
+  margin: 12px auto 32px;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--dg-color-text-secondary);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.nearby-result-start-over:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
+.nearby-result-type {
+  color: var(--dg-color-brand-deep);
+  font-weight: 700;
+}
+
+.nearby-result-maps {
+  display: inline-flex;
+  margin: 10px 0 20px;
+}
+
+.nearby-result-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.nearby-result-actions .btn-primary,
+.nearby-result-actions .btn-secondary {
   width: 100%;
   margin: 0;
+}
+
+.discovery-all {
+  width: 100%;
+  margin: 8px 0 12px;
+}
+
+.discovery-build {
+  width: 100%;
+  margin: 12px 0 0;
+}
+
+.timeline-remove {
+  border: 0;
+  background: transparent;
+  color: #b42318;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
 }
 
 .welcome-resume-summary .subtitle {
@@ -464,9 +1205,120 @@ p {
   text-align: left;
 }
 
+.planning-input-stage {
+  padding: 24px 20px 28px;
+}
+
+.planning-page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.planning-page-header h2 {
+  margin: 0;
+  color: var(--dg-color-brand-deep);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.75rem, 7vw, 2.25rem);
+  line-height: 1.05;
+}
+
+.plan-back-control {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dg-color-brand-deep);
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.plan-back-control:focus-visible {
+  outline: 3px solid var(--dg-color-focus);
+  outline-offset: 3px;
+}
+
+.plan-essentials-block {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.plan-essentials-block > h3,
+.plan-start-block .planning-place-search > h3 {
+  margin: 0 0 12px;
+  color: var(--dg-color-brand-deep);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.plan-start-block {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--dg-color-border-soft);
+}
+
+.plan-start-block .planning-place-search {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.plan-start-block .planning-place-search .selected-place-summary {
+  margin: 12px 0 16px;
+}
+
+.planning-input-stage .selected-place-summary {
+  margin: 12px 0 16px;
+  padding: 14px 16px;
+  border-radius: var(--dg-radius-md);
+}
+
+.planning-continue-helper {
+  min-height: 1.5em;
+  margin: 22px 0 10px;
+  color: var(--dg-color-text-muted);
+  font-size: 0.95rem;
+}
+
+.planning-continue {
+  width: 100%;
+  margin: 0;
+}
+
 .planning-place-resolution form {
   display: grid;
   gap: 10px;
+}
+
+.planning-place-search {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #d0d8f8;
+  border-radius: 14px;
+  background: #f8f9ff;
+}
+
+.planning-place-search h3 {
+  margin-top: 0;
+}
+
+.planning-place-search form,
+.planning-place-search .place-search-form {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-place-search .btn-secondary {
+  width: 100%;
 }
 
 .planning-place-results {
@@ -561,6 +1413,7 @@ p {
 
 .price-btn {
   flex: 1;
+  min-height: 52px;
   padding: 10px 8px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
@@ -589,7 +1442,6 @@ p {
   height: 160px;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 15px;
   background: #f0f0f0;
 }
 
@@ -597,6 +1449,62 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.restaurant-photo-figure {
+  margin: 0 0 15px;
+}
+
+.restaurant-photo--unavailable {
+  display: none;
+}
+
+.restaurant-photo-credit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 9px;
+  border: 1px solid #dbe4f0;
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  background: #fff;
+  color: #374151;
+  font-size: 0.76rem;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.restaurant-photo-authors {
+  min-width: 0;
+}
+
+.restaurant-photo-authors a,
+.restaurant-photo-source {
+  color: #1d4ed8;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.restaurant-photo-author-avatar {
+  width: 18px;
+  height: 18px;
+  margin: 0 4px -4px 0;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.restaurant-photo-source {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .restaurant-photo-credit {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 
 .city-tag {
@@ -652,6 +1560,16 @@ p {
   margin-bottom: 10px;
 }
 
+/* Google Places names can be long. Let the card grow naturally and wrap the
+   real name rather than clipping it or abbreviating a live venue. */
+.place-name {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+  line-height: 1.22;
+}
+
 .rating {
   font-size: 1.2em;
   margin-bottom: 15px;
@@ -666,13 +1584,13 @@ p {
 
 .details {
   font-size: 0.95em;
-  color: #666;
+  color: #475569;
   margin: 5px 0;
 }
 
 .address {
   font-size: 0.85em;
-  color: #999;
+  color: #526071;
   font-style: italic;
   margin-top: 15px;
   overflow-wrap: anywhere;
@@ -717,7 +1635,7 @@ p {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #999;
+  color: #526071;
   margin-bottom: 2px;
 }
 
@@ -1117,18 +2035,21 @@ p {
   margin-bottom: 16px;
 }
 
-/* Activities grid: 3-column compact layout for 12 categories */
-.activities-grid {
+/* Activity and food choices share the same compact three-column treatment. */
+.activities-grid,
+.cuisine-grid {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.activities-grid .interest-btn {
+.activities-grid .interest-btn,
+.cuisine-grid .interest-btn {
   padding: 14px 6px;
   font-size: 0.82em;
   gap: 6px;
 }
 
-.activities-grid .interest-btn .icon {
+.activities-grid .interest-btn .icon,
+.cuisine-grid .interest-btn .icon {
   font-size: 1.6em;
 }
 
@@ -1310,6 +2231,69 @@ p {
   border: 1px solid #fde68a;
 }
 
+/* A short, optional junction in the planning flow. It keeps the three area
+   choices easy to compare without turning a geographical suggestion into a
+   dense route explanation. */
+.geographic-choice-card {
+  text-align: center;
+}
+
+.geographic-choice-eyebrow {
+  color: #4f46e5;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+.geographic-choice-intro {
+  color: #374151;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  margin: 14px auto 10px;
+  max-width: 360px;
+}
+
+.geographic-choice-distance,
+.geographic-choice-time {
+  color: #4b5563;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  margin: 8px auto;
+}
+
+.geographic-choice-time {
+  background: #eef2ff;
+  border-radius: 10px;
+  color: #3730a3;
+  font-weight: 650;
+  padding: 10px 12px;
+}
+
+.geographic-choice-card h3 {
+  color: #1f2937;
+  font-size: 1.05rem;
+  margin: 22px 0 12px;
+}
+
+.geographic-choice-options {
+  display: grid;
+  gap: 10px;
+}
+
+.geographic-choice-options button {
+  min-height: 52px;
+  width: 100%;
+}
+
+.geographic-choice-note {
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 18px auto 0;
+  max-width: 360px;
+}
+
 @media (max-width: 600px) {
   .dayguide-container {
     padding: 10px;
@@ -1333,7 +2317,7 @@ p {
   }
 
   .interest-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .btn-primary,
@@ -1369,12 +2353,238 @@ p {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .activities-grid .interest-btn {
+  .interest-grid .interest-btn {
     padding: 16px 8px;
     font-size: 0.88em;
   }
 
   .popup-card {
     padding: 26px 20px 22px;
+  }
+}
+
+/* Packet 189: one calm, phone-first visual language for every live card.
+   Provider photos are shown only when supplied by Google; the no-photo state
+   remains a neutral surface rather than inventing a substitute image. */
+.live-place-page {
+  min-height: 100vh;
+  padding: 24px 16px 36px;
+  background: #ffffff;
+  color: #07345e;
+}
+
+.live-place-card {
+  width: min(100%, 520px);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(7, 52, 94, 0.16);
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 14px 36px rgba(7, 52, 94, 0.13);
+}
+
+.live-place-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px 12px;
+}
+
+.live-place-card-section,
+.live-place-card-progress,
+.live-place-card-source,
+.live-place-card-type,
+.live-place-card-facts,
+.live-place-card-address,
+.live-place-card-sample-note {
+  margin: 0;
+}
+
+.live-place-card-section {
+  color: #07345e;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.live-place-card-progress {
+  color: #52708d;
+  font-size: 0.84rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.live-place-card-source {
+  margin: 0 20px 12px;
+  color: #52708d;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.live-place-card-source--sample {
+  color: #7b5569;
+}
+
+.live-place-card-photo {
+  margin: 0;
+  background: #eef4f7;
+}
+
+.live-place-card-photo > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.live-place-card-photo--unavailable {
+  display: none;
+}
+
+.live-place-card-photo-credit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  padding: 9px 16px;
+  color: #52708d;
+  background: #f7fafb;
+  border-top: 1px solid rgba(7, 52, 94, 0.08);
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+.live-place-card-photo-credit a,
+.live-place-card-maps {
+  color: #07345e;
+  font-weight: 800;
+}
+
+.live-place-card-photo-authors a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.live-place-card-photo-author-avatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.live-place-card-photo-fallback {
+  display: grid;
+  min-height: 190px;
+  place-items: end start;
+  padding: 22px;
+  background: #07345e;
+  color: #ffffff;
+}
+
+.live-place-card-photo-fallback span {
+  max-width: 26ch;
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.live-place-card-content {
+  padding: 20px;
+}
+
+.live-place-card-type {
+  color: #52708d;
+  font-size: 0.86rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.live-place-card-name {
+  margin: 6px 0 12px;
+  color: #07345e;
+  font-size: clamp(1.55rem, 6vw, 2.1rem);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.live-place-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 14px;
+  color: #294f71;
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.live-place-card-facts span + span::before {
+  margin-right: 14px;
+  color: #f25f43;
+  content: "•";
+}
+
+.live-place-card-address,
+.live-place-card-sample-note {
+  margin-top: 12px;
+  color: #52708d;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.live-place-card-maps {
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  margin-top: 18px;
+  padding: 0 16px;
+  border: 1px solid #07345e;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.live-place-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 20px 20px;
+}
+
+.live-place-card-actions button {
+  min-height: 56px;
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.live-place-card-skip {
+  border: 1px solid #07345e;
+  background: #ffffff;
+  color: #07345e;
+}
+
+.live-place-card-choose {
+  border: 1px solid #07345e;
+  background: #07345e;
+  color: #ffffff;
+}
+
+.live-place-card-maps:focus-visible,
+.live-place-card-actions button:focus-visible {
+  outline: 3px solid #f25f43;
+  outline-offset: 3px;
+}
+
+@media (max-width: 380px) {
+  .live-place-page {
+    padding-inline: 10px;
+  }
+
+  .live-place-card-header,
+  .live-place-card-content,
+  .live-place-card-actions {
+    padding-inline: 16px;
   }
 }

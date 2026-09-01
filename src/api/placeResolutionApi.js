@@ -67,8 +67,12 @@ export async function resolvePlaceQuery(
   if (response.status === 404) {
     throw resolutionError(PLACE_RESOLUTION_ERROR.RESOLVER_UNAVAILABLE);
   }
+  // Any other unsuccessful status is a resolver-side fault, not a fault in what
+  // was typed. Reporting it as RESOLVER_UNAVAILABLE keeps it on the honest
+  // "search is not available" message; the former HTTP_<status> code matched no
+  // case in the caller and so fell through to the query-fault message.
   if (!response.ok) {
-    throw resolutionError(`HTTP_${response.status}`);
+    throw resolutionError(PLACE_RESOLUTION_ERROR.RESOLVER_UNAVAILABLE);
   }
 
   let payload;

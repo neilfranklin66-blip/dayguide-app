@@ -31,7 +31,7 @@ test('renders the current activity card', () => {
   render(<ActivitiesStage {...baseProps} />);
 
   expect(screen.getByText('City Museum')).toBeInTheDocument();
-  expect(screen.getByText('1 / 1')).toBeInTheDocument();
+  expect(screen.getByText('discovery.cardProgress')).toBeInTheDocument();
 });
 
 test('sample activity card shows an honest sample indication and hides the km-away proximity claim', () => {
@@ -47,7 +47,7 @@ test('a non-sample activity keeps its real distance and shows no sample badge', 
   const liveActivity = { ...activity, isSample: false };
   render(<ActivitiesStage {...baseProps} activityQueue={[liveActivity]} />);
 
-  expect(screen.getByText('activities.kmAway')).toBeInTheDocument();
+  expect(screen.getByText('nearbyResult.distance')).toBeInTheDocument();
   expect(screen.queryByText('activities.sampleBadge')).not.toBeInTheDocument();
   expect(screen.queryByText('activities.sampleNote')).not.toBeInTheDocument();
 });
@@ -56,7 +56,7 @@ test('accepting an activity calls swipeActivity(true)', () => {
   const swipeActivity = jest.fn();
   render(<ActivitiesStage {...baseProps} swipeActivity={swipeActivity} />);
 
-  fireEvent.click(screen.getByText('activities.yes'));
+  fireEvent.click(screen.getByText('discovery.choose'));
 
   expect(swipeActivity).toHaveBeenCalledWith(true);
 });
@@ -128,6 +128,20 @@ test('renders the no-results card when the queue is empty', () => {
   render(<ActivitiesStage {...baseProps} activityQueue={[]} />);
 
   expect(screen.getByText('activities.noResultsTitle')).toBeInTheDocument();
+});
+
+test('nearby activity discovery has no section header or card progress', () => {
+  render(<ActivitiesStage {...baseProps} isLiveDiscovery activityQueue={[{ ...activity, isSample: false }]} />);
+
+  expect(screen.queryByText('discovery.activities')).not.toBeInTheDocument();
+  expect(screen.queryByText('discovery.cardProgress')).not.toBeInTheDocument();
+});
+
+test('renders the unavailable card for a failed live activity search', () => {
+  render(<ActivitiesStage {...baseProps} activityQueue={[]} activitySource="location_denied" />);
+
+  expect(screen.getByText('activities.locationDeniedWarning')).toBeInTheDocument();
+  expect(screen.queryByText('activities.noResultsTitle')).not.toBeInTheDocument();
 });
 
 test('show-all button broadens the search by calling goToActivities with no interests', () => {

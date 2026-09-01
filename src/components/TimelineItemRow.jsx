@@ -2,7 +2,7 @@ import React from 'react';
 import { formatDurationLabel, getTimelineCategoryLabel } from '../engines/timelineEngine';
 import { ACTIVITY_CATEGORIES } from '../config/dayGuideOptions';
 
-export default function TimelineItemRow({ item, index, onDurationChange, t }) {
+export default function TimelineItemRow({ item, index, onDurationChange, onRemove, t }) {
   return (
     <div className="timeline-item">
       <div className="timeline-time">{item.time}</div>
@@ -17,6 +17,7 @@ export default function TimelineItemRow({ item, index, onDurationChange, t }) {
             })}
           </p>
           <h4>{item.activity}</h4>
+          <button className="timeline-remove" onClick={onRemove}>{t('timeline.remove')}</button>
           <div className="duration-section">
             <input type="range" min="0.25" max="4" step="0.25" value={item.duration}
               onChange={e => onDurationChange(index, parseFloat(e.target.value))}
@@ -43,7 +44,7 @@ export default function TimelineItemRow({ item, index, onDurationChange, t }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {t('restaurants.openInMaps', 'Open in Maps')}
+              {t('restaurants.openInMaps', 'Open in Google Maps')}
             </a>
           )}
         </div>

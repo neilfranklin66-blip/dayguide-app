@@ -6,10 +6,10 @@ This register records evidence-backed known issues, technical debt, architecture
 risks, operational uncertainties, security and configuration gaps, test and
 accessibility gaps, and explicitly accepted limitations for DayGuide.
 
-- **Current verification date:** 31 July 2026
+- **Current verification date:** 1 September 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Packet 161 exact Deploy Preview acceptance,
-  credential rollback, and cleared-plan verification
+- **Latest targeted update:** Read-only source audit of distance-unit and Google
+  Maps labelling across `src/`, 1 September 2026
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository evidence, Product Owner-operated
@@ -154,9 +154,110 @@ decision must be supported by the launch rules and evidence.
   desktop and phone widths; the former isolated `again.` line was no longer
   visible.
 
-No other active working defect was established from the permitted evidence.
-Entries elsewhere in this register are classified as debt, risk, uncertainty,
-gap, or accepted limitation rather than duplicated as known issues.
+### KI-004 — No route between categories within a Plan your day session
+
+- **ID:** KI-004
+- **Category:** Active known issue
+- **Severity:** High
+- **Status:** Verified open
+- **Launch blocking:** Yes for the Plan your day journey
+- **Verification status:** Observed by the Product Owner during end-to-end testing at localhost:8888 under `netlify dev`, 31 August 2026.
+- **Factual evidence:** Multiple venues can be selected within Food & Drinks, and multiple within Things to do, and all selections reach the itinerary. Neither category offers any route to the other within a single planning session. Selecting Food & Drinks never leads to Things to do, and the reverse is also true.
+- **Impact:** A user planning a day can build only a single-category plan. The Plan your day journey is the reason Find something nearby was accepted as a single-result journey, so this gap removes the justification for that compromise.
+- **Likely dependency:** The cross-category route existed and worked in an earlier version. Changes since have removed or disconnected it.
+- **Recommended next action:** Establish which commit removed the connection, then decide whether it returns as a direct control, as a prompt, or both.
+- **Verification date:** 31 August 2026
+
+### KI-005 — Legacy pop-ups appear with unapproved wording
+
+- **ID:** KI-005
+- **Category:** Active known issue
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Observed by the Product Owner during end-to-end testing, 31 August 2026.
+- **Factual evidence:** A meal prompt appears after Show me both, rendered by `MealPromptCard.jsx`, reading "Add a restaurant?" and "Would you like to add a meal or restaurant break to your day?". A break prompt appears after multiple Things to do selections, rendered by `PopupModal.jsx`, reading "Time for a Break?". Both use "restaurant" rather than the approved **Food & Drinks**, and neither is in the binding copy authority in `DESIGN_BASELINE.md`.
+- **Impact:** Superseded wording is presented to the user on a route otherwise following the current design.
+- **Operational rule:** The pop-up mechanism is intended product direction, not legacy debris. It exists to offer a coffee, a break or a meal during a long day where none was originally selected, and is planned to extend to points of interest — a nearby museum, a highly rated restaurant, a statue or building of note — with a brief description, and potentially audio through the phone or headphones. The function is wanted. The wording and behaviour have not been agreed for this version.
+- **Recommended next action:** Approve replacement wording before any implementation packet touches these components. Do not remove the components.
+- **Verification date:** 31 August 2026
+
+### KI-006 — No travel time from start place to first venue
+
+- **ID:** KI-006
+- **Category:** Active known issue
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** Not determined
+- **Verification status:** Observed by the Product Owner during end-to-end testing, 31 August 2026.
+- **Factual evidence:** After setting a start place and building an itinerary in Plan your day, no travel time is shown between the start place and the first selected venue.
+- **Impact:** The user cannot judge when to leave for the first stop.
+- **Likely dependency:** Related to the shelved live travel-time work recorded in `PACKET156_UNIVERSAL_TRAVEL_ESTIMATE_POLICY.md`, whose results fell outside acceptable prediction levels.
+- **Recommended next action:** Decide whether the first leg receives an estimate on the same basis as later legs, or is deliberately omitted.
+- **Verification date:** 31 August 2026
+
+### KI-007 — Hour button shows no selected state
+
+- **ID:** KI-007
+- **Category:** Active known issue
+- **Severity:** Low
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Observed by the Product Owner during end-to-end testing, 31 August 2026.
+- **Factual evidence:** On the Plan your day opening screen, tapping an hour in the hour grid does not visually mark that button as selected. The minute buttons do register visually, and the chosen time displays correctly including the hour, for example 09:15.
+- **Impact:** The user receives no confirmation that the hour was accepted, and may tap repeatedly.
+- **Likely dependency:** Missing or misapplied selected-state styling on the hour control in `StartTimeSelector.jsx`.
+- **Recommended next action:** Confirm the selected-state class is applied to the hour buttons on the same basis as the minute buttons.
+- **Verification date:** 31 August 2026
+
+### KI-008 — Use my current location does not set a start area
+
+- **ID:** KI-008
+- **Category:** Active known issue
+- **Severity:** Medium
+- **Status:** Verified open, cause not established
+- **Launch blocking:** Not determined
+- **Verification status:** Observed by the Product Owner during end-to-end testing at localhost:8888, 31 August 2026. Place and postcode search on the same screen worked correctly in the same session.
+- **Factual evidence:** Selecting "Use my current location" does not result in an accepted start area. `PlanningInputWithPlaceResolution.jsx:61-66` requires a place reference with `source === 'current_gps'`, which depends on `position` from `useGeolocation`. Whether the browser returned a position was not established.
+- **Impact:** The faster of the two ways to set a start area is unavailable, leaving search as the only route.
+- **Likely dependency:** Either a browser permission state for the origin, or a code fault. Geolocation requires a secure context; localhost qualifies, a bare-IP HTTP LAN address does not.
+- **Recommended next action:** Reset the location permission for the origin and retest. If it still fails on localhost with permission granted, treat as a code fault.
+- **Verification date:** 31 August 2026
+
+### KI-009 — Distance units are inconsistent within an English session
+
+- **ID:** KI-009
+- **Category:** Active known issue
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Established by read-only source audit, 1 September 2026, following the copy authority ledger being committed and its section B decision surfacing.
+- **Factual evidence:** `formatNearbyDistance` (`src/utils/placeDistance.js:5`) converts to miles when the locale starts with `en`, one decimal below 10 and a whole number at 10 or above, matching the ledger's section B rule. Three reachable strings bypass that formatter and interpolate raw kilometres: the hardcoded `📍 {item.distance}km` at `src/components/TimelineItemRow.jsx:37`, and `geography.fromStart` and `geography.toLater` at `src/locales/en.json:311-312`. An English user therefore sees miles on a Nearby card and kilometres on the itinerary and geographic-choice screens in the same session.
+- **Impact:** The same quantity is presented in two units within one journey. The ledger's rule is implemented on the Nearby card path only.
+- **Likely dependency:** The affected screens — itinerary rows and geographic choice — are recorded as legacy and not approved for the current design. Correcting units on screens awaiting redesign may be wasted effort; correcting them signals the rule applies everywhere.
+- **Recommended next action:** Decide whether the two legacy screens are brought into the section B rule now, or whether the rule is deferred until those screens receive their own design decision. Do not change the formatter.
+- **Verification date:** 1 September 2026
+
+### KI-010 — Five user-visible strings have no renderer
+
+- **ID:** KI-010
+- **Category:** Active known issue
+- **Severity:** Low
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Established by read-only source audit, 1 September 2026. Each was checked for dynamic key construction as well as literal reference; none resolves from a template call site.
+- **Factual evidence:** `activities.kmAway` (`en.json:269`), `restaurants.kmAway` (`en.json:332`), `restaurants.liveResults` (`en.json:340`) and `planning.searchPrivacy` (`en.json:143`) have no non-test consumer anywhere in `src/`. `buildRecommendationReason` (`src/utils/recommendationReason.js:80`) contains the hardcoded English fragment `only ${card.distanceKm} km from you` and has no caller outside its own test.
+- **Impact:** None to a user today, since none renders. The risk is that a future packet reaches for one of these and reintroduces superseded wording. `restaurants.liveResults` reads "Live results from Google Maps", which would also be factually wrong if revived: the provider is Google Places, and the badge actually shown is `nearbyResult.liveSource`, "Live from Google Places".
+- **Operational rule:** Under the design baseline, a string is not approved merely because it exists in source. These five are unapproved and unreachable, and must not be used as precedent.
+- **Recommended next action:** Decide whether to delete them or retain them as dormant. If retained, they belong in the copy authority ledger's historical classification so their status is recorded rather than inferred.
+- **Verification date:** 1 September 2026
+
+KI-004 to KI-008 were established from Product Owner end-to-end testing on 31
+August 2026. KI-009 and KI-010 were established by read-only source audit on 1
+September 2026. No other active working defect was established from the
+permitted evidence. Entries elsewhere in this register are classified as debt,
+risk, uncertainty, gap, or accepted limitation rather than duplicated as known
+issues.
 
 ## 4. Launch blockers
 
@@ -580,23 +681,27 @@ These are current scope or product limitations, not duplicated as working
 defects. No entry is marked Deferred because no separate Product Owner deferral
 decision was evidenced during this review.
 
-### AL-001 — Activity suggestions are sample data
+### AL-001 — Activity suggestions were sample data
 
 - **ID:** AL-001
 - **Category:** Accepted product/data limitation
 - **Severity:** High
-- **Status:** Accepted limitation
-- **Launch blocking:** No
-- **Verification status:** Verified in tracked source and disclosure components.
-- **Factual evidence:** `src/DayGuide.jsx` imports
-  `src/mockActivityData.json` and marks activities `isSample: true`.
-  `ActivitySwipeCard.jsx` and `TimelineItemRow.jsx` disclose the sample state.
-- **Impact:** Activity suggestions are not verified live local recommendations.
-- **Likely dependency:** A future approved live activity-data requirement and
-  provider, if product scope changes.
-- **Recommended next action:** Preserve honest sample disclosure unless the
-  Product Owner separately approves live activity integration.
-- **Verification date:** 13 July 2026
+- **Status:** Superseded by accepted Packet 173 unpublished-preview evidence.
+- **Launch blocking:** The live-only candidate has passed its Packet 173
+  preview gate; separate review, merge and Production-promotion authority are
+  still required.
+- **Verification status:** The former limitation is historical evidence. Packet
+  173 removes `mockActivityData.json` from the current Plan-a-Day activity path,
+  uses the existing Google Places activity search, and adds an activity-flow
+  mock-import guard. Existing saved plans retain their `isSample` disclosure.
+- **Impact:** Current activity suggestions are intended to be live local
+  recommendations; a provider or location failure now produces an honest
+  unavailable card instead of a sample substitute.
+- **Likely dependency:** Existing Places availability. Production remains a
+  separate promotion decision.
+- **Recommended next action:** Preserve the accepted live-discovery base while
+  the later interface-refinement and release/promotion packets are scoped.
+- **Verification date:** 9 August 2026
 
 ### AL-002 — Transport estimates are approximate
 
