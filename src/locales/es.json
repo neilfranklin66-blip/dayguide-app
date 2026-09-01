@@ -47,7 +47,7 @@
     "title": "¿Qué te gustaría encontrar?", "subtitle": "Elige una opción para ver lugares cercanos.",
     "food": "Comida y bebida", "activities": "Cosas que hacer", "both": "Muéstrame ambos", "foodOptionHint": "Un lugar para comer o simplemente un buen café", "activitiesOptionHint": "Lugares que merece la pena explorar", "bothOptionHint": "Una mezcla equilibrada cerca de ti", "foodTitle": "¿Qué te apetece?", "foodHint": "Elige un tipo de comida o mira toda la oferta cercana.",
     "allFood": "Toda la comida y bebida", "showFood": "Mostrar lugares para comer", "activitiesTitle": "¿Qué te gustaría hacer?", "activitiesHint": "Elige una actividad o mira lugares cercanos.",
-    "allActivities": "Todas las actividades", "showActivities": "Mostrar cosas que hacer", "searchingActivities": "Buscando cosas que hacer cerca...", "searchingBoth": "Buscando opciones cercanas...", "buildPicks": "Crear mi día ({{count}} opciones)", "changeActivity": "Elige otro tipo de actividad", "backToNearby": "Volver a las opciones cercanas", "startOver": "Empezar de nuevo", "notForMe": "No es para mí", "chooseThis": "Elijo este", "skip": "Omitir", "choose": "Elegir", "cardProgress": "{{current}} de {{total}}", "placeDetails": "Detalles del lugar", "openInMaps": "Abrir en Maps", "mixedCompleteTitle": "Eso es todo en esta mezcla cercana", "mixedCompleteHint": "Prueba una categoría para ver más opciones.", "mixedEmptyTitle": "No hay nada en esta mezcla cercana", "mixedEmptyHint": "Prueba comida o actividades por separado.", "bothUnavailableTitle": "Las opciones cercanas no están disponibles ahora", "bothUnavailableHint": "Prueba comida o actividades, o revisa el acceso a la ubicación."
+    "allActivities": "Todas las actividades", "showActivities": "Mostrar cosas que hacer", "searchingActivities": "Buscando cosas que hacer cerca...", "searchingBoth": "Buscando opciones cercanas...", "buildPicks": "Crear mi día ({{count}} opciones)", "changeActivity": "Elige otro tipo de actividad", "backToNearby": "Volver a las opciones cercanas", "startOver": "Empezar de nuevo", "notForMe": "No es para mí", "chooseThis": "Elijo este", "skip": "Omitir", "choose": "Elegir", "cardProgress": "{{current}} de {{total}}", "placeDetails": "Detalles del lugar", "openInMaps": "Abrir en Google Maps", "mixedCompleteTitle": "Eso es todo en esta mezcla cercana", "mixedCompleteHint": "Prueba una categoría para ver más opciones.", "mixedEmptyTitle": "No hay nada en esta mezcla cercana", "mixedEmptyHint": "Prueba comida o actividades por separado.", "bothUnavailableTitle": "Las opciones cercanas no están disponibles ahora", "bothUnavailableHint": "Prueba comida o actividades, o revisa el acceso a la ubicación."
   },
   "interests": {
     "title": "¿Qué te apetecería hacer?",
@@ -289,7 +289,7 @@
     "timeLabel": "Tiempo a reservar",
     "kmAway": "📍 {{distance}} km de distancia",
     "duration": "⏱️ {{duration}} horas",
-    "openInMaps": "🗺️ Abrir en Maps",
+    "openInMaps": "🗺️ Abrir en Google Maps",
     "photoBy": "Foto de",
     "viewPhotoOnMaps": "Ver foto",
     "skip": "❌ Omitir",

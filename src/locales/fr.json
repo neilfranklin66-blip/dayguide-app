@@ -47,7 +47,7 @@
     "title": "Qu’aimeriez-vous trouver ?", "subtitle": "Choisissez une option pour voir des options à proximité.",
     "food": "Manger et boire", "activities": "Idées de sortie", "both": "Montrez-moi les deux", "foodOptionHint": "Un endroit où manger, ou simplement un bon café", "activitiesOptionHint": "Des endroits qui valent le détour", "bothOptionHint": "Un mélange équilibré à proximité", "foodTitle": "Qu’est-ce qui vous ferait plaisir ?", "foodHint": "Choisissez un type de cuisine ou voyez toutes les options à proximité.",
     "allFood": "Tous les lieux pour manger et boire", "showFood": "Voir les lieux pour manger", "activitiesTitle": "Qu’aimeriez-vous faire ?", "activitiesHint": "Choisissez une activité ou voyez les lieux à proximité.",
-    "allActivities": "Toutes les activités", "showActivities": "Voir les idées de sortie", "searchingActivities": "Recherche d’idées de sortie à proximité...", "searchingBoth": "Recherche d'options à proximité...", "buildPicks": "Créer ma journée ({{count}} choix)", "changeActivity": "Choisir un autre type d'activité", "backToNearby": "Retour aux choix à proximité", "startOver": "Recommencer", "notForMe": "Pas pour moi", "chooseThis": "Je choisis ceci", "skip": "Passer", "choose": "Choisir", "cardProgress": "{{current}} sur {{total}}", "placeDetails": "Détails du lieu", "openInMaps": "Ouvrir dans Maps", "mixedCompleteTitle": "C'est tout pour ce mélange à proximité", "mixedCompleteHint": "Essayez une catégorie pour voir plus d'options.", "mixedEmptyTitle": "Rien dans ce mélange à proximité", "mixedEmptyHint": "Essayez séparément les lieux pour manger ou les idées de sortie.", "bothUnavailableTitle": "Les options à proximité ne sont pas disponibles actuellement", "bothUnavailableHint": "Essayez de manger ou de sortir, ou vérifiez l'accès à votre position."
+    "allActivities": "Toutes les activités", "showActivities": "Voir les idées de sortie", "searchingActivities": "Recherche d’idées de sortie à proximité...", "searchingBoth": "Recherche d'options à proximité...", "buildPicks": "Créer ma journée ({{count}} choix)", "changeActivity": "Choisir un autre type d'activité", "backToNearby": "Retour aux choix à proximité", "startOver": "Recommencer", "notForMe": "Pas pour moi", "chooseThis": "Je choisis ceci", "skip": "Passer", "choose": "Choisir", "cardProgress": "{{current}} sur {{total}}", "placeDetails": "Détails du lieu", "openInMaps": "Ouvrir dans Google Maps", "mixedCompleteTitle": "C'est tout pour ce mélange à proximité", "mixedCompleteHint": "Essayez une catégorie pour voir plus d'options.", "mixedEmptyTitle": "Rien dans ce mélange à proximité", "mixedEmptyHint": "Essayez séparément les lieux pour manger ou les idées de sortie.", "bothUnavailableTitle": "Les options à proximité ne sont pas disponibles actuellement", "bothUnavailableHint": "Essayez de manger ou de sortir, ou vérifiez l'accès à votre position."
   },
   "interests": {
     "title": "Qu’aimeriez-vous faire ?",
@@ -289,7 +289,7 @@
     "timeLabel": "Temps à prévoir",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} heures",
-    "openInMaps": "🗺️ Ouvrir dans Maps",
+    "openInMaps": "🗺️ Ouvrir dans Google Maps",
     "photoBy": "Photo de",
     "viewPhotoOnMaps": "Voir la photo",
     "skip": "❌ Passer",

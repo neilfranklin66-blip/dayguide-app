@@ -47,7 +47,7 @@
     "title": "Bạn muốn tìm gì?", "subtitle": "Chọn một mục để xem các lựa chọn gần bạn.",
     "food": "Đồ ăn và thức uống", "activities": "Việc để làm", "both": "Hiện cả hai", "foodOptionHint": "Một nơi để ăn, hoặc chỉ một ly cà phê ngon", "activitiesOptionHint": "Những nơi đáng để dạo quanh", "bothOptionHint": "Một lựa chọn cân bằng gần bạn", "foodTitle": "Bạn muốn gì?", "foodHint": "Chọn loại đồ ăn hoặc xem tất cả địa điểm gần đây.",
     "allFood": "Tất cả đồ ăn và thức uống", "showFood": "Hiển thị địa điểm ăn uống", "activitiesTitle": "Bạn muốn làm gì?", "activitiesHint": "Chọn hoạt động hoặc xem các địa điểm gần đây.",
-    "allActivities": "Tất cả hoạt động", "showActivities": "Hiển thị việc để làm", "searchingActivities": "Đang tìm hoạt động gần đây...", "searchingBoth": "Đang tìm các lựa chọn gần đây...", "buildPicks": "Lập ngày của tôi ({{count}} lựa chọn)", "changeActivity": "Chọn loại hoạt động khác", "backToNearby": "Quay lại lựa chọn gần đây", "startOver": "Bắt đầu lại", "notForMe": "Không hợp với tôi", "chooseThis": "Chọn nơi này", "skip": "Bỏ qua", "choose": "Chọn", "cardProgress": "{{current}} / {{total}}", "placeDetails": "Thông tin địa điểm", "openInMaps": "Mở trong Maps", "mixedCompleteTitle": "Đó là toàn bộ lựa chọn gần đây này", "mixedCompleteHint": "Hãy thử một danh mục để xem thêm lựa chọn.", "mixedEmptyTitle": "Không có gì trong nhóm lựa chọn gần đây này", "mixedEmptyHint": "Hãy thử riêng đồ ăn hoặc việc để làm.", "bothUnavailableTitle": "Các lựa chọn gần đây hiện không khả dụng", "bothUnavailableHint": "Hãy thử đồ ăn hoặc việc để làm, hoặc kiểm tra quyền truy cập vị trí."
+    "allActivities": "Tất cả hoạt động", "showActivities": "Hiển thị việc để làm", "searchingActivities": "Đang tìm hoạt động gần đây...", "searchingBoth": "Đang tìm các lựa chọn gần đây...", "buildPicks": "Lập ngày của tôi ({{count}} lựa chọn)", "changeActivity": "Chọn loại hoạt động khác", "backToNearby": "Quay lại lựa chọn gần đây", "startOver": "Bắt đầu lại", "notForMe": "Không hợp với tôi", "chooseThis": "Chọn nơi này", "skip": "Bỏ qua", "choose": "Chọn", "cardProgress": "{{current}} / {{total}}", "placeDetails": "Thông tin địa điểm", "openInMaps": "Mở trong Google Maps", "mixedCompleteTitle": "Đó là toàn bộ lựa chọn gần đây này", "mixedCompleteHint": "Hãy thử một danh mục để xem thêm lựa chọn.", "mixedEmptyTitle": "Không có gì trong nhóm lựa chọn gần đây này", "mixedEmptyHint": "Hãy thử riêng đồ ăn hoặc việc để làm.", "bothUnavailableTitle": "Các lựa chọn gần đây hiện không khả dụng", "bothUnavailableHint": "Hãy thử đồ ăn hoặc việc để làm, hoặc kiểm tra quyền truy cập vị trí."
   },
   "interests": {
     "title": "Bạn muốn tận hưởng điều gì?",
@@ -289,7 +289,7 @@
     "timeLabel": "Thời gian dự kiến",
     "kmAway": "📍 {{distance}} km",
     "duration": "⏱️ {{duration}} giờ",
-    "openInMaps": "🗺️ Mở trong Bản đồ",
+    "openInMaps": "🗺️ Mở trong Google Maps",
     "photoBy": "Ảnh của",
     "viewPhotoOnMaps": "Xem ảnh",
     "skip": "❌ Bỏ qua",

@@ -47,7 +47,7 @@
     "title": "您想找什么？", "subtitle": "选择一项即可查看附近选择。",
     "food": "餐饮", "activities": "可做的事", "both": "两种都看看", "foodOptionHint": "找个吃饭的地方，或喝杯好咖啡", "activitiesOptionHint": "值得逛逛的地方", "bothOptionHint": "附近的均衡选择", "foodTitle": "您想吃点什么？", "foodHint": "选择餐饮类型，或查看附近所有餐饮地点。",
     "allFood": "所有餐饮", "showFood": "查看餐饮地点", "activitiesTitle": "您想做什么？", "activitiesHint": "选择活动或查看附近地点。",
-    "allActivities": "所有活动", "showActivities": "查看可做的事", "searchingActivities": "正在寻找附近的活动...", "searchingBoth": "正在寻找附近选择...", "buildPicks": "安排我的一天（{{count}} 个选择）", "changeActivity": "选择其他活动类型", "backToNearby": "返回附近选择", "startOver": "重新开始", "notForMe": "不适合我", "chooseThis": "选这个", "skip": "跳过", "choose": "选择", "cardProgress": "{{current}} / {{total}}", "placeDetails": "地点详情", "openInMaps": "在地图中打开", "mixedCompleteTitle": "这就是这一批附近选择", "mixedCompleteHint": "试试其中一个类别，查看更多选择。", "mixedEmptyTitle": "这一批附近没有结果", "mixedEmptyHint": "请分别尝试餐饮或可做的事。", "bothUnavailableTitle": "附近选择暂时不可用", "bothUnavailableHint": "请尝试餐饮或可做的事，或检查位置访问权限。"
+    "allActivities": "所有活动", "showActivities": "查看可做的事", "searchingActivities": "正在寻找附近的活动...", "searchingBoth": "正在寻找附近选择...", "buildPicks": "安排我的一天（{{count}} 个选择）", "changeActivity": "选择其他活动类型", "backToNearby": "返回附近选择", "startOver": "重新开始", "notForMe": "不适合我", "chooseThis": "选这个", "skip": "跳过", "choose": "选择", "cardProgress": "{{current}} / {{total}}", "placeDetails": "地点详情", "openInMaps": "在 Google Maps 中打开", "mixedCompleteTitle": "这就是这一批附近选择", "mixedCompleteHint": "试试其中一个类别，查看更多选择。", "mixedEmptyTitle": "这一批附近没有结果", "mixedEmptyHint": "请分别尝试餐饮或可做的事。", "bothUnavailableTitle": "附近选择暂时不可用", "bothUnavailableHint": "请尝试餐饮或可做的事，或检查位置访问权限。"
   },
   "interests": {
     "title": "您想享受什么？",
@@ -289,7 +289,7 @@
     "timeLabel": "预留时间",
     "kmAway": "📍 {{distance}} 公里",
     "duration": "⏱️ {{duration}} 小时",
-    "openInMaps": "🗺️ 在地图中打开",
+    "openInMaps": "🗺️ 在 Google Maps 中打开",
     "photoBy": "照片来源：",
     "viewPhotoOnMaps": "查看照片",
     "skip": "❌ 跳过",
