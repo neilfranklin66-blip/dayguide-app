@@ -1,7 +1,7 @@
 # DayGuide Design Baseline
 
 - **Status:** Active design authority for the experience reset
-- **Version:** 1.11
+- **Version:** 1.12
 - **Effective:** 1 September 2026
 **Scope:** The welcome screen, nearby-discovery choice screens, and the next single-card discovery screen. It also records the agreed direction that later planning screens must follow.
 
@@ -302,7 +302,17 @@ The threshold is derived from the display rule rather than chosen: it is the poi
 
 A blank tells the user nothing. A clamped figure states a number the data does not support. The phrase confirms the app looked and found something.
 
-**Undecided:** the wording in Spanish, French, Vietnamese and Chinese.
+**Approved wording.** The phrase is approved in all five locales:
+
+| Locale | Phrase |
+| --- | --- |
+| en | **You’re already close** |
+| es | **Ya estás muy cerca** |
+| fr | **Vous y êtes presque** |
+| vi | **Bạn đã ở rất gần rồi** |
+| zh | **你已经很近了** |
+
+The non-English phrasings are idiomatic rather than literal, and are approved on the basis that the intent carries in a short, widely understood phrase. None has been confirmed by a native speaker. That check is wanted but is not a condition of implementation.
 
 ## Planning foundations that follow this baseline
 
@@ -347,6 +357,7 @@ Once a verified finish has been chosen, its optional arrival time uses the same 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.12 | 1 September 2026 | Recorded the approved **You’re already close** wording for the very-short-distance rule in all five locales, replacing the undecided note for that rule. The non-English phrasings are idiomatic rather than literal and are approved on the basis that the intent carries in a short, widely understood phrase; none has been confirmed by a native speaker, and that check is wanted but is not a condition of implementation. This is a documentation-only direction; it makes no application-source, deployment, credential, or provider change. |
 | 1.11 | 1 September 2026 | Recorded the intended, not-yet-implemented very-short-distance rule: where the displayed figure would round to zero — roughly 80 metres in English, roughly 50 metres in the kilometre locales — DayGuide shows **You’re already close** rather than a number or a blank, wherever a distance appears, including the Nearby card, the itinerary row, and the geographic choice screen. The threshold is derived from the display rule rather than chosen, and is therefore not a fixed distance: English converts to miles and the kilometre locales do not. The wording in Spanish, French, Vietnamese and Chinese remains undecided. This is a documentation-only direction; it makes no application-source, deployment, credential, or provider change. |
 | 1.10 | 31 August 2026 | Recorded the intended, not-yet-implemented nearby result behaviour: **Show me both** alternating card order, context-dependent search widening with a mandatory user-facing notice, and the register for that copy. The triggering distance threshold, widened reach, and exact notice wording remain undecided, and the behaviour depends on transport mode affecting results. This is a documentation-only direction; it makes no application-source, deployment, credential, or provider change. |
 | 1.9 | 26 August 2026 | Consolidated the binding English copy authority and explicit superseded/excluded reset-flow wording in this active baseline. This is a documentation-only clarification; it makes no application-source, deployment, credential, or provider change. |
