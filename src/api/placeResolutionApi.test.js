@@ -86,6 +86,22 @@ test.each([
   );
 });
 
+// A resolver that answers with any unsuccessful status has failed on its own
+// account. Reporting that as HTTP_<status> matched no case in the search
+// component, so an infrastructure fault was worded as a fault in what the
+// person typed. Every such status is now the honest "unavailable" state.
+test.each([500, 502, 503])(
+  'treats an unsuccessful resolver response (%i) as unavailable, not a bad query',
+  async status => {
+    await expect(
+      resolvePlaceQuery(
+        'London Euston',
+        jest.fn().mockResolvedValue({ ok: false, status }),
+      ),
+    ).rejects.toThrow(PLACE_RESOLUTION_ERROR.RESOLVER_UNAVAILABLE);
+  },
+);
+
 test('distinguishes a missing resolver, network failure and malformed response', async () => {
   await expect(
     resolvePlaceQuery(

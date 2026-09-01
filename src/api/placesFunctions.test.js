@@ -59,7 +59,13 @@ describe('places-nearby function', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
-  it('returns only a safe upstream HTTP diagnostic when Places API rejects a request', async () => {
+  // Previously this returned UNKNOWN_ERROR, which the browser rendered as the
+  // generic "we couldn't reach the live restaurant search" card — a temporary
+  // fault, complete with a Try again button that could never succeed, because
+  // an expired key stays expired. REQUEST_DENIED routes to the no_key card,
+  // which names the setup fault and offers no retry. The upstream diagnostic
+  // still names only the HTTP family, and no provider text is passed through.
+  it('reports an expired key as a denial rather than a retryable unknown error', async () => {
     process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
     global.fetch.mockResolvedValue({
       ok: false,
@@ -75,10 +81,86 @@ describe('places-nearby function', () => {
     const res = await nearby.handler(event);
 
     expect(JSON.parse(res.body)).toEqual({
-      status: 'UNKNOWN_ERROR',
+      status: 'REQUEST_DENIED',
       error_message: 'UPSTREAM_HTTP_400',
       provider_status: 'INVALID_ARGUMENT',
       provider_cause: 'INVALID_API_KEY',
+    });
+    expect(res.body).not.toContain('Provider detail must not reach the browser');
+  });
+
+  // The exact 400 returned in production on 2026-09-01 by an expired key.
+  // Note the wording: "expired", not "not valid" — the reason code is what
+  // identifies it reliably.
+  it('recognises the expired-key response Google actually returned', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: {
+          code: 400,
+          status: 'INVALID_ARGUMENT',
+          message: 'API key expired. Please renew the API key.',
+          details: [
+            {
+              '@type': 'type.googleapis.com/google.rpc.ErrorInfo',
+              reason: 'API_KEY_INVALID',
+              domain: 'googleapis.com',
+            },
+          ],
+        },
+      }),
+    });
+
+    const res = await nearby.handler(event);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'REQUEST_DENIED',
+      error_message: 'UPSTREAM_HTTP_400',
+      provider_status: 'INVALID_ARGUMENT',
+      provider_cause: 'INVALID_API_KEY',
+    });
+  });
+
+  it('recognises an expired key from the reason code alone, with no message text', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: {
+          status: 'INVALID_ARGUMENT',
+          details: [{ reason: 'API_KEY_INVALID' }],
+        },
+      }),
+    });
+
+    const res = await nearby.handler(event);
+
+    expect(JSON.parse(res.body).status).toBe('REQUEST_DENIED');
+    expect(JSON.parse(res.body).provider_cause).toBe('INVALID_API_KEY');
+  });
+
+  it('leaves a malformed request of our own as an unknown error, not a key denial', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: {
+          status: 'INVALID_ARGUMENT',
+          message: 'Invalid field mask: nextPageToken is not supported here.',
+        },
+      }),
+    });
+
+    const res = await nearby.handler(event);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'UNKNOWN_ERROR',
+      error_message: 'UPSTREAM_HTTP_400',
+      provider_status: 'INVALID_ARGUMENT',
     });
   });
 
@@ -458,6 +540,115 @@ describe('places-resolve function', () => {
       candidates: [],
     });
     expect(res.body).not.toContain('provider account detail');
+  });
+
+  // An expired key is a 400 INVALID_ARGUMENT, not a 401 or 403. Before this
+  // branch existed it fell through to the generic 502, and the browser told
+  // the person their place could not be verified — a query fault, when the
+  // fault was ours. NO_API_KEY is the code this same function already returns
+  // when no key is configured, and reaches the same honest message.
+  it('reports an expired key as the same denial as a missing one', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: {
+          status: 'INVALID_ARGUMENT',
+          message: 'API key not valid. Please pass a valid API key. Account detail here.',
+        },
+      }),
+    });
+
+    const res = await resolve.handler(event);
+
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'REQUEST_DENIED',
+      error_message: 'NO_API_KEY',
+      candidates: [],
+    });
+    expect(res.body).not.toContain('Account detail here');
+  });
+
+  // The exact 400 returned in production on 2026-09-01 by an expired key.
+  // Note the wording: "expired", not "not valid" — the reason code is what
+  // identifies it reliably.
+  it('recognises the expired-key response Google actually returned', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: {
+          code: 400,
+          status: 'INVALID_ARGUMENT',
+          message: 'API key expired. Please renew the API key.',
+          details: [
+            {
+              '@type': 'type.googleapis.com/google.rpc.ErrorInfo',
+              reason: 'API_KEY_INVALID',
+              domain: 'googleapis.com',
+            },
+          ],
+        },
+      }),
+    });
+
+    const res = await resolve.handler(event);
+
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'REQUEST_DENIED',
+      error_message: 'NO_API_KEY',
+      candidates: [],
+    });
+    expect(res.body).not.toContain('renew the API key');
+  });
+
+  it('recognises an expired key from the reason code alone, with no message text', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: {
+          status: 'INVALID_ARGUMENT',
+          details: [{ reason: 'API_KEY_INVALID' }],
+        },
+      }),
+    });
+
+    const res = await resolve.handler(event);
+
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'REQUEST_DENIED',
+      error_message: 'NO_API_KEY',
+      candidates: [],
+    });
+  });
+
+  it('leaves a malformed request of our own as the generic upstream failure', async () => {
+    process.env.GOOGLE_PLACES_API_KEY = TEST_KEY;
+    global.fetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: {
+          status: 'INVALID_ARGUMENT',
+          message: 'Invalid field mask: places.rating is not requestable.',
+        },
+      }),
+    });
+
+    const res = await resolve.handler(event);
+
+    expect(res.statusCode).toBe(502);
+    expect(JSON.parse(res.body)).toEqual({
+      status: 'FETCH_ERROR',
+      error_message: 'UPSTREAM_HTTP_ERROR',
+      candidates: [],
+    });
   });
 
   it('reports an upstream connection failure without exposing its raw message', async () => {

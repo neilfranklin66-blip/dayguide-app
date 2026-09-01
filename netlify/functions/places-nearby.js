@@ -43,6 +43,20 @@ const LEGACY_PRICE_LEVELS = {
   PRICE_LEVEL_VERY_EXPENSIVE: 4,
 };
 
+// Google reports a dead key as 400 INVALID_ARGUMENT whether it is expired,
+// revoked or malformed. `details[].reason` carries the machine-readable code
+// and is the signal to trust; the message text is English prose that Google
+// has already varied ("not valid" vs "expired") and could vary again, so it
+// stays only as a fallback for responses that omit the structured detail.
+const INVALID_KEY_REASON = 'API_KEY_INVALID';
+const INVALID_KEY_MESSAGE =
+  /api key (?:is )?not valid|api key expired|provided api key is invalid/i;
+
+const isInvalidKeyError = error =>
+  (Array.isArray(error?.details) &&
+    error.details.some(detail => detail?.reason === INVALID_KEY_REASON)) ||
+  INVALID_KEY_MESSAGE.test(error?.message || '');
+
 const SAFE_PROVIDER_ERROR_STATUSES = new Set([
   'INVALID_ARGUMENT',
   'FAILED_PRECONDITION',
@@ -125,13 +139,10 @@ const providerFailure = (status, payload) => {
   // without returning Google's message or any credential material.
   const upstreamDiagnostic = `UPSTREAM_HTTP_${status}`;
   const providerStatus = payload?.error?.status;
-  const providerMessage = payload?.error?.message;
   const safeProviderStatus = SAFE_PROVIDER_ERROR_STATUSES.has(providerStatus)
     ? { provider_status: providerStatus }
     : {};
-  const safeProviderCause = /api key (?:is )?not valid|provided api key is invalid/i.test(
-    providerMessage || '',
-  )
+  const safeProviderCause = isInvalidKeyError(payload?.error)
     ? { provider_cause: 'INVALID_API_KEY' }
     : {};
   if (status === 429 || payload?.error?.status === 'RESOURCE_EXHAUSTED') {
@@ -142,7 +153,18 @@ const providerFailure = (status, payload) => {
       ...safeProviderCause,
     };
   }
-  if (status === 401 || status === 403 || payload?.error?.status === 'PERMISSION_DENIED') {
+  // An expired or revoked key arrives as 400 INVALID_ARGUMENT rather than 401
+  // or 403, so `provider_cause` is the only thing that identifies it. Treating
+  // it as UNKNOWN_ERROR sent the person a card saying the search was
+  // temporarily unreachable, with a Try again button that could never succeed;
+  // REQUEST_DENIED reaches the no_key card, which names the setup fault and
+  // offers no retry.
+  if (
+    status === 401 ||
+    status === 403 ||
+    payload?.error?.status === 'PERMISSION_DENIED' ||
+    safeProviderCause.provider_cause === 'INVALID_API_KEY'
+  ) {
     return {
       status: 'REQUEST_DENIED',
       error_message: upstreamDiagnostic,
