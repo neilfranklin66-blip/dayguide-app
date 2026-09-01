@@ -68,6 +68,7 @@ const REQUIRED_KEYS = [
   'interests.leavingAtThisTime',
   'discovery.backToNearby',
   'discovery.startOver',
+  'discovery.openInMaps',
   // Packet 159's mounted planning workflow. Deriving every leaf from English
   // prevents a later control or warning from silently falling back in one of
   // the five supported locales.
@@ -140,6 +141,18 @@ const PLACEHOLDER_KEYS = [
   'timeline.dayNarrative.template',
 ];
 
+// The two Maps actions must name Google Maps, in every locale including
+// English. The link opens Google Maps wherever it is shown, so a generic map
+// name is inaccurate. DESIGN_BASELINE.md and the copy authority ledger record
+// "Open in Google Maps" as approved, and both "Maps" and "Open in Maps" as
+// superseded. `restaurants.openInMaps` was already in REQUIRED_KEYS and still
+// carried the superseded wording in four locales: presence was asserted, and
+// wording was not.
+const MAPS_ACTION_KEYS = [
+  'discovery.openInMaps',
+  'restaurants.openInMaps',
+];
+
 function getPath(object, dotPath) {
   return dotPath
     .split('.')
@@ -185,6 +198,10 @@ describe.each(LOCALE_CODES)('locale %s', code => {
     expect(typeof value).toBe('string');
     // Separators intentionally include spaces, so no trim() here.
     expect(value.length).toBeGreaterThan(0);
+  });
+
+  test.each(MAPS_ACTION_KEYS)('%s names Google Maps explicitly', key => {
+    expect(getPath(locale, key)).toContain('Google Maps');
   });
 
   test.each(PLACEHOLDER_KEYS)('placeholders in %s match English', key => {
