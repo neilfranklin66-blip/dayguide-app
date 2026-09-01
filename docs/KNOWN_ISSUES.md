@@ -6,10 +6,10 @@ This register records evidence-backed known issues, technical debt, architecture
 risks, operational uncertainties, security and configuration gaps, test and
 accessibility gaps, and explicitly accepted limitations for DayGuide.
 
-- **Current verification date:** 31 August 2026
+- **Current verification date:** 1 September 2026
 - **Register baseline:** Packet 134 corrective compliance review
-- **Latest targeted update:** Product Owner end-to-end testing of the Plan your
-  day journey at localhost:8888 under `netlify dev`, 31 August 2026
+- **Latest targeted update:** Read-only source audit of distance-unit and Google
+  Maps labelling across `src/`, 1 September 2026
 - **Baseline evidence date:** 11 July 2026
 - **Baseline verification point:** Packet 131
 - **Evidence scope:** tracked repository evidence, Product Owner-operated
@@ -224,10 +224,39 @@ decision must be supported by the launch rules and evidence.
 - **Recommended next action:** Reset the location permission for the origin and retest. If it still fails on localhost with permission granted, treat as a code fault.
 - **Verification date:** 31 August 2026
 
+### KI-009 — Distance units are inconsistent within an English session
+
+- **ID:** KI-009
+- **Category:** Active known issue
+- **Severity:** Medium
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Established by read-only source audit, 1 September 2026, following the copy authority ledger being committed and its section B decision surfacing.
+- **Factual evidence:** `formatNearbyDistance` (`src/utils/placeDistance.js:5`) converts to miles when the locale starts with `en`, one decimal below 10 and a whole number at 10 or above, matching the ledger's section B rule. Three reachable strings bypass that formatter and interpolate raw kilometres: the hardcoded `📍 {item.distance}km` at `src/components/TimelineItemRow.jsx:37`, and `geography.fromStart` and `geography.toLater` at `src/locales/en.json:311-312`. An English user therefore sees miles on a Nearby card and kilometres on the itinerary and geographic-choice screens in the same session.
+- **Impact:** The same quantity is presented in two units within one journey. The ledger's rule is implemented on the Nearby card path only.
+- **Likely dependency:** The affected screens — itinerary rows and geographic choice — are recorded as legacy and not approved for the current design. Correcting units on screens awaiting redesign may be wasted effort; correcting them signals the rule applies everywhere.
+- **Recommended next action:** Decide whether the two legacy screens are brought into the section B rule now, or whether the rule is deferred until those screens receive their own design decision. Do not change the formatter.
+- **Verification date:** 1 September 2026
+
+### KI-010 — Five user-visible strings have no renderer
+
+- **ID:** KI-010
+- **Category:** Active known issue
+- **Severity:** Low
+- **Status:** Verified open
+- **Launch blocking:** No
+- **Verification status:** Established by read-only source audit, 1 September 2026. Each was checked for dynamic key construction as well as literal reference; none resolves from a template call site.
+- **Factual evidence:** `activities.kmAway` (`en.json:269`), `restaurants.kmAway` (`en.json:332`), `restaurants.liveResults` (`en.json:340`) and `planning.searchPrivacy` (`en.json:143`) have no non-test consumer anywhere in `src/`. `buildRecommendationReason` (`src/utils/recommendationReason.js:80`) contains the hardcoded English fragment `only ${card.distanceKm} km from you` and has no caller outside its own test.
+- **Impact:** None to a user today, since none renders. The risk is that a future packet reaches for one of these and reintroduces superseded wording. `restaurants.liveResults` reads "Live results from Google Maps", which would also be factually wrong if revived: the provider is Google Places, and the badge actually shown is `nearbyResult.liveSource`, "Live from Google Places".
+- **Operational rule:** Under the design baseline, a string is not approved merely because it exists in source. These five are unapproved and unreachable, and must not be used as precedent.
+- **Recommended next action:** Decide whether to delete them or retain them as dormant. If retained, they belong in the copy authority ledger's historical classification so their status is recorded rather than inferred.
+- **Verification date:** 1 September 2026
+
 KI-004 to KI-008 were established from Product Owner end-to-end testing on 31
-August 2026. No other active working defect was established from the permitted
-evidence. Entries elsewhere in this register are classified as debt, risk,
-uncertainty, gap, or accepted limitation rather than duplicated as known
+August 2026. KI-009 and KI-010 were established by read-only source audit on 1
+September 2026. No other active working defect was established from the
+permitted evidence. Entries elsewhere in this register are classified as debt,
+risk, uncertainty, gap, or accepted limitation rather than duplicated as known
 issues.
 
 ## 4. Launch blockers
